@@ -8,31 +8,34 @@ package it.cnr.ilc.lexo.servlet;
 import io.swagger.jaxrs.config.BeanConfig;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Map;
+import java.util.Properties;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 /**
  *
  * @author andreabellandi
  */
-
 public class SwaggerServletConfiguration extends HttpServlet {
-    
+
     @Override
     public void init(ServletConfig config) throws ServletException {
+        Logger logger = LoggerFactory.getLogger(SwaggerServletConfiguration.class);
         super.init(config);
         BeanConfig beanConfig = new BeanConfig();
-        beanConfig.setBasePath("lexo-server/service");
-        beanConfig.setHost("localhost:8080");
+        beanConfig.setBasePath(config.getServletContext().getContextPath() + "/service");
+        logger.info("init(): config.getServletContext().getContextPath(): [ " + config.getServletContext().getContextPath() + "/service ]");
         beanConfig.setTitle("LexO server API documentation");
         beanConfig.setResourcePackage("it.cnr.ilc.lexo");
         beanConfig.setPrettyPrint(true);
         beanConfig.setScan(true);
-        beanConfig.setSchemes(new String[] {"http"});
+        beanConfig.setSchemes(new String[]{"https"});
         beanConfig.setVersion("0.1");
     }
-    
+
 }

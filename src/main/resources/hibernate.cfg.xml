@@ -6,11 +6,8 @@
         <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
         <property name="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property>
         <property name="hibernate.connection.url">jdbc:mysql://localhost/lexo_server?characterEncoding=UTF-8&amp;serverTimezone=Europe/Rome</property>
-<!--        <property name="hibernate.connection.username">lexo</property>
-        <property name="hibernate.connection.password">LexOServer12</property>-->
-        <!--<property name="hibernate.connection.url">jdbc:mysql://localhost/lexo-server?characterEncoding=UTF-8&amp;serverTimezone=Europe/Rome</property>-->
-        <property name="hibernate.connection.username">root</property>
-        <property name="hibernate.connection.password">root</property>
+        <property name="hibernate.connection.username">USER</property>
+        <property name="hibernate.connection.password">PASSWORD</property>
         <property name="hibernate.current_session_context_class">thread</property>
         <property name="hibernate.c3p0.min_size">3</property>
         <property name="hibernate.c3p0.max_size">30</property>

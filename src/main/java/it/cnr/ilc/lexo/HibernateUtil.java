@@ -20,8 +20,8 @@ public class HibernateUtil {
     private static final SessionFactory SESSION_FACTORY;
 
     static {
-        StandardServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder().configure().build();
-        Metadata metadata = new MetadataSources(serviceRegistry).buildMetadata();
+        StandardServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder().configure().build(); 
+        Metadata metadata = new MetadataSources(serviceRegistry).buildMetadata(); 
         SESSION_FACTORY = metadata.buildSessionFactory();
     }
 

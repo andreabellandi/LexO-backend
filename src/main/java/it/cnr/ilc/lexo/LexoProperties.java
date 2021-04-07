@@ -3,7 +3,8 @@ package it.cnr.ilc.lexo;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-import org.hibernate.Hibernate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -12,25 +13,27 @@ import org.hibernate.Hibernate;
 public class LexoProperties {
 
     private static final Properties PROPERTIES = new Properties();
+    static final Logger logger = LoggerFactory.getLogger(LexoFilter.class.getName());
 
     static {
         load();
     }
 
     public static final void load() {
-        System.err.println("Lexofilter.context " + LexoFilter.CONTEXT);
+        logger.debug("Lexofilter.context: " + LexoFilter.CONTEXT);
         InputStream input = null;
         try {
-//            input = LexoProperties.class.getResourceAsStream("/" + LexoFilter.CONTEXT + ".properties");
             input = LexoProperties.class.getClassLoader().getResourceAsStream("lexo-server.properties");
             PROPERTIES.load(input);
         } catch (IOException e) {
-            System.err.println(e.getMessage());
+            logger.error(e.getLocalizedMessage());
         } finally {
             try {
-                input.close();
-            } catch (Exception e) {
-                System.err.println(e.getMessage());
+                if (null != input) {
+                    input.close();
+                }
+            } catch (IOException e) {
+                logger.error(e.getLocalizedMessage());
             }
         }
     }

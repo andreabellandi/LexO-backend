@@ -9,10 +9,10 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
-import org.apache.log4j.DailyRollingFileAppender;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PatternLayout;
+import javax.servlet.http.HttpServletResponse;
+import org.hibernate.HibernateException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -21,6 +21,7 @@ import org.apache.log4j.PatternLayout;
 @WebFilter(urlPatterns = {"/faces/*", "/service/*", "/servlet/*"})
 public class LexoFilter implements Filter {
 
+    static final Logger logger = LoggerFactory.getLogger(LexoFilter.class.getName());
     public static String CONTEXT;
     public static String VERSION;
 
@@ -29,23 +30,12 @@ public class LexoFilter implements Filter {
         CONTEXT = filterConfig.getServletContext().getContextPath().substring(1);
         VERSION = LexoProperties.getProperty("application.version");
         File logFile = new File(filterConfig.getServletContext().getRealPath("/"));
-        logFile = new File(logFile.getParentFile().getParentFile(), "logs/" + CONTEXT + ".log");
-        PatternLayout layout = new PatternLayout();
-        String conversionPattern = "%d %p %m\n";
-        layout.setConversionPattern(conversionPattern);
-        DailyRollingFileAppender rollingAppender = new DailyRollingFileAppender();
-        rollingAppender.setFile(logFile.getAbsolutePath());
-        rollingAppender.setDatePattern("'.'yyyy-MM-dd");
-        rollingAppender.setLayout(layout);
-        rollingAppender.activateOptions();
-        Logger logger = Logger.getLogger(CONTEXT);
-        logger.setLevel(Level.INFO);
-        logger.addAppender(rollingAppender);
         logger.info(CONTEXT + " start");
     }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+
         try {
             HibernateUtil.getSession().beginTransaction();
             HibernateUtil.getSession().enableFilter("status");
@@ -57,36 +47,55 @@ public class LexoFilter implements Filter {
             if (HibernateUtil.getSession().getTransaction().isActive()) {
                 HibernateUtil.getSession().getTransaction().commit();
             }
-        } catch (Throwable ex) {
-            Logger.getLogger(CONTEXT).error("", ex);
-            ex.printStackTrace();
+        } catch (Exception ex) {
+            HttpServletResponse httpResponse = (HttpServletResponse) response;
+
+            logger.error("Type of Exception: " + ex.getClass());
+
+            if (ex instanceof org.hibernate.exception.GenericJDBCException) {
+                logger.error("doFilter() Error connecting MySQL", ex);
+                httpResponse.addHeader("Error", "Unable to connect to MySQL");
+                httpResponse.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, "Unable to connect to MySQL");
+            } else {
+                httpResponse.addHeader("Error", "Unable to connect to ???");
+                logger.error("doFilter()", ex);
+                httpResponse.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, "Unable to connect to ???");
+            }
             try {
                 if (GraphDbUtil.getConnection().isActive()) {
                     GraphDbUtil.getConnection().rollback();
                 }
             } catch (Exception e) {
+                logger.error("doFilter(), Unable to connect to GraphDB", e);
+                httpResponse.addHeader("Error", "Unable to connect to GraphDB");
+                httpResponse.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, "Unable to connect to GraphDB");
             }
             try {
                 if (HibernateUtil.getSession().getTransaction().isActive()) {
                     HibernateUtil.getSession().getTransaction().rollback();
                 }
             } catch (Exception e) {
+                logger.error(e.getLocalizedMessage());
             }
+
         } finally {
             try {
                 GraphDbUtil.releaseConnection();
             } catch (Exception e) {
+                logger.error(e.getLocalizedMessage());
             }
             try {
                 HibernateUtil.getSession().close();
-            } catch (Exception e) {
+            } catch (HibernateException e) {
+                logger.error(e.getLocalizedMessage());
             }
         }
     }
 
     @Override
     public void destroy() {
-        Logger.getLogger(CONTEXT).info(CONTEXT + " stop");
+        // Logger.getLogger(CONTEXT).info(CONTEXT + " stop");
+        logger.info(CONTEXT + " stop");
         HibernateUtil.closeFactory();
         GraphDbUtil.close();
     }
