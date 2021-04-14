@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package it.cnr.ilc.lexo.service.data.lexicon;
+package it.cnr.ilc.lexo.service.data.lexicon.output;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -13,7 +13,7 @@ import it.cnr.ilc.lexo.service.data.Data;
  *
  * @author andreabellandi
  */
-@ApiModel(description = "Class representing features counting")
+@ApiModel(description = "Output model representing features counting")
 public class Counting implements Data {
 
     @ApiModelProperty(value = "feature label", example = "verb")

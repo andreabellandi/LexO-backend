@@ -19,16 +19,16 @@ import org.slf4j.LoggerFactory;
  * @author andreabellandi
  */
 @WebFilter(urlPatterns = {"/faces/*", "/service/*", "/servlet/*"})
-public class LexoFilter implements Filter {
+public class LexOFilter implements Filter {
 
-    static final Logger logger = LoggerFactory.getLogger(LexoFilter.class.getName());
+    static final Logger logger = LoggerFactory.getLogger(LexOFilter.class.getName());
     public static String CONTEXT;
     public static String VERSION;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         CONTEXT = filterConfig.getServletContext().getContextPath().substring(1);
-        VERSION = LexoProperties.getProperty("application.version");
+        VERSION = LexOProperties.getProperty("application.version");
         File logFile = new File(filterConfig.getServletContext().getRealPath("/"));
         logger.info(CONTEXT + " start");
     }

@@ -5,8 +5,8 @@
  */
 package it.cnr.ilc.lexo.service.helper;
 
-import it.cnr.ilc.lexo.service.data.lexicon.FormItem;
-import it.cnr.ilc.lexo.service.data.lexicon.Morphology;
+import it.cnr.ilc.lexo.service.data.lexicon.output.FormItem;
+import it.cnr.ilc.lexo.service.data.lexicon.output.Morphology;
 import it.cnr.ilc.lexo.sparql.SparqlVariable;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -24,14 +24,14 @@ public class FormsListHelper extends TripleStoreDataHelper<FormItem> {
 
     @Override
     public void fillData(FormItem data, BindingSet bs) {
-        data.setAuthor(((bs.getBinding(SparqlVariable.AUTHOR) != null) ? bs.getBinding(SparqlVariable.AUTHOR).getValue().stringValue() : ""));
-        data.setIRI(bs.getBinding(SparqlVariable.FORM).getValue().stringValue());
-        data.setInstanceName(bs.getBinding(SparqlVariable.INSTANCE_NAME).getValue().stringValue());
-        data.setLabel(bs.getBinding(SparqlVariable.WRITTEN_REPRESENTATION).getValue().stringValue());
-        data.setNote(((bs.getBinding(SparqlVariable.NOTE) != null) ? bs.getBinding(SparqlVariable.NOTE).getValue().stringValue() : ""));
-        data.setPhoneticRep(((bs.getBinding(SparqlVariable.PHONETIC_REPRESENTATION) != null) ? bs.getBinding(SparqlVariable.PHONETIC_REPRESENTATION).getValue().stringValue() : ""));
-        data.setType(bs.getBinding(SparqlVariable.FORM_TYPE).getValue().stringValue());
-        data.setMorphology(getMorphology(bs.getBinding(SparqlVariable.MORPHOLOGY) != null ? bs.getBinding(SparqlVariable.MORPHOLOGY).getValue().stringValue() : ""));
+        data.setAuthor(getStringValue(bs, SparqlVariable.AUTHOR));
+        data.setForm(getStringValue(bs, SparqlVariable.FORM));
+        data.setFormInstanceName(getStringValue(bs, SparqlVariable.FORM_INSTANCE_NAME));
+        data.setLabel(getStringValue(bs, SparqlVariable.WRITTEN_REPRESENTATION));
+        data.setNote(getStringValue(bs, SparqlVariable.NOTE));
+        data.setPhoneticRep(getStringValue(bs, SparqlVariable.PHONETIC_REPRESENTATION));
+        data.setType(getStringValue(bs, SparqlVariable.FORM_TYPE));
+        data.setMorphology(getMorphology(bs, getStringValue(bs, SparqlVariable.MORPHOLOGY)));
     }
 
     @Override
@@ -39,15 +39,6 @@ public class FormsListHelper extends TripleStoreDataHelper<FormItem> {
         return FormItem.class;
     }
 
-    private ArrayList<Morphology> getMorphology(String morpho) {
-        ArrayList<Morphology> morphos = new ArrayList();
-        if (!morpho.isEmpty()) {
-            Matcher matcher = pattern.matcher(morpho);
-            while (matcher.find()) {
-                morphos.add(new Morphology(matcher.group(2), matcher.group(3)));
-            }
-        }
-        return morphos;
-    }
+    
 
 }

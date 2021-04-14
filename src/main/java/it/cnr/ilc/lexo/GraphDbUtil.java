@@ -24,15 +24,15 @@ public class GraphDbUtil {
     private static Repository REPOSITORY = null;
     private static final List<RepositoryConnection> POOL = new ArrayList<>();
     private static final Map<Thread, RepositoryConnection> ACTIVES = new HashMap<>();
-    private static final int SIZE = Integer.parseInt(LexoProperties.getProperty("GraphDb.size", "5"));
+    private static final int SIZE = Integer.parseInt(LexOProperties.getProperty("GraphDb.size", "5"));
     private static int current = 0;
     private static final Logger logger = LoggerFactory.getLogger(GraphDbUtil.class);
 
     static {
-        RepositoryManager repositoryManager = new RemoteRepositoryManager(LexoProperties.getProperty("GraphDb.url", "https://lexo-datasets.ilc.cnr.it:7200"));
+        RepositoryManager repositoryManager = new RemoteRepositoryManager(LexOProperties.getProperty("GraphDb.url", "http://localhost:7200"));
         repositoryManager.init();
         try {
-            REPOSITORY = repositoryManager.getRepository(LexoProperties.getProperty("GraphDb.repository", "Simple"));
+            REPOSITORY = repositoryManager.getRepository(LexOProperties.getProperty("GraphDb.repository", "SIMPLE"));
         } catch (RepositoryException | RepositoryConfigException e) {
             logger.error("Unable to connect to GraphDB: " + e);
         }

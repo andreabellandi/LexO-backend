@@ -5,7 +5,7 @@
  */
 package it.cnr.ilc.lexo.service.helper;
 
-import it.cnr.ilc.lexo.service.data.lexicon.Counting;
+import it.cnr.ilc.lexo.service.data.lexicon.output.Counting;
 import it.cnr.ilc.lexo.sparql.SparqlVariable;
 import org.eclipse.rdf4j.query.BindingSet;
 

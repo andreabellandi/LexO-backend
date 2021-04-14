@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package it.cnr.ilc.lexo.service.data.lexicon;
+package it.cnr.ilc.lexo.service.data.lexicon.output;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -12,7 +12,7 @@ import io.swagger.annotations.ApiModelProperty;
  *
  * @author andreabellandi
  */
-@ApiModel(description = "Class representing the morphological traits of a form taken from lexinfo ontology v3.0")
+@ApiModel(description = "Output model representing the morphological traits of a form taken from lexinfo ontology v3.0")
 public class Morphology {
 
     @ApiModelProperty(value = "trait name", example = "tense")

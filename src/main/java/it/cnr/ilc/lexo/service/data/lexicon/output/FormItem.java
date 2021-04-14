@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package it.cnr.ilc.lexo.service.data.lexicon;
+package it.cnr.ilc.lexo.service.data.lexicon.output;
 
+import it.cnr.ilc.lexo.service.data.lexicon.output.Morphology;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import it.cnr.ilc.lexo.service.data.Data;
@@ -14,7 +15,7 @@ import java.util.ArrayList;
  *
  * @author andreabellandi
  */
-@ApiModel(description = "Class representing the main features of a form")
+@ApiModel(description = "Output model representing the main features of a form")
 public class FormItem implements Data {
 
     @ApiModelProperty(value = "form type", allowableValues = "canonicalForm, otherForm")
@@ -30,9 +31,9 @@ public class FormItem implements Data {
     @ApiModelProperty(value = "form morphology")
     private ArrayList<Morphology> morphology;
     @ApiModelProperty(value = "form IRI", example = "namespace:MUSaccedereVERB")
-    private String IRI;
+    private String form;
     @ApiModelProperty(value = "form short IRI", example = "MUSaccedereVERB")
-    private String instanceName;
+    private String formInstanceName;
 
     public FormItem() {
     }
@@ -45,20 +46,20 @@ public class FormItem implements Data {
         this.morphology = morphology;
     }
 
-    public String getIRI() {
-        return IRI;
+    public String getForm() {
+        return form;
     }
 
-    public void setIRI(String IRI) {
-        this.IRI = IRI;
+    public void setForm(String form) {
+        this.form = form;
     }
 
-    public String getInstanceName() {
-        return instanceName;
+    public String getFormInstanceName() {
+        return formInstanceName;
     }
 
-    public void setInstanceName(String instanceName) {
-        this.instanceName = instanceName;
+    public void setFormInstanceName(String formInstanceName) {
+        this.formInstanceName = formInstanceName;
     }
 
     public String getType() {
@@ -101,14 +102,4 @@ public class FormItem implements Data {
         this.phoneticRep = phoneticRep;
     }
 
-    public FormItem(String IRI, String instanceName, String type, String label, ArrayList<Morphology> morphology, String phoneticRep, String author, String note) {
-        this.author = author;
-        this.note = note;
-        this.type = type;
-        this.label = label;
-        this.phoneticRep = phoneticRep;
-        this.morphology = morphology;
-        this.IRI = IRI;
-        this.instanceName = instanceName;
-    }
 }

@@ -3,7 +3,7 @@ package it.cnr.ilc.lexo.service.helper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import it.cnr.ilc.lexo.LexoProperties;
+import it.cnr.ilc.lexo.LexOProperties;
 import it.cnr.ilc.lexo.service.data.Data;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -29,11 +29,11 @@ public abstract class Helper<D extends Data> {
     protected final ObjectMapper objectMapper = new ObjectMapper();
 
     {
-        String dateFormat = LexoProperties.getProperty("helper.jsonDateFormat", "yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+        String dateFormat = LexOProperties.getProperty("helper.jsonDateFormat", "yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
         if (dateFormat != null && !dateFormat.isEmpty()) {
             objectMapper.setDateFormat(new SimpleDateFormat(dateFormat));
         }
-        if ("true".equals(LexoProperties.getProperty("helper.jsonPrettyPrint", "false"))) {
+        if ("true".equals(LexOProperties.getProperty("helper.jsonPrettyPrint", "false"))) {
             objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
         }
     }

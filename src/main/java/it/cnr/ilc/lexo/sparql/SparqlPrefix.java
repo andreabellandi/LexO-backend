@@ -39,5 +39,6 @@ public class SparqlPrefix {
 
     // data
     public static final String LEX = "PREFIX lex: <http://lexica/mylexicon#>";
+    public static final String ONTOLOGY = "PREFIX ontology: <http://simpleOntology#>";
 
 }

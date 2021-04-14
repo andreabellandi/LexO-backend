@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package it.cnr.ilc.lexo.service.data.lexicon;
+package it.cnr.ilc.lexo.service.data.lexicon.output;
 
 import it.cnr.ilc.lexo.service.data.Data;
 
@@ -13,8 +13,8 @@ import it.cnr.ilc.lexo.service.data.Data;
  */
 public class LexicalEntryItem implements Data {
 
-    private boolean verified;
-    private String whoVerified;
+    private String status;
+    private String revisor;
     private String type;
     private String pos;
     private String label;
@@ -22,17 +22,10 @@ public class LexicalEntryItem implements Data {
     private String author;
     private String note;
     private boolean hasChildren;
-    private String IRI;
-    private String instanceName;
+    private String lexicalEntry;
+    private String lexicalEntryInstanceName;
 
-    public LexicalEntryItem() {}
-
-    public String getInstanceName() {
-        return instanceName;
-    }
-
-    public void setInstanceName(String instanceName) {
-        this.instanceName = instanceName;
+    public LexicalEntryItem() {
     }
 
     public boolean isHasChildren() {
@@ -43,36 +36,12 @@ public class LexicalEntryItem implements Data {
         this.hasChildren = hasChildren;
     }
 
-    public String getIRI() {
-        return IRI;
-    }
-
-    public void setIRI(String IRI) {
-        this.IRI = IRI;
-    }
-
     public String getLanguage() {
         return language;
     }
 
     public void setLanguage(String language) {
         this.language = language;
-    }
-
-    public boolean isVerified() {
-        return verified;
-    }
-
-    public void setVerified(boolean verified) {
-        this.verified = verified;
-    }
-
-    public String getWhoVerified() {
-        return whoVerified;
-    }
-
-    public void setWhoVerified(String whoVerified) {
-        this.whoVerified = whoVerified;
     }
 
     public String getType() {
@@ -113,6 +82,38 @@ public class LexicalEntryItem implements Data {
 
     public void setNote(String note) {
         this.note = note;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getRevisor() {
+        return revisor;
+    }
+
+    public void setRevisor(String revisor) {
+        this.revisor = revisor;
+    }
+
+    public String getLexicalEntry() {
+        return lexicalEntry;
+    }
+
+    public void setLexicalEntry(String lexicalEntry) {
+        this.lexicalEntry = lexicalEntry;
+    }
+
+    public String getLexicalEntryInstanceName() {
+        return lexicalEntryInstanceName;
+    }
+
+    public void setLexicalEntryInstanceName(String lexicalEntryInstanceName) {
+        this.lexicalEntryInstanceName = lexicalEntryInstanceName;
     }
 
 }

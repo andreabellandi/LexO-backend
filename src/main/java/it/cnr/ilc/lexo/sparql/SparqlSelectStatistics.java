@@ -1,0 +1,93 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package it.cnr.ilc.lexo.sparql;
+
+/**
+ *
+ * @author andreabellandi
+ */
+public class SparqlSelectStatistics {
+
+    public static final String STATISTICS_AUTHORS
+            = SparqlPrefix.INST + "\n"
+            + SparqlPrefix.LUC + "\n"
+            + "SELECT ?"
+            + SparqlVariable.LABEL
+            + " ?"
+            + SparqlVariable.LABEL_COUNT
+            + " WHERE {\n"
+            + "  ?r a inst:lexicalEntryIndex ;\n"
+            + "    luc:facetFields \"author\" ;\n"
+            + "    luc:facets _:f .\n"
+            + "  _:f luc:facetValue ?" + SparqlVariable.LABEL + " .\n"
+            + "  _:f luc:facetCount ?" + SparqlVariable.LABEL_COUNT + " .\n"
+            + "} order by ?" + SparqlVariable.LABEL;
+
+    public static final String STATISTICS_TYPES
+            = SparqlPrefix.INST + "\n"
+            + SparqlPrefix.LUC + "\n"
+            + "SELECT ?"
+            + SparqlVariable.LABEL
+            + " ?"
+            + SparqlVariable.LABEL_COUNT
+            + " WHERE {\n"
+            + "  ?r a inst:lexicalEntryIndex ;\n"
+            + "    luc:facetFields \"type\" ;\n"
+            + "    luc:facets _:f .\n"
+            + "  _:f luc:facetValue ?" + SparqlVariable.LABEL + " .\n"
+            + "  _:f luc:facetCount ?" + SparqlVariable.LABEL_COUNT + " .\n"
+            + "  FILTER (regex(str(?" + SparqlVariable.LABEL + "), \"word|multi-word expression|affix\"))"
+            + "}";
+
+    public static final String STATISTICS_LANGUAGES
+            = SparqlPrefix.INST + "\n"
+            + SparqlPrefix.LUC + "\n"
+            + "SELECT ?"
+            + SparqlVariable.LABEL
+            + " ?"
+            + SparqlVariable.LABEL_COUNT
+            + " WHERE {\n"
+            + "  ?r a inst:lexicalEntryIndex ;\n"
+            + "    luc:facetFields \"writtenFormLanguage\" ;\n"
+            + "    luc:facets _:f .\n"
+            + "  _:f luc:facetValue ?" + SparqlVariable.LABEL + " .\n"
+            + "  _:f luc:facetCount ?" + SparqlVariable.LABEL_COUNT + " .\n"
+            + "} order by ?" + SparqlVariable.LABEL;
+
+    public static final String STATISTICS_POS
+            = SparqlPrefix.INST + "\n"
+            + SparqlPrefix.LUC + "\n"
+            + "SELECT ?"
+            + SparqlVariable.LABEL
+            + " ?"
+            + SparqlVariable.LABEL_COUNT
+            + " WHERE {\n"
+            + "  ?r a inst:lexicalEntryIndex ;\n"
+            + "    luc:facetFields \"pos\" ;\n"
+            + "    luc:facets _:f .\n"
+            + "  _:f luc:facetValue ?" + SparqlVariable.LABEL + " .\n"
+            + "  _:f luc:facetCount ?" + SparqlVariable.LABEL_COUNT + " .\n"
+            + "  FILTER NOT EXISTS { \n"
+            + "      FILTER (regex(str(?" + SparqlVariable.LABEL + "), \"word|multi-word expression|affix\")) . \n"
+            + "  }\n"
+            + "}";
+
+    public static final String STATISTICS_STATUS
+            = SparqlPrefix.INST + "\n"
+            + SparqlPrefix.LUC + "\n"
+            + "SELECT ?"
+            + SparqlVariable.LABEL
+            + " ?"
+            + SparqlVariable.LABEL_COUNT
+            + " WHERE {\n"
+            + "  ?r a inst:lexicalEntryIndex ;\n"
+            + "    luc:facetFields \"status\" ;\n"
+            + "    luc:facets _:f .\n"
+            + "  _:f luc:facetValue ?" + SparqlVariable.LABEL + " .\n"
+            + "  _:f luc:facetCount ?" + SparqlVariable.LABEL_COUNT + " .\n"
+            + "} order by ?" + SparqlVariable.LABEL;
+
+}

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package it.cnr.ilc.lexo.service.data.lexicon;
+package it.cnr.ilc.lexo.service.data.lexicon.output;
 
 import it.cnr.ilc.lexo.service.data.Data;
 import java.util.ArrayList;
@@ -12,7 +12,7 @@ import java.util.ArrayList;
  *
  * @author andreabellandi
  */
-public class LexicalEntryElement implements Data {
+public class LexicalEntryElementItem implements Data {
 
     private ArrayList<Element> elements;
 
@@ -23,8 +23,8 @@ public class LexicalEntryElement implements Data {
     public void setElements(ArrayList<Element> elements) {
         this.elements = elements;
     }
-    
-    public LexicalEntryElement() {}
+
+    public LexicalEntryElementItem() {}
     
     public static class Element {
 

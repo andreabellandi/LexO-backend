@@ -5,26 +5,27 @@
  */
 package it.cnr.ilc.lexo.service.helper;
 
-import it.cnr.ilc.lexo.service.data.lexicon.LexicalEntryElement;
-import it.cnr.ilc.lexo.service.data.lexicon.LexicalEntryElement.Element;
+import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryElementItem;
+import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryElementItem.Element;
 import it.cnr.ilc.lexo.sparql.SparqlVariable;
 import java.util.ArrayList;
+import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.query.BindingSet;
 
 /**
  *
  * @author andreabellandi
  */
-public class LexicalEntryElementHelper extends TripleStoreDataHelper<LexicalEntryElement> {
+public class LexicalEntryElementHelper extends TripleStoreDataHelper<LexicalEntryElementItem> {
 
     @Override
-    public void fillData(LexicalEntryElement data, BindingSet bs) {
+    public void fillData(LexicalEntryElementItem data, BindingSet bs) {
         data.setElements(getElements(bs));
     }
 
     @Override
-    public Class<LexicalEntryElement> getDataClass() {
-        return LexicalEntryElement.class;
+    public Class<LexicalEntryElementItem> getDataClass() {
+        return LexicalEntryElementItem.class;
     }
 
     private ArrayList<Element> getElements(BindingSet bs) {
@@ -34,6 +35,8 @@ public class LexicalEntryElementHelper extends TripleStoreDataHelper<LexicalEntr
         elems.add(getElement(bs, SparqlVariable.FRAME));
         elems.add(getElement(bs, SparqlVariable.LEXICAL_CONCEPT));
         elems.add(getElement(bs, SparqlVariable.CONCEPT));
+        elems.add(getElement(bs, SparqlVariable.LEXICAL_ENTRY_SUBTERM));
+        elems.add(getElement(bs, SparqlVariable.LEXICAL_ENTRY_CONSTITUENT));
         return elems;
     }
     

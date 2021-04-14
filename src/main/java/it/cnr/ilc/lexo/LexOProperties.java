@@ -10,20 +10,20 @@ import org.slf4j.LoggerFactory;
  *
  * @author andreabellandi
  */
-public class LexoProperties {
+public class LexOProperties {
 
     private static final Properties PROPERTIES = new Properties();
-    static final Logger logger = LoggerFactory.getLogger(LexoFilter.class.getName());
+    static final Logger logger = LoggerFactory.getLogger(LexOFilter.class.getName());
 
     static {
         load();
     }
 
     public static final void load() {
-        logger.debug("Lexofilter.context: " + LexoFilter.CONTEXT);
+        logger.debug("Lexofilter.context: " + LexOFilter.CONTEXT);
         InputStream input = null;
         try {
-            input = LexoProperties.class.getClassLoader().getResourceAsStream("lexo-server.properties");
+            input = LexOProperties.class.getClassLoader().getResourceAsStream("lexo-server.properties");
             PROPERTIES.load(input);
         } catch (IOException e) {
             logger.error(e.getLocalizedMessage());

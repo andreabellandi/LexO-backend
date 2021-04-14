@@ -9,9 +9,9 @@ package it.cnr.ilc.lexo.sparql;
  *
  * @author andreabellandi
  */
-public class SparqlSelect {
+public class SparqlSelectData {
 
-    public static final String LEXICAL_ENTRIES
+    public static final String DATA_LEXICAL_ENTRIES
             = SparqlPrefix.DCT + "\n"
             + SparqlPrefix.INST + "\n"
             + SparqlPrefix.LEX + "\n"
@@ -25,8 +25,8 @@ public class SparqlSelect {
             + SparqlPrefix.LUC + "\n"
             + "SELECT ?" + SparqlVariable.TOTAL_HITS
             + " ?" + SparqlVariable.LEXICAL_ENTRY
-            + " ?" + SparqlVariable.INSTANCE_NAME
-            + " ?" + SparqlVariable.LEXICAL_ENTRY_STATE
+            + " ?" + SparqlVariable.LEXICAL_ENTRY_INSTANCE_NAME
+            + " ?" + SparqlVariable.LEXICAL_ENTRY_STATUS
             + " ?" + SparqlVariable.LEXICAL_ENTRY_REVISOR
             + " ?" + SparqlVariable.LEXICAL_ENTRY_TYPE
             + " ?" + SparqlVariable.LEXICAL_ENTRY_POS
@@ -38,7 +38,7 @@ public class SparqlSelect {
             + "  ?search a inst:" + SparqlVariable.LEXICAL_ENTRY_INDEX + " ;\n"
             + "      luc:query \"[FILTER]\" ;\n"
             + "      luc:totalHits ?totalHits ;\n"
-            + "      luc:orderBy \"writtenForm\" ;\n"
+            + "      luc:orderBy \"lexicalEntryLabel\" ;\n"
             + "      luc:offset \"[OFFSET]\" ;\n"
             + "      luc:limit \"[LIMIT]\" ;\n"
             + "      luc:entities ?" + SparqlVariable.LEXICAL_ENTRY + " .\n"
@@ -48,21 +48,24 @@ public class SparqlSelect {
             + "          rdfs:label ?" + SparqlVariable.LABEL + " .\n"
             + "   OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " rdfs:comment ?" + SparqlVariable.NOTE + "} .\n"
             + "   OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " loc:rev ?" + SparqlVariable.LEXICAL_ENTRY_REVISOR + "} .\n"
-            + "   OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " dct:valid ?" + SparqlVariable.LEXICAL_ENTRY_STATE + "} .\n"
-            + "   BIND(strafter(str(?" + SparqlVariable.LEXICAL_ENTRY + "),str(lex:)) as ?" + SparqlVariable.INSTANCE_NAME + ") \n"
+            + "   OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " dct:valid ?" + SparqlVariable.LEXICAL_ENTRY_STATUS + "} .\n"
+            + "   BIND(strafter(str(?" + SparqlVariable.LEXICAL_ENTRY + "),str(lex:)) as ?" + SparqlVariable.LEXICAL_ENTRY_INSTANCE_NAME + ") \n"
             + "   FILTER(STRSTARTS(STR(?" + SparqlVariable.LEXICAL_ENTRY_TYPE + "), str(ontolex:)))\n"
             + "}";
 
-    public static final String LEXICAL_ENTRY
+    public static final String DATA_LEXICAL_ENTRY_ELEMENTS
             = SparqlPrefix.SYNSEM + "\n"
             + SparqlPrefix.INST + "\n"
             + SparqlPrefix.ONTOLEX + "\n"
+            + SparqlPrefix.DECOMP + "\n"
             + SparqlPrefix.LUC + "\n"
             + "SELECT (count(?" + SparqlVariable.FORM + ") as ?" + SparqlVariable.FORM + "Count) "
             + "(count(?" + SparqlVariable.SENSE + ") as ?" + SparqlVariable.SENSE + "Count) "
             + "(count(?" + SparqlVariable.FRAME + ") as ?" + SparqlVariable.FRAME + "Count) "
             + "(count(?" + SparqlVariable.LEXICAL_CONCEPT + ") as ?" + SparqlVariable.LEXICAL_CONCEPT + "Count) "
             + "(count(?" + SparqlVariable.CONCEPT + ") as ?" + SparqlVariable.CONCEPT + "Count)\n"
+            + "(count(?" + SparqlVariable.LEXICAL_ENTRY_SUBTERM + ") as ?" + SparqlVariable.LEXICAL_ENTRY_SUBTERM + "Count)\n"
+            + "(count(?" + SparqlVariable.LEXICAL_ENTRY_CONSTITUENT + ") as ?" + SparqlVariable.LEXICAL_ENTRY_CONSTITUENT + "Count)\n"
             + "WHERE {\n"
             + "  ?search a inst:lexicalEntryIndex ;\n"
             + "      luc:query \"lexicalEntryIRI:[IRI]\" ;\n"
@@ -76,9 +79,13 @@ public class SparqlSelect {
             + "    { ?" + SparqlVariable.LEXICAL_ENTRY + " ontolex:evokes ?" + SparqlVariable.LEXICAL_CONCEPT + " . }\n"
             + " UNION \n"
             + "    { ?" + SparqlVariable.LEXICAL_ENTRY + " ontolex:denotes ?" + SparqlVariable.CONCEPT + " . }\n"
+            + " UNION \n"
+            + "    { ?" + SparqlVariable.LEXICAL_ENTRY + " decomp:subterm+ ?" + SparqlVariable.LEXICAL_ENTRY_SUBTERM + " . }\n"
+            + " UNION \n"
+            + "    { ?" + SparqlVariable.LEXICAL_ENTRY + " decomp:consituent+ ?" + SparqlVariable.LEXICAL_ENTRY_CONSTITUENT + " . }\n"
             + "}";
 
-    public static final String FORMS
+    public static final String DATA_FORMS
             = SparqlPrefix.DCT + "\n"
             + SparqlPrefix.INST + "\n"
             + SparqlPrefix.ONTO + "\n"
@@ -93,7 +100,7 @@ public class SparqlSelect {
             + " ?" + SparqlVariable.WRITTEN_REPRESENTATION
             + " ?" + SparqlVariable.PHONETIC_REPRESENTATION
             + " ?" + SparqlVariable.NOTE
-            + " ?" + SparqlVariable.INSTANCE_NAME
+            + " ?" + SparqlVariable.FORM_INSTANCE_NAME
             + " (GROUP_CONCAT(concat(str(?tn),\":\",str(?tv));SEPARATOR=\";\") AS ?" + SparqlVariable.MORPHOLOGY + ")\n"
             + "FROM onto:explicit\n"
             + "WHERE {\n"
@@ -108,12 +115,12 @@ public class SparqlSelect {
             + "   OPTIONAL { ?" + SparqlVariable.FORM + " ?" + SparqlVariable.MORPHOLOGY_TRAIT_NAME + " ?" + SparqlVariable.MORPHOLOGY_TRAIT_VALUE + " .\n"
             + "              FILTER(STRSTARTS(STR(?" + SparqlVariable.MORPHOLOGY_TRAIT_NAME + "), str(lexinfo:))) }\n"
             + "   ?" + SparqlVariable.FORM_TYPE + " rdfs:subPropertyOf* ontolex:lexicalForm .\n"
-            + "   BIND(strafter(str(?" + SparqlVariable.FORM + "), str(lex:)) as ?" + SparqlVariable.INSTANCE_NAME + ")\n"
+            + "   BIND(strafter(str(?" + SparqlVariable.FORM + "), str(lex:)) as ?" + SparqlVariable.FORM_INSTANCE_NAME + ")\n"
             + "   BIND(strafter(str(?" + SparqlVariable.MORPHOLOGY_TRAIT_NAME + "),str(lexinfo:)) as ?tn)\n"
             + "   BIND(strafter(str(?" + SparqlVariable.MORPHOLOGY_TRAIT_VALUE + "),str(lexinfo:)) as ?tv)\n"
             + "} GROUP BY ?"
             + SparqlVariable.FORM
-            + " ?" + SparqlVariable.INSTANCE_NAME
+            + " ?" + SparqlVariable.FORM_INSTANCE_NAME
             + " ?" + SparqlVariable.FORM_TYPE
             + " ?" + SparqlVariable.AUTHOR
             + " ?" + SparqlVariable.WRITTEN_REPRESENTATION
@@ -121,9 +128,9 @@ public class SparqlSelect {
             + " ?" + SparqlVariable.NOTE + "\n"
             + "  ORDER BY ?"
             + SparqlVariable.WRITTEN_REPRESENTATION
-            + " ?" + SparqlVariable.INSTANCE_NAME;
+            + " ?" + SparqlVariable.FORM_INSTANCE_NAME;
 
-    public static final String LEXICAL_SENSES
+    public static final String DATA_LEXICAL_SENSES
             = SparqlPrefix.DCT + "\n"
             + SparqlPrefix.INST + "\n"
             + SparqlPrefix.ONTOLEX + "\n"
@@ -131,19 +138,42 @@ public class SparqlSelect {
             + SparqlPrefix.SKOS + "\n"
             + SparqlPrefix.LUC + "\n"
             + SparqlPrefix.LEX + "\n"
-            + "SELECT ?sense ?author ?definition ?note ?instanceName\n"
+            + SparqlPrefix.ONTO + "\n"
+            + SparqlPrefix.LOC + "\n"
+            + SparqlPrefix.LEXINFO + "\n"
+            + SparqlPrefix.ONTOLOGY + "\n"
+            + "SELECT ?" + SparqlVariable.LEXICAL_ENTRY
+            + " ?" + SparqlVariable.LEXICAL_ENTRY_POS
+            + " ?" + SparqlVariable.SENSE
+            + " ?" + SparqlVariable.AUTHOR
+            + " ?" + SparqlVariable.SENSE_DEFINITION
+            + " ?" + SparqlVariable.NOTE
+            + " ?" + SparqlVariable.SENSE_INSTANCE_NAME
+            + " ?" + SparqlVariable.CONCEPT
+            + " ?" + SparqlVariable.CONCEPT_INSTANCE_NAME
+            + " ?" + SparqlVariable.SENSE_USAGE + "\n"
+            + "FROM onto:explicit\n"
             + "WHERE {\n"
-            + "  ?search a inst:lexicalEntryIndex ;\n"
-            + "      luc:query \"lexicalEntryIRI:*mylexicon*accedere*\" ;\n"
-            + "      luc:entities ?lexicalEntry .\n"
-            + "  ?lexicalEntry ontolex:sense ?sense .\n"
-            + "  ?sense dct:contributor ?author .\n"
-            + "    OPTIONAL { ?sense skos:definition ?definition . }\n"
-            + "    OPTIONAL { ?sense rdfs:comment ?note . }\n"
-            + " BIND(strafter(str(?sense), str(lex:)) as ?instanceName)\n"
-            + "}";
+            + "    ?search a inst:" + SparqlVariable.LEXICAL_ENTRY_INDEX + " ;\n"
+            + "              luc:query \"[FILTER]\" ;\n"
+            + "              luc:totalHits ?totalHits ;\n"
+            + "              luc:orderBy \"lexicalEntryLabel\" ;\n"
+            + "              luc:offset \"[OFFSET]\" ;\n"
+            + "              luc:limit \"[LIMIT]\" ;\n"
+            + "              luc:entities ?" + SparqlVariable.LEXICAL_ENTRY + " .\n"
+            + "    ?" + SparqlVariable.LEXICAL_ENTRY + " ontolex:sense ?" + SparqlVariable.SENSE + " ;\n"
+            + "    	lexinfo:partOfSpeech ?" + SparqlVariable.LEXICAL_ENTRY_POS + " .\n"
+            + "    OPTIONAL { ?" + SparqlVariable.SENSE + " dct:contributor ?" + SparqlVariable.AUTHOR + " . } \n"
+            + "    OPTIONAL { ?" + SparqlVariable.SENSE + " skos:definition ?" + SparqlVariable.SENSE_DEFINITION + " . }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.SENSE + " rdfs:comment ?" + SparqlVariable.NOTE + " . }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.SENSE + " ontolex:reference ?" + SparqlVariable.CONCEPT + " . }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.SENSE + " ontolex:usage [ rdf:value ?" + SparqlVariable.SENSE_USAGE + " ] . }\n"
+            + "    BIND(strafter(str(?" + SparqlVariable.SENSE + "), str(lex:)) as ?" + SparqlVariable.SENSE_INSTANCE_NAME + ")\n"
+            + "    BIND(strafter(str(?" + SparqlVariable.CONCEPT + "), str(ontology:)) as ?" + SparqlVariable.CONCEPT_INSTANCE_NAME + ")\n"
+            + "}\n"
+            + " ";
 
-    public static final String FRAMES
+    public static final String DATA_FRAMES
             = SparqlPrefix.DCT + "\n"
             + SparqlPrefix.INST + "\n"
             + SparqlPrefix.ONTOLEX + "\n"
@@ -165,83 +195,63 @@ public class SparqlSelect {
             + "    OPTIONAL { ?frame synsem:synArg ?arg . }\n"
             + "} GROUP BY ?frame ?author ?pattern ?note";
 
-    public static final String AUTHORS
-            = SparqlPrefix.INST + "\n"
+    public static final String DATA_LEXICAL_ENTRY_CORE
+            = SparqlPrefix.DCT + "\n"
+            + SparqlPrefix.INST + "\n"
+            + SparqlPrefix.LEX + "\n"
+            + SparqlPrefix.LEXINFO + "\n"
+            + SparqlPrefix.LOC + "\n"
+            + SparqlPrefix.ONTO + "\n"
+            + SparqlPrefix.ONTOLEX + "\n"
+            + SparqlPrefix.SKOS + "\n"
+            + SparqlPrefix.RDFS + "\n"
             + SparqlPrefix.LUC + "\n"
-            + "SELECT ?"
-            + SparqlVariable.LABEL
-            + " ?"
-            + SparqlVariable.LABEL_COUNT
-            + " WHERE {\n"
-            + "  ?r a inst:lexicalEntryIndex ;\n"
-            + "    luc:facetFields \"author\" ;\n"
-            + "    luc:facets _:f .\n"
-            + "  _:f luc:facetValue ?" + SparqlVariable.LABEL + " .\n"
-            + "  _:f luc:facetCount ?" + SparqlVariable.LABEL_COUNT + " .\n"
-            + "} order by ?" + SparqlVariable.LABEL;
-
-    public static final String TYPES
-            = SparqlPrefix.INST + "\n"
-            + SparqlPrefix.LUC + "\n"
-            + "SELECT ?"
-            + SparqlVariable.LABEL
-            + " ?"
-            + SparqlVariable.LABEL_COUNT
-            + " WHERE {\n"
-            + "  ?r a inst:lexicalEntryIndex ;\n"
-            + "    luc:facetFields \"type\" ;\n"
-            + "    luc:facets _:f .\n"
-            + "  _:f luc:facetValue ?" + SparqlVariable.LABEL + " .\n"
-            + "  _:f luc:facetCount ?" + SparqlVariable.LABEL_COUNT + " .\n"
-            + "  FILTER (regex(str(?" + SparqlVariable.LABEL + "), \"word|multi-word expression|affix\"))"
-            + "}";
-
-    public static final String LANGUAGES
-            = SparqlPrefix.INST + "\n"
-            + SparqlPrefix.LUC + "\n"
-            + "SELECT ?"
-            + SparqlVariable.LABEL
-            + " ?"
-            + SparqlVariable.LABEL_COUNT
-            + " WHERE {\n"
-            + "  ?r a inst:lexicalEntryIndex ;\n"
-            + "    luc:facetFields \"writtenFormLanguage\" ;\n"
-            + "    luc:facets _:f .\n"
-            + "  _:f luc:facetValue ?" + SparqlVariable.LABEL + " .\n"
-            + "  _:f luc:facetCount ?" + SparqlVariable.LABEL_COUNT + " .\n"
-            + "} order by ?" + SparqlVariable.LABEL;
-
-    public static final String POS
-            = SparqlPrefix.INST + "\n"
-            + SparqlPrefix.LUC + "\n"
-            + "SELECT ?"
-            + SparqlVariable.LABEL
-            + " ?"
-            + SparqlVariable.LABEL_COUNT
-            + " WHERE {\n"
-            + "  ?r a inst:lexicalEntryIndex ;\n"
-            + "    luc:facetFields \"pos\" ;\n"
-            + "    luc:facets _:f .\n"
-            + "  _:f luc:facetValue ?" + SparqlVariable.LABEL + " .\n"
-            + "  _:f luc:facetCount ?" + SparqlVariable.LABEL_COUNT + " .\n"
-            + "  FILTER NOT EXISTS { \n"
-            + "      FILTER (regex(str(?" + SparqlVariable.LABEL + "), \"word|multi-word expression|affix\")) . \n"
-            + "  }\n"
-            + "}";
-
-    public static final String STATES
-            = SparqlPrefix.INST + "\n"
-            + SparqlPrefix.LUC + "\n"
-            + "SELECT ?"
-            + SparqlVariable.LABEL
-            + " ?"
-            + SparqlVariable.LABEL_COUNT
-            + " WHERE {\n"
-            + "  ?r a inst:lexicalEntryIndex ;\n"
-            + "    luc:facetFields \"state\" ;\n"
-            + "    luc:facets _:f .\n"
-            + "  _:f luc:facetValue ?" + SparqlVariable.LABEL + " .\n"
-            + "  _:f luc:facetCount ?" + SparqlVariable.LABEL_COUNT + " .\n"
-            + "} order by ?" + SparqlVariable.LABEL;
+            + SparqlPrefix.SESAME + "\n"
+            + "SELECT ?" + SparqlVariable.LEXICAL_ENTRY
+            + " ?" + SparqlVariable.LEXICAL_ENTRY_TYPE
+            + " ?" + SparqlVariable.LABEL
+            + " ?" + SparqlVariable.LEXICAL_ENTRY_REVISOR
+            + " ?" + SparqlVariable.LEXICAL_ENTRY_POS
+            + " ?" + SparqlVariable.LEXICAL_ENTRY_STATUS
+            + " ?" + SparqlVariable.CONCEPT
+            + " ?" + SparqlVariable.AUTHOR
+            + " ?" + SparqlVariable.NOTE
+            + " ?" + SparqlVariable.LEXICAL_CONCEPT
+            + " ?" + SparqlVariable.CONCEPT_SCHEME + "\n"
+            + "(GROUP_CONCAT(concat(str(?traitType),\":\",str(?traitValue));SEPARATOR=\";\") AS ?morphos)\n"
+            + "FROM onto:explicit\n"
+            + "WHERE {\n"
+            + "  ?search a inst:" + SparqlVariable.LEXICAL_ENTRY_INDEX + " ;\n"
+            + "      luc:query \"lexicalEntryIRI:[IRI]\" ;\n"
+            + "      luc:entities ?" + SparqlVariable.LEXICAL_ENTRY + " .\n"
+            + "  ?" + SparqlVariable.LEXICAL_ENTRY + " sesame:directType ?" + SparqlVariable.LEXICAL_ENTRY_TYPE + " ;\n"
+            + "                rdfs:label ?" + SparqlVariable.LABEL + ".\n"
+            + "    OPTIONAL { ?" + SparqlVariable.LEXICAL_ENTRY + " lexinfo:partOfSpeech ?" + SparqlVariable.LEXICAL_ENTRY_POS + " . }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.LEXICAL_ENTRY + " rdfs:comment ?" + SparqlVariable.NOTE + " . }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.LEXICAL_ENTRY + " ontolex:denotes ?" + SparqlVariable.CONCEPT + " . }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.LEXICAL_ENTRY + " ontolex:evokes ?" + SparqlVariable.LEXICAL_CONCEPT + " . \n"
+            + "               ?" + SparqlVariable.CONCEPT + " skos:inScheme ?" + SparqlVariable.CONCEPT_SCHEME + " . }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.LEXICAL_ENTRY + " dc:valid ?" + SparqlVariable.LEXICAL_ENTRY_STATUS + " . }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.LEXICAL_ENTRY + " dc:contributor ?" + SparqlVariable.AUTHOR + " . }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.LEXICAL_ENTRY + " loc:rev ?" + SparqlVariable.LEXICAL_ENTRY_REVISOR + " . }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.LEXICAL_ENTRY + " ?morphoTrait ?morphoValue . }\n"
+            + "    FILTER(STRSTARTS(STR(?morphoTrait), str(lexinfo:)))\n"
+            + "    FILTER(STRSTARTS(STR(?morphoValue), str(lexinfo:)))\n"
+            + "    FILTER(STRSTARTS(STR(?" + SparqlVariable.LEXICAL_ENTRY_TYPE + "), str(ontolex:)))\n"
+            + "    BIND(strafter(str(?morphoTrait),str(lexinfo:)) as ?traitType)\n"
+            + "    BIND(strafter(str(?morphoValue),str(lexinfo:)) as ?traitValue)\n"
+            + "} GROUP BY ?" 
+            + SparqlVariable.LEXICAL_ENTRY + " ?" 
+            + SparqlVariable.LEXICAL_ENTRY_TYPE + " ?" 
+            + SparqlVariable.LABEL + " ?" 
+            + SparqlVariable.LEXICAL_ENTRY_REVISOR + " ?" 
+            + SparqlVariable.LEXICAL_ENTRY_POS + " ?" 
+            + SparqlVariable.LEXICAL_ENTRY_STATUS + " ?" 
+            + SparqlVariable.AUTHOR + " ?" 
+            + SparqlVariable.LABEL + " ?" 
+            + SparqlVariable.NOTE + " ?" 
+            + SparqlVariable.CONCEPT + " ?" 
+            + SparqlVariable.LEXICAL_CONCEPT + " ?" 
+            + SparqlVariable.CONCEPT_SCHEME;
 
 }
