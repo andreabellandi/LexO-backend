@@ -124,4 +124,21 @@ public class EnumUtil {
         }
         
     }
+    
+    public static enum LinkedEntityType {
+        Internal("internal"),
+        External("external");
+
+        private final String linkedEntityType;
+
+        private LinkedEntityType(String linkedEntityType) {
+            this.linkedEntityType = linkedEntityType;
+        }
+
+        @Override
+        public String toString() {
+            return this.linkedEntityType;
+        }
+        
+    }
 }

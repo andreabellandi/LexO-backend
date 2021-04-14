@@ -35,6 +35,10 @@ public class LexicalEntryCore implements Data {
     private String concept;
     @ApiModelProperty(value = "short IRI of the concept denoted by", example = "conceptID")
     private String conceptInstanceName;
+//    @ApiModelProperty(value = "list of lexical entities linked by the 'see also' relationship")
+//    private ArrayList<LinkedEntity> seeAlso;
+//    @ApiModelProperty(value = "list of lexical entities linked by the 'same as' relationship")
+//    private ArrayList<LinkedEntity> sameAs;
     @ApiModelProperty(value = "lexcial entry author", example = "user3")
     private String author;
     @ApiModelProperty(value = "lexcial entry revisor", example = "rev2")
@@ -43,6 +47,7 @@ public class LexicalEntryCore implements Data {
     private String status;
     @ApiModelProperty(value = "lexcial entry note", example = "some note ...")
     private String note;
+    
 
     public String getLexicalEntry() {
         return lexicalEntry;

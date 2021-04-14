@@ -30,7 +30,7 @@ public class SwaggerServletConfiguration extends HttpServlet {
         beanConfig.setResourcePackage("it.cnr.ilc.lexo");
         beanConfig.setPrettyPrint(true);
         beanConfig.setScan(true);
-        beanConfig.setSchemes(new String[]{"https, http"});
+        beanConfig.setSchemes(new String[]{"https", "http"});
         beanConfig.setVersion("0.1");
     }
 

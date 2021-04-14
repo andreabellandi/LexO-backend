@@ -58,50 +58,50 @@ public class LexiconData {
     private final LexicalEntryElementHelper lexicalEntryElementHelper = new LexicalEntryElementHelper();
     private final LexicalEntryCoreHelper lexicalEntryCoreHelper = new LexicalEntryCoreHelper();
 
-//    @GET
-//    @Path("{id}/lexicalEntry")
-//    @Produces(MediaType.APPLICATION_JSON)
-//    @RequestMapping(
-//            method = RequestMethod.GET,
-//            value = "/{id}/lexicalEntry",
-//            produces = "application/json; charset=UTF-8")
-//    @ApiOperation(value = "Lexical entry data",
-//            notes = "This method returns the data related to a specific aspect (morphology, syntax, ...) associated with a given lexical entry")
-//    public Response lexicalEntry(
-//            @ApiParam(
-//                    name = "key",
-//                    value = "authentication token",
-//                    example = "lexodemo",
-//                    required = true)
-//            @QueryParam("key") String key,
-//            @ApiParam(
-//                    name = "aspect",
-//                    allowableValues = "core, decomposition, etymology, variation and translation, syntax and semantics",
-//                    example = "core",
-//                    required = true)
-//            @QueryParam("aspect") String aspect,
-//            @ApiParam(
-//                    name = "id",
-//                    value = "lexical entry ID",
-//                    example = "MUSaccedereVERB",
-//                    required = true)
-//            @PathParam("id") String id) {
-//        try {
-//            TupleQueryResult lexicalEntry = lexiconManager.getLexicalEntry(id, aspect);
-//            if (aspect.equals(EnumUtil.LexicalAspects.Core.toString())) {
-//                List<LexicalEntryCore> le = lexicalEntryCoreHelper.newDataList(lexicalEntry);
-//                String json = lexicalEntryCoreHelper.toJson(le);
-//                return Response.ok(json).header("Access-Control-Allow-Origin", "*")
-//                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")
-//                        .allow("OPTIONS")
-//                        .build();
-//            }
-//            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("lexical aspect not available").build();
-//        } catch (ManagerException ex) {
-//            Logger.getLogger(LexiconData.class.getName()).log(Level.SEVERE, null, ex);
-//            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
-//        }
-//    }
+    @GET
+    @Path("{id}/lexicalEntry")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "/{id}/lexicalEntry",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Lexical entry data",
+            notes = "This method returns the data related to a specific aspect (morphology, syntax, ...) associated with a given lexical entry")
+    public Response lexicalEntry(
+            @ApiParam(
+                    name = "key",
+                    value = "authentication token",
+                    example = "lexodemo",
+                    required = true)
+            @QueryParam("key") String key,
+            @ApiParam(
+                    name = "aspect",
+                    allowableValues = "core, decomposition, etymology, variation and translation, syntax and semantics",
+                    example = "core",
+                    required = true)
+            @QueryParam("aspect") String aspect,
+            @ApiParam(
+                    name = "id",
+                    value = "lexical entry ID",
+                    example = "MUSaccedereVERB",
+                    required = true)
+            @PathParam("id") String id) {
+        try {
+            TupleQueryResult lexicalEntry = lexiconManager.getLexicalEntry(id, aspect);
+            if (aspect.equals(EnumUtil.LexicalAspects.Core.toString())) {
+                List<LexicalEntryCore> le = lexicalEntryCoreHelper.newDataList(lexicalEntry);
+                String json = lexicalEntryCoreHelper.toJson(le);
+                return Response.ok(json).header("Access-Control-Allow-Origin", "*")
+                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")
+                        .allow("OPTIONS")
+                        .build();
+            }
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("lexical aspect not available").build();
+        } catch (ManagerException ex) {
+            Logger.getLogger(LexiconData.class.getName()).log(Level.SEVERE, null, ex);
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        }
+    }
 
     @POST
     @Path("lexicalSenses")
