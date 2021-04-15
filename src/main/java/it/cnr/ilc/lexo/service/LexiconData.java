@@ -22,11 +22,16 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalSenseItem;
 import it.cnr.ilc.lexo.service.helper.FormsListHelper;
 import it.cnr.ilc.lexo.service.helper.HelperException;
+import it.cnr.ilc.lexo.service.helper.LexicalEntryAttestationLinkHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalEntryCoreHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalEntryFilterHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalEntryElementHelper;
+import it.cnr.ilc.lexo.service.helper.LexicalEntryMultimediaLinkHelper;
+import it.cnr.ilc.lexo.service.helper.LexicalEntryOtherLinkHelper;
+import it.cnr.ilc.lexo.service.helper.LexicalEntryReferenceLinkHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalSenseFilterHelper;
 import it.cnr.ilc.lexo.util.EnumUtil;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -57,6 +62,10 @@ public class LexiconData {
     private final FormsListHelper formsListHelper = new FormsListHelper();
     private final LexicalEntryElementHelper lexicalEntryElementHelper = new LexicalEntryElementHelper();
     private final LexicalEntryCoreHelper lexicalEntryCoreHelper = new LexicalEntryCoreHelper();
+    private final LexicalEntryReferenceLinkHelper lexicalEntryReferenceLinkHelper = new LexicalEntryReferenceLinkHelper();
+    private final LexicalEntryAttestationLinkHelper lexicalEntryAttestationLinkHelper = new LexicalEntryAttestationLinkHelper();
+    private final LexicalEntryMultimediaLinkHelper lexicalEntryMultimediaLinkHelper = new LexicalEntryMultimediaLinkHelper();
+    private final LexicalEntryOtherLinkHelper lexicalEntryOtherLinkHelper = new LexicalEntryOtherLinkHelper();
 
     @GET
     @Path("{id}/lexicalEntry")
@@ -65,7 +74,7 @@ public class LexiconData {
             method = RequestMethod.GET,
             value = "/{id}/lexicalEntry",
             produces = "application/json; charset=UTF-8")
-    @ApiOperation(value = "Lexical entry data",
+    @ApiOperation(value = "Lexical entry",
             notes = "This method returns the data related to a specific aspect (morphology, syntax, ...) associated with a given lexical entry")
     public Response lexicalEntry(
             @ApiParam(
@@ -89,9 +98,16 @@ public class LexiconData {
         try {
             TupleQueryResult lexicalEntry = lexiconManager.getLexicalEntry(id, aspect);
             if (aspect.equals(EnumUtil.LexicalAspects.Core.toString())) {
-                List<LexicalEntryCore> le = lexicalEntryCoreHelper.newDataList(lexicalEntry);
-                String json = lexicalEntryCoreHelper.toJson(le);
-                return Response.ok(json).header("Access-Control-Allow-Origin", "*")
+                LexicalEntryCore lec = lexicalEntryCoreHelper.newData(lexicalEntry);
+                TupleQueryResult lexicalEntryReferenceLinks = lexiconManager.getLexicalEntryReferenceLinks(id);
+                LexicalEntryElementItem referenceLinks = lexicalEntryReferenceLinkHelper.newData(lexicalEntryReferenceLinks);
+                lexiconManager.addLexicalEntryLinks(lec, referenceLinks, 
+                        new LexicalEntryElementItem("Multimedia", new ArrayList()), 
+                        new LexicalEntryElementItem("Attestation", new ArrayList()), 
+                        new LexicalEntryElementItem("Other", new ArrayList()));
+                String json = lexicalEntryCoreHelper.toJson(lec);
+                return Response.ok(json)
+                        .header("Access-Control-Allow-Origin", "*")
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")
                         .allow("OPTIONS")
                         .build();
@@ -119,6 +135,7 @@ public class LexiconData {
             List<LexicalSenseItem> entries = lexicalSenseFilterHelper.newDataList(lexicalSenses);
             String json = lexicalSenseFilterHelper.toJson(entries);
             return Response.ok(json)
+                    .header("Access-Control-Allow-Headers", "*")
                     .header("Access-Control-Allow-Origin", "*")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")
                     .allow("OPTIONS")
@@ -145,6 +162,8 @@ public class LexiconData {
             List<LexicalEntryItem> entries = lexicalEntryFilterHelper.newDataList(lexicalEnties);
             String json = lexicalEntryFilterHelper.toJson(entries);
             return Response.ok(json)
+                    .type(MediaType.APPLICATION_JSON)
+                    .header("Access-Control-Allow-Headers", "*")
                     .header("Access-Control-Allow-Origin", "*")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")
                     .allow("OPTIONS")
@@ -222,7 +241,7 @@ public class LexiconData {
             @PathParam("id") String id) {
 //        log(Level.INFO, "get lexicon entries types");
         TupleQueryResult _elements = lexiconManager.getElements(id);
-        List<LexicalEntryElementItem> elements = lexicalEntryElementHelper.newDataList(_elements);
+        LexicalEntryElementItem elements = lexicalEntryElementHelper.newData(_elements);
         String json = lexicalEntryElementHelper.toJson(elements);
         return Response.ok(json)
                 .header("Access-Control-Allow-Origin", "*")

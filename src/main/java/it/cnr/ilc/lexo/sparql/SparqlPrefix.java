@@ -36,6 +36,7 @@ public class SparqlPrefix {
     public static final String RDFS = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>";
     public static final String RDF = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>";
     public static final String SKOS = "PREFIX skos: <http://www.w3.org/2004/02/skos/core#>";
+    public static final String OWL = "PREFIX owl: <http://www.w3.org/2002/07/owl#>";
 
     // data
     public static final String LEX = "PREFIX lex: <http://lexica/mylexicon#>";

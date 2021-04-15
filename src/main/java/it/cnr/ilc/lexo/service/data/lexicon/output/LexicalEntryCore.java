@@ -35,10 +35,8 @@ public class LexicalEntryCore implements Data {
     private String concept;
     @ApiModelProperty(value = "short IRI of the concept denoted by", example = "conceptID")
     private String conceptInstanceName;
-//    @ApiModelProperty(value = "list of lexical entities linked by the 'see also' relationship")
-//    private ArrayList<LinkedEntity> seeAlso;
-//    @ApiModelProperty(value = "list of lexical entities linked by the 'same as' relationship")
-//    private ArrayList<LinkedEntity> sameAs;
+    @ApiModelProperty(value = "the counting of the links of a lexical entry and their type: Reference (see Also, same As, bilbiography, ...), Multimedia, Attestation, Other)")
+    private ArrayList<LexicalEntryElementItem> links;
     @ApiModelProperty(value = "lexcial entry author", example = "user3")
     private String author;
     @ApiModelProperty(value = "lexcial entry revisor", example = "rev2")
@@ -47,7 +45,6 @@ public class LexicalEntryCore implements Data {
     private String status;
     @ApiModelProperty(value = "lexcial entry note", example = "some note ...")
     private String note;
-    
 
     public String getLexicalEntry() {
         return lexicalEntry;
@@ -151,6 +148,14 @@ public class LexicalEntryCore implements Data {
 
     public void setNote(String note) {
         this.note = note;
+    }
+
+    public ArrayList<LexicalEntryElementItem> getLinks() {
+        return links;
+    }
+
+    public void setLinks(ArrayList<LexicalEntryElementItem> links) {
+        this.links = links;
     }
 
 }

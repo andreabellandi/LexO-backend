@@ -31,6 +31,7 @@ public class LexicalEntryFilterHelper extends TripleStoreDataHelper<LexicalEntry
         data.setRevisor(((bs.getBinding(SparqlVariable.LEXICAL_ENTRY_REVISOR) != null) ? bs.getBinding(SparqlVariable.LEXICAL_ENTRY_REVISOR).getValue().stringValue() : ""));
         data.setAuthor(((bs.getBinding(SparqlVariable.AUTHOR) != null) ? bs.getBinding(SparqlVariable.AUTHOR).getValue().stringValue() : ""));
         data.setNote(((bs.getBinding(SparqlVariable.NOTE) != null) ? bs.getBinding(SparqlVariable.NOTE).getValue().stringValue() : ""));
+        data.setMorphology(getMorphology(bs, getStringValue(bs, SparqlVariable.MORPHOLOGY)));
         data.setHasChildren(true);
     }
 

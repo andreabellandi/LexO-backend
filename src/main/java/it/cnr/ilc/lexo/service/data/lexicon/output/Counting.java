@@ -13,7 +13,7 @@ import it.cnr.ilc.lexo.service.data.Data;
  *
  * @author andreabellandi
  */
-@ApiModel(description = "Output model representing features counting")
+@ApiModel(description = "Output model representing some counting")
 public class Counting implements Data {
 
     @ApiModelProperty(value = "feature label", example = "verb")

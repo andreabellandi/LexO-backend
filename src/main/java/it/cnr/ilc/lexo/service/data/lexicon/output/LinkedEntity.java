@@ -25,6 +25,46 @@ public class LinkedEntity {
     private String lexicalType;
     @ApiModelProperty(value = "the type of linked the lexical entity", allowableValues = "internal, external")
     private String entityType;
+
+    public String getLexicalEntity() {
+        return lexicalEntity;
+    }
+
+    public void setLexicalEntity(String lexicalEntity) {
+        this.lexicalEntity = lexicalEntity;
+    }
+
+    public String getLexicalEntityInstanceName() {
+        return lexicalEntityInstanceName;
+    }
+
+    public void setLexicalEntityInstanceName(String lexicalEntityInstanceName) {
+        this.lexicalEntityInstanceName = lexicalEntityInstanceName;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public String getLexicalType() {
+        return lexicalType;
+    }
+
+    public void setLexicalType(String lexicalType) {
+        this.lexicalType = lexicalType;
+    }
+
+    public String getEntityType() {
+        return entityType;
+    }
+
+    public void setEntityType(String entityType) {
+        this.entityType = entityType;
+    }
     
     
 }

@@ -21,6 +21,7 @@ public class LexicalEntryElementHelper extends TripleStoreDataHelper<LexicalEntr
     @Override
     public void fillData(LexicalEntryElementItem data, BindingSet bs) {
         data.setElements(getElements(bs));
+        data.setType("OntoLex-Lemon model");
     }
 
     @Override

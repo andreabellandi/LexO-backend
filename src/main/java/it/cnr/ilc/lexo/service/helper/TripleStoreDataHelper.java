@@ -37,6 +37,16 @@ public abstract class TripleStoreDataHelper<D extends Data> extends Helper<D> {
                 collect(Collectors.toList());
     }
 
+    public D newData(TupleQueryResult res) {
+        try {
+            D data = getDataClass().getDeclaredConstructor().newInstance();
+            fillData(data, res.next());
+            return data;
+        } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+    
     public D newData(BindingSet bs) {
         try {
             D data = getDataClass().getDeclaredConstructor().newInstance();

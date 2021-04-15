@@ -8,12 +8,17 @@ package it.cnr.ilc.lexo.manager;
 import it.cnr.ilc.lexo.GraphDbUtil;
 import it.cnr.ilc.lexo.LexOProperties;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalFilter;
+import it.cnr.ilc.lexo.service.data.lexicon.output.Counting;
+import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryCore;
+import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryElementItem;
 import it.cnr.ilc.lexo.sparql.SparqlSelectData;
 import it.cnr.ilc.lexo.util.EnumUtil;
 import it.cnr.ilc.lexo.util.EnumUtil.FormTypes;
 import it.cnr.ilc.lexo.util.EnumUtil.LexicalEntryStatus;
 import it.cnr.ilc.lexo.util.EnumUtil.LexicalEntryTypes;
 import it.cnr.ilc.lexo.util.StringUtil;
+import java.util.ArrayList;
+import java.util.List;
 import org.eclipse.rdf4j.query.QueryLanguage;
 import org.eclipse.rdf4j.query.TupleQuery;
 import org.eclipse.rdf4j.query.TupleQueryResult;
@@ -97,5 +102,28 @@ public class LexiconDataManager implements Manager, Cached {
                 SparqlSelectData.DATA_LEXICAL_ENTRY_CORE.replace("[IRI]", namespace + lexicalEntryID));
         return tupleQuery.evaluate();
     }
+    
+    public TupleQueryResult getLexicalEntryReferenceLinks(String lexicalEntryID) {
+        TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL,
+                SparqlSelectData.DATA_LEXICAL_ENTRY_REFERENCE_LINKS.replace("[IRI]", namespace + lexicalEntryID));
+        return tupleQuery.evaluate();
+    }
+    
+    public void addLexicalEntryLinks(LexicalEntryCore lec, LexicalEntryElementItem... links) {
+        if (lec.getLinks()!= null) {
+            addLinks(lec.getLinks(), links);
+        } else {
+            ArrayList<LexicalEntryElementItem> otherLinksList = new ArrayList<>();
+            lec.setLinks(otherLinksList);
+            addLinks(lec.getLinks(), links);
+        }
+    }
+    
+    private void addLinks(ArrayList<LexicalEntryElementItem> leec, LexicalEntryElementItem... links) {
+        for (LexicalEntryElementItem link : links) {
+            leec.add(link);
+        }
+    }
 
+    
 }

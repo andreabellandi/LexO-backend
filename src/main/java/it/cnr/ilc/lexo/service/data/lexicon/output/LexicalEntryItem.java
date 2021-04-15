@@ -6,6 +6,7 @@
 package it.cnr.ilc.lexo.service.data.lexicon.output;
 
 import it.cnr.ilc.lexo.service.data.Data;
+import java.util.ArrayList;
 
 /**
  *
@@ -24,6 +25,7 @@ public class LexicalEntryItem implements Data {
     private boolean hasChildren;
     private String lexicalEntry;
     private String lexicalEntryInstanceName;
+    private ArrayList<Morphology> morphology;
 
     public LexicalEntryItem() {
     }
@@ -115,5 +117,15 @@ public class LexicalEntryItem implements Data {
     public void setLexicalEntryInstanceName(String lexicalEntryInstanceName) {
         this.lexicalEntryInstanceName = lexicalEntryInstanceName;
     }
+
+    public ArrayList<Morphology> getMorphology() {
+        return morphology;
+    }
+
+    public void setMorphology(ArrayList<Morphology> morphology) {
+        this.morphology = morphology;
+    }
+
+    
 
 }

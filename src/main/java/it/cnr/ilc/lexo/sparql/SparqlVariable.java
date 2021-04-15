@@ -54,5 +54,8 @@ public class SparqlVariable {
     
     public static final String LABEL = "label";
     public static final String LABEL_COUNT = "labelCount";
+    
+    public static final String SEEALSO = "seeAlso";
+    public static final String SAMEAS = "sameAs";
 
 }

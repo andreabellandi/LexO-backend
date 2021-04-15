@@ -9,8 +9,7 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Morphology;
 import it.cnr.ilc.lexo.sparql.SparqlVariable;
 import java.util.ArrayList;
-import java.util.regex.Matcher;
-import org.eclipse.rdf4j.model.IRI;
+import java.util.List;
 import org.eclipse.rdf4j.query.BindingSet;
 
 /**
@@ -35,10 +34,10 @@ public class LexicalEntryCoreHelper extends TripleStoreDataHelper<LexicalEntryCo
         data.setType(getLocalName(bs, SparqlVariable.LEXICAL_ENTRY_TYPE));
         data.setMorphology(getMorphology(bs, getStringValue(bs, SparqlVariable.MORPHOLOGY)));
     }
-    
+
     @Override
     public Class<LexicalEntryCore> getDataClass() {
         return LexicalEntryCore.class;
     }
-    
+
 }

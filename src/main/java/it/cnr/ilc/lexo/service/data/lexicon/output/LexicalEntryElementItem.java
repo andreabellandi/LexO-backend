@@ -14,7 +14,16 @@ import java.util.ArrayList;
  */
 public class LexicalEntryElementItem implements Data {
 
+    private String type;
     private ArrayList<Element> elements;
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     public ArrayList<Element> getElements() {
         return elements;
@@ -26,6 +35,11 @@ public class LexicalEntryElementItem implements Data {
 
     public LexicalEntryElementItem() {}
     
+    public LexicalEntryElementItem(String type, ArrayList<Element> elements) {
+        this.type = type;
+        this.elements = elements;
+    }
+
     public static class Element {
 
         private String label;
@@ -61,8 +75,9 @@ public class LexicalEntryElementItem implements Data {
         public void setHasChildren(boolean hasChildren) {
             this.hasChildren = hasChildren;
         }
-        
-        public Element() {}
+
+        public Element() {
+        }
     }
 
 }
