@@ -38,7 +38,7 @@ public abstract class TripleStoreDataHelper<D extends Data> extends Helper<D> {
     }
 
     public D newData(TupleQueryResult res) {
-        try {
+        try {//*****************//
             D data = getDataClass().getDeclaredConstructor().newInstance();
             fillData(data, res.next());
             return data;

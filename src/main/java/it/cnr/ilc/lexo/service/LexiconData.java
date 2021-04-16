@@ -8,12 +8,9 @@ package it.cnr.ilc.lexo.service;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 import it.cnr.ilc.lexo.manager.LexiconDataManager;
 import it.cnr.ilc.lexo.manager.ManagerException;
 import it.cnr.ilc.lexo.manager.ManagerFactory;
-import it.cnr.ilc.lexo.service.data.lexicon.output.Counting;
 import it.cnr.ilc.lexo.service.data.lexicon.output.FormItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryElementItem;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalFilter;
@@ -107,10 +104,10 @@ public class LexiconData {
                         new LexicalEntryElementItem("Other", new ArrayList()));
                 String json = lexicalEntryCoreHelper.toJson(lec);
                 return Response.ok(json)
-                        .header("Access-Control-Allow-Origin", "*")
-                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")
-                        .allow("OPTIONS")
-                        .build();
+                    .type(MediaType.TEXT_PLAIN)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
             }
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("lexical aspect not available").build();
         } catch (ManagerException ex) {
@@ -135,10 +132,9 @@ public class LexiconData {
             List<LexicalSenseItem> entries = lexicalSenseFilterHelper.newDataList(lexicalSenses);
             String json = lexicalSenseFilterHelper.toJson(entries);
             return Response.ok(json)
-                    .header("Access-Control-Allow-Headers", "*")
-                    .header("Access-Control-Allow-Origin", "*")
-                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")
-                    .allow("OPTIONS")
+                    .type(MediaType.TEXT_PLAIN)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
         } catch (ManagerException ex) {
             Logger.getLogger(LexiconData.class.getName()).log(Level.SEVERE, null, ex);
@@ -162,11 +158,9 @@ public class LexiconData {
             List<LexicalEntryItem> entries = lexicalEntryFilterHelper.newDataList(lexicalEnties);
             String json = lexicalEntryFilterHelper.toJson(entries);
             return Response.ok(json)
-                    .type(MediaType.APPLICATION_JSON)
-                    .header("Access-Control-Allow-Headers", "*")
-                    .header("Access-Control-Allow-Origin", "*")
-                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")
-                    .allow("OPTIONS")
+                    .type(MediaType.TEXT_PLAIN)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
         } catch (ManagerException ex) {
             Logger.getLogger(LexiconData.class.getName()).log(Level.SEVERE, null, ex);
@@ -183,11 +177,6 @@ public class LexiconData {
             produces = "application/json; charset=UTF-8")
     @ApiOperation(value = "Lexical entry forms",
             notes = "This method returns all the forms of a lexical entry")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK", response = FormItem.class),
-        @ApiResponse(code = 201, message = ""),
-        @ApiResponse(code = 400, message = "")
-    })
     public Response forms(
             @ApiParam(
                     name = "key",
@@ -206,10 +195,10 @@ public class LexiconData {
         List<FormItem> forms = formsListHelper.newDataList(_forms);
         String json = formsListHelper.toJson(forms);
         return Response.ok(json)
-                .header("Access-Control-Allow-Origin", "*")
-                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")
-                .allow("OPTIONS")
-                .build();
+                    .type(MediaType.TEXT_PLAIN)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
     }
 
     @GET
@@ -221,11 +210,6 @@ public class LexiconData {
             produces = "application/json; charset=UTF-8")
     @ApiOperation(value = "Lexical entry elements",
             notes = "This method returns the counting of all the elements of a lexical entry (forms, senses, frames, etc ...)")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK", response = Counting.class),
-        @ApiResponse(code = 201, message = ""),
-        @ApiResponse(code = 400, message = "")
-    })
     public Response elements(
             @ApiParam(
                     name = "key",
@@ -244,10 +228,10 @@ public class LexiconData {
         LexicalEntryElementItem elements = lexicalEntryElementHelper.newData(_elements);
         String json = lexicalEntryElementHelper.toJson(elements);
         return Response.ok(json)
-                .header("Access-Control-Allow-Origin", "*")
-                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")
-                .allow("OPTIONS")
-                .build();
+                    .type(MediaType.TEXT_PLAIN)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
     }
 
 }

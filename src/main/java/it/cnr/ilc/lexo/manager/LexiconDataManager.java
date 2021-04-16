@@ -29,7 +29,8 @@ import org.eclipse.rdf4j.query.TupleQueryResult;
  */
 public class LexiconDataManager implements Manager, Cached {
 
-    private final String namespace = StringUtil.escapeMetaCharacters(LexOProperties.getProperty("repository.lexicon.namespace"));
+//    private final String namespace = StringUtil.escapeMetaCharacters(LexOProperties.getProperty("repository.lexicon.namespace"));
+    private final String namespace = LexOProperties.getProperty("repository.lexicon.namespace");
 
     @Override
     public void reloadCache() {
@@ -72,13 +73,13 @@ public class LexiconDataManager implements Manager, Cached {
 
     public TupleQueryResult getElements(String lexicalEntryID) {
         TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL,
-                SparqlSelectData.DATA_LEXICAL_ENTRY_ELEMENTS.replace("[IRI]", namespace + lexicalEntryID));
+                SparqlSelectData.DATA_LEXICAL_ENTRY_ELEMENTS.replace("[IRI]", "\\\"" + namespace + lexicalEntryID + "\\\""));
         return tupleQuery.evaluate();
     }
 
     public TupleQueryResult getForms(String lexicalEntryID) {
         TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL,
-                SparqlSelectData.DATA_FORMS.replace("[IRI]", namespace + lexicalEntryID));
+                SparqlSelectData.DATA_FORMS.replace("[IRI]", "\\\"" + namespace + lexicalEntryID + "\\\""));
         return tupleQuery.evaluate();
     }
 
@@ -99,13 +100,13 @@ public class LexiconDataManager implements Manager, Cached {
     public TupleQueryResult getLexicalEntry(String lexicalEntryID, String aspect) throws ManagerException {
         Manager.validateWithEnum("aspect", EnumUtil.LexicalAspects.class, aspect);
         TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL,
-                SparqlSelectData.DATA_LEXICAL_ENTRY_CORE.replace("[IRI]", namespace + lexicalEntryID));
+                SparqlSelectData.DATA_LEXICAL_ENTRY_CORE.replace("[IRI]", "\\\"" + namespace + lexicalEntryID + "\\\""));
         return tupleQuery.evaluate();
     }
     
     public TupleQueryResult getLexicalEntryReferenceLinks(String lexicalEntryID) {
         TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL,
-                SparqlSelectData.DATA_LEXICAL_ENTRY_REFERENCE_LINKS.replace("[IRI]", namespace + lexicalEntryID));
+                SparqlSelectData.DATA_LEXICAL_ENTRY_REFERENCE_LINKS.replace("[IRI]", "\\\"" + namespace + lexicalEntryID + "\\\""));
         return tupleQuery.evaluate();
     }
     

@@ -8,9 +8,6 @@ package it.cnr.ilc.lexo.service;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-import it.cnr.ilc.lexo.manager.LexiconDataManager;
 import it.cnr.ilc.lexo.manager.LexiconStatisticsManager;
 import it.cnr.ilc.lexo.manager.ManagerFactory;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Counting;
@@ -49,11 +46,11 @@ public class LexiconStatistics {
             produces = "application/json; charset=UTF-8")
     @ApiOperation(value = "Lexical entry types",
             notes = "This method returns the lexical entry types and their counting")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK", response = Counting.class),
-        @ApiResponse(code = 201, message = ""),
-        @ApiResponse(code = 400, message = "")
-    })
+//    @ApiResponses(value = {
+//        @ApiResponse(code = 200, message = "OK", response = Counting.class),
+//        @ApiResponse(code = 201, message = ""),
+//        @ApiResponse(code = 400, message = "")
+//    })
     public Response types(
             @ApiParam(
                     name = "key",
@@ -66,10 +63,10 @@ public class LexiconStatistics {
         List<Counting> types = countingHelper.newDataList(lexicalEntryTypes);
         String json = countingHelper.toJson(types);
         return Response.ok(json)
-                .header("Access-Control-Allow-Origin", "*")
-                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")
-                .allow("OPTIONS")
-                .build();
+                    .type(MediaType.TEXT_PLAIN)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
     }
 
     @GET
@@ -95,10 +92,10 @@ public class LexiconStatistics {
         List<Counting> status = countingHelper.newDataList(lexicalEntryStates);
         String json = countingHelper.toJson(status);
         return Response.ok(json)
-                .header("Access-Control-Allow-Origin", "*")
-                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")
-                .allow("OPTIONS")
-                .build();
+                    .type(MediaType.TEXT_PLAIN)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
     }
 
     @GET
@@ -124,10 +121,10 @@ public class LexiconStatistics {
         List<Counting> authors = countingHelper.newDataList(lexicalEntryAuthors);
         String json = countingHelper.toJson(authors);
         return Response.ok(json)
-                .header("Access-Control-Allow-Origin", "*")
-                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")
-                .allow("OPTIONS")
-                .build();
+                    .type(MediaType.TEXT_PLAIN)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
     }
 
     @GET
@@ -153,10 +150,10 @@ public class LexiconStatistics {
         List<Counting> langs = countingHelper.newDataList(languages);
         String json = countingHelper.toJson(langs);
         return Response.ok(json)
-                .header("Access-Control-Allow-Origin", "*")
-                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")
-                .allow("OPTIONS")
-                .build();
+                    .type(MediaType.TEXT_PLAIN)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
     }
 
     @GET
@@ -182,9 +179,9 @@ public class LexiconStatistics {
         List<Counting> pos = countingHelper.newDataList(_pos);
         String json = countingHelper.toJson(pos);
         return Response.ok(json)
-                .header("Access-Control-Allow-Origin", "*")
-                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")
-                .allow("OPTIONS")
-                .build();
+                    .type(MediaType.TEXT_PLAIN)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
     }
 }
