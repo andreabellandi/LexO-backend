@@ -11,9 +11,10 @@ import io.swagger.annotations.ApiParam;
 import it.cnr.ilc.lexo.manager.LexiconDataManager;
 import it.cnr.ilc.lexo.manager.ManagerException;
 import it.cnr.ilc.lexo.manager.ManagerFactory;
+import it.cnr.ilc.lexo.service.data.lexicon.input.FormFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.output.FormItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryElementItem;
-import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalFilter;
+import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalEntryFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalSenseItem;
@@ -29,7 +30,9 @@ import it.cnr.ilc.lexo.service.helper.LexicalEntryReferenceLinkHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalSenseFilterHelper;
 import it.cnr.ilc.lexo.util.EnumUtil;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.Consumes;
@@ -60,9 +63,6 @@ public class LexiconData {
     private final LexicalEntryElementHelper lexicalEntryElementHelper = new LexicalEntryElementHelper();
     private final LexicalEntryCoreHelper lexicalEntryCoreHelper = new LexicalEntryCoreHelper();
     private final LexicalEntryReferenceLinkHelper lexicalEntryReferenceLinkHelper = new LexicalEntryReferenceLinkHelper();
-    private final LexicalEntryAttestationLinkHelper lexicalEntryAttestationLinkHelper = new LexicalEntryAttestationLinkHelper();
-    private final LexicalEntryMultimediaLinkHelper lexicalEntryMultimediaLinkHelper = new LexicalEntryMultimediaLinkHelper();
-    private final LexicalEntryOtherLinkHelper lexicalEntryOtherLinkHelper = new LexicalEntryOtherLinkHelper();
 
     @GET
     @Path("{id}/lexicalEntry")
@@ -126,7 +126,7 @@ public class LexiconData {
             produces = "application/json; charset=UTF-8")
     @ApiOperation(value = "Lexical senses list",
             notes = "This method returns a list of lexical senses according to the input filter")
-    public Response sensesList(@QueryParam("key") String key, LexicalFilter lef) throws HelperException {
+    public Response sensesList(@QueryParam("key") String key, LexicalEntryFilter lef) throws HelperException {
         try {
             TupleQueryResult lexicalSenses = lexiconManager.getFilterdLexicalSenses(lef);
             List<LexicalSenseItem> entries = lexicalSenseFilterHelper.newDataList(lexicalSenses);
@@ -152,11 +152,43 @@ public class LexiconData {
             produces = "application/json; charset=UTF-8")
     @ApiOperation(value = "Lexical entries list",
             notes = "This method returns a list of lexical entries according to the input filter")
-    public Response entriesList(@QueryParam("key") String key, LexicalFilter lef) throws HelperException {
+    public Response entriesList(@QueryParam("key") String key, LexicalEntryFilter lef) throws HelperException {
         try {
             TupleQueryResult lexicalEnties = lexiconManager.getFilterdLexicalEntries(lef);
             List<LexicalEntryItem> entries = lexicalEntryFilterHelper.newDataList(lexicalEnties);
             String json = lexicalEntryFilterHelper.toJson(entries);
+            return Response.ok(json)
+                    .type(MediaType.TEXT_PLAIN)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
+        } catch (ManagerException ex) {
+            Logger.getLogger(LexiconData.class.getName()).log(Level.SEVERE, null, ex);
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        }
+    }
+    
+    @POST
+    @Path("forms")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.POST,
+            value = "/forms",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Forms list",
+            notes = "This method returns a list of forms according to the input filter")
+    public Response formsList(@QueryParam("key") String key, FormFilter ff) throws HelperException {
+        try {
+            Map<String, List<FormItem>> forms = new HashMap();
+            TupleQueryResult resForms = lexiconManager.getFilterdForms(ff);
+            forms.put(ff.getFormType().equals(EnumUtil.SearchFormTypes.Lemma.toString()) ? "forms of " + ff.getForm() : ff.getForm(), 
+                    formsListHelper.newDataList(resForms));
+            for (String sense : ff.getSenseUris()) {
+                TupleQueryResult _resForms = lexiconManager.getFormsBySenseRelation(ff, sense);
+                forms.put(ff.getExtendTo() + " of " + sense + " with distance " + ff.getExtensionDegree(), formsListHelper.newDataList(_resForms));
+            }
+            String json = formsListHelper.toJson(forms);
             return Response.ok(json)
                     .type(MediaType.TEXT_PLAIN)
                     .header("Access-Control-Allow-Headers", "content-type")

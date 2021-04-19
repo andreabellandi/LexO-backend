@@ -7,15 +7,20 @@ package it.cnr.ilc.lexo.manager;
 
 import it.cnr.ilc.lexo.GraphDbUtil;
 import it.cnr.ilc.lexo.LexOProperties;
-import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalFilter;
+import it.cnr.ilc.lexo.service.data.lexicon.input.FormFilter;
+import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalEntryFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Counting;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryElementItem;
 import it.cnr.ilc.lexo.sparql.SparqlSelectData;
+import it.cnr.ilc.lexo.sparql.SparqlVariable;
 import it.cnr.ilc.lexo.util.EnumUtil;
+import it.cnr.ilc.lexo.util.EnumUtil.AcceptedSearchFormExtendTo;
+import it.cnr.ilc.lexo.util.EnumUtil.AcceptedSearchFormExtensionDegree;
 import it.cnr.ilc.lexo.util.EnumUtil.FormTypes;
 import it.cnr.ilc.lexo.util.EnumUtil.LexicalEntryStatus;
 import it.cnr.ilc.lexo.util.EnumUtil.LexicalEntryTypes;
+import it.cnr.ilc.lexo.util.EnumUtil.SearchFormTypes;
 import it.cnr.ilc.lexo.util.StringUtil;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +42,7 @@ public class LexiconDataManager implements Manager, Cached {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    public TupleQueryResult getFilterdLexicalEntries(LexicalFilter lef) throws ManagerException {
+    public TupleQueryResult getFilterdLexicalEntries(LexicalEntryFilter lef) throws ManagerException {
         Manager.validateWithEnum("formType", FormTypes.class, lef.getFormType());
         Manager.validateWithEnum("status", LexicalEntryStatus.class, lef.getStatus());
         Manager.validateWithEnum("type", LexicalEntryTypes.class, lef.getType());
@@ -51,7 +56,7 @@ public class LexiconDataManager implements Manager, Cached {
         return tupleQuery.evaluate();
     }
 
-    private String createFilter(LexicalFilter lef) {
+    private String createFilter(LexicalEntryFilter lef) {
         String text = lef.getText().isEmpty() ? "*" : lef.getText();
         String filter = "(" + (lef.getSearchMode().equals(EnumUtil.SearchModes.Equals.toString()) ? getSearchField(lef.getFormType(), text)
                 : (lef.getSearchMode().equals(EnumUtil.SearchModes.StartsWith.toString()) ? getSearchField(lef.getFormType(), text + "*")
@@ -77,13 +82,33 @@ public class LexiconDataManager implements Manager, Cached {
         return tupleQuery.evaluate();
     }
 
-    public TupleQueryResult getForms(String lexicalEntryID) {
+    public TupleQueryResult getFilterdForms(FormFilter ff) throws ManagerException {
+        Manager.validateWithEnum("searchFormTypes", SearchFormTypes.class, ff.getFormType());
+        Manager.validateWithEnum("acceptedSearchFormExtendTo", AcceptedSearchFormExtendTo.class, ff.getExtendTo());
+        Manager.validateWithEnum("acceptedSearchFormExtensionDegree", AcceptedSearchFormExtensionDegree.class, String.valueOf(ff.getExtensionDegree()));
         TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL,
-                SparqlSelectData.DATA_FORMS.replace("[IRI]", "\\\"" + namespace + lexicalEntryID + "\\\""));
+                (ff.getFormType().equals(EnumUtil.SearchFormTypes.Lemma.toString()))
+                ? SparqlSelectData.DATA_FORMS.replace("[IRI]", "\\\"" + namespace + ff.getLexicalEntry() + "\\\"")
+                        .replace("[FORM_CONSTRAINT]", "")
+                : SparqlSelectData.DATA_FORMS.replace("[IRI]", "\\\"" + namespace + ff.getLexicalEntry() + "\\\"")
+                        .replace("[FORM_CONSTRAINT]", "FILTER(regex(str(?" + SparqlVariable.WRITTEN_REPRESENTATION + "), \"^" + ff.getForm().trim() + "$\"))\n"));
         return tupleQuery.evaluate();
     }
 
-    public TupleQueryResult getFilterdLexicalSenses(LexicalFilter lef) throws ManagerException {
+    public TupleQueryResult getForms(String lexicalEntryID) {
+        TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL,
+                SparqlSelectData.DATA_FORMS.replace("[IRI]", "\\\"" + namespace + lexicalEntryID + "\\\"")
+                        .replace("[FORM_CONSTRAINT]", ""));
+        return tupleQuery.evaluate();
+    }
+
+    public TupleQueryResult getFormsBySenseRelation(FormFilter ff, String sense) throws ManagerException {
+        TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL, 
+                SparqlSelectData.DATA_FORMS_BY_SENSE_RELATION.replace("[SENSE]", sense).replace("[SENSE_RELATION]", ff.getExtendTo()));
+        return tupleQuery.evaluate();
+    }
+
+    public TupleQueryResult getFilterdLexicalSenses(LexicalEntryFilter lef) throws ManagerException {
         Manager.validateWithEnum("formType", FormTypes.class, lef.getFormType());
         Manager.validateWithEnum("status", LexicalEntryStatus.class, lef.getStatus());
         Manager.validateWithEnum("type", LexicalEntryTypes.class, lef.getType());
@@ -103,15 +128,15 @@ public class LexiconDataManager implements Manager, Cached {
                 SparqlSelectData.DATA_LEXICAL_ENTRY_CORE.replace("[IRI]", "\\\"" + namespace + lexicalEntryID + "\\\""));
         return tupleQuery.evaluate();
     }
-    
+
     public TupleQueryResult getLexicalEntryReferenceLinks(String lexicalEntryID) {
         TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL,
                 SparqlSelectData.DATA_LEXICAL_ENTRY_REFERENCE_LINKS.replace("[IRI]", "\\\"" + namespace + lexicalEntryID + "\\\""));
         return tupleQuery.evaluate();
     }
-    
+
     public void addLexicalEntryLinks(LexicalEntryCore lec, LexicalEntryElementItem... links) {
-        if (lec.getLinks()!= null) {
+        if (lec.getLinks() != null) {
             addLinks(lec.getLinks(), links);
         } else {
             ArrayList<LexicalEntryElementItem> otherLinksList = new ArrayList<>();
@@ -119,12 +144,11 @@ public class LexiconDataManager implements Manager, Cached {
             addLinks(lec.getLinks(), links);
         }
     }
-    
+
     private void addLinks(ArrayList<LexicalEntryElementItem> leec, LexicalEntryElementItem... links) {
         for (LexicalEntryElementItem link : links) {
             leec.add(link);
         }
     }
 
-    
 }

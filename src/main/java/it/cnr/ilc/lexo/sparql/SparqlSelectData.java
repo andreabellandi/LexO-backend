@@ -116,6 +116,7 @@ public class SparqlSelectData {
             + " ?" + SparqlVariable.AUTHOR
             + " ?" + SparqlVariable.WRITTEN_REPRESENTATION
             + " ?" + SparqlVariable.PHONETIC_REPRESENTATION
+            + " ?" + SparqlVariable.LEXICAL_ENTRY_POS
             + " ?" + SparqlVariable.NOTE
             + " ?" + SparqlVariable.FORM_INSTANCE_NAME
             + " (GROUP_CONCAT(concat(str(?tn),\":\",str(?tv));SEPARATOR=\";\") AS ?" + SparqlVariable.MORPHOLOGY + ")\n"
@@ -124,7 +125,8 @@ public class SparqlSelectData {
             + "   ?search a inst:" + SparqlVariable.LEXICAL_ENTRY_INDEX + " ;\n"
             + "             luc:query \"lexicalEntryIRI:[IRI]\" ;\n"
             + "             luc:entities ?" + SparqlVariable.LEXICAL_ENTRY + " .\n"
-            + "   ?" + SparqlVariable.LEXICAL_ENTRY + " ?" + SparqlVariable.FORM_TYPE + " ?" + SparqlVariable.FORM + " .\n"
+            + "   ?" + SparqlVariable.LEXICAL_ENTRY + " ?" + SparqlVariable.FORM_TYPE + " ?" + SparqlVariable.FORM + " ;\n"
+            + "       lexinfo:partOfSpeech ?posTag .\n"
             + "   ?" + SparqlVariable.FORM + " dct:contributor ?" + SparqlVariable.AUTHOR + " ;\n"
             + "       ontolex:writtenRep ?" + SparqlVariable.WRITTEN_REPRESENTATION + " .\n"
             + "   OPTIONAL { ?" + SparqlVariable.FORM + " ontolex:phoneticRep ?" + SparqlVariable.PHONETIC_REPRESENTATION + " . }\n"
@@ -133,12 +135,15 @@ public class SparqlSelectData {
             + "              FILTER(STRSTARTS(STR(?" + SparqlVariable.MORPHOLOGY_TRAIT_NAME + "), str(lexinfo:))) }\n"
             + "   ?" + SparqlVariable.FORM_TYPE + " rdfs:subPropertyOf* ontolex:lexicalForm .\n"
             + "   BIND(strafter(str(?" + SparqlVariable.FORM + "), str(lex:)) as ?" + SparqlVariable.FORM_INSTANCE_NAME + ")\n"
+            + "   BIND(strafter(str(?posTag), str(lexinfo:)) as ?" + SparqlVariable.LEXICAL_ENTRY_POS + ")\n"
             + "   BIND(strafter(str(?" + SparqlVariable.MORPHOLOGY_TRAIT_NAME + "),str(lexinfo:)) as ?tn)\n"
             + "   BIND(strafter(str(?" + SparqlVariable.MORPHOLOGY_TRAIT_VALUE + "),str(lexinfo:)) as ?tv)\n"
+            + "   [FORM_CONSTRAINT]"
             + "} GROUP BY ?"
             + SparqlVariable.FORM
             + " ?" + SparqlVariable.FORM_INSTANCE_NAME
             + " ?" + SparqlVariable.FORM_TYPE
+            + " ?" + SparqlVariable.LEXICAL_ENTRY_POS
             + " ?" + SparqlVariable.AUTHOR
             + " ?" + SparqlVariable.WRITTEN_REPRESENTATION
             + " ?" + SparqlVariable.PHONETIC_REPRESENTATION
@@ -270,7 +275,7 @@ public class SparqlSelectData {
             + SparqlVariable.CONCEPT + " ?"
             + SparqlVariable.LEXICAL_CONCEPT + " ?"
             + SparqlVariable.CONCEPT_SCHEME;
-    
+
     public static final String DATA_LEXICAL_ENTRY_REFERENCE_LINKS
             = SparqlPrefix.LUC + "\n"
             + SparqlPrefix.INST + "\n"
@@ -287,4 +292,55 @@ public class SparqlSelectData {
             + " UNION \n"
             + "    { ?" + SparqlVariable.LEXICAL_ENTRY + " owl:sameAs ?" + SparqlVariable.SAMEAS + " . }\n"
             + "}";
+
+    public static final String DATA_FORMS_BY_SENSE_RELATION
+            = SparqlPrefix.DCT + "\n"
+            + SparqlPrefix.INST + "\n"
+            + SparqlPrefix.RDFS + "\n"
+            + SparqlPrefix.LEX + "\n"
+            + SparqlPrefix.LEXINFO + "\n"
+            + SparqlPrefix.ONTO + "\n"
+            + SparqlPrefix.ONTOLEX + "\n"
+            + SparqlPrefix.SESAME + "\n"
+            + "SELECT ?" + SparqlVariable.FORM_TYPE
+            + " ?" + SparqlVariable.FORM
+            + " ?" + SparqlVariable.AUTHOR
+            + " ?" + SparqlVariable.WRITTEN_REPRESENTATION
+            + " ?" + SparqlVariable.PHONETIC_REPRESENTATION
+            + " ?" + SparqlVariable.NOTE
+            + " ?" + SparqlVariable.LEXICAL_ENTRY_POS
+            + " ?" + SparqlVariable.FORM_INSTANCE_NAME
+            + " (GROUP_CONCAT(concat(str(?" + SparqlVariable.MORPHOLOGY_TRAIT_NAME + "),\":\",str(?"
+            + SparqlVariable.MORPHOLOGY_TRAIT_VALUE + "));SEPARATOR=\";\") AS ?" + SparqlVariable.MORPHOLOGY + ") \n"
+            + "FROM NAMED onto:explicit\n"
+            + "FROM NAMED onto:implicit   \n"
+            + "{\n"
+            + "    GRAPH ?g { lex:[SENSE] lexinfo:[SENSE_RELATION] ?" + SparqlVariable.TARGET + " . }\n"
+            + "    ?" + SparqlVariable.LEXICAL_ENTRY + " ontolex:sense ?" + SparqlVariable.TARGET + " .\n"
+            + "    ?" + SparqlVariable.LEXICAL_ENTRY + " ?" + SparqlVariable.FORM_TYPE + " ?" + SparqlVariable.FORM + " ;\n"
+            + "       lexinfo:partOfSpeech ?posTag .\n" 
+            + "    ?" + SparqlVariable.FORM + " dct:contributor ?" + SparqlVariable.AUTHOR + " ;\n"
+            + "       ontolex:writtenRep ?" + SparqlVariable.WRITTEN_REPRESENTATION + " .\n"
+            + "   OPTIONAL { ?" + SparqlVariable.FORM + " ontolex:phoneticRep ?" + SparqlVariable.PHONETIC_REPRESENTATION + " . }\n"
+            + "   OPTIONAL { ?" + SparqlVariable.FORM + " rdfs:comment ?" + SparqlVariable.NOTE + " . }\n"
+            + "   OPTIONAL { GRAPH ?g { ?" + SparqlVariable.FORM + " ?morphoTrait ?morphoValue . }  \n"
+            + "              FILTER(STRSTARTS(STR(?morphoTrait), str(lexinfo:))) }\n"
+            + "   ?" + SparqlVariable.FORM_TYPE + " sesame:directSubPropertyOf ontolex:lexicalForm .\n"
+            + "   BIND(strafter(str(?" + SparqlVariable.FORM + "), str(lex:)) as ?" + SparqlVariable.FORM_INSTANCE_NAME + ")\n"
+            + "   BIND(strafter(str(?posTag),str(lexinfo:)) as ?" + SparqlVariable.LEXICAL_ENTRY_POS + ")\n"
+            + "   BIND(strafter(str(?morphoTrait),str(lexinfo:)) as ?" + SparqlVariable.MORPHOLOGY_TRAIT_NAME + ")\n"
+            + "   BIND(strafter(str(?morphoValue),str(lexinfo:)) as ?" + SparqlVariable.MORPHOLOGY_TRAIT_VALUE + ")\n"
+            + "   FILTER(regex(str(?g), \"explicit\")) \n"
+            + "} GROUP BY ?"
+            + SparqlVariable.FORM
+            + " ?" + SparqlVariable.FORM_INSTANCE_NAME
+            + " ?" + SparqlVariable.FORM_TYPE
+            + " ?" + SparqlVariable.LEXICAL_ENTRY_POS
+            + " ?" + SparqlVariable.AUTHOR
+            + " ?" + SparqlVariable.WRITTEN_REPRESENTATION
+            + " ?" + SparqlVariable.PHONETIC_REPRESENTATION
+            + " ?" + SparqlVariable.NOTE + "\n"
+            + "  ORDER BY ?"
+            + SparqlVariable.WRITTEN_REPRESENTATION
+            + " ?" + SparqlVariable.FORM_INSTANCE_NAME;
 }

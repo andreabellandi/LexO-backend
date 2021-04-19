@@ -14,7 +14,7 @@ import it.cnr.ilc.lexo.service.data.Data;
  * @author andreabellandi
  */
 @ApiModel(description = "Input model representing lexical filter options")
-public class LexicalFilter implements Data {
+public class LexicalEntryFilter implements Data {
 
     @ApiModelProperty(value = "chars sequence to search", example = "a")
     private String text;
@@ -24,7 +24,7 @@ public class LexicalFilter implements Data {
     private String type;
     @ApiModelProperty(value = "part of speech (empty means all)", example = "verb")
     private String pos;
-    @ApiModelProperty(value = "the type of form the serach is performed on (entry means lemma, empty means all)", allowableValues = "flexed, entry", example = "flexed")
+    @ApiModelProperty(value = "the type of form the serach is performed on (entry refers to the entry label only, and flexed means all the forms)", allowableValues = "flexed, entry", example = "flexed")
     private String formType;
     @ApiModelProperty(value = "author (empty means all)", example = "fmurano")
     private String author;
@@ -37,7 +37,7 @@ public class LexicalFilter implements Data {
     @ApiModelProperty(value = "result set limit", example = "500")
     private int limit;
 
-    public LexicalFilter() {
+    public LexicalEntryFilter() {
     }
 
     public String getText() {

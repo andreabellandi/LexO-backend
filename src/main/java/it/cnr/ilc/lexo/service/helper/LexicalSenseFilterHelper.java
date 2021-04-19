@@ -7,7 +7,7 @@ package it.cnr.ilc.lexo.service.helper;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import it.cnr.ilc.lexo.Constant;
-import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalFilter;
+import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalEntryFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalSenseItem;
 import it.cnr.ilc.lexo.sparql.SparqlVariable;
 import org.eclipse.rdf4j.model.IRI;
@@ -43,9 +43,9 @@ public class LexicalSenseFilterHelper extends TripleStoreDataHelper<LexicalSense
         return LexicalSenseItem.class;
     }
 
-    public LexicalFilter fromJsonFilter(String json) throws HelperException {
+    public LexicalEntryFilter fromJsonFilter(String json) throws HelperException {
         try {
-            return objectMapper.readValue(json, LexicalFilter.class);
+            return objectMapper.readValue(json, LexicalEntryFilter.class);
         } catch (JsonProcessingException ex) {
             throw new HelperException("parsing error");
         }

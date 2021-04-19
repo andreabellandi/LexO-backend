@@ -83,5 +83,17 @@ public abstract class TripleStoreDataHelper<D extends Data> extends Helper<D> {
         }
         return morphos;
     }
+    
+    public ArrayList<Morphology> getMorphologyWithPoS(BindingSet bs, String morpho, String pos) {
+        ArrayList<Morphology> morphos = new ArrayList();
+        morphos.add(new Morphology("partOfSpeech", pos));
+        if (!morpho.isEmpty()) {
+            Matcher matcher = pattern.matcher(morpho);
+            while (matcher.find()) {
+                morphos.add(new Morphology(matcher.group(2), matcher.group(3)));
+            }
+        }
+        return morphos;
+    }
 
 }

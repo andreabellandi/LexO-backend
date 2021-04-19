@@ -141,4 +141,57 @@ public class EnumUtil {
         }
         
     }
+    
+    public static enum SearchFormTypes {
+        Keyword("keyword"),
+        Lemma("lemma");
+
+        private final String searchFormTypes;
+
+        private SearchFormTypes(String searchFormTypes) {
+            this.searchFormTypes = searchFormTypes;
+        }
+
+        @Override
+        public String toString() {
+            return this.searchFormTypes;
+        }
+        
+    }
+    
+    public static enum AcceptedSearchFormExtendTo {
+        Hypernym("hypernym"),
+        Hyponym("hyponym"),
+        Synonym("synonym");
+
+        private final String acceptedSearchFormExtendTo;
+
+        private AcceptedSearchFormExtendTo(String acceptedSearchFormExtendTo) {
+            this.acceptedSearchFormExtendTo = acceptedSearchFormExtendTo;
+        }
+
+        @Override
+        public String toString() {
+            return this.acceptedSearchFormExtendTo;
+        }
+        
+    }
+    
+    public static enum AcceptedSearchFormExtensionDegree {
+        One("1"),
+        Two("2"),
+        Three("3");
+
+        private final String acceptedSearchFormExtensionDegree;
+
+        private AcceptedSearchFormExtensionDegree(String acceptedSearchFormExtensionDegree) {
+            this.acceptedSearchFormExtensionDegree = acceptedSearchFormExtensionDegree;
+        }
+
+        @Override
+        public String toString() {
+            return this.acceptedSearchFormExtensionDegree;
+        }
+        
+    }
 }

@@ -63,6 +63,14 @@ public abstract class Helper<D extends Data> {
             throw new RuntimeException(ex);
         }
     }
+    
+    public String toJson(Map<String, List<D>> data) {
+        try {
+            return objectMapper.writeValueAsString(data);
+        } catch (JsonProcessingException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
 
     public <T> List<T> listFromJson(Class<T> clazz, String json) throws HelperException {
         try {

@@ -42,6 +42,8 @@ public class SparqlVariable {
     
     public static final String FRAME = "frame";
     
+    public static final String LEXICAL_FORM = "lexicalForm";
+    
     public static final String LEXICAL_CONCEPT = "lexicalConcept";
     public static final String CONCEPT_SCHEME = "conceptScheme";
     
@@ -57,5 +59,7 @@ public class SparqlVariable {
     
     public static final String SEEALSO = "seeAlso";
     public static final String SAMEAS = "sameAs";
+    
+    public static final String TARGET = "target";
 
 }
