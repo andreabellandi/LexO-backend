@@ -160,6 +160,7 @@ public class EnumUtil {
     }
     
     public static enum AcceptedSearchFormExtendTo {
+        None(""),
         Hypernym("hypernym"),
         Hyponym("hyponym"),
         Synonym("synonym");

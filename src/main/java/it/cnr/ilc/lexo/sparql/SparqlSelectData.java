@@ -315,7 +315,7 @@ public class SparqlSelectData {
             + "FROM NAMED onto:explicit\n"
             + "FROM NAMED onto:implicit   \n"
             + "{\n"
-            + "    GRAPH ?g { lex:[SENSE] lexinfo:[SENSE_RELATION] ?" + SparqlVariable.TARGET + " . }\n"
+            + "    GRAPH ?g { [RELATION_DISTANCE_PATH] }\n"
             + "    ?" + SparqlVariable.LEXICAL_ENTRY + " ontolex:sense ?" + SparqlVariable.TARGET + " .\n"
             + "    ?" + SparqlVariable.LEXICAL_ENTRY + " ?" + SparqlVariable.FORM_TYPE + " ?" + SparqlVariable.FORM + " ;\n"
             + "       lexinfo:partOfSpeech ?posTag .\n" 

@@ -20,12 +20,9 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalSenseItem;
 import it.cnr.ilc.lexo.service.helper.FormsListHelper;
 import it.cnr.ilc.lexo.service.helper.HelperException;
-import it.cnr.ilc.lexo.service.helper.LexicalEntryAttestationLinkHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalEntryCoreHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalEntryFilterHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalEntryElementHelper;
-import it.cnr.ilc.lexo.service.helper.LexicalEntryMultimediaLinkHelper;
-import it.cnr.ilc.lexo.service.helper.LexicalEntryOtherLinkHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalEntryReferenceLinkHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalSenseFilterHelper;
 import it.cnr.ilc.lexo.util.EnumUtil;
@@ -98,16 +95,16 @@ public class LexiconData {
                 LexicalEntryCore lec = lexicalEntryCoreHelper.newData(lexicalEntry);
                 TupleQueryResult lexicalEntryReferenceLinks = lexiconManager.getLexicalEntryReferenceLinks(id);
                 LexicalEntryElementItem referenceLinks = lexicalEntryReferenceLinkHelper.newData(lexicalEntryReferenceLinks);
-                lexiconManager.addLexicalEntryLinks(lec, referenceLinks, 
-                        new LexicalEntryElementItem("Multimedia", new ArrayList()), 
-                        new LexicalEntryElementItem("Attestation", new ArrayList()), 
+                lexiconManager.addLexicalEntryLinks(lec, referenceLinks,
+                        new LexicalEntryElementItem("Multimedia", new ArrayList()),
+                        new LexicalEntryElementItem("Attestation", new ArrayList()),
                         new LexicalEntryElementItem("Other", new ArrayList()));
                 String json = lexicalEntryCoreHelper.toJson(lec);
                 return Response.ok(json)
-                    .type(MediaType.TEXT_PLAIN)
-                    .header("Access-Control-Allow-Headers", "content-type")
-                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                    .build();
+                        .type(MediaType.TEXT_PLAIN)
+                        .header("Access-Control-Allow-Headers", "content-type")
+                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                        .build();
             }
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("lexical aspect not available").build();
         } catch (ManagerException ex) {
@@ -167,7 +164,7 @@ public class LexiconData {
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }
     }
-    
+
     @POST
     @Path("forms")
     @Produces(MediaType.APPLICATION_JSON)
@@ -182,11 +179,23 @@ public class LexiconData {
         try {
             Map<String, List<FormItem>> forms = new HashMap();
             TupleQueryResult resForms = lexiconManager.getFilterdForms(ff);
-            forms.put(ff.getFormType().equals(EnumUtil.SearchFormTypes.Lemma.toString()) ? "forms of " + ff.getForm() : ff.getForm(), 
+            forms.put(ff.getFormType().equals(EnumUtil.SearchFormTypes.Lemma.toString()) ? "forms of " + ff.getForm() : ff.getForm(),
                     formsListHelper.newDataList(resForms));
-            for (String sense : ff.getSenseUris()) {
-                TupleQueryResult _resForms = lexiconManager.getFormsBySenseRelation(ff, sense);
-                forms.put(ff.getExtendTo() + " of " + sense + " with distance " + ff.getExtensionDegree(), formsListHelper.newDataList(_resForms));
+            if (!ff.getExtendTo().equals(EnumUtil.AcceptedSearchFormExtendTo.None.toString())) {
+                for (String sense : ff.getSenseUris()) {
+                    if (ff.getExtendTo().equals(EnumUtil.AcceptedSearchFormExtendTo.Hypernym.toString())
+                            || ff.getExtendTo().equals(EnumUtil.AcceptedSearchFormExtendTo.Hyponym.toString())) {
+                        for (int distance = 1; distance <= ff.getExtensionDegree(); distance++) {
+                            TupleQueryResult _resForms = lexiconManager.getFormsBySenseRelation(ff, sense, distance);
+                            forms.put(ff.getExtendTo() + " of " + sense + " with distance " + distance, formsListHelper.newDataList(_resForms));
+                        }
+                    } else if (ff.getExtendTo().equals(EnumUtil.AcceptedSearchFormExtendTo.Synonym.toString())) {
+                        TupleQueryResult _resForms = lexiconManager.getFormsBySenseRelation(ff, sense);
+                        if (_resForms.stream().count() > 0) {
+                            forms.put(ff.getExtendTo() + " of " + sense, formsListHelper.newDataList(_resForms));
+                        }
+                    }
+                }
             }
             String json = formsListHelper.toJson(forms);
             return Response.ok(json)
@@ -227,10 +236,10 @@ public class LexiconData {
         List<FormItem> forms = formsListHelper.newDataList(_forms);
         String json = formsListHelper.toJson(forms);
         return Response.ok(json)
-                    .type(MediaType.TEXT_PLAIN)
-                    .header("Access-Control-Allow-Headers", "content-type")
-                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                    .build();
+                .type(MediaType.TEXT_PLAIN)
+                .header("Access-Control-Allow-Headers", "content-type")
+                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                .build();
     }
 
     @GET
@@ -260,10 +269,10 @@ public class LexiconData {
         LexicalEntryElementItem elements = lexicalEntryElementHelper.newData(_elements);
         String json = lexicalEntryElementHelper.toJson(elements);
         return Response.ok(json)
-                    .type(MediaType.TEXT_PLAIN)
-                    .header("Access-Control-Allow-Headers", "content-type")
-                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                    .build();
+                .type(MediaType.TEXT_PLAIN)
+                .header("Access-Control-Allow-Headers", "content-type")
+                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                .build();
     }
 
 }
