@@ -108,7 +108,7 @@ public class LexiconData {
             }
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("lexical aspect not available").build();
         } catch (ManagerException ex) {
-            Logger.getLogger(LexiconData.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(LexiconData.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }
     }
@@ -134,7 +134,7 @@ public class LexiconData {
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
         } catch (ManagerException ex) {
-            Logger.getLogger(LexiconData.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(LexiconData.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }
     }
@@ -160,7 +160,7 @@ public class LexiconData {
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
         } catch (ManagerException ex) {
-            Logger.getLogger(LexiconData.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(LexiconData.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }
     }
@@ -204,7 +204,7 @@ public class LexiconData {
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
         } catch (ManagerException ex) {
-            Logger.getLogger(LexiconData.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(LexiconData.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }
     }

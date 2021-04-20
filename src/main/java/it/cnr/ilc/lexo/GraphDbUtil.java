@@ -38,6 +38,7 @@ public class GraphDbUtil {
     }
 
     private static void testConnection(RepositoryConnection connection) throws Exception {
+        // SELECT * WHERE { ?x ?y ?z} LIMIT 1
     }
 
     public static RepositoryConnection getConnection() {
