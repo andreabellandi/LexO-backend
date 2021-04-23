@@ -73,6 +73,10 @@ public abstract class TripleStoreDataHelper<D extends Data> extends Helper<D> {
         return (bs.getBinding(variable) != null) ? ((Literal) bs.getBinding(variable).getValue()).getLanguage().get() : "";
     }
     
+    public int getIntegerNumber(BindingSet bs, String variable) {
+        return (bs.getBinding(variable) != null) ? Integer.parseInt(bs.getBinding(variable).getValue().stringValue()) : 0;
+    }
+    
     public ArrayList<Morphology> getMorphology(BindingSet bs, String morpho) {
         ArrayList<Morphology> morphos = new ArrayList();
         if (!morpho.isEmpty()) {

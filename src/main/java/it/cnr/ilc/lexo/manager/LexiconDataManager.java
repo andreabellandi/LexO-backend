@@ -9,6 +9,7 @@ import it.cnr.ilc.lexo.GraphDbUtil;
 import it.cnr.ilc.lexo.LexOProperties;
 import it.cnr.ilc.lexo.service.data.lexicon.input.FormFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalEntryFilter;
+import it.cnr.ilc.lexo.service.data.lexicon.output.Counting;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryElementItem;
 import it.cnr.ilc.lexo.sparql.SparqlSelectData;
@@ -34,9 +35,20 @@ public class LexiconDataManager implements Manager, Cached {
 //    private final String namespace = StringUtil.escapeMetaCharacters(LexOProperties.getProperty("repository.lexicon.namespace"));
     private final String namespace = LexOProperties.getProperty("repository.lexicon.namespace");
 
+    public String getNamespace() {
+        return namespace;
+    }
+
     @Override
     public void reloadCache() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public Counting getTotalHits(String label, int value) {
+        Counting counting = new Counting();
+        counting.setLabel(label);
+        counting.setCount(value);
+        return counting;
     }
 
     public TupleQueryResult getFilterdLexicalEntries(LexicalEntryFilter lef) throws ManagerException {
@@ -61,7 +73,7 @@ public class LexiconDataManager implements Manager, Cached {
                 : getSearchField(lef.getFormType(), "*" + text)))) + ")";
         filter = filter + (!lef.getLang().isEmpty() ? " AND writtenFormLanguage:" + lef.getLang() : "");
         filter = filter + (!lef.getAuthor().isEmpty() ? " AND author:" + lef.getAuthor() : "");
-        filter = filter + (!lef.getPos().isEmpty() ? " AND pos:" + lef.getPos() : "");
+        filter = filter + (!lef.getPos().isEmpty() ? " AND pos:" + "\\\"" + lef.getPos() + "\\\"" : "");
         filter = filter + (!lef.getType().isEmpty() ? " AND type:" + lef.getType() : "");
         filter = filter + (!lef.getStatus().isEmpty() ? " AND status:" + lef.getStatus() : "");
         return filter;

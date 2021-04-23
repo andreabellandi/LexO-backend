@@ -14,7 +14,7 @@ import org.eclipse.rdf4j.query.BindingSet;
  *
  * @author andreabellandi
  */
-public class FormsListHelper extends TripleStoreDataHelper<FormItem> {
+public class FormItemsHelper extends TripleStoreDataHelper<FormItem> {
 
     @Override
     public void fillData(FormItem data, BindingSet bs) {

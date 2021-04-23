@@ -15,10 +15,13 @@ import it.cnr.ilc.lexo.service.data.lexicon.input.FormFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.output.FormItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryElementItem;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalEntryFilter;
+import it.cnr.ilc.lexo.service.data.lexicon.output.FormList;
+import it.cnr.ilc.lexo.service.data.lexicon.output.HitsDataList;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalSenseItem;
-import it.cnr.ilc.lexo.service.helper.FormsListHelper;
+import it.cnr.ilc.lexo.service.helper.FormItemsHelper;
+import it.cnr.ilc.lexo.service.helper.FormListHelper;
 import it.cnr.ilc.lexo.service.helper.HelperException;
 import it.cnr.ilc.lexo.service.helper.LexicalEntryCoreHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalEntryFilterHelper;
@@ -56,7 +59,8 @@ public class LexiconData {
     private final LexiconDataManager lexiconManager = ManagerFactory.getManager(LexiconDataManager.class);
     private final LexicalEntryFilterHelper lexicalEntryFilterHelper = new LexicalEntryFilterHelper();
     private final LexicalSenseFilterHelper lexicalSenseFilterHelper = new LexicalSenseFilterHelper();
-    private final FormsListHelper formsListHelper = new FormsListHelper();
+    private final FormItemsHelper formItemsHelper = new FormItemsHelper();
+    private final FormListHelper formListHelper = new FormListHelper();
     private final LexicalEntryElementHelper lexicalEntryElementHelper = new LexicalEntryElementHelper();
     private final LexicalEntryCoreHelper lexicalEntryCoreHelper = new LexicalEntryCoreHelper();
     private final LexicalEntryReferenceLinkHelper lexicalEntryReferenceLinkHelper = new LexicalEntryReferenceLinkHelper();
@@ -153,7 +157,8 @@ public class LexiconData {
         try {
             TupleQueryResult lexicalEnties = lexiconManager.getFilterdLexicalEntries(lef);
             List<LexicalEntryItem> entries = lexicalEntryFilterHelper.newDataList(lexicalEnties);
-            String json = lexicalEntryFilterHelper.toJson(entries);
+            HitsDataList hdl = new HitsDataList(lexicalEntryFilterHelper.getTotalHits(), entries);
+            String json = lexicalEntryFilterHelper.toJson(hdl);
             return Response.ok(json)
                     .type(MediaType.TEXT_PLAIN)
                     .header("Access-Control-Allow-Headers", "content-type")
@@ -176,28 +181,28 @@ public class LexiconData {
     @ApiOperation(value = "Forms list",
             notes = "This method returns a list of forms according to the input filter")
     public Response formsList(@QueryParam("key") String key, FormFilter ff) throws HelperException {
-        try {
-            Map<String, List<FormItem>> forms = new HashMap();
-            TupleQueryResult resForms = lexiconManager.getFilterdForms(ff);
-            forms.put(ff.getFormType().equals(EnumUtil.SearchFormTypes.Lemma.toString()) ? "forms of " + ff.getForm() : ff.getForm(),
-                    formsListHelper.newDataList(resForms));
+        try {          
+            List<FormList> list = new ArrayList();
+            TupleQueryResult res = lexiconManager.getFilterdForms(ff);
+            list.add(new FormList("", 0, "", "", formItemsHelper.newDataList(res)));
             if (!ff.getExtendTo().equals(EnumUtil.AcceptedSearchFormExtendTo.None.toString())) {
                 for (String sense : ff.getSenseUris()) {
                     if (ff.getExtendTo().equals(EnumUtil.AcceptedSearchFormExtendTo.Hypernym.toString())
                             || ff.getExtendTo().equals(EnumUtil.AcceptedSearchFormExtendTo.Hyponym.toString())) {
                         for (int distance = 1; distance <= ff.getExtensionDegree(); distance++) {
                             TupleQueryResult _resForms = lexiconManager.getFormsBySenseRelation(ff, sense, distance);
-                            forms.put(ff.getExtendTo() + " of " + sense + " with distance " + distance, formsListHelper.newDataList(_resForms));
+                            list.add(new FormList(ff.getExtendTo().equals(EnumUtil.AcceptedSearchFormExtendTo.Hypernym.toString()) ? "hyponym" : "hypernym", 
+                                    distance, lexiconManager.getNamespace() + sense, sense, formItemsHelper.newDataList(_resForms)));
                         }
                     } else if (ff.getExtendTo().equals(EnumUtil.AcceptedSearchFormExtendTo.Synonym.toString())) {
                         TupleQueryResult _resForms = lexiconManager.getFormsBySenseRelation(ff, sense);
                         if (_resForms.stream().count() > 0) {
-                            forms.put(ff.getExtendTo() + " of " + sense, formsListHelper.newDataList(_resForms));
+                            list.add(new FormList("synonym", 1, lexiconManager.getNamespace() + sense, sense, formItemsHelper.newDataList(_resForms)));
                         }
                     }
                 }
             }
-            String json = formsListHelper.toJson(forms);
+            String json = formListHelper.toJson(list);
             return Response.ok(json)
                     .type(MediaType.TEXT_PLAIN)
                     .header("Access-Control-Allow-Headers", "content-type")
@@ -233,8 +238,8 @@ public class LexiconData {
             @PathParam("id") String id) {
 //        log(Level.INFO, "get lexicon entries types");
         TupleQueryResult _forms = lexiconManager.getForms(id);
-        List<FormItem> forms = formsListHelper.newDataList(_forms);
-        String json = formsListHelper.toJson(forms);
+        List<FormItem> forms = formItemsHelper.newDataList(_forms);
+        String json = formItemsHelper.toJson(forms);
         return Response.ok(json)
                 .type(MediaType.TEXT_PLAIN)
                 .header("Access-Control-Allow-Headers", "content-type")

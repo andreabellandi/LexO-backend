@@ -21,6 +21,7 @@ public class LexicalEntryFilterHelper extends TripleStoreDataHelper<LexicalEntry
 
     @Override
     public void fillData(LexicalEntryItem data, BindingSet bs) {
+        setTotalHits(getIntegerNumber(bs, SparqlVariable.TOTAL_HITS));
         data.setLexicalEntry(bs.getBinding(SparqlVariable.LEXICAL_ENTRY).getValue().stringValue());
         data.setLexicalEntryInstanceName(bs.getBinding(SparqlVariable.LEXICAL_ENTRY_INSTANCE_NAME).getValue().stringValue());
         data.setType(((IRI) bs.getBinding(SparqlVariable.LEXICAL_ENTRY_TYPE).getValue()).getLocalName());
@@ -48,5 +49,4 @@ public class LexicalEntryFilterHelper extends TripleStoreDataHelper<LexicalEntry
         }
     }
 
-    
 }

@@ -16,6 +16,7 @@ public class LexicalSenseItem implements Data {
     private String sense;
     private String senseInstanceName;
     private String lexicalEntry;
+    private String lexicalEntryInstanceName;
     private String pos;
     private boolean hasChildren;
     private String label;
@@ -120,6 +121,14 @@ public class LexicalSenseItem implements Data {
 
     public void setConceptInstanceName(String conceptInstanceName) {
         this.conceptInstanceName = conceptInstanceName;
+    }
+
+    public String getLexicalEntryInstanceName() {
+        return lexicalEntryInstanceName;
+    }
+
+    public void setLexicalEntryInstanceName(String lexicalEntryInstanceName) {
+        this.lexicalEntryInstanceName = lexicalEntryInstanceName;
     }
 
 }

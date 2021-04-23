@@ -5,9 +5,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import it.cnr.ilc.lexo.LexOProperties;
 import it.cnr.ilc.lexo.service.data.Data;
+import it.cnr.ilc.lexo.service.data.lexicon.output.Counting;
+import it.cnr.ilc.lexo.service.data.lexicon.output.HitsDataList;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
+import org.apache.poi.ss.formula.functions.T;
 
 /**
  *
@@ -15,6 +18,16 @@ import java.util.Map;
  * @param <D>
  */
 public abstract class Helper<D extends Data> {
+
+    private int totalHits;
+
+    public int getTotalHits() {
+        return totalHits;
+    }
+
+    public void setTotalHits(int totalHits) {
+        this.totalHits = totalHits;
+    }
 
     public static boolean parseBoolean(String content) throws HelperException {
         if ("true".equals(content.toLowerCase())) {
@@ -63,7 +76,15 @@ public abstract class Helper<D extends Data> {
             throw new RuntimeException(ex);
         }
     }
-    
+
+    public String toJson(HitsDataList<D> data) {
+        try {
+            return objectMapper.writeValueAsString(data);
+        } catch (JsonProcessingException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
     public String toJson(Map<String, List<D>> data) {
         try {
             return objectMapper.writeValueAsString(data);
