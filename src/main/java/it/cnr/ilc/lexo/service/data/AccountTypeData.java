@@ -1,17 +1,23 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package it.cnr.ilc.lexo.service.data;
 
 /**
  *
  * @author andreabellandi
  */
-public class AccountType implements Data {
+
+public class AccountTypeData implements Data {
 
     private Long id;
     private String name;
     private Integer position;
     private String color;
 
-    public AccountType() {
+    public AccountTypeData() {
     }
 
     public Long getId() {

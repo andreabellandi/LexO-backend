@@ -15,6 +15,8 @@ import it.cnr.ilc.lexo.service.data.lexicon.input.FormFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.output.FormItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryElementItem;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalEntryFilter;
+import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalSenseFilter;
+import it.cnr.ilc.lexo.service.data.lexicon.output.Counting;
 import it.cnr.ilc.lexo.service.data.lexicon.output.FormList;
 import it.cnr.ilc.lexo.service.data.lexicon.output.HitsDataList;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryCore;
@@ -28,6 +30,7 @@ import it.cnr.ilc.lexo.service.helper.LexicalEntryFilterHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalEntryElementHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalEntryReferenceLinkHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalSenseFilterHelper;
+import it.cnr.ilc.lexo.service.helper.PathLenghtHelper;
 import it.cnr.ilc.lexo.util.EnumUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -54,7 +57,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  */
 @Path("lexicon/data")
 @Api("Lexicon data")
-public class LexiconData {
+public class LexiconData extends Service {
 
     private final LexiconDataManager lexiconManager = ManagerFactory.getManager(LexiconDataManager.class);
     private final LexicalEntryFilterHelper lexicalEntryFilterHelper = new LexicalEntryFilterHelper();
@@ -64,6 +67,7 @@ public class LexiconData {
     private final LexicalEntryElementHelper lexicalEntryElementHelper = new LexicalEntryElementHelper();
     private final LexicalEntryCoreHelper lexicalEntryCoreHelper = new LexicalEntryCoreHelper();
     private final LexicalEntryReferenceLinkHelper lexicalEntryReferenceLinkHelper = new LexicalEntryReferenceLinkHelper();
+    private final PathLenghtHelper pathLenghtHelper = new PathLenghtHelper();
 
     @GET
     @Path("{id}/lexicalEntry")
@@ -127,9 +131,9 @@ public class LexiconData {
             produces = "application/json; charset=UTF-8")
     @ApiOperation(value = "Lexical senses list",
             notes = "This method returns a list of lexical senses according to the input filter")
-    public Response sensesList(@QueryParam("key") String key, LexicalEntryFilter lef) throws HelperException {
+    public Response sensesList(@QueryParam("key") String key, LexicalSenseFilter lsf) throws HelperException {
         try {
-            TupleQueryResult lexicalSenses = lexiconManager.getFilterdLexicalSenses(lef);
+            TupleQueryResult lexicalSenses = lexiconManager.getFilterdLexicalSenses(lsf);
             List<LexicalSenseItem> entries = lexicalSenseFilterHelper.newDataList(lexicalSenses);
             String json = lexicalSenseFilterHelper.toJson(entries);
             return Response.ok(json)
@@ -181,7 +185,7 @@ public class LexiconData {
     @ApiOperation(value = "Forms list",
             notes = "This method returns a list of forms according to the input filter")
     public Response formsList(@QueryParam("key") String key, FormFilter ff) throws HelperException {
-        try {          
+        try {
             List<FormList> list = new ArrayList();
             TupleQueryResult res = lexiconManager.getFilterdForms(ff);
             list.add(new FormList("", 0, "", "", formItemsHelper.newDataList(res)));
@@ -189,14 +193,28 @@ public class LexiconData {
                 for (String sense : ff.getSenseUris()) {
                     if (ff.getExtendTo().equals(EnumUtil.AcceptedSearchFormExtendTo.Hypernym.toString())
                             || ff.getExtendTo().equals(EnumUtil.AcceptedSearchFormExtendTo.Hyponym.toString())) {
-                        for (int distance = 1; distance <= ff.getExtensionDegree(); distance++) {
-                            TupleQueryResult _resForms = lexiconManager.getFormsBySenseRelation(ff, sense, distance);
-                            list.add(new FormList(ff.getExtendTo().equals(EnumUtil.AcceptedSearchFormExtendTo.Hypernym.toString()) ? "hyponym" : "hypernym", 
-                                    distance, lexiconManager.getNamespace() + sense, sense, formItemsHelper.newDataList(_resForms)));
+                        int lenght = 1;
+                        List<FormItem> forms = new ArrayList();
+                        for (Counting c : pathLenghtHelper.newDataList(lexiconManager.getRelationByLenght(ff.getExtendTo(), sense))) {
+                            if (ff.getExtensionDegree() >= c.getCount()) {
+                                if (lenght == c.getCount()) {
+                                    TupleQueryResult _res = lexiconManager.getFilterdForms(c.getLabel());
+                                    forms.addAll(formItemsHelper.newDataList(_res));
+                                } else {
+                                    list.add(new FormList(ff.getExtendTo(), lenght, lexiconManager.getNamespace() + sense, sense,
+                                            lexiconManager.getFormItemListCopy(forms)));
+                                    forms.clear();
+                                    lenght++;
+                                    TupleQueryResult _res = lexiconManager.getFilterdForms(c.getLabel());
+                                    forms.addAll(formItemsHelper.newDataList(_res));
+                                }
+                            }
                         }
+                        list.add(new FormList(ff.getExtendTo(), lenght, lexiconManager.getNamespace() + sense, sense,
+                                            lexiconManager.getFormItemListCopy(forms)));
                     } else if (ff.getExtendTo().equals(EnumUtil.AcceptedSearchFormExtendTo.Synonym.toString())) {
                         TupleQueryResult _resForms = lexiconManager.getFormsBySenseRelation(ff, sense);
-                        if (_resForms.stream().count() > 0) {
+                        if (_resForms.hasNext()) {
                             list.add(new FormList("synonym", 1, lexiconManager.getNamespace() + sense, sense, formItemsHelper.newDataList(_resForms)));
                         }
                     }

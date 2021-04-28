@@ -318,7 +318,7 @@ public class SparqlSelectData {
             + "    GRAPH ?g { [RELATION_DISTANCE_PATH] }\n"
             + "    ?" + SparqlVariable.LEXICAL_ENTRY + " ontolex:sense ?" + SparqlVariable.TARGET + " .\n"
             + "    ?" + SparqlVariable.LEXICAL_ENTRY + " ?" + SparqlVariable.FORM_TYPE + " ?" + SparqlVariable.FORM + " ;\n"
-            + "       lexinfo:partOfSpeech ?posTag .\n" 
+            + "       lexinfo:partOfSpeech ?posTag .\n"
             + "    ?" + SparqlVariable.FORM + " dct:contributor ?" + SparqlVariable.AUTHOR + " ;\n"
             + "       ontolex:writtenRep ?" + SparqlVariable.WRITTEN_REPRESENTATION + " .\n"
             + "   OPTIONAL { ?" + SparqlVariable.FORM + " ontolex:phoneticRep ?" + SparqlVariable.PHONETIC_REPRESENTATION + " . }\n"
@@ -343,4 +343,39 @@ public class SparqlSelectData {
             + "  ORDER BY ?"
             + SparqlVariable.WRITTEN_REPRESENTATION
             + " ?" + SparqlVariable.FORM_INSTANCE_NAME;
+
+    public static final String DATA_PATH_LENGTH
+            = SparqlPrefix.LEX + "\n"
+            + SparqlPrefix.LEXINFO + "\n"
+            + SparqlPrefix.ONTOLEX + "\n"
+            + "SELECT ?lexicalEntry (count(?mid) as ?lenght) { \n"
+            + "  lex:[START_NODE] lexinfo:[START_RELATION]* ?mid .\n"
+            + "  ?mid lexinfo:[MID_RELATION]+ ?IRI .\n"
+            + "  ?lexicalEntry ontolex:sense ?IRI .\n"
+            + "}\n"
+            + "GROUP BY ?IRI ?lexicalEntry \n"
+            + "ORDER BY ?lenght";
+//            = SparqlPrefix.LEX + "\n"
+//            + SparqlPrefix.LEXINFO + "\n"
+//            + "SELECT ?" + SparqlVariable.IRI + " (count(?mid) as ?" + SparqlVariable.LENGHT + ") { \n"
+//            + "  lex:[START_NODE] lexinfo:[START_RELATION]* ?mid .\n"
+//            + "  ?mid lexinfo:[MID_RELATION]+ ?" + SparqlVariable.IRI + " .\n"
+//            + "}\n"
+//            + "GROUP BY ?" + SparqlVariable.IRI + " \n"
+//            + "ORDER BY ?" + SparqlVariable.LENGHT + "";
+
+    public static final String DATA_RELATION
+            = SparqlPrefix.LEX + "\n"
+            + SparqlPrefix.LEXINFO + "\n"
+            + SparqlPrefix.ONTO + "\n"
+            + SparqlPrefix.ONTOLEX + "\n"
+            + "SELECT ?g ?target ?id\n"
+            + "FROM NAMED onto:explicit\n"
+            + "FROM NAMED onto:implicit \n"
+            + "{ \n"
+            + "  GRAPH ?g { lex:[NODE] lexinfo:[RELATION] ?target . \n"
+            + "        [FILTER] } \n"
+            + "  ?id [ID_RELATION] ?target .\n"
+            + "}";
+
 }

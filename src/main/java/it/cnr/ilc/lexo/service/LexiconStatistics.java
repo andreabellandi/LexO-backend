@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  */
 @Path("lexicon/statistics")
 @Api("Lexicon statistics")
-public class LexiconStatistics {
+public class LexiconStatistics extends Service {
 
     private final LexiconStatisticsManager lexiconManager = ManagerFactory.getManager(LexiconStatisticsManager.class);
     private final CountingHelper countingHelper = new CountingHelper();

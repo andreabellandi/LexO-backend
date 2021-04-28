@@ -61,5 +61,7 @@ public class SparqlVariable {
     public static final String SAMEAS = "sameAs";
     
     public static final String TARGET = "target";
+    public static final String IRI = "IRI";
+    public static final String LENGHT = "lenght";
 
 }

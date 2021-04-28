@@ -5,23 +5,30 @@
  */
 package it.cnr.ilc.lexo.service.data.lexicon.input;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import it.cnr.ilc.lexo.service.data.Data;
 import java.util.ArrayList;
 
 /**
  *
- * @author andreabellandi { "searchType": "keyWord", "lexicalEntry" : IRI",
- * "senses": [ "http://lexica/mylexicon#USem72095pesca",
- * "http://lexica/mylexicon#USem72096pesca" ], "extend": "iperonimia",
- * "distance": 1, }
+ * @author andreabellandi
  */
+
+@ApiModel(description = "Input model representing form filter options")
 public class FormFilter implements Data {
 
+    @ApiModelProperty(value = "chars sequence to search", example = "pesca", allowEmptyValue = false)
     private String form;
+    @ApiModelProperty(value = "the type of form the serach is performed on", allowableValues = "keyword, lemma", example = "lemma", allowEmptyValue = false)
     private String formType;
+    @ApiModelProperty(value = "the lexical entry ID", example = "MUSpescaNOUN", allowEmptyValue = false)
     private String lexicalEntry;
+    @ApiModelProperty(value = "senses to be extend to with a lexico semantic relation", example = "USem72095pesca", allowEmptyValue = true)
     private ArrayList<String> senseUris;
+    @ApiModelProperty(value = "the lexico-semantic relation of the list of senses, the search has to be extended to", allowableValues = "synonym, hypernym, hyponym", example = "hyponym", allowEmptyValue = true)
     private String extendTo;
+    @ApiModelProperty(value = "the depth of the lexico-semantic relation, the search has to get up to  (only 1 for synonym)", allowableValues = "1, 2, 3", example = "3", allowEmptyValue = false)
     private int extensionDegree;
 
     public String getForm() {

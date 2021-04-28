@@ -1,21 +1,21 @@
-package it.cnr.ilc.lexo.hibernate.entity;
-
-import java.util.Map;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package it.cnr.ilc.lexo.service.data;
 
 /**
  *
  * @author andreabellandi
  */
-@Entity
-public class AccountEntity extends SuperEntity  {
+import com.fasterxml.jackson.annotation.JsonInclude;
+import java.util.Map;
 
-    private AccountTypeEntity type;
+public class AccountData implements Data {
+
+    private Long id;
+    private String type;
     private String username;
     private String password;
     private String name;
@@ -23,16 +23,25 @@ public class AccountEntity extends SuperEntity  {
     private Boolean enabled;
     private Map<String, String> settings;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    public AccountTypeEntity getType() {
+    public AccountData() {
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getType() {
         return type;
     }
 
-    public void setType(AccountTypeEntity type) {
+    public void setType(String type) {
         this.type = type;
     }
 
-    @Column(nullable = false)
     public String getUsername() {
         return username;
     }
@@ -41,7 +50,6 @@ public class AccountEntity extends SuperEntity  {
         this.username = username;
     }
 
-    @Column(nullable = false)
     public String getPassword() {
         return password;
     }
@@ -66,7 +74,6 @@ public class AccountEntity extends SuperEntity  {
         this.email = email;
     }
 
-    @Column(nullable = false, columnDefinition = "tinyint(1)")
     public Boolean getEnabled() {
         return enabled;
     }
@@ -75,7 +82,7 @@ public class AccountEntity extends SuperEntity  {
         this.enabled = enabled;
     }
 
-    @ElementCollection(fetch = FetchType.LAZY)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public Map<String, String> getSettings() {
         return settings;
     }

@@ -13,31 +13,31 @@ import it.cnr.ilc.lexo.service.data.Data;
  *
  * @author andreabellandi
  */
-@ApiModel(description = "Input model representing lexical entry filter options")
-public class LexicalEntryFilter implements Data {
+@ApiModel(description = "Input model representing lexical sense filter options")
+public class LexicalSenseFilter implements Data {
 
-    @ApiModelProperty(value = "chars sequence to search", example = "disso", allowEmptyValue = true)
+    @ApiModelProperty(value = "chars sequence to search", example = "pesca", allowEmptyValue = false)
     private String text;
-    @ApiModelProperty(value = "search type to perform (it cannot be empty)", example = "startsWith", allowableValues = "equals, startsWith, contains, endsWith", allowEmptyValue = false)
+    @ApiModelProperty(value = "search type to perform (it cannot be empty)", example = "equals", allowableValues = "equals, startsWith, contains, endsWith", allowEmptyValue = false)
     private String searchMode;
     @ApiModelProperty(value = "lexcial entry types (empty means all)", example = "word", allowableValues = "word, multi-word expression, affix", allowEmptyValue = true)
     private String type;
-    @ApiModelProperty(value = "part of speech (empty means all)", example = "noun", allowEmptyValue = true)
+    @ApiModelProperty(value = "part of speech (empty means all)", example= "noun", allowEmptyValue = true)
     private String pos;
     @ApiModelProperty(value = "the type of form the serach is performed on (entry refers to the entry label only, and flexed means all the forms)", allowableValues = "flexed, entry", example = "flexed", allowEmptyValue = false)
     private String formType;
-    @ApiModelProperty(value = "author (empty means all)", example = "vquochi", allowEmptyValue = true)
+    @ApiModelProperty(value = "author (empty means all)", example = "fmurano", allowEmptyValue = true)
     private String author;
     @ApiModelProperty(value = "language (empty for all languages)", example = "it", allowEmptyValue = true)
     private String lang;
-    @ApiModelProperty(value = "status (empty means all)", example = "reviewed", allowableValues = "working, completed, reviewed", allowEmptyValue = true)
+    @ApiModelProperty(value = "status (empty means all)", example = "completed", allowableValues = "working, completed, reviewed", allowEmptyValue = true)
     private String status;
     @ApiModelProperty(value = "result set offset", example = "0", allowEmptyValue = false)
     private int offset;
     @ApiModelProperty(value = "result set limit", example = "500", allowEmptyValue = false)
     private int limit;
 
-    public LexicalEntryFilter() {
+    public LexicalSenseFilter() {
     }
 
     public String getText() {
