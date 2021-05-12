@@ -92,9 +92,13 @@ public class LexiconDataManager implements Manager, Cached {
         filter = filter + (!lsf.getLang().isEmpty() ? " AND writtenFormLanguage:" + lsf.getLang() : "");
         filter = filter + (!lsf.getAuthor().isEmpty() ? " AND author:" + lsf.getAuthor() : "");
         filter = filter + (!lsf.getPos().isEmpty() ? " AND pos:" + "\\\"" + lsf.getPos() + "\\\"" : "");
-        filter = filter + (!lsf.getType().isEmpty() ? " AND type:" + lsf.getType() : "");
+        filter = filter + (!lsf.getType().isEmpty() ? " AND type:" + "\\\"" + lsf.getType() + "\\\"" : "");
         filter = filter + (!lsf.getStatus().isEmpty() ? " AND status:" + lsf.getStatus() : "");
         return filter;
+    }
+
+    private String createFilter(String lexicalEntryID) {
+        return "lexicalEntryIRI:" + "\\\"" + namespace + lexicalEntryID + "\\\"";
     }
 
     private String getSearchField(String formType, String textSearch) {
@@ -108,7 +112,7 @@ public class LexiconDataManager implements Manager, Cached {
                 SparqlSelectData.DATA_LEXICAL_ENTRY_ELEMENTS.replace("[IRI]", "\\\"" + namespace + lexicalEntryID + "\\\""));
         return tupleQuery.evaluate();
     }
-    
+
     public List<FormItem> getFormItemListCopy(List<FormItem> forms) {
         List<FormItem> _forms = new ArrayList();
         for (FormItem fi : forms) {
@@ -125,15 +129,15 @@ public class LexiconDataManager implements Manager, Cached {
         }
         return _forms;
     }
-    
-     private ArrayList<Morphology> getMorphologyListCopy(ArrayList<Morphology> morpho) { 
-         ArrayList<Morphology> _morpho = new ArrayList();
+
+    private ArrayList<Morphology> getMorphologyListCopy(ArrayList<Morphology> morpho) {
+        ArrayList<Morphology> _morpho = new ArrayList();
         for (Morphology m : morpho) {
             Morphology _m = new Morphology(m.getTrait(), m.getValue());
             _morpho.add(_m);
         }
         return _morpho;
-     }
+    }
 
     public TupleQueryResult getFilterdForms(FormFilter ff) throws ManagerException {
         Manager.validateWithEnum("searchFormTypes", SearchFormTypes.class, ff.getFormType());
@@ -150,7 +154,7 @@ public class LexiconDataManager implements Manager, Cached {
                         .replace("[FORM_CONSTRAINT]", ""));
         return tupleQuery.evaluate();
     }
-    
+
     public TupleQueryResult getFilterdForms(String id) throws ManagerException {
         TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL,
                 SparqlSelectData.DATA_FORMS.replace("[IRI]", "\\\"" + namespace + id + "\\\"")
@@ -170,6 +174,14 @@ public class LexiconDataManager implements Manager, Cached {
         TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL,
                 SparqlSelectData.DATA_FORMS.replace("[IRI]", "\\\"" + namespace + lexicalEntryID + "\\\"")
                         .replace("[FORM_CONSTRAINT]", ""));
+        return tupleQuery.evaluate();
+    }
+
+    public TupleQueryResult getLexicalSenses(String lexicalEntryID) {
+        TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL,
+                SparqlSelectData.DATA_LEXICAL_SENSES.replace("[FILTER]", createFilter(lexicalEntryID))
+                        .replace("[LIMIT]", String.valueOf(500))
+                        .replace("[OFFSET]", String.valueOf(0)));
         return tupleQuery.evaluate();
     }
 

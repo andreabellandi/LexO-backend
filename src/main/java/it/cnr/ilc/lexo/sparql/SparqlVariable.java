@@ -51,6 +51,11 @@ public class SparqlVariable {
     public static final String CONCEPT_INSTANCE_NAME = "conceptInstanceName";
     
     public static final String AUTHOR = "author";
+    public static final String CREATION_DATE = "created";
+    public static final String COMPLETION_DATE = "dateAccepted";
+    public static final String REVISION_DATE = "dateSubmitted";
+    public static final String LAST_UPDATE = "modified";
+    
     
     public static final String NOTE = "note";
     

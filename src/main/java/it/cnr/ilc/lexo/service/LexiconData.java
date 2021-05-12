@@ -264,6 +264,39 @@ public class LexiconData extends Service {
                 .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                 .build();
     }
+    
+     @GET
+    @Path("{id}/senses")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "/{id}/senses",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Lexical senses",
+            notes = "This method returns all the senses of a lexical entry")
+    public Response senses(
+            @ApiParam(
+                    name = "key",
+                    value = "authentication token",
+                    example = "lexodemo",
+                    required = true)
+            @QueryParam("key") String key,
+            @ApiParam(
+                    name = "id",
+                    value = "lexical entry ID",
+                    example = "MUSaccedereVERB",
+                    required = true)
+            @PathParam("id") String id) {
+//        log(Level.INFO, "get lexicon entries types");
+        TupleQueryResult _forms = lexiconManager.getLexicalSenses(id);
+        List<LexicalSenseItem> senses = lexicalSenseFilterHelper.newDataList(_forms);
+        String json = lexicalSenseFilterHelper.toJson(senses);
+        return Response.ok(json)
+                .type(MediaType.TEXT_PLAIN)
+                .header("Access-Control-Allow-Headers", "content-type")
+                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                .build();
+    }
 
     @GET
     @Path("{id}/elements")

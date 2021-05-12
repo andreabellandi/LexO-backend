@@ -17,13 +17,13 @@ import java.util.ArrayList;
 @ApiModel(description = "Output model representing the core data of a lexical entry")
 public class LexicalEntryCore implements Data {
 
-    @ApiModelProperty(value = "lexcial entry IRI", example = "namespace:MUSaccedereVERB")
+    @ApiModelProperty(value = "lexical entry IRI", example = "namespace:MUSaccedereVERB")
     private String lexicalEntry;
-    @ApiModelProperty(value = "lexcial entry short IRI", example = "MUSaccedereVERB")
+    @ApiModelProperty(value = "lexical entry short IRI", example = "MUSaccedereVERB")
     private String lexicalEntryInstanceName;
-    @ApiModelProperty(value = "lexcial entry label", example = "label for accedere")
+    @ApiModelProperty(value = "lexical entry label", example = "label for accedere")
     private String label;
-    @ApiModelProperty(value = "lexcial entry types", example = "word", allowableValues = "word, multi-word expression, affix")
+    @ApiModelProperty(value = "lexical entry types", example = "word", allowableValues = "word, multi-word expression, affix")
     private String type;
     @ApiModelProperty(value = "part of speech", reference = "https://www.lexinfo.net/", example = "verb")
     private String pos;
@@ -37,14 +37,22 @@ public class LexicalEntryCore implements Data {
     private String conceptInstanceName;
     @ApiModelProperty(value = "the counting of the links of a lexical entry and their type: Reference (see Also, same As, bilbiography, ...), Multimedia, Attestation, Other)")
     private ArrayList<LexicalEntryElementItem> links;
-    @ApiModelProperty(value = "lexcial entry author", example = "user3")
+    @ApiModelProperty(value = "lexical entry author", example = "user3")
     private String author;
-    @ApiModelProperty(value = "lexcial entry revisor", example = "rev2")
+    @ApiModelProperty(value = "lexical entry revisor", example = "rev2")
     private String revisor;
     @ApiModelProperty(value = "lexical entry status", example = "working", allowableValues = "working, completed, reviewed")
     private String status;
-    @ApiModelProperty(value = "lexcial entry note", example = "some note ...")
+    @ApiModelProperty(value = "lexical entry note", example = "some note ...")
     private String note;
+    @ApiModelProperty(value = "lexical entry creation date")
+    private String creationDate;
+    @ApiModelProperty(value = "lexical entry last update")
+    private String lastUpdate;
+    @ApiModelProperty(value = "lexical entry completed status date")
+    private String completionDate;
+    @ApiModelProperty(value = "lexical entry reviewed status date")
+    private String revisionDate;
 
     public String getLexicalEntry() {
         return lexicalEntry;
@@ -158,4 +166,35 @@ public class LexicalEntryCore implements Data {
         this.links = links;
     }
 
+    public String getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(String creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public String getLastUpdate() {
+        return lastUpdate;
+    }
+
+    public void setLastUpdate(String lastUpdate) {
+        this.lastUpdate = lastUpdate;
+    }
+
+    public String getCompletionDate() {
+        return completionDate;
+    }
+
+    public void setCompletionDate(String completionDate) {
+        this.completionDate = completionDate;
+    }
+
+    public String getRevisionDate() {
+        return revisionDate;
+    }
+
+    public void setRevisionDate(String revisionDate) {
+        this.revisionDate = revisionDate;
+    }
 }

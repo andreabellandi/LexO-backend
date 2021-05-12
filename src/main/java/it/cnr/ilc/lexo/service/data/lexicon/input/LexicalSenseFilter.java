@@ -26,7 +26,7 @@ public class LexicalSenseFilter implements Data {
     private String pos;
     @ApiModelProperty(value = "the type of form the serach is performed on (entry refers to the entry label only, and flexed means all the forms)", allowableValues = "flexed, entry", example = "flexed", allowEmptyValue = false)
     private String formType;
-    @ApiModelProperty(value = "author (empty means all)", example = "fmurano", allowEmptyValue = true)
+    @ApiModelProperty(value = "author (empty means all)", example = "user1", allowEmptyValue = true)
     private String author;
     @ApiModelProperty(value = "language (empty for all languages)", example = "it", allowEmptyValue = true)
     private String lang;

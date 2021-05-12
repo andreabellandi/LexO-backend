@@ -7,7 +7,6 @@ package it.cnr.ilc.lexo.service.helper;
 
 import it.cnr.ilc.lexo.service.data.Data;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Morphology;
-import it.cnr.ilc.lexo.sparql.SparqlVariable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +24,7 @@ import org.eclipse.rdf4j.query.TupleQueryResult;
  * @param <D>
  */
 public abstract class TripleStoreDataHelper<D extends Data> extends Helper<D> {
-    
+
     private final String MORPHOLOGY_PATTERN = "(([a-zA-Z]+)\\:([a-zA-Z]+));?";
     private final Pattern pattern = Pattern.compile(MORPHOLOGY_PATTERN);
 
@@ -38,7 +37,7 @@ public abstract class TripleStoreDataHelper<D extends Data> extends Helper<D> {
     }
 
     public D newData(TupleQueryResult res) {
-        try {//*****************//
+        try {// if res.next == null ??????//
             D data = getDataClass().getDeclaredConstructor().newInstance();
             fillData(data, res.next());
             return data;
@@ -46,7 +45,7 @@ public abstract class TripleStoreDataHelper<D extends Data> extends Helper<D> {
             throw new RuntimeException(ex);
         }
     }
-    
+
     public D newData(BindingSet bs) {
         try {
             D data = getDataClass().getDeclaredConstructor().newInstance();
@@ -70,13 +69,15 @@ public abstract class TripleStoreDataHelper<D extends Data> extends Helper<D> {
     }
 
     public String getLiteralLanguage(BindingSet bs, String variable) {
-        return (bs.getBinding(variable) != null) ? ((Literal) bs.getBinding(variable).getValue()).getLanguage().get() : "";
+        return (bs.getBinding(variable) != null) ? (!(((Literal) bs.getBinding(variable).getValue()).getLanguage().isEmpty())
+                ? ((Literal) bs.getBinding(variable).getValue()).getLanguage().get() : "")
+                : "";
     }
-    
+
     public int getIntegerNumber(BindingSet bs, String variable) {
         return (bs.getBinding(variable) != null) ? Integer.parseInt(bs.getBinding(variable).getValue().stringValue()) : 0;
     }
-    
+
     public ArrayList<Morphology> getMorphology(BindingSet bs, String morpho) {
         ArrayList<Morphology> morphos = new ArrayList();
         if (!morpho.isEmpty()) {
@@ -87,7 +88,7 @@ public abstract class TripleStoreDataHelper<D extends Data> extends Helper<D> {
         }
         return morphos;
     }
-    
+
     public ArrayList<Morphology> getMorphologyWithPoS(BindingSet bs, String morpho, String pos) {
         ArrayList<Morphology> morphos = new ArrayList();
         morphos.add(new Morphology("partOfSpeech", pos));

@@ -27,6 +27,8 @@ public class LexicalEntryItem implements Data {
     private String lexicalEntryInstanceName;
     private ArrayList<Morphology> morphology;
 
+    
+
     public LexicalEntryItem() {
     }
 
@@ -125,6 +127,8 @@ public class LexicalEntryItem implements Data {
     public void setMorphology(ArrayList<Morphology> morphology) {
         this.morphology = morphology;
     }
+
+    
 
     
 
