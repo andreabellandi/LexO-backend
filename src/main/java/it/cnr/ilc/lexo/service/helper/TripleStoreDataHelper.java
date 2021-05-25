@@ -25,7 +25,7 @@ import org.eclipse.rdf4j.query.TupleQueryResult;
  */
 public abstract class TripleStoreDataHelper<D extends Data> extends Helper<D> {
 
-    private final String MORPHOLOGY_PATTERN = "(([a-zA-Z]+)\\:([a-zA-Z]+));?";
+    private final String MORPHOLOGY_PATTERN = "(([a-zA-Z-]+):(([a-zA-Z-]+\\s?)+));?";
     private final Pattern pattern = Pattern.compile(MORPHOLOGY_PATTERN);
 
     public abstract void fillData(D data, BindingSet bs);
@@ -68,8 +68,8 @@ public abstract class TripleStoreDataHelper<D extends Data> extends Helper<D> {
         return (bs.getBinding(variable) != null) ? ((Literal) bs.getBinding(variable).getValue()).getLabel() : "";
     }
 
-    public String getLiteralLanguage(BindingSet bs, String variable) {
-        return (bs.getBinding(variable) != null) ? (!(((Literal) bs.getBinding(variable).getValue()).getLanguage().isEmpty())
+    public String getLiteralLanguage(BindingSet bs, String variable)  {
+        return (bs.getBinding(variable) != null) ? ((((Literal) bs.getBinding(variable).getValue()).getLanguage().isPresent())
                 ? ((Literal) bs.getBinding(variable).getValue()).getLanguage().get() : "")
                 : "";
     }

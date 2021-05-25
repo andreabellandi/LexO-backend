@@ -12,7 +12,10 @@ package it.cnr.ilc.lexo.sparql;
 public class SparqlDeleteData {
 
     public static final String DELETE_LEXICAL_ENTRY
-            = SparqlPrefix.LEX + "\n"
-            + "DELETE WHERE { lex:_ID_ ?predicate ?object . }";
+            = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
+            + "DELETE { lex:_ID_ ?predicate ?object . \n"
+            + "         ?subject ?_predicate lex:_ID_ . }\n"
+            + "WHERE { lex:_ID_ ?predicate ?object . \n"
+           + "         OPTIONAL { ?subject ?_predicate lex:_ID_ . } }";
 
 }

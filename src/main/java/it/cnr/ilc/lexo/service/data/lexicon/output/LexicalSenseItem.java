@@ -21,7 +21,9 @@ public class LexicalSenseItem implements Data {
     private boolean hasChildren;
     private String label;
     private String definition;
-    private String author;
+    private String creator;
+    private String lastUpdate;
+    private String creationDate;
     private String note;
     private String usage;
     private String concept;
@@ -83,12 +85,28 @@ public class LexicalSenseItem implements Data {
         this.definition = definition;
     }
 
-    public String getAuthor() {
-        return author;
+    public String getCreator() {
+        return creator;
     }
 
-    public void setAuthor(String author) {
-        this.author = author;
+    public void setCreator(String creator) {
+        this.creator = creator;
+    }
+
+    public String getLastUpdate() {
+        return lastUpdate;
+    }
+
+    public void setLastUpdate(String lastUpdate) {
+        this.lastUpdate = lastUpdate;
+    }
+
+    public String getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(String creationDate) {
+        this.creationDate = creationDate;
     }
 
     public String getNote() {

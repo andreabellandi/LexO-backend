@@ -7,13 +7,8 @@ package it.cnr.ilc.lexo.manager;
 
 import it.cnr.ilc.lexo.GraphDbUtil;
 import it.cnr.ilc.lexo.LexOProperties;
-import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryCore;
-import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryItem;
 import it.cnr.ilc.lexo.sparql.SparqlDeleteData;
-import it.cnr.ilc.lexo.sparql.SparqlInsertData;
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.UUID;
 import org.eclipse.rdf4j.query.QueryLanguage;
 import org.eclipse.rdf4j.query.Update;
 
@@ -24,8 +19,6 @@ import org.eclipse.rdf4j.query.Update;
 public class LexiconDeletionManager implements Manager, Cached {
 
     private final String namespace = LexOProperties.getProperty("repository.lexicon.namespace");
-    private final String idInstancePrefix = LexOProperties.getProperty("repository.instance.id");
-    private static final SimpleDateFormat timestampFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
 
 
     public String getNamespace() {
@@ -39,7 +32,7 @@ public class LexiconDeletionManager implements Manager, Cached {
 
     public void deleteLexicalEntry(String id) throws ManagerException {
         Update updateOperation = GraphDbUtil.getConnection().prepareUpdate(QueryLanguage.SPARQL,
-                SparqlDeleteData.DELETE_LEXICAL_ENTRY.replace("_ID_", id));
+                SparqlDeleteData.DELETE_LEXICAL_ENTRY.replaceAll("_ID_", id));
         updateOperation.execute();
     }
 

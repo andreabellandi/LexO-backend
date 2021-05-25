@@ -75,5 +75,51 @@ public class LexiconCreation extends Service {
             return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Insertion denied, wrong key").build();
         }
     }
+    
+//    @GET
+//    @Path("form")
+//    @Produces(MediaType.APPLICATION_JSON)
+//    @RequestMapping(
+//            method = RequestMethod.GET,
+//            value = "form",
+//            produces = "application/json; charset=UTF-8")
+//    @ApiOperation(value = "Form creation",
+//            notes = "This method creates a new form and returns its id and some metadata")
+//    public Response form(
+//            @ApiParam(
+//                    name = "key",
+//                    value = "authentication token",
+//                    example = "lexodemo",
+//                    required = true)
+//            @QueryParam("key") String key,
+//            @ApiParam(
+//                    name = "author",
+//                    value = "the account is being creating the form",
+//                    example = "user7",
+//                    required = true)
+//            @QueryParam("author") String author,
+//            @ApiParam(
+//                    name = "lexical entry id",
+//                    value = "lexical entry id the form belongs to",
+//                    required = true)
+//            @QueryParam("id") String id) {
+//        if (key.equals("PRINitant19")) {
+//            try {
+//                //        log(Level.INFO, "get lexicon entries types");
+//                LexicalEntryCore lec = lexiconManager.createForm(id, author);
+//                String json = lexicalEntryCoreHelper.toJson(lec);
+//                return Response.ok(json)
+//                        .type(MediaType.TEXT_PLAIN)
+//                        .header("Access-Control-Allow-Headers", "content-type")
+//                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+//                        .build();
+//            } catch (ManagerException ex) {
+//                Logger.getLogger(LexiconCreation.class.getName()).log(Level.SEVERE, null, ex);
+//                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+//            }
+//        } else {
+//            return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Insertion denied, wrong key").build();
+//        }
+//    }
 
 }

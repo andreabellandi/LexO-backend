@@ -23,15 +23,26 @@ public class GraphDbUtil {
     private static Repository REPOSITORY = null;
     private static final List<RepositoryConnection> POOL = new ArrayList<>();
     private static final Map<Thread, RepositoryConnection> ACTIVES = new HashMap<>();
-    private static final int SIZE = Integer.parseInt(LexOProperties.getProperty("GraphDb.size", "5"));
+    private static final int SIZE = Integer.parseInt(LexOProperties.getProperty("GraphDb.size", "50"));
     private static int current = 0;
     private static final Logger logger = LoggerFactory.getLogger(GraphDbUtil.class);
+    private static final RepositoryManager repositoryManager;
 
     static {
-        RepositoryManager repositoryManager = new RemoteRepositoryManager(LexOProperties.getProperty("GraphDb.url", "http://localhost:7200"));
+        repositoryManager = new RemoteRepositoryManager(LexOProperties.getProperty("GraphDb.url", "http://localhost:7200"));
         repositoryManager.init();
         try {
             REPOSITORY = repositoryManager.getRepository(LexOProperties.getProperty("GraphDb.repository", "SIMPLE"));
+        } catch (RepositoryException | RepositoryConfigException e) {
+            logger.error("Unable to connect to GraphDB: " + e);
+        }
+    }
+
+    // multirepository management must not be static !! To fix it !!
+    public void setRepository(String repoName) {
+        try {
+            REPOSITORY.shutDown();
+            REPOSITORY = repositoryManager.getRepository(repoName);
         } catch (RepositoryException | RepositoryConfigException e) {
             logger.error("Unable to connect to GraphDB: " + e);
         }
@@ -43,7 +54,7 @@ public class GraphDbUtil {
 
     public static RepositoryConnection getConnection() {
         synchronized (LOCK) {
-            RepositoryConnection connection = ACTIVES.get(Thread.currentThread()); 
+            RepositoryConnection connection = ACTIVES.get(Thread.currentThread());
             if (connection != null) {
                 logger.debug(Thread.currentThread().getName() + " get active connection");
                 return connection;

@@ -12,8 +12,8 @@ package it.cnr.ilc.lexo.sparql;
 public class SparqlIndex {
 
     public static final String LEXICAL_ENTRY_INDEX
-            = SparqlPrefix.INST + "\n"
-            + SparqlPrefix.LUC + "\n"
+            = SparqlPrefix.INST.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LUC.getSparqlPrefix() + "\n"
             + "INSERT DATA {\n"
             + "     inst:" + SparqlVariable.LEXICAL_ENTRY_INDEX + " :createConnector '''\n"
             + " {\n"
@@ -34,7 +34,7 @@ public class SparqlIndex {
             + "      \"propertyChain\": [\n"
             + "        \"http://www.w3.org/ns/lemon/ontolex#otherForm\",\n"
             + "        \"http://www.w3.org/ns/lemon/ontolex#writtenRep\"\n"
-            + "      ]\n"
+            + "      ],\n"
             + "      \"analyzed\": false\n"
             + "     },\n"
             + "     {\n"
@@ -42,14 +42,16 @@ public class SparqlIndex {
             + "      \"propertyChain\": [\n"
             + "        \"http://www.w3.org/ns/lemon/ontolex#canonicalForm\",\n"
             + "        \"http://www.w3.org/ns/lemon/ontolex#writtenRep\"\n"
-            + "      ]\n"
+            + "      ],\n"
             + "      \"analyzed\": false\n"
             + "     },\n"
             + "    {\n"
             + "       \"fieldName\": \"lexicalEntryIRI\",\n"
             + "       \"propertyChain\": [\n"
             + "         \"$self\"\n"
-            + "       ]\n"
+            + "       ],\n"
+            + "	\"multivalued\": false,\n"
+            + "    \"analyzed\": false\n"
             + "    },\n"
             + "    {\n"
             + "         \"fieldName\": \"writtenFormLanguage\",\n"
@@ -65,6 +67,7 @@ public class SparqlIndex {
             + "           \"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\",\n"
             + "           \"http://www.w3.org/2000/01/rdf-schema#label\"\n"
             + "         ],\n"
+            + "         \"analyzed\": false,\n"
             + "         \"languages\": [\n"
             + "			\"en\"\n"
             + "         ]\n"
@@ -75,6 +78,7 @@ public class SparqlIndex {
             + "           \"http://www.lexinfo.net/ontology/3.0/lexinfo#partOfSpeech\",\n"
             + "           \"http://www.w3.org/2000/01/rdf-schema#label\"\n"
             + "         ],\n"
+            + "         \"analyzed\": false,\n"
             + "         \"languages\": [\n"
             + "			\"en\"\n"
             + "         ]\n"
@@ -82,7 +86,7 @@ public class SparqlIndex {
             + "     {\n"
             + "          \"fieldName\": \"status\",\n"
             + "          \"propertyChain\": [\n"
-            + "                \"http://purl.org/dc/terms/valid\"\n"
+            + "                \"http://www.w3.org/2003/06/sw-vocab-status/ns#term_status\"\n"
             + "          ]\n"
             + "     },\n"
             + "    {\n"
@@ -97,7 +101,7 @@ public class SparqlIndex {
             + " }";
 
     public static final String DELETE_INDEX
-            = SparqlPrefix.INST + "\n"
+            = SparqlPrefix.INST.getSparqlPrefix() + "\n"
             + "INSERT DATA {\n"
             + "  inst:[INDEX_NAME] :dropConnector \"\" .\n"
             + "}";

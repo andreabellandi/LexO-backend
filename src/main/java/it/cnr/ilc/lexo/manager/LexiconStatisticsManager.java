@@ -7,8 +7,14 @@ package it.cnr.ilc.lexo.manager;
 
 import it.cnr.ilc.lexo.GraphDbUtil;
 import it.cnr.ilc.lexo.LexOProperties;
+import it.cnr.ilc.lexo.service.data.vocabulary.MorphologicalProperty;
 import it.cnr.ilc.lexo.sparql.SparqlSelectStatistics;
+import it.cnr.ilc.lexo.sparql.SparqlVariable;
 import it.cnr.ilc.lexo.util.StringUtil;
+import java.util.ArrayList;
+import java.util.List;
+import org.eclipse.rdf4j.query.BindingSet;
+import org.eclipse.rdf4j.query.QueryEvaluationException;
 import org.eclipse.rdf4j.query.QueryLanguage;
 import org.eclipse.rdf4j.query.TupleQuery;
 import org.eclipse.rdf4j.query.TupleQueryResult;
@@ -17,11 +23,31 @@ import org.eclipse.rdf4j.query.TupleQueryResult;
  *
  * @author andreabellandi
  */
-public class LexiconStatisticsManager implements Manager, Cached {
+public final class LexiconStatisticsManager implements Manager, Cached {
+
+    private final List<String> languages = new ArrayList<>();
+
+    public List<String> getLexiconLanguages() {
+        return languages;
+    }
     
+    LexiconStatisticsManager() {
+        reloadCache();
+    }
+
     @Override
     public void reloadCache() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        languages.clear();
+        TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL, SparqlSelectStatistics.STATISTICS_LANGUAGES_LIST);
+        try (TupleQueryResult result = tupleQuery.evaluate()) {
+            while (result.hasNext()) {
+                BindingSet bs = result.next();
+                if (bs.getBinding(SparqlVariable.LEXICON_LANGUAGE) != null) {
+                    languages.add(bs.getBinding(SparqlVariable.LEXICON_LANGUAGE).getValue().stringValue());
+                }
+            }
+        } catch (QueryEvaluationException qee) {
+        }
     }
 
     public TupleQueryResult getTypes() {

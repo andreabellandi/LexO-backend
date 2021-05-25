@@ -11,6 +11,7 @@ import it.cnr.ilc.lexo.service.data.lexicon.input.FormFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalEntryFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalSenseFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Counting;
+import it.cnr.ilc.lexo.service.data.lexicon.output.FormCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.FormItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryElementItem;
@@ -117,7 +118,7 @@ public class LexiconDataManager implements Manager, Cached {
         List<FormItem> _forms = new ArrayList();
         for (FormItem fi : forms) {
             FormItem _fi = new FormItem();
-            _fi.setAuthor(fi.getAuthor());
+            _fi.setCreator(fi.getCreator());
             _fi.setForm(fi.getForm());
             _fi.setFormInstanceName(fi.getFormInstanceName());
             _fi.setLabel(fi.getLabel());
@@ -254,6 +255,26 @@ public class LexiconDataManager implements Manager, Cached {
         for (LexicalEntryElementItem link : links) {
             leec.add(link);
         }
+    }
+
+    public TupleQueryResult getForm(String formID, String aspect) throws ManagerException {
+        if (!aspect.equals(EnumUtil.LexicalAspects.Core.toString()) && !aspect.equals(EnumUtil.LexicalAspects.VarTrans.toString())) {
+            throw new ManagerException(aspect + " does not allowed for lexical forms");
+        }
+        TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL,
+                SparqlSelectData.DATA_FORM_CORE.replace("[IRI]", "\\\"" + namespace + formID + "\\\""));
+        return tupleQuery.evaluate();
+    }
+
+    public FormCore getMorphologyInheritance(List<FormCore> fc) {
+        if (fc.size() > 1) {
+            ArrayList<Morphology> ms = new ArrayList();
+            for (FormCore _fc : fc) {
+                ms.addAll(_fc.getInheritedMorphology());
+            }
+            fc.get(0).setInheritedMorphology(ms);
+        }
+        return fc.get(0);
     }
 
 }

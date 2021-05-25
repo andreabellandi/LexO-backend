@@ -21,13 +21,16 @@ public class LexicalEntryItem implements Data {
     private String label;
     private String language;
     private String author;
+    private String creator;
     private String note;
     private boolean hasChildren;
     private String lexicalEntry;
     private String lexicalEntryInstanceName;
     private ArrayList<Morphology> morphology;
-
-    
+    private String creationDate;
+    private String lastUpdate;
+    private String completionDate;
+    private String revisionDate;
 
     public LexicalEntryItem() {
     }
@@ -38,6 +41,14 @@ public class LexicalEntryItem implements Data {
 
     public void setHasChildren(boolean hasChildren) {
         this.hasChildren = hasChildren;
+    }
+
+    public String getCreator() {
+        return creator;
+    }
+
+    public void setCreator(String creator) {
+        this.creator = creator;
     }
 
     public String getLanguage() {
@@ -128,8 +139,36 @@ public class LexicalEntryItem implements Data {
         this.morphology = morphology;
     }
 
-    
+    public String getCreationDate() {
+        return creationDate;
+    }
 
-    
+    public void setCreationDate(String creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public String getLastUpdate() {
+        return lastUpdate;
+    }
+
+    public void setLastUpdate(String lastUpdate) {
+        this.lastUpdate = lastUpdate;
+    }
+
+    public String getCompletionDate() {
+        return completionDate;
+    }
+
+    public void setCompletionDate(String completionDate) {
+        this.completionDate = completionDate;
+    }
+
+    public String getRevisionDate() {
+        return revisionDate;
+    }
+
+    public void setRevisionDate(String revisionDate) {
+        this.revisionDate = revisionDate;
+    }
 
 }

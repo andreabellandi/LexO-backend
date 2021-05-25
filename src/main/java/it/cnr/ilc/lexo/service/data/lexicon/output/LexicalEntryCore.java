@@ -37,9 +37,11 @@ public class LexicalEntryCore implements Data {
     private String conceptInstanceName;
     @ApiModelProperty(value = "the counting of the links of a lexical entry and their type: Reference (see Also, same As, bilbiography, ...), Multimedia, Attestation, Other)")
     private ArrayList<LexicalEntryElementItem> links;
-    @ApiModelProperty(value = "lexical entry author", example = "user3")
+    @ApiModelProperty(value = "lexical entry author (who completes the entry) ", example = "user9")
     private String author;
-    @ApiModelProperty(value = "lexical entry revisor", example = "rev2")
+    @ApiModelProperty(value = "lexical entry creator (who creates the entry) ", example = "user3")
+    private String creator;
+    @ApiModelProperty(value = "lexical entry revisor(who reviews the entry) ", example = "rev2")
     private String revisor;
     @ApiModelProperty(value = "lexical entry status", example = "working", allowableValues = "working, completed, reviewed")
     private String status;
@@ -68,6 +70,14 @@ public class LexicalEntryCore implements Data {
 
     public void setLexicalEntryInstanceName(String lexicalEntryInstanceName) {
         this.lexicalEntryInstanceName = lexicalEntryInstanceName;
+    }
+
+    public String getCreator() {
+        return creator;
+    }
+
+    public void setCreator(String creator) {
+        this.creator = creator;
     }
 
     public String getLabel() {

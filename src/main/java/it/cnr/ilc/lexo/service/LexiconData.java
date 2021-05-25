@@ -17,11 +17,14 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryElementItem;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalEntryFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalSenseFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Counting;
+import it.cnr.ilc.lexo.service.data.lexicon.output.FormCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.FormList;
 import it.cnr.ilc.lexo.service.data.lexicon.output.HitsDataList;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalSenseItem;
+import it.cnr.ilc.lexo.service.data.lexicon.output.Morphology;
+import it.cnr.ilc.lexo.service.helper.FormCoreHelper;
 import it.cnr.ilc.lexo.service.helper.FormItemsHelper;
 import it.cnr.ilc.lexo.service.helper.FormListHelper;
 import it.cnr.ilc.lexo.service.helper.HelperException;
@@ -68,6 +71,7 @@ public class LexiconData extends Service {
     private final LexicalEntryCoreHelper lexicalEntryCoreHelper = new LexicalEntryCoreHelper();
     private final LexicalEntryReferenceLinkHelper lexicalEntryReferenceLinkHelper = new LexicalEntryReferenceLinkHelper();
     private final PathLenghtHelper pathLenghtHelper = new PathLenghtHelper();
+    private final FormCoreHelper formCoreHelper = new FormCoreHelper();
 
     @GET
     @Path("{id}/lexicalEntry")
@@ -108,6 +112,58 @@ public class LexiconData extends Service {
                         new LexicalEntryElementItem("Attestation", new ArrayList()),
                         new LexicalEntryElementItem("Other", new ArrayList()));
                 String json = lexicalEntryCoreHelper.toJson(lec);
+                return Response.ok(json)
+                        .type(MediaType.TEXT_PLAIN)
+                        .header("Access-Control-Allow-Headers", "content-type")
+                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                        .build();
+            }
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("lexical aspect not available").build();
+        } catch (ManagerException ex) {
+            Logger.getLogger(LexiconData.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        }
+    }
+    
+    @GET
+    @Path("{id}/form")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "/{id}/form",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Form",
+            notes = "This method returns the core data related to given form")
+    public Response form(
+            @ApiParam(
+                    name = "key",
+                    value = "authentication token",
+                    example = "lexodemo",
+                    required = true)
+            @QueryParam("key") String key,
+            @ApiParam(
+                    name = "aspect",
+                    allowableValues = "core, variation and translation",
+                    example = "core",
+                    required = true)
+            @QueryParam("aspect") String aspect,
+            @ApiParam(
+                    name = "id",
+                    value = "form ID",
+                    example = "MUSabbacchiareVERB_PHUabbacchiammo_P1IR",
+                    required = true)
+            @PathParam("id") String id) {
+        try {
+            TupleQueryResult form = lexiconManager.getForm(id, aspect);
+            if (aspect.equals(EnumUtil.LexicalAspects.Core.toString())) {
+                List<FormCore> fc = formCoreHelper.newDataList(form);
+//                TupleQueryResult lexicalEntryReferenceLinks = lexiconManager.getLexicalEntryReferenceLinks(id);
+//                LexicalEntryElementItem referenceLinks = lexicalEntryReferenceLinkHelper.newData(lexicalEntryReferenceLinks);
+//                lexiconManager.addLexicalEntryLinks(lec, referenceLinks,
+//                        new LexicalEntryElementItem("Multimedia", new ArrayList()),
+//                        new LexicalEntryElementItem("Attestation", new ArrayList()),
+//                        new LexicalEntryElementItem("Other", new ArrayList()));
+                String json = formCoreHelper.toJson(lexiconManager.getMorphologyInheritance(fc));
                 return Response.ok(json)
                         .type(MediaType.TEXT_PLAIN)
                         .header("Access-Control-Allow-Headers", "content-type")

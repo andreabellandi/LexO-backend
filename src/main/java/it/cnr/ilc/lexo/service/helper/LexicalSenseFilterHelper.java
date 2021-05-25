@@ -29,7 +29,7 @@ public class LexicalSenseFilterHelper extends TripleStoreDataHelper<LexicalSense
         data.setPos(((IRI) bs.getBinding(SparqlVariable.LEXICAL_ENTRY_POS).getValue()).getLocalName());
         data.setSense(bs.getBinding(SparqlVariable.SENSE).getValue().stringValue());
         data.setSenseInstanceName(bs.getBinding(SparqlVariable.SENSE_INSTANCE_NAME).getValue().stringValue());
-        data.setAuthor(((bs.getBinding(SparqlVariable.AUTHOR) != null) ? bs.getBinding(SparqlVariable.AUTHOR).getValue().stringValue() : ""));
+        data.setCreator(((bs.getBinding(SparqlVariable.LEXICAL_ENTRY_CREATION_AUTHOR) != null) ? bs.getBinding(SparqlVariable.LEXICAL_ENTRY_CREATION_AUTHOR).getValue().stringValue() : ""));
         data.setDefinition(definition);
         data.setLabel(!definition.isEmpty() ? name : Constant.NO_SENSE_DEFINITION);
         data.setNote(((bs.getBinding(SparqlVariable.NOTE) != null) ? bs.getBinding(SparqlVariable.NOTE).getValue().stringValue() : ""));
@@ -37,6 +37,8 @@ public class LexicalSenseFilterHelper extends TripleStoreDataHelper<LexicalSense
         data.setConcept(((bs.getBinding(SparqlVariable.CONCEPT) != null) ? bs.getBinding(SparqlVariable.CONCEPT).getValue().stringValue() : ""));
         data.setConceptInstanceName(((bs.getBinding(SparqlVariable.CONCEPT_INSTANCE_NAME) != null) ? bs.getBinding(SparqlVariable.CONCEPT_INSTANCE_NAME).getValue().stringValue() : ""));
         data.setHasChildren(false);
+        data.setLastUpdate(getStringValue(bs, SparqlVariable.LAST_UPDATE));
+        data.setCreationDate(getStringValue(bs, SparqlVariable.CREATION_DATE));
     }
 
     @Override

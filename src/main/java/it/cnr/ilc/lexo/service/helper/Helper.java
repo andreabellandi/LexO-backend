@@ -5,12 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import it.cnr.ilc.lexo.LexOProperties;
 import it.cnr.ilc.lexo.service.data.Data;
-import it.cnr.ilc.lexo.service.data.lexicon.output.Counting;
 import it.cnr.ilc.lexo.service.data.lexicon.output.HitsDataList;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
-import org.apache.poi.ss.formula.functions.T;
 
 /**
  *

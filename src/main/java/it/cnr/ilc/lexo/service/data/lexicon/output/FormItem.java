@@ -23,7 +23,11 @@ public class FormItem implements Data {
     @ApiModelProperty(value = "form written represenation", example = "accedere")
     private String label;
     @ApiModelProperty(value = "creation author for the form", example = "user1")
-    private String author;
+    private String creator;
+    @ApiModelProperty(value = "last update of the form")
+    private String lastUpdate;
+    @ApiModelProperty(value = "creation date of the form")
+    private String creationDate;
     @ApiModelProperty(value = "form note", example = "textual content ...")
     private String note;
     @ApiModelProperty(value = "form phonetic representation", example = "a'tʃ:ɛdere")
@@ -78,12 +82,28 @@ public class FormItem implements Data {
         this.label = label;
     }
 
-    public String getAuthor() {
-        return author;
+    public String getCreator() {
+        return creator;
     }
 
-    public void setAuthor(String author) {
-        this.author = author;
+    public void setCreator(String creator) {
+        this.creator = creator;
+    }
+
+    public String getLastUpdate() {
+        return lastUpdate;
+    }
+
+    public void setLastUpdate(String lastUpdate) {
+        this.lastUpdate = lastUpdate;
+    }
+
+    public String getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(String creationDate) {
+        this.creationDate = creationDate;
     }
 
     public String getNote() {

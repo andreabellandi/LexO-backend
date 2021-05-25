@@ -159,6 +159,46 @@ public class EnumUtil {
         
     }
     
+    public static enum LexicalEntryAttributes {
+        Label("label"),
+        Type("type"),
+        Status("status"),
+        Note("note"),
+        Language("language"),
+        Denotes("denotes");
+
+        private final String lexicalEntryAttributes;
+
+        private LexicalEntryAttributes(String lexicalEntryAttributes) {
+            this.lexicalEntryAttributes = lexicalEntryAttributes;
+        }
+
+        @Override
+        public String toString() {
+            return this.lexicalEntryAttributes;
+        }
+        
+    }
+    
+    public static enum LinguisticRelation {
+        Morphology("morphology"),
+        LexicalRel("lexicalRel"),
+        SenseRel("senseRel"),
+        ConceptRel("conceptRel");
+
+        private final String linguisticRelation;
+
+        private LinguisticRelation(String linguisticRelation) {
+            this.linguisticRelation = linguisticRelation;
+        }        
+
+        @Override
+        public String toString() {
+            return this.linguisticRelation;
+        }
+        
+    }
+    
     public static enum AcceptedSearchFormExtendTo {
         None(""),
         Hypernym("hypernym"),
