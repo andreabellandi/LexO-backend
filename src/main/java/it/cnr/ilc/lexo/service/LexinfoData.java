@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * @author andreabellandi
  */
 @Path("lexinfo/data")
-@Api("Lexinfo vocabulary")
+@Api("Linguistic vocabulary")
 public class LexinfoData extends Service {
 
     private final LexinfoManager lexiconManager = ManagerFactory.getManager(LexinfoManager.class);

@@ -14,12 +14,19 @@ public class SparqlVariable {
     // index names
     public static final String LEXICAL_ENTRY_INDEX = "lexicalEntryIndex";
     public static final String FORM_INDEX = "formIndex";
+    public static final String LEXICAL_SENSE_INDEX = "lexicalSenseIndex";
     
     // varibale names
     public static final String TOTAL_HITS = "totalHits";
     
     public static final String LEXICON = "lexicon";
     public static final String LEXICON_LANGUAGE = "language";
+    public static final String LEXICON_LANGUAGE_INSTANCE_NAME = "languageInstanceName";
+    public static final String LEXICON_LANGUAGE_LABEL = "languageLabel";
+    public static final String LEXICON_LANGUAGE_LEXVO = "lexvo";
+    public static final String LEXICON_LANGUAGE_DESCRIPTION = "languageDescription";
+    public static final String LEXICON_LANGUAGE_CATALOG = "catalog";
+    public static final String LEXICON_LANGUAGE_CREATOR = "creator";
     
     public static final String LEXICAL_ENTRY = "lexicalEntry";
     public static final String LEXICAL_ENTRY_INSTANCE_NAME = "lexicalEntryInstanceName";   
@@ -52,7 +59,14 @@ public class SparqlVariable {
     public static final String SENSE_INSTANCE_NAME = "senseInstanceName";   
     public static final String SENSE_DEFINITION = "definition"; 
     public static final String SENSE_USAGE = "usage"; 
-    
+    public static final String SENSE_DESCRIPTION = "description"; 
+    public static final String SENSE_EXPLANATION = "explanation"; 
+    public static final String SENSE_GLOSS = "gloss"; 
+    public static final String SENSE_EXAMPLE = "senseExample"; 
+    public static final String SENSE_TRANSLATION = "senseTranslation"; 
+    public static final String SENSE_CREATION_AUTHOR = "creator";
+    public static final String SENSE_TOPIC = "topic";
+
     public static final String FRAME = "frame";
     
     public static final String LEXICAL_FORM = "lexicalForm";
@@ -82,5 +96,12 @@ public class SparqlVariable {
     
     public static final String PROPERTY_COMMENT = "propertyComment";
     public static final String INST_COMMENT = "instComment";
+    public static final String CLASS_COMMENT = "classComment";
+    
+    public static final String STATEMENTS_NUMBER = "statements";
+    public static final String TYPE = "type";
+    public static final String VALUE = "value";
+    
+    public static final String GRAPH = "graph";
 
 }

@@ -30,9 +30,28 @@ public class LexiconDeletionManager implements Manager, Cached {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    public void deleteLexiconLanguage(String id) throws ManagerException {
+        Update updateOperation = GraphDbUtil.getConnection().prepareUpdate(QueryLanguage.SPARQL,
+                SparqlDeleteData.DELETE_LEXICON_LANGUAGE.replaceAll("_ID_", id));
+        updateOperation.execute();
+    }
+    
+    // mancano le forme e i sensi !!!!
     public void deleteLexicalEntry(String id) throws ManagerException {
         Update updateOperation = GraphDbUtil.getConnection().prepareUpdate(QueryLanguage.SPARQL,
                 SparqlDeleteData.DELETE_LEXICAL_ENTRY.replaceAll("_ID_", id));
+        updateOperation.execute();
+    }
+    
+    public void deleteForm(String id) throws ManagerException {
+        Update updateOperation = GraphDbUtil.getConnection().prepareUpdate(QueryLanguage.SPARQL,
+                SparqlDeleteData.DELETE_FORM.replaceAll("_ID_", id));
+        updateOperation.execute();
+    }
+    
+    public void deleteLexicalSense(String id) throws ManagerException {
+        Update updateOperation = GraphDbUtil.getConnection().prepareUpdate(QueryLanguage.SPARQL,
+                SparqlDeleteData.DELETE_LEXICAL_SENSE.replaceAll("_ID_", id));
         updateOperation.execute();
     }
 

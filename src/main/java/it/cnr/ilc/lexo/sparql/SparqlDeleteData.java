@@ -11,7 +11,26 @@ package it.cnr.ilc.lexo.sparql;
  */
 public class SparqlDeleteData {
 
+    public static final String DELETE_LEXICON_LANGUAGE
+            = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
+            + "DELETE { lex:_ID_ ?predicate ?object . \n"
+            + "WHERE { lex:_ID_ ?predicate ?object . }";
+    
     public static final String DELETE_LEXICAL_ENTRY
+            = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
+            + "DELETE { lex:_ID_ ?predicate ?object . \n"
+            + "         ?subject ?_predicate lex:_ID_ . }\n"
+            + "WHERE { lex:_ID_ ?predicate ?object . \n"
+           + "         OPTIONAL { ?subject ?_predicate lex:_ID_ . } }";
+    
+    public static final String DELETE_FORM
+            = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
+            + "DELETE { lex:_ID_ ?predicate ?object . \n"
+            + "         ?subject ?_predicate lex:_ID_ . }\n"
+            + "WHERE { lex:_ID_ ?predicate ?object . \n"
+           + "         OPTIONAL { ?subject ?_predicate lex:_ID_ . } }";
+    
+    public static final String DELETE_LEXICAL_SENSE
             = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
             + "DELETE { lex:_ID_ ?predicate ?object . \n"
             + "         ?subject ?_predicate lex:_ID_ . }\n"

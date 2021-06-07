@@ -13,11 +13,11 @@ import it.cnr.ilc.lexo.service.data.Data;
  *
  * @author andreabellandi
  */
-@ApiModel(description = "Input model representing a lexical entry updater")
-public class LexicalEntryUpdater implements Data {
-
-    @ApiModelProperty(value = "lexical entry relation/attribute", example = "label", allowEmptyValue = false,
-            allowableValues = "label, type, language, status, note")
+@ApiModel(description = "Input model representing a language updater")
+public class LanguageUpdater implements Data {
+    
+    @ApiModelProperty(value = "language relation/attribute", example = "description", 
+            allowableValues = "language, linguisticCatalog, description")
     private String relation;
     @ApiModelProperty(value = "realtion/attribute value", example = "test", allowEmptyValue = false)
     private String value;
@@ -37,5 +37,7 @@ public class LexicalEntryUpdater implements Data {
     public void setValue(String value) {
         this.value = value;
     }
-
+    
+    
+    
 }

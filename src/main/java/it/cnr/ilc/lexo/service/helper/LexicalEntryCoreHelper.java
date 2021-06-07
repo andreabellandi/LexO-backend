@@ -24,7 +24,7 @@ public class LexicalEntryCoreHelper extends TripleStoreDataHelper<LexicalEntryCo
         data.setLexicalEntryInstanceName(getLocalName(bs, SparqlVariable.LEXICAL_ENTRY));
         data.setCreator(getStringValue(bs, SparqlVariable.LEXICAL_ENTRY_CREATION_AUTHOR));
         data.setAuthor(getStringValue(bs, SparqlVariable.LEXICAL_ENTRY_COMPLETING_AUTHOR));
-        data.setConcept(getStringValue(bs, SparqlVariable.CONCEPT));
+//        data.setConcept(getStringValue(bs, SparqlVariable.CONCEPT));
 //        data.setConceptInstanceName(getLocalName(bs, SparqlVariable.CONCEPT));
         data.setLabel(getLiteralLabel(bs, SparqlVariable.LABEL));
         data.setLanguage(getLiteralLanguage(bs, SparqlVariable.LABEL));

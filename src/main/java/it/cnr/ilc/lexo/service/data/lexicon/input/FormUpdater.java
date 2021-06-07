@@ -13,11 +13,11 @@ import it.cnr.ilc.lexo.service.data.Data;
  *
  * @author andreabellandi
  */
-@ApiModel(description = "Input model representing a lexical entry updater")
-public class LexicalEntryUpdater implements Data {
+@ApiModel(description = "Input model representing a form updater")
+public class FormUpdater implements Data {
 
-    @ApiModelProperty(value = "lexical entry relation/attribute", example = "label", allowEmptyValue = false,
-            allowableValues = "label, type, language, status, note")
+    @ApiModelProperty(value = "form relation/attribute", example = "writtenRep", allowEmptyValue = false,
+            allowableValues = "type, note, writtenRep, phoneticRep, pronunciation, romanization, segmentation, transliteration")
     private String relation;
     @ApiModelProperty(value = "realtion/attribute value", example = "test", allowEmptyValue = false)
     private String value;

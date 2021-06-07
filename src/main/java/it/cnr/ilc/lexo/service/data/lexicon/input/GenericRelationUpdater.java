@@ -12,17 +12,17 @@ import io.swagger.annotations.ApiModelProperty;
  *
  * @author andreabellandi
  */
-@ApiModel(description = "Input model representing a linguistic relation updater")
-public class LinguisticRelationUpdater {
+@ApiModel(description = "Input model representing a generic relation updater")
+public class GenericRelationUpdater {
 
-    @ApiModelProperty(value = "the type of relation", example = "morphology", allowEmptyValue = false,
-            allowableValues = "morphology, conceptRef, lexicalRel, senseRel, conceptRel")
+    @ApiModelProperty(value = "the type of relation", example = "reference", allowEmptyValue = false,
+            allowableValues = "reference, bibliography, attestation, multimedia")
     private String type;
-    @ApiModelProperty(value = "realtion name", example = "partOfSpeech", allowEmptyValue = false)
+    @ApiModelProperty(value = "realtion name", example = "seeAlso", allowEmptyValue = false)
     private String relation;
-    @ApiModelProperty(value = "realtion value", example = "noun", allowEmptyValue = false)
+    @ApiModelProperty(value = "realtion value", example = "entity ID", allowEmptyValue = false)
     private String value;
-    @ApiModelProperty(value = "previous realtion/attribute value (leave empty, if a new relation value is needed)", example = "oldValue", allowEmptyValue = true)
+    @ApiModelProperty(value = "previous realtion/attribute value", example = "old value", allowEmptyValue = true)
     private String currentValue;
 
     public String getCurrentValue() {
@@ -33,6 +33,8 @@ public class LinguisticRelationUpdater {
         this.currentValue = currentValue;
     }
     
+    
+
     public String getType() {
         return type;
     }

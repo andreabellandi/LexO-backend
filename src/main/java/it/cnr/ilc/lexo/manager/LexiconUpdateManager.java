@@ -7,19 +7,27 @@ package it.cnr.ilc.lexo.manager;
 
 import it.cnr.ilc.lexo.GraphDbUtil;
 import it.cnr.ilc.lexo.LexOProperties;
+import it.cnr.ilc.lexo.service.data.lexicon.input.FormUpdater;
+import it.cnr.ilc.lexo.service.data.lexicon.input.GenericRelationUpdater;
+import it.cnr.ilc.lexo.service.data.lexicon.input.LanguageUpdater;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalEntryUpdater;
+import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalSenseUpdater;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LinguisticRelationUpdater;
+import it.cnr.ilc.lexo.sparql.SparqlInsertData;
 import it.cnr.ilc.lexo.sparql.SparqlPrefix;
 import it.cnr.ilc.lexo.sparql.SparqlSelectData;
 import it.cnr.ilc.lexo.sparql.SparqlUpdateData;
 import it.cnr.ilc.lexo.sparql.SparqlVariable;
+import static it.cnr.ilc.lexo.sparql.SparqlVariable.IRI;
 import it.cnr.ilc.lexo.util.EnumUtil;
 import it.cnr.ilc.lexo.util.OntoLexEntity;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Literal;
+import org.eclipse.rdf4j.model.Value;
 import org.eclipse.rdf4j.query.BindingSet;
 import org.eclipse.rdf4j.query.QueryEvaluationException;
 import org.eclipse.rdf4j.query.QueryLanguage;
@@ -37,6 +45,9 @@ public final class LexiconUpdateManager implements Manager, Cached {
     public final String URL_PATTERN = "https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)";
     public final Pattern pattern = Pattern.compile(URL_PATTERN);
     private final String namespace = LexOProperties.getProperty("repository.lexicon.namespace");
+    private final String lexvoPrefix = "https://id.loc.gov/vocabulary/";
+    private final String libraryOfCongressPrefix = "http://id.loc.gov/vocabulary/";
+    private final String lexinfoCatalog = "http://www.lexinfo.net/ontologies/3.0/lexinfo";
     private static final SimpleDateFormat timestampFormat = new SimpleDateFormat(LexOProperties.getProperty("manager.operationTimestampFormat"));
 
     public String getNamespace() {
@@ -47,12 +58,24 @@ public final class LexiconUpdateManager implements Manager, Cached {
     public void reloadCache() {
     }
 
+    public void validateLexiconLanguageAttribute(String attribute) throws ManagerException {
+        Manager.validateWithEnum("attribute", EnumUtil.LanguageAttributes.class, attribute);
+    }
+
     public void validateLexicalEntryAttribute(String attribute) throws ManagerException {
         Manager.validateWithEnum("attribute", EnumUtil.LexicalEntryAttributes.class, attribute);
     }
 
     public void validateLexicalEntryType(String type) throws ManagerException {
         Manager.validateWithOntoLexEntity("type", OntoLexEntity.LexicalEntryTypes.class, type);
+    }
+
+    public void validateFormType(String type) throws ManagerException {
+        Manager.validateWithOntoLexEntity("type", OntoLexEntity.FormTypes.class, type);
+    }
+
+    public void validateConceptRef(String type) throws ManagerException {
+        Manager.validateWithOntoLexEntity("type", OntoLexEntity.ReferenceTypes.class, type);
     }
 
     public void validateLexicalEntryStatus(String status) throws ManagerException {
@@ -63,11 +86,23 @@ public final class LexiconUpdateManager implements Manager, Cached {
         Manager.validateLanguage(lang);
     }
 
-    public void validateLexicalEntryDenote(String url) throws ManagerException {
-        //currently it can be an external url only !!!
+    public void validateURL(String url, String... urlPrefix) throws ManagerException {
         Matcher matcher = pattern.matcher(url);
         if (!matcher.find()) {
             throw new ManagerException(url + " is not a valid url");
+        } else {
+            if (urlPrefix.length > 0) {
+                boolean prefixed = false;
+                for (String p : urlPrefix) {
+                    if (url.startsWith(p)) {
+                        prefixed = true;
+                        break;
+                    }
+                }
+                if (!prefixed) {
+                    throw new ManagerException(url + " is not an admissible url");
+                }
+            }
         }
     }
 
@@ -75,13 +110,56 @@ public final class LexiconUpdateManager implements Manager, Cached {
         Manager.validateMorphology(trait, value);
     }
 
-    public String updateLexicalEntry(String id, String relation, String valueToInsert, boolean dataType) throws ManagerException, UpdateExecutionException {
+    public void validateFormAttribute(String attribute) throws ManagerException {
+        Manager.validateWithEnum("attribute", EnumUtil.FormAttributes.class, attribute);
+    }
+
+    public void validateLexicalSenseAttribute(String attribute) throws ManagerException {
+        Manager.validateWithEnum("attribute", EnumUtil.LexicalSenseAttributes.class, attribute);
+    }
+
+    public String updateLexiconLanguage(String id, LanguageUpdater lu, String user) throws ManagerException {
+        validateLexiconLanguageAttribute(lu.getRelation());
+        if (lu.getRelation().equals(EnumUtil.LanguageAttributes.Catalog.toString())) {
+            validateURL(lu.getValue(), lexinfoCatalog);
+            return updateLexiconLanguage(id, SparqlPrefix.SKOS.getPrefix() + lu.getRelation(), lu.getValue());
+        } else if (lu.getRelation().equals(EnumUtil.LanguageAttributes.Lexvo.toString())) {
+            validateURL(lu.getValue(), lexvoPrefix, libraryOfCongressPrefix);
+            return updateLexiconLanguage(id, SparqlPrefix.SKOS.getPrefix() + lu.getRelation(), lu.getValue());
+        } else if (lu.getRelation().equals(EnumUtil.LanguageAttributes.Description.toString())) {
+            return updateLexiconLanguage(id, SparqlPrefix.LEXINFO.getPrefix() + lu.getRelation(), "\"" + lu.getValue() + "\"");
+        } else {
+            return null;
+        }
+    }
+
+    public String updateLexiconLanguage(String id, String relation, String valueToInsert) throws ManagerException, UpdateExecutionException {
+        if (valueToInsert.isEmpty()) {
+            throw new ManagerException("value cannot be empty");
+        }
+        String lastupdate = timestampFormat.format(new Timestamp(System.currentTimeMillis()));
+        Update updateOperation = GraphDbUtil.getConnection().prepareUpdate(QueryLanguage.SPARQL,
+                SparqlUpdateData.UPDATE_LEXICON_LANGUAGE.replaceAll("_ID_", id)
+                        .replaceAll("_RELATION_", relation.equals(EnumUtil.LanguageAttributes.Catalog.toString())
+                                ? SparqlPrefix.LIME.getPrefix() + EnumUtil.LanguageAttributes.Catalog
+                                : SparqlPrefix.DCT.getPrefix() + relation)
+                        .replaceAll("_VALUE_TO_INSERT_", valueToInsert)
+                        .replaceAll("_VALUE_TO_DELETE_", "?" + SparqlVariable.TARGET)
+                        .replaceAll("_LAST_UPDATE_", "\"" + lastupdate + "\""));
+        updateOperation.execute();
+        return lastupdate;
+    }
+
+    public String updateLexicalEntry(String id, String relation, String valueToInsert, String valueToDelete) throws ManagerException, UpdateExecutionException {
+        if (valueToInsert.isEmpty()) {
+            throw new ManagerException("value cannot be empty");
+        }
         String lastupdate = timestampFormat.format(new Timestamp(System.currentTimeMillis()));
         Update updateOperation = GraphDbUtil.getConnection().prepareUpdate(QueryLanguage.SPARQL,
                 SparqlUpdateData.UPDATE_LEXICAL_ENTRY.replaceAll("_ID_", id)
                         .replaceAll("_RELATION_", relation)
-                        .replaceAll("_VALUE_TO_INSERT_", dataType ? "\"" + valueToInsert + "\"" : valueToInsert)
-                        .replaceAll("_VALUE_TO_DELETE_", "?" + SparqlVariable.TARGET)
+                        .replaceAll("_VALUE_TO_INSERT_", valueToInsert)
+                        .replaceAll("_VALUE_TO_DELETE_", valueToDelete)
                         .replaceAll("_LAST_UPDATE_", "\"" + lastupdate + "\""));
         updateOperation.execute();
         return lastupdate;
@@ -90,10 +168,12 @@ public final class LexiconUpdateManager implements Manager, Cached {
     public String updateLexicalEntry(String id, LexicalEntryUpdater leu, String user) throws ManagerException {
         validateLexicalEntryAttribute(leu.getRelation());
         if (leu.getRelation().equals(EnumUtil.LexicalEntryAttributes.Label.toString())) {
-            return updateLexicalEntry(id, SparqlPrefix.RDFS.getPrefix() + leu.getRelation(), leu.getValue(), true);
+            String lang = ManagerFactory.getManager(UtilityManager.class).getLanguage(id);
+            return updateLexicalEntry(id, SparqlPrefix.RDFS.getPrefix() + leu.getRelation(),
+                    (lang != null) ? ("\"" + leu.getValue() + "\"@" + lang) : "\"" + leu.getValue() + "\"", "?" + SparqlVariable.TARGET);
         } else if (leu.getRelation().equals(EnumUtil.LexicalEntryAttributes.Type.toString())) {
             validateLexicalEntryType(leu.getValue());
-            return updateLexicalEntry(id, SparqlPrefix.RDF.getPrefix() + leu.getRelation(), SparqlPrefix.ONTOLEX.getPrefix() + leu.getValue(), false);
+            return updateLexicalEntry(id, SparqlPrefix.RDF.getPrefix() + leu.getRelation(), SparqlPrefix.ONTOLEX.getPrefix() + leu.getValue(), "?" + SparqlVariable.TARGET);
         } else if (leu.getRelation().equals(EnumUtil.LexicalEntryAttributes.Status.toString())) {
             validateLexicalEntryStatus(leu.getValue());
             if (leu.getValue().isEmpty()) {
@@ -104,22 +184,9 @@ public final class LexiconUpdateManager implements Manager, Cached {
             validateLexicalEntryLanguage(leu.getValue());
             return updateLanguage(id, leu);
         } else if (leu.getRelation().equals(EnumUtil.LexicalEntryAttributes.Note.toString())) {
-            return updateLexicalEntry(id, SparqlPrefix.SKOS.getPrefix() + leu.getRelation(), leu.getValue(), true);
-        } else if (leu.getRelation().equals(EnumUtil.LexicalEntryAttributes.Denotes.toString())) {
-            // currently the property ranges over an external url only 
-            validateLexicalEntryDenote(leu.getValue());
-            return updateLexicalEntry(id, SparqlPrefix.ONTOLEX.getPrefix() + leu.getRelation(), leu.getValue(), true);
+            return updateLexicalEntry(id, SparqlPrefix.SKOS.getPrefix() + leu.getRelation(), "\"" + leu.getValue() + "\"", "?" + SparqlVariable.TARGET);
         } else {
             return null;
-        }
-    }
-
-    public String updateLexicalEntry(String id, LinguisticRelationUpdater lru) throws ManagerException {
-        if (lru.getType().equals(EnumUtil.LinguisticRelation.Morphology.toString())) {
-            validateMorphology(lru.getRelation(), lru.getValue());
-            return updateLexicalEntry(id, SparqlPrefix.LEXINFO.getPrefix() + lru.getRelation(), SparqlPrefix.LEXINFO.getPrefix() + lru.getValue(), false);
-        } else {
-            throw new ManagerException(lru.getType() + " is not a valid relation type");
         }
     }
 
@@ -196,7 +263,7 @@ public final class LexiconUpdateManager implements Manager, Cached {
         updateOperation.execute();
         return lastupdate;
     }
-    
+
     private String statusBackwarding(String id, String status, String currentStatus, String user) throws QueryEvaluationException {
         String lastupdate = timestampFormat.format(new Timestamp(System.currentTimeMillis()));
         Update updateOperation = GraphDbUtil.getConnection().prepareUpdate(QueryLanguage.SPARQL,
@@ -274,4 +341,194 @@ public final class LexiconUpdateManager implements Manager, Cached {
         return 0;
     }
 
+    public String updateForm(String id, FormUpdater fu, String user) throws ManagerException {
+        UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+        validateFormAttribute(fu.getRelation());
+        if (fu.getRelation().equals(EnumUtil.FormAttributes.Type.toString())) {
+            validateFormType(fu.getValue());
+            String leid = utilityManager.getLexicalEntryByForm(id);
+            return updateFormType(id, leid, fu.getValue());
+        } else if (fu.getRelation().equals(EnumUtil.FormAttributes.Note.toString())) {
+            return updateForm(id, SparqlPrefix.SKOS.getPrefix() + fu.getRelation(), "\"" + fu.getValue() + "\"");
+        } else if (fu.getRelation().equals(EnumUtil.FormAttributes.WrittenRep.toString())) {
+            String lang = utilityManager.getLanguage(id);
+            return updateForm(id, SparqlPrefix.ONTOLEX.getPrefix() + fu.getRelation(),
+                    (lang != null) ? ("\"" + fu.getValue() + "\"@" + lang) : "\"" + fu.getValue() + "\"");
+        } else if (fu.getRelation().equals(EnumUtil.FormAttributes.PhoneticRep.toString())) {
+            String lang = utilityManager.getLanguage(id);
+            return updateForm(id, SparqlPrefix.ONTOLEX.getPrefix() + fu.getRelation(),
+                    (lang != null) ? ("\"" + fu.getValue() + "\"@" + lang) : "\"" + fu.getValue() + "\"");
+        } else if (fu.getRelation().equals(EnumUtil.FormAttributes.Transliteration.toString())) {
+            String lang = utilityManager.getLanguage(id);
+            return updateForm(id, SparqlPrefix.LEXINFO.getPrefix() + fu.getRelation(),
+                    (lang != null) ? ("\"" + fu.getValue() + "\"@" + lang) : "\"" + fu.getValue() + "\"");
+        } else if (fu.getRelation().equals(EnumUtil.FormAttributes.Segmentation.toString())) {
+            String lang = utilityManager.getLanguage(id);
+            return updateForm(id, SparqlPrefix.LEXINFO.getPrefix() + fu.getRelation(),
+                    (lang != null) ? ("\"" + fu.getValue() + "\"@" + lang) : "\"" + fu.getValue() + "\"");
+        } else if (fu.getRelation().equals(EnumUtil.FormAttributes.Pronunciation.toString())) {
+            String lang = utilityManager.getLanguage(id);
+            return updateForm(id, SparqlPrefix.LEXINFO.getPrefix() + fu.getRelation(),
+                    (lang != null) ? ("\"" + fu.getValue() + "\"@" + lang) : "\"" + fu.getValue() + "\"");
+        } else if (fu.getRelation().equals(EnumUtil.FormAttributes.Romanization.toString())) {
+            String lang = utilityManager.getLanguage(id);
+            return updateForm(id, SparqlPrefix.LEXINFO.getPrefix() + fu.getRelation(),
+                    (lang != null) ? ("\"" + fu.getValue() + "\"@" + lang) : "\"" + fu.getValue() + "\"");
+        } else {
+            return null;
+        }
+    }
+
+    public String updateForm(String id, String relation, String valueToInsert) throws ManagerException, UpdateExecutionException {
+        if (valueToInsert.isEmpty()) {
+            throw new ManagerException("value cannot be empty");
+        }
+        String lastupdate = timestampFormat.format(new Timestamp(System.currentTimeMillis()));
+        Update updateOperation = GraphDbUtil.getConnection().prepareUpdate(QueryLanguage.SPARQL,
+                SparqlUpdateData.UPDATE_FORM.replaceAll("_ID_", id)
+                        .replaceAll("_RELATION_", relation)
+                        .replaceAll("_VALUE_TO_INSERT_", valueToInsert)
+                        .replaceAll("_VALUE_TO_DELETE_", "?" + SparqlVariable.TARGET)
+                        .replaceAll("_LAST_UPDATE_", "\"" + lastupdate + "\""));
+        updateOperation.execute();
+        return lastupdate;
+    }
+
+    public String updateFormType(String id, String leid, String formType) throws ManagerException, UpdateExecutionException {
+        String lastupdate = timestampFormat.format(new Timestamp(System.currentTimeMillis()));
+        Update updateOperation = GraphDbUtil.getConnection().prepareUpdate(QueryLanguage.SPARQL,
+                SparqlUpdateData.UPDATE_FORM_TYPE.replaceAll("_ID_", id)
+                        .replaceAll("_LEID_", leid)
+                        .replaceAll("_FORM_TYPE_", formType)
+                        .replaceAll("_LAST_UPDATE_", "\"" + lastupdate + "\""));
+        updateOperation.execute();
+        return lastupdate;
+    }
+
+    public String updateLexicalSense(String id, LexicalSenseUpdater lsu, String user) throws ManagerException {
+        validateLexicalSenseAttribute(lsu.getRelation());
+        if (lsu.getRelation().equals(EnumUtil.LexicalSenseAttributes.Note.toString())) {
+            return updateLexicalSense(id, SparqlPrefix.SKOS.getPrefix() + lsu.getRelation(), "\"" + lsu.getValue() + "\"");
+        } else if (lsu.getRelation().equals(EnumUtil.LexicalSenseAttributes.Definition.toString())) {
+            return updateLexicalSense(id, SparqlPrefix.SKOS.getPrefix() + lsu.getRelation(), "\"" + lsu.getValue() + "\"");
+        } else if (lsu.getRelation().equals(EnumUtil.LexicalSenseAttributes.Description.toString())) {
+            return updateLexicalSense(id, SparqlPrefix.LEXINFO.getPrefix() + lsu.getRelation(), "\"" + lsu.getValue() + "\"");
+        } else if (lsu.getRelation().equals(EnumUtil.LexicalSenseAttributes.Explanation.toString())) {
+            return updateLexicalSense(id, SparqlPrefix.LEXINFO.getPrefix() + lsu.getRelation(), "\"" + lsu.getValue() + "\"");
+        } else if (lsu.getRelation().equals(EnumUtil.LexicalSenseAttributes.Gloss.toString())) {
+            return updateLexicalSense(id, SparqlPrefix.LEXINFO.getPrefix() + lsu.getRelation(), "\"" + lsu.getValue() + "\"");
+        } else if (lsu.getRelation().equals(EnumUtil.LexicalSenseAttributes.Reference.toString())) {
+            validateURL(lsu.getValue());
+            return updateLexicalSense(id, SparqlPrefix.ONTOLEX.getPrefix() + lsu.getRelation(), lsu.getValue());
+        } else if (lsu.getRelation().equals(EnumUtil.LexicalSenseAttributes.SenseExample.toString())) {
+            return updateLexicalSense(id, SparqlPrefix.LEXINFO.getPrefix() + lsu.getRelation(), "\"" + lsu.getValue() + "\"");
+        } else if (lsu.getRelation().equals(EnumUtil.LexicalSenseAttributes.SenseTranslation.toString())) {
+            return updateLexicalSense(id, SparqlPrefix.LEXINFO.getPrefix() + lsu.getRelation(), "\"" + lsu.getValue() + "\"");
+        } else if (lsu.getRelation().equals(EnumUtil.LexicalSenseAttributes.Topic.toString())) {
+            validateURL(lsu.getValue());
+            return updateLexicalSense(id, SparqlPrefix.DCT.getPrefix() + lsu.getRelation(), lsu.getValue());
+        } else if (lsu.getRelation().equals(EnumUtil.LexicalSenseAttributes.Usage.toString())) {
+            return updateLexicalSense(id, SparqlPrefix.ONTOLEX.getPrefix() + lsu.getRelation(), "[ rdf:value \"" + lsu.getValue() + "\" ]");
+        } else {
+            return null;
+        }
+    }
+
+    public String updateLexicalSense(String id, String relation, String valueToInsert) throws ManagerException, UpdateExecutionException {
+        if (valueToInsert.isEmpty()) {
+            throw new ManagerException("value cannot be empty");
+        }
+        String lastupdate = timestampFormat.format(new Timestamp(System.currentTimeMillis()));
+        Update updateOperation = GraphDbUtil.getConnection().prepareUpdate(QueryLanguage.SPARQL,
+                SparqlUpdateData.UPDATE_LEXICAL_SENSE.replaceAll("_ID_", id)
+                        .replaceAll("_RELATION_", relation)
+                        .replaceAll("_VALUE_TO_INSERT_", valueToInsert)
+                        .replaceAll("_VALUE_TO_DELETE_", "?" + SparqlVariable.TARGET)
+                        .replaceAll("_LAST_UPDATE_", "\"" + lastupdate + "\""));
+        updateOperation.execute();
+        return lastupdate;
+    }
+
+    public String updateLinguisticRelation(String id, LinguisticRelationUpdater lru) throws ManagerException {
+        if (lru.getType().equals(EnumUtil.LinguisticRelation.Morphology.toString())) {
+            validateMorphology(lru.getRelation(), lru.getValue());
+            setPrefixes(lru, SparqlPrefix.LEXINFO.getUri(), SparqlPrefix.LEXINFO.getUri(), SparqlPrefix.LEXINFO.getUri());
+        } else if (lru.getType().equals(EnumUtil.LinguisticRelation.ConceptRef.toString())) {
+            // currently the property ranges over an external url only 
+            validateURL(lru.getValue());
+            validateConceptRef(lru.getRelation());
+            setPrefixes(lru, SparqlPrefix.ONTOLEX.getUri(), "", "");
+        } else {
+            throw new ManagerException(lru.getType() + " is not a valid relation type");
+        }
+        return (lru.getCurrentValue() != null)
+                ? (lru.getCurrentValue().isEmpty()
+                ? createLinguisticRelation(id, lru.getRelation(), lru.getValue())
+                : updateLinguisticRelation(id, lru.getRelation(), lru.getValue(), lru.getCurrentValue()))
+                : createLinguisticRelation(id, lru.getRelation(), lru.getValue());
+    }
+
+    private void setPrefixes(LinguisticRelationUpdater lru, String... prefix) {
+        lru.setRelation("<" + prefix[0] + lru.getRelation() + ">");
+        lru.setValue("<" + prefix[1] + lru.getValue() + ">");
+        if (lru.getCurrentValue() != null) {
+            if (!lru.getCurrentValue().isEmpty()) {
+                lru.setCurrentValue("<" + prefix[2] + lru.getCurrentValue() + ">");
+            }
+        }
+    }
+
+    public String createLinguisticRelation(String id, String relation, String valueToInsert) throws ManagerException, UpdateExecutionException {
+        return updateLinguisticRelation(SparqlInsertData.CREATE_LINGUISTIC_RELATION, id, relation,
+                valueToInsert, "?" + SparqlVariable.TARGET);
+    }
+
+    public String updateLinguisticRelation(String id, String relation, String valueToInsert, String currentValue) throws ManagerException, UpdateExecutionException {
+        if (ManagerFactory.getManager(UtilityManager.class).existsLinguisticRelation(id, relation, currentValue)) {
+            return updateLinguisticRelation(SparqlUpdateData.UPDATE_LINGUISTIC_RELATION, id, relation,
+                    valueToInsert, currentValue);
+        } else {
+            throw new ManagerException("IRI " + id + " does not exist or <" + id + ", " + relation + ", " + currentValue + "> does not exist");
+        }
+    }
+
+    public String updateLinguisticRelation(String query, String id, String relation, String valueToInsert, String valueToDelete) throws ManagerException, UpdateExecutionException {
+        String lastupdate = timestampFormat.format(new Timestamp(System.currentTimeMillis()));
+        Update updateOperation = GraphDbUtil.getConnection().prepareUpdate(QueryLanguage.SPARQL,
+                query.replaceAll("_ID_", id)
+                        .replaceAll("_RELATION_", relation)
+                        .replaceAll("_VALUE_TO_INSERT_", valueToInsert)
+                        .replaceAll("_VALUE_TO_DELETE_", valueToDelete)
+                        .replaceAll("_LAST_UPDATE_", "\"" + lastupdate + "\""));
+        updateOperation.execute();
+        return lastupdate;
+    }
+
+    public String updateGenericRelation(String id, GenericRelationUpdater gru) throws ManagerException {
+        UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+        if (gru.getType().equals(EnumUtil.GenericRelation.Reference.toString())) {
+            if (!utilityManager.exists(id)) {
+                validateURL(gru.getValue());
+                throw new ManagerException(id + " does not exist in the lexicon");
+            }
+            return updateGenericRelation(id, SparqlPrefix.RDFS.getPrefix() + gru.getRelation(), gru.getValue());
+        } else {
+            throw new ManagerException(gru.getType() + " is not a valid relation type");
+        }
+    }
+
+    public String updateGenericRelation(String id, String relation, String valueToInsert) throws ManagerException, UpdateExecutionException {
+        if (valueToInsert.isEmpty()) {
+            throw new ManagerException("value cannot be empty");
+        }
+        String lastupdate = timestampFormat.format(new Timestamp(System.currentTimeMillis()));
+        Update updateOperation = GraphDbUtil.getConnection().prepareUpdate(QueryLanguage.SPARQL,
+                SparqlUpdateData.UPDATE_GENERIC_RELATION.replaceAll("_ID_", id)
+                        .replaceAll("_RELATION_", relation)
+                        .replaceAll("_VALUE_TO_INSERT_", valueToInsert)
+                        .replaceAll("_VALUE_TO_DELETE_", "?" + SparqlVariable.TARGET)
+                        .replaceAll("_LAST_UPDATE_", "\"" + lastupdate + "\""));
+        updateOperation.execute();
+        return lastupdate;
+    }
 }

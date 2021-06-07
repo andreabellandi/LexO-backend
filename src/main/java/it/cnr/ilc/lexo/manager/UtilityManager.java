@@ -1,0 +1,143 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package it.cnr.ilc.lexo.manager;
+
+import it.cnr.ilc.lexo.GraphDbUtil;
+import it.cnr.ilc.lexo.sparql.SparqlQueryUtil;
+import it.cnr.ilc.lexo.sparql.SparqlVariable;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Literal;
+import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.query.BindingSet;
+import org.eclipse.rdf4j.query.BooleanQuery;
+import org.eclipse.rdf4j.query.QueryEvaluationException;
+import org.eclipse.rdf4j.query.QueryLanguage;
+import org.eclipse.rdf4j.query.TupleQuery;
+import org.eclipse.rdf4j.query.TupleQueryResult;
+
+/**
+ *
+ * @author andreabellandi
+ */
+public final class UtilityManager implements Manager, Cached {
+
+    @Override
+    public void reloadCache() {
+
+    }
+
+    // ret values: 
+    // null = id does not exist
+    // empty = attribute value does not exist
+    // string = attribute value
+    public String getEntityAttribute(String id, String relation) throws QueryEvaluationException {
+        TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL,
+                SparqlQueryUtil.ENTITY_RELATION.replaceAll("_ID_", id)
+                        .replaceAll("_RELATION_", relation));
+        try (TupleQueryResult result = tupleQuery.evaluate()) {
+            while (result.hasNext()) {
+                BindingSet bs = result.next();
+                return (bs.getBinding(SparqlVariable.TYPE) != null)
+                        ? ((bs.getBinding(SparqlVariable.VALUE) != null) ? bs.getBinding(SparqlVariable.VALUE).getValue().stringValue() : "") : null;
+            }
+        } catch (QueryEvaluationException qee) {
+        }
+        return null;
+    }
+
+    public boolean existsLinguisticRelation(String id, String relation, String value) throws QueryEvaluationException {
+        BooleanQuery b = GraphDbUtil.getConnection().prepareBooleanQuery(QueryLanguage.SPARQL,
+                SparqlQueryUtil.ASK_ENTITY_RELATION.replaceAll("_ID_", id)
+                        .replaceAll("_RELATION_", relation)
+                        .replaceAll("_VALUE_", value));
+        return b.evaluate();
+    }
+
+    public int getNumberOfStatements(String id) throws QueryEvaluationException {
+        TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL,
+                SparqlQueryUtil.NUMBER_OF_STATEMENTS.replaceAll("_ID_", id));
+        try (TupleQueryResult result = tupleQuery.evaluate()) {
+            while (result.hasNext()) {
+                BindingSet bs = result.next();
+                return (bs.getBinding(SparqlVariable.STATEMENTS_NUMBER) != null) ? ((Literal) bs.getBinding(SparqlVariable.LABEL).getValue()).intValue() : null;
+            }
+        } catch (QueryEvaluationException qee) {
+        }
+        return 0;
+    }
+
+    public String getLanguage(String id) throws QueryEvaluationException {
+        TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL,
+                SparqlQueryUtil.LANGUAGE.replaceAll("_ID_", id));
+        try (TupleQueryResult result = tupleQuery.evaluate()) {
+            while (result.hasNext()) {
+                BindingSet bs = result.next();
+                return (bs.getBinding(SparqlVariable.LEXICON_LANGUAGE) != null) ? bs.getBinding(SparqlVariable.LEXICON_LANGUAGE).getValue().stringValue() : null;
+            }
+        } catch (QueryEvaluationException qee) {
+        }
+        return null;
+    }
+
+    public String getLexicalEntryByForm(String id) throws QueryEvaluationException {
+        TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL,
+                SparqlQueryUtil.LEXICAL_ENTRY_BY_FORM.replaceAll("_ID_", id));
+        try (TupleQueryResult result = tupleQuery.evaluate()) {
+            while (result.hasNext()) {
+                BindingSet bs = result.next();
+                return (bs.getBinding(SparqlVariable.LEXICAL_ENTRY_INSTANCE_NAME) != null)
+                        ? ((IRI) bs.getBinding(SparqlVariable.LEXICAL_ENTRY_INSTANCE_NAME).getValue()).getLocalName() : null;
+            }
+        } catch (QueryEvaluationException qee) {
+        }
+        return null;
+    }
+
+    public int lexicalEntriesNumberByLanguage(String id) throws QueryEvaluationException {
+        TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL,
+                SparqlQueryUtil.LEXICAL_ENTRY_NUMBER_BY_LANGUAGE.replaceAll("_ID_", id));
+        try (TupleQueryResult result = tupleQuery.evaluate()) {
+            while (result.hasNext()) {
+                BindingSet bs = result.next();
+                return (bs.getBinding(SparqlVariable.LABEL_COUNT) != null)
+                        ? ((Literal) bs.getBinding(SparqlVariable.LABEL_COUNT).getValue()).intValue() : 1;
+            }
+        } catch (QueryEvaluationException qee) {
+        }
+        return 1;
+    }
+
+    public boolean isLexiconLanguage(String id) throws QueryEvaluationException {
+        BooleanQuery ask = GraphDbUtil.getConnection().prepareBooleanQuery(QueryLanguage.SPARQL,
+                SparqlQueryUtil.IS_LEXICON_LANGUAGE.replaceAll("_ID_", id));
+        return ask.evaluate();
+    }
+
+    public boolean isLexicalEntry(String id) throws QueryEvaluationException {
+        BooleanQuery ask = GraphDbUtil.getConnection().prepareBooleanQuery(QueryLanguage.SPARQL,
+                SparqlQueryUtil.IS_LEXICALENTRY_ID.replaceAll("_ID_", id));
+        return ask.evaluate();
+    }
+
+    public boolean exists(String id) throws QueryEvaluationException {
+        BooleanQuery ask = GraphDbUtil.getConnection().prepareBooleanQuery(QueryLanguage.SPARQL,
+                SparqlQueryUtil.EXISTS_ID.replaceAll("_ID_", id));
+        return ask.evaluate();
+    }
+
+    public boolean isForm(String id) throws QueryEvaluationException {
+        BooleanQuery ask = GraphDbUtil.getConnection().prepareBooleanQuery(QueryLanguage.SPARQL,
+                SparqlQueryUtil.IS_FORM_ID.replaceAll("_ID_", id));
+        return ask.evaluate();
+    }
+
+    public boolean isLexicalSense(String id) throws QueryEvaluationException {
+        BooleanQuery ask = GraphDbUtil.getConnection().prepareBooleanQuery(QueryLanguage.SPARQL,
+                SparqlQueryUtil.IS_LEXICALSENSE_ID.replaceAll("_ID_", id));
+        return ask.evaluate();
+    }
+
+}

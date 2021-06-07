@@ -26,7 +26,7 @@ public class LexicalSenseFilterHelper extends TripleStoreDataHelper<LexicalSense
         String name = (!definition.isEmpty() && definition.length() > Constant.SENSE_NAME_MAX_LENGHT) ? definition.substring(0, Constant.SENSE_NAME_MAX_LENGHT - 1).concat(" ...") : definition;
         data.setLexicalEntry(bs.getBinding(SparqlVariable.LEXICAL_ENTRY).getValue().stringValue());
         data.setLexicalEntryInstanceName(getLocalName(bs, SparqlVariable.LEXICAL_ENTRY));
-        data.setPos(((IRI) bs.getBinding(SparqlVariable.LEXICAL_ENTRY_POS).getValue()).getLocalName());
+        data.setPos(getLocalName(bs, SparqlVariable.LEXICAL_ENTRY_POS));
         data.setSense(bs.getBinding(SparqlVariable.SENSE).getValue().stringValue());
         data.setSenseInstanceName(bs.getBinding(SparqlVariable.SENSE_INSTANCE_NAME).getValue().stringValue());
         data.setCreator(((bs.getBinding(SparqlVariable.LEXICAL_ENTRY_CREATION_AUTHOR) != null) ? bs.getBinding(SparqlVariable.LEXICAL_ENTRY_CREATION_AUTHOR).getValue().stringValue() : ""));
