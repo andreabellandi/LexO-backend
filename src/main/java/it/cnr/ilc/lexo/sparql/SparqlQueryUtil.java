@@ -24,24 +24,35 @@ public class SparqlQueryUtil {
             + "    OPTIONAL { " + SparqlPrefix.LEX.getPrefix() + "_ID_ _RELATION_ ?" + SparqlVariable.VALUE + " . }\n"
             + "    FILTER(!STRSTARTS(STR(?type), str(" + SparqlPrefix.OWL.getPrefix() + ")))\n"
             + "}";
-    
+
     public static final String ASK_ENTITY_RELATION
-            = SparqlPrefix.LEX.getSparqlPrefix() + "\n" 
+            = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
             + "ASK { lex:_ID_ _RELATION_ _VALUE_ }";
 
     public static final String IS_LEXICON_LANGUAGE
             = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
-            + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LIME.getSparqlPrefix() + "\n"
             + "ASK { " + SparqlPrefix.LEX.getPrefix() + "_ID_ a " + SparqlPrefix.LIME.getPrefix() + "Lexicon }";
 
     public static final String IS_LEXICALENTRY_ID
             = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
             + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
             + "ASK { " + SparqlPrefix.LEX.getPrefix() + "_ID_ a " + SparqlPrefix.ONTOLEX.getPrefix() + "LexicalEntry }";
+    
+    public static final String HAS_LEXICALENTRY_CHILDREN
+            = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
+            + "ASK {" + SparqlPrefix.LEX.getPrefix() + "_ID_ " + SparqlPrefix.ONTOLEX.getPrefix() + "sense|" + SparqlPrefix.ONTOLEX.getPrefix() + "lexicalForm ?f}";
 
     public static final String EXISTS_ID
             = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
             + "ASK { " + SparqlPrefix.LEX.getPrefix() + "_ID_ a ?type }";
+
+    public static final String EXISTS_LANGUAGE
+            = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LIME.getSparqlPrefix() + "\n"
+            + "ASK { ?lex a " + SparqlPrefix.LIME.getPrefix() + "Lexicon ;"
+            + "      " + SparqlPrefix.LIME.getPrefix() + "language \"_LANG_\" . }";
 
     public static final String IS_FORM_ID
             = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
@@ -76,7 +87,7 @@ public class SparqlQueryUtil {
     public static final String LEXICAL_ENTRY_NUMBER_BY_LANGUAGE
             = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
             + SparqlPrefix.LIME.getSparqlPrefix() + "\n"
-            + "SELECT ?" + SparqlVariable.LABEL_COUNT + " \n"
-            + "WHERE { lex:_ID_ " + SparqlPrefix.LIME.getPrefix() + "entry ?" + SparqlVariable.LABEL_COUNT + " }";
+            + "SELECT (count(?count) as ?" + SparqlVariable.LABEL_COUNT + ") \n"
+            + "WHERE { lex:_ID_ " + SparqlPrefix.LIME.getPrefix() + "entry ?count }";
 
 }

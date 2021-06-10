@@ -176,9 +176,9 @@ public class EnumUtil {
     }
     
     public static enum LanguageAttributes {
-        Catalog("linguisticCatalog"),
         Description("description"),
-        Lexvo("language");
+        Language("language"),
+        Lexvo("lexvo");
 
         private final String languageAttributes;
 

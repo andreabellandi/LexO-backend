@@ -63,7 +63,7 @@ public class LexiconCreation extends Service {
                     required = true)
             @QueryParam("key") String key,
             @ApiParam(
-                    name = "language",
+                    name = "lang",
                     value = "language code (2 or 3 digits)",
                     example = "en",
                     required = true)
@@ -77,6 +77,10 @@ public class LexiconCreation extends Service {
         if (key.equals("PRINitant19")) {
             try {
                 //        log(Level.INFO, "get lexicon entries types");
+                UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+                if (utilityManager.languageExists(lang)) {
+                    return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Language label " + lang + " already exists").build();
+                }
                 Language l = lexiconManager.createLanguage(author, lang);
                 String json = languageHelper.toJson(l);
                 return Response.ok(json)

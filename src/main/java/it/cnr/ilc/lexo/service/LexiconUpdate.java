@@ -177,7 +177,6 @@ public class LexiconUpdate extends Service {
     public Response linguisticRelation(@QueryParam("key") String key, @PathParam("id") String id, LinguisticRelationUpdater lru) {
         if (key.equals("PRINitant19")) {
             try {
-                UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
                 return Response.ok(lexiconManager.updateLinguisticRelation(id, lru))
                         .type(MediaType.TEXT_PLAIN)
                         .header("Access-Control-Allow-Headers", "content-type")
@@ -192,34 +191,34 @@ public class LexiconUpdate extends Service {
         }
     }
 
-//    @POST
-//    @Path("{id}/genericRelation")
-//    @Produces(MediaType.APPLICATION_JSON)
-//    @RequestMapping(
-//            method = RequestMethod.POST,
-//            value = "/{id}/genericRelation",
-//            produces = "application/json; charset=UTF-8")
-//    @ApiOperation(value = "Generic relation update",
-//            notes = "This method updates a generic relation according to the input updater")
-//    public Response genericRelation(@QueryParam("key") String key, @PathParam("id") String id, GenericRelationUpdater gru) {
-//        if (key.equals("PRINitant19")) {
-//            try {
-//                UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
-//                if (!utilityManager.exists(id)) {
-//                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + id + " does not exist").build();
-//                }
-//                return Response.ok(lexiconManager.updateGenericRelation(id, gru))
-//                        .type(MediaType.TEXT_PLAIN)
-//                        .header("Access-Control-Allow-Headers", "content-type")
-//                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-//                        .build();
-//            } catch (ManagerException | UpdateExecutionException ex) {
-//                Logger.getLogger(LexiconUpdate.class.getName()).log(Level.SEVERE, null, ex);
-//                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
-//            }
-//        } else {
-//            return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Insertion denied, wrong key").build();
-//        }
-//    }
+    @POST
+    @Path("{id}/genericRelation")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.POST,
+            value = "/{id}/genericRelation",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Generic relation update",
+            notes = "This method updates a generic relation according to the input updater")
+    public Response genericRelation(@QueryParam("key") String key, @PathParam("id") String id, GenericRelationUpdater gru) {
+        if (key.equals("PRINitant19")) {
+            try {
+                UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+                if (!utilityManager.exists(id)) {
+                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + id + " does not exist").build();
+                }
+                return Response.ok(lexiconManager.updateGenericRelation(id, gru))
+                        .type(MediaType.TEXT_PLAIN)
+                        .header("Access-Control-Allow-Headers", "content-type")
+                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                        .build();
+            } catch (ManagerException | UpdateExecutionException ex) {
+                Logger.getLogger(LexiconUpdate.class.getName()).log(Level.SEVERE, null, ex);
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            }
+        } else {
+            return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Insertion denied, wrong key").build();
+        }
+    }
 
 }

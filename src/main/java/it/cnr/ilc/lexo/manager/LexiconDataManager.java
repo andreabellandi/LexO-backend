@@ -246,10 +246,10 @@ public class LexiconDataManager implements Manager, Cached {
         return tupleQuery.evaluate();
     }
     
-    public TupleQueryResult getLexicalEntryPropertyLinks(String lexicalEntryID, String property) throws ManagerException {
+    public TupleQueryResult getLexicalEntryLinks(String lexicalEntryID, String property) throws ManagerException {
         Manager.validateWithEnum("property", EnumUtil.LexicalEntryPropertyLinks.class, property);
         TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL,
-                SparqlSelectData.DATA_LEXICAL_ENTRY_PROPERTY_LINKS
+                SparqlSelectData.DATA_LEXICAL_ENTRY_LINKS
                         .replace("_ID_", lexicalEntryID)
                         .replace("_RELATION_", SparqlPrefix.ONTOLEX.getPrefix() + property));
         return tupleQuery.evaluate();
@@ -287,13 +287,15 @@ public class LexiconDataManager implements Manager, Cached {
     }
     
     public FormCore getMorphologyInheritance(List<FormCore> fc) {
-        if (fc.size() > 1) {
-            ArrayList<Morphology> ms = new ArrayList();
-            for (FormCore _fc : fc) {
-                ms.addAll(_fc.getInheritedMorphology());
+        List<Morphology> inhml = new ArrayList(); 
+        for (int i = 1; i < fc.size(); i++) {
+            for (Morphology m : fc.get(i).getInheritedMorphology()) {
+                if (!m.getTrait().equals("partOfSpeech")) {
+                    inhml.add(m);
+                }
             }
-            fc.get(0).setInheritedMorphology(ms);
         }
+        fc.get(0).getInheritedMorphology().addAll(inhml);
         return fc.get(0);
     }
     

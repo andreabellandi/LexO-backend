@@ -105,6 +105,11 @@ public final class LexiconUpdateManager implements Manager, Cached {
             }
         }
     }
+    
+    public void languageUpdatePermission(String id) throws ManagerException {
+        if (ManagerFactory.getManager(UtilityManager.class).lexicalEntriesNumberByLanguage(id) > 0)
+            throw new ManagerException(" Language cannot be modified or deleted. Remove all its entries first");
+    }
 
     public void validateMorphology(String trait, String value) throws ManagerException {
         Manager.validateMorphology(trait, value);
@@ -120,14 +125,14 @@ public final class LexiconUpdateManager implements Manager, Cached {
 
     public String updateLexiconLanguage(String id, LanguageUpdater lu, String user) throws ManagerException {
         validateLexiconLanguageAttribute(lu.getRelation());
-        if (lu.getRelation().equals(EnumUtil.LanguageAttributes.Catalog.toString())) {
-            validateURL(lu.getValue(), lexinfoCatalog);
-            return updateLexiconLanguage(id, SparqlPrefix.SKOS.getPrefix() + lu.getRelation(), lu.getValue());
-        } else if (lu.getRelation().equals(EnumUtil.LanguageAttributes.Lexvo.toString())) {
+        if (lu.getRelation().equals(EnumUtil.LanguageAttributes.Lexvo.toString())) {
             validateURL(lu.getValue(), lexvoPrefix, libraryOfCongressPrefix);
-            return updateLexiconLanguage(id, SparqlPrefix.SKOS.getPrefix() + lu.getRelation(), lu.getValue());
+            return updateLexiconLanguage(id, SparqlPrefix.DCT.getPrefix() + "language", "<" + lu.getValue() + ">");
         } else if (lu.getRelation().equals(EnumUtil.LanguageAttributes.Description.toString())) {
-            return updateLexiconLanguage(id, SparqlPrefix.LEXINFO.getPrefix() + lu.getRelation(), "\"" + lu.getValue() + "\"");
+            return updateLexiconLanguage(id, SparqlPrefix.DCT.getPrefix() + lu.getRelation(), "\"" + lu.getValue() + "\"");
+        } else if (lu.getRelation().equals(EnumUtil.LanguageAttributes.Language.toString())) {
+            languageUpdatePermission(id);
+            return updateLexiconLanguage(id, SparqlPrefix.LIME.getPrefix() + lu.getRelation(), "\"" + lu.getValue() + "\"");
         } else {
             return null;
         }
@@ -140,9 +145,7 @@ public final class LexiconUpdateManager implements Manager, Cached {
         String lastupdate = timestampFormat.format(new Timestamp(System.currentTimeMillis()));
         Update updateOperation = GraphDbUtil.getConnection().prepareUpdate(QueryLanguage.SPARQL,
                 SparqlUpdateData.UPDATE_LEXICON_LANGUAGE.replaceAll("_ID_", id)
-                        .replaceAll("_RELATION_", relation.equals(EnumUtil.LanguageAttributes.Catalog.toString())
-                                ? SparqlPrefix.LIME.getPrefix() + EnumUtil.LanguageAttributes.Catalog
-                                : SparqlPrefix.DCT.getPrefix() + relation)
+                        .replaceAll("_RELATION_", relation)
                         .replaceAll("_VALUE_TO_INSERT_", valueToInsert)
                         .replaceAll("_VALUE_TO_DELETE_", "?" + SparqlVariable.TARGET)
                         .replaceAll("_LAST_UPDATE_", "\"" + lastupdate + "\""));
@@ -451,6 +454,7 @@ public final class LexiconUpdateManager implements Manager, Cached {
 
     public String updateLinguisticRelation(String id, LinguisticRelationUpdater lru) throws ManagerException {
         if (lru.getType().equals(EnumUtil.LinguisticRelation.Morphology.toString())) {
+            
             validateMorphology(lru.getRelation(), lru.getValue());
             setPrefixes(lru, SparqlPrefix.LEXINFO.getUri(), SparqlPrefix.LEXINFO.getUri(), SparqlPrefix.LEXINFO.getUri());
         } else if (lru.getType().equals(EnumUtil.LinguisticRelation.ConceptRef.toString())) {
@@ -508,8 +512,9 @@ public final class LexiconUpdateManager implements Manager, Cached {
         UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
         if (gru.getType().equals(EnumUtil.GenericRelation.Reference.toString())) {
             if (!utilityManager.exists(id)) {
-                validateURL(gru.getValue());
                 throw new ManagerException(id + " does not exist in the lexicon");
+            } else {
+                validateURL(gru.getValue());
             }
             return updateGenericRelation(id, SparqlPrefix.RDFS.getPrefix() + gru.getRelation(), gru.getValue());
         } else {

@@ -14,6 +14,7 @@ public class SparqlUpdateData {
     public static final String UPDATE_LEXICON_LANGUAGE
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
             + SparqlPrefix.LEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LIME.getSparqlPrefix() + "\n"
             + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
             + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
             + SparqlPrefix.SKOS.getSparqlPrefix() + "\n"

@@ -29,7 +29,7 @@ public class LanguageHelper extends TripleStoreDataHelper<Language> {
         data.setCreationDate(getStringValue(bs, SparqlVariable.CREATION_DATE));
         data.setCatalog(getStringValue(bs, SparqlVariable.LEXICON_LANGUAGE_CATALOG));
         data.setDescription(getStringValue(bs, SparqlVariable.LEXICON_LANGUAGE_DESCRIPTION));
-        data.setLexvo(getStringValue(bs, SparqlVariable.LEXICON_LANGUAGE_DESCRIPTION));
+        data.setLexvo(getStringValue(bs, SparqlVariable.LEXICON_LANGUAGE_LEXVO));
         data.setEntries(getIntegerNumber(bs, SparqlVariable.LABEL_COUNT));
     }
 

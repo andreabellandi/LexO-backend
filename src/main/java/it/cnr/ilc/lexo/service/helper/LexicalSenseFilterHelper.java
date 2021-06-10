@@ -37,6 +37,7 @@ public class LexicalSenseFilterHelper extends TripleStoreDataHelper<LexicalSense
         data.setConcept(((bs.getBinding(SparqlVariable.CONCEPT) != null) ? bs.getBinding(SparqlVariable.CONCEPT).getValue().stringValue() : ""));
         data.setConceptInstanceName(((bs.getBinding(SparqlVariable.CONCEPT_INSTANCE_NAME) != null) ? bs.getBinding(SparqlVariable.CONCEPT_INSTANCE_NAME).getValue().stringValue() : ""));
         data.setHasChildren(false);
+        data.setLemma(getStringValue(bs, SparqlVariable.WRITTEN_REPRESENTATION));
         data.setLastUpdate(getStringValue(bs, SparqlVariable.LAST_UPDATE));
         data.setCreationDate(getStringValue(bs, SparqlVariable.CREATION_DATE));
     }

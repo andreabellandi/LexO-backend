@@ -115,6 +115,12 @@ public final class UtilityManager implements Manager, Cached {
                 SparqlQueryUtil.IS_LEXICON_LANGUAGE.replaceAll("_ID_", id));
         return ask.evaluate();
     }
+    
+    public boolean hasLexicalEntryChildren(String id) throws QueryEvaluationException {
+        BooleanQuery ask = GraphDbUtil.getConnection().prepareBooleanQuery(QueryLanguage.SPARQL,
+                SparqlQueryUtil.HAS_LEXICALENTRY_CHILDREN.replaceAll("_ID_", id));
+        return ask.evaluate();
+    }
 
     public boolean isLexicalEntry(String id) throws QueryEvaluationException {
         BooleanQuery ask = GraphDbUtil.getConnection().prepareBooleanQuery(QueryLanguage.SPARQL,
@@ -128,6 +134,13 @@ public final class UtilityManager implements Manager, Cached {
         return ask.evaluate();
     }
 
+    public boolean languageExists(String lang) throws QueryEvaluationException {
+        BooleanQuery ask = GraphDbUtil.getConnection().prepareBooleanQuery(QueryLanguage.SPARQL,
+                SparqlQueryUtil.EXISTS_LANGUAGE.replaceAll("_LANG_", lang));
+        return ask.evaluate();
+    }
+
+    
     public boolean isForm(String id) throws QueryEvaluationException {
         BooleanQuery ask = GraphDbUtil.getConnection().prepareBooleanQuery(QueryLanguage.SPARQL,
                 SparqlQueryUtil.IS_FORM_ID.replaceAll("_ID_", id));

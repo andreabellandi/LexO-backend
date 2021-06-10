@@ -13,7 +13,7 @@ public class SparqlDeleteData {
 
     public static final String DELETE_LEXICON_LANGUAGE
             = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
-            + "DELETE { lex:_ID_ ?predicate ?object . \n"
+            + "DELETE { lex:_ID_ ?predicate ?object . } \n"
             + "WHERE { lex:_ID_ ?predicate ?object . }";
     
     public static final String DELETE_LEXICAL_ENTRY

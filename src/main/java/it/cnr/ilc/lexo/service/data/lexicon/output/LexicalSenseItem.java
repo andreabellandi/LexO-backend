@@ -18,6 +18,7 @@ public class LexicalSenseItem implements Data {
     private String lexicalEntry;
     private String lexicalEntryInstanceName;
     private String pos;
+    private String lemma;
     private boolean hasChildren;
     private String label;
     private String definition;
@@ -35,6 +36,14 @@ public class LexicalSenseItem implements Data {
 
     public void setSense(String sense) {
         this.sense = sense;
+    }
+
+    public String getLemma() {
+        return lemma;
+    }
+
+    public void setLemma(String lemma) {
+        this.lemma = lemma;
     }
 
     public String getSenseInstanceName() {

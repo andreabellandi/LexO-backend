@@ -160,7 +160,7 @@ public class LexiconData extends Service {
                     required = true)
             @PathParam("id") String id) {
         try {
-            TupleQueryResult propertyLinks = lexiconManager.getLexicalEntryPropertyLinks(id, property);
+            TupleQueryResult propertyLinks = lexiconManager.getLexicalEntryLinks(id, property);
             List<LinkedEntity> le = linkedEntityHelper.newDataList(propertyLinks);
             String json = linkedEntityHelper.toJson(le);
             return Response.ok(json)

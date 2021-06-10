@@ -17,7 +17,7 @@ import it.cnr.ilc.lexo.service.data.Data;
 public class LanguageUpdater implements Data {
     
     @ApiModelProperty(value = "language relation/attribute", example = "description", 
-            allowableValues = "language, linguisticCatalog, description")
+            allowableValues = "language, lexvo, description")
     private String relation;
     @ApiModelProperty(value = "realtion/attribute value", example = "test", allowEmptyValue = false)
     private String value;

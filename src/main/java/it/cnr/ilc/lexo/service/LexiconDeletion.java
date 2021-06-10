@@ -66,7 +66,7 @@ public class LexiconDeletion extends Service {
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + id + " does not exist").build();
                 }
                 if (utilityManager.lexicalEntriesNumberByLanguage(id) != 0) {
-                    return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("IRI " + id + " has some lexical entries associated").build();
+                    return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("IRI " + id + " cannot be deleted. Remove all its entries first").build();
                 }
                 lexiconManager.deleteLexiconLanguage(id);
                 return Response.ok()

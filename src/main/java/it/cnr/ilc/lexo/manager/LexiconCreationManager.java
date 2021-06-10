@@ -46,23 +46,27 @@ public class LexiconCreationManager implements Manager, Cached {
         String _id = id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
         Update updateOperation = GraphDbUtil.getConnection().prepareUpdate(QueryLanguage.SPARQL,
                 SparqlInsertData.CREATE_LEXICON_LANGUAGE.replace("_ID_", _id)
-                        .replace("_LANG_", _id));
+                        .replace("_LANG_", lang)
+                        .replace("_AUTHOR_", author)
+                        .replace("_CREATED_", created)
+                        .replace("_MODIFIED_", created));
         updateOperation.execute();
         return setLanguage(_id, created, author, lang);
     }
-    
+
     private Language setLanguage(String id, String created, String author, String lang) {
         Language l = new Language();
         l.setCreator(author);
         l.setLanguageInstanceName(id);
         l.setLanguage(getNamespace() + id);
         l.setLabel(lang);
+        l.setCatalog("http://www.lexinfo.net/ontology/3.0/lexinfo#");
         l.setLastUpdate(created);
         l.setCreationDate(created);
         l.setEntries(0);
         return l;
     }
-    
+
     public LexicalEntryCore createLexicalEntry(String author) throws ManagerException {
         Timestamp tm = new Timestamp(System.currentTimeMillis());
         String id = idInstancePrefix + tm.toString();
@@ -107,7 +111,7 @@ public class LexiconCreationManager implements Manager, Cached {
         updateOperation.execute();
         return setForm(_id, created, author);
     }
-    
+
     private FormCore setForm(String id, String created, String author) {
         List<Property> pl = new ArrayList();
         Property p = new Property("writtenRep", id);
@@ -138,7 +142,7 @@ public class LexiconCreationManager implements Manager, Cached {
         updateOperation.execute();
         return setSense(_id, created, author);
     }
-    
+
     private LexicalSenseCore setSense(String id, String created, String author) {
         LexicalSenseCore sc = new LexicalSenseCore();
         sc.setCreator(author);
@@ -148,5 +152,5 @@ public class LexiconCreationManager implements Manager, Cached {
         sc.setCreationDate(created);
         return sc;
     }
-    
+
 }

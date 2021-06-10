@@ -29,8 +29,13 @@ public class SparqlInsertData {
     public static final String CREATE_LEXICON_LANGUAGE
             = SparqlPrefix.LIME.getSparqlPrefix() + "\n"
             + SparqlPrefix.LEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.DCT.getSparqlPrefix() + "\n"
             + "INSERT DATA { " + SparqlPrefix.LEX.getPrefix() + "_ID_ a " + SparqlPrefix.LIME.getPrefix() + "Lexicon ;\n" +
-"                           " + SparqlPrefix.LIME.getPrefix() + "language \"_LANG_\" . }";
+              SparqlPrefix.LIME.getPrefix() + "language \"_LANG_\" ;\n"
+            + SparqlPrefix.LIME.getPrefix() + "linguisticCatalog <http://www.lexinfo.net/ontologies/3.0/lexinfo> ;\n"
+            + SparqlPrefix.DCT.getPrefix() + "creator \"_AUTHOR_\" ;\n"
+            + SparqlPrefix.DCT.getPrefix() + "created \"_CREATED_\" ;\n"
+            + SparqlPrefix.DCT.getPrefix() + "modified \"_MODIFIED_\" . }";
 
     public static final String CREATE_FORM
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"

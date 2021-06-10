@@ -44,6 +44,10 @@ public class FormCoreHelper extends TripleStoreDataHelper<FormCore> {
 
     private ArrayList<Morphology> getMorphology(BindingSet bs) {
         ArrayList<Morphology> m = new ArrayList();
+        if (!getStringValue(bs, SparqlVariable.LEXICAL_ENTRY_POS).isEmpty()) {
+            m.add(new Morphology("partOfSpeech",
+                    getLocalName(bs, SparqlVariable.LEXICAL_ENTRY_POS)));
+        }
         if (!getStringValue(bs, SparqlVariable.INHERITED_MORPHOLOGY_TRAIT_NAME).isEmpty()) {
             m.add(new Morphology(getStringValue(bs, SparqlVariable.INHERITED_MORPHOLOGY_TRAIT_NAME),
                     getStringValue(bs, SparqlVariable.INHERITED_MORPHOLOGY_TRAIT_VALUE)));

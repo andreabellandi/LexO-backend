@@ -20,7 +20,6 @@ public class LexiconDeletionManager implements Manager, Cached {
 
     private final String namespace = LexOProperties.getProperty("repository.lexicon.namespace");
 
-
     public String getNamespace() {
         return namespace;
     }
@@ -35,20 +34,24 @@ public class LexiconDeletionManager implements Manager, Cached {
                 SparqlDeleteData.DELETE_LEXICON_LANGUAGE.replaceAll("_ID_", id));
         updateOperation.execute();
     }
-    
-    // mancano le forme e i sensi !!!!
+
     public void deleteLexicalEntry(String id) throws ManagerException {
-        Update updateOperation = GraphDbUtil.getConnection().prepareUpdate(QueryLanguage.SPARQL,
-                SparqlDeleteData.DELETE_LEXICAL_ENTRY.replaceAll("_ID_", id));
-        updateOperation.execute();
+        if (!ManagerFactory.getManager(UtilityManager.class).hasLexicalEntryChildren(id)) {
+            Update updateOperation = GraphDbUtil.getConnection().prepareUpdate(QueryLanguage.SPARQL,
+                    SparqlDeleteData.DELETE_LEXICAL_ENTRY.replaceAll("_ID_", id));
+            updateOperation.execute();
+        } else {
+            throw new ManagerException("The lexical entry cannot be deleted. Remove its forms and/or senses first.");
+        }
+
     }
-    
+
     public void deleteForm(String id) throws ManagerException {
         Update updateOperation = GraphDbUtil.getConnection().prepareUpdate(QueryLanguage.SPARQL,
                 SparqlDeleteData.DELETE_FORM.replaceAll("_ID_", id));
         updateOperation.execute();
     }
-    
+
     public void deleteLexicalSense(String id) throws ManagerException {
         Update updateOperation = GraphDbUtil.getConnection().prepareUpdate(QueryLanguage.SPARQL,
                 SparqlDeleteData.DELETE_LEXICAL_SENSE.replaceAll("_ID_", id));
