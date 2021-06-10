@@ -246,12 +246,11 @@ public class LexiconDataManager implements Manager, Cached {
         return tupleQuery.evaluate();
     }
     
-    public TupleQueryResult getLexicalEntryLinks(String lexicalEntryID, String property) throws ManagerException {
-        Manager.validateWithEnum("property", EnumUtil.LexicalEntryPropertyLinks.class, property);
+    public TupleQueryResult getLinguisticRelation(String lexicalEntryID, String property) throws ManagerException {
         TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL,
-                SparqlSelectData.DATA_LEXICAL_ENTRY_LINKS
+                SparqlSelectData.DATA_LINGUISTIC_RELATION
                         .replace("_ID_", lexicalEntryID)
-                        .replace("_RELATION_", SparqlPrefix.ONTOLEX.getPrefix() + property));
+                        .replace("_RELATION_", property));
         return tupleQuery.evaluate();
     }
     

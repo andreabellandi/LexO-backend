@@ -495,28 +495,26 @@ public class SparqlSelectData {
             + "    { ?" + SparqlVariable.LEXICAL_ENTRY + " owl:sameAs ?" + SparqlVariable.SAMEAS + " . }\n"
             + "}";
 
-    public static final String DATA_LEXICAL_ENTRY_LINKS
+    public static final String DATA_LINGUISTIC_RELATION
             = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
             + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
             + SparqlPrefix.ONTO.getSparqlPrefix() + "\n"
             + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
             + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
             + SparqlPrefix.SESAME.getSparqlPrefix() + "\n"
+            + SparqlPrefix.SKOS.getSparqlPrefix() + "\n"
             + SparqlPrefix.RDF.getSparqlPrefix() + "\n"
             + SparqlPrefix.OWL.getSparqlPrefix() + "\n"
-            + "SELECT ?" + SparqlVariable.GRAPH + " ?" + SparqlVariable.TARGET + " ?" + SparqlVariable.LABEL + " ?" + SparqlVariable.TYPE + "\n"
+            + "SELECT ?graph ?" + SparqlVariable.TARGET + " ?" + SparqlVariable.LABEL + " ?" + SparqlVariable.TYPE + "\n"
             + "FROM NAMED " + SparqlPrefix.ONTO.getPrefix() + "explicit\n"
             + "FROM NAMED " + SparqlPrefix.ONTO.getPrefix() + "implicit\n"
             + "   { \n"
-            + "      GRAPH ?" + SparqlVariable.GRAPH + " { lex:_ID_ _RELATION_ ?" + SparqlVariable.TARGET + " . }\n"
-            + "    OPTIONAL { ?" + SparqlVariable.TARGET + " " + SparqlPrefix.RDFS.getPrefix() + "label ?" + SparqlVariable.LABEL + " . }\n"
+            + "      GRAPH ?graph { " + SparqlPrefix.LEX.getPrefix() + "_ID_ ?relation ?" + SparqlVariable.TARGET + " . \n"
+            + "                                             FILTER (regex(str(?relation), \"_RELATION_\")) }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.TARGET + " " + SparqlPrefix.RDFS.getPrefix() + "label|" + SparqlPrefix.SKOS.getPrefix() + "definition ?" + SparqlVariable.LABEL + " . }\n"
             + "    OPTIONAL { ?" + SparqlVariable.TARGET + " " + SparqlPrefix.SESAME.getPrefix() + "directType ?" + SparqlVariable.TYPE + " . \n"
-            + "    FILTER (!regex(str(?" + SparqlVariable.TYPE + "), \""
-            + SparqlPrefix.RDFS.getUri() + "|"
-            + SparqlPrefix.RDF.getUri() + "|"
-            + SparqlPrefix.OWL.getUri()
-            + "\")) }\n"
-            + "   }";
+            + "    FILTER (!regex(str(?" + SparqlVariable.TYPE + "), \"http://www.w3.org/2000/01/rdf-schema#|http://www.w3.org/1999/02/22-rdf-syntax-ns#|http://www.w3.org/2002/07/owl#\")) }\n"
+            + "   } ORDER BY ?graph";
 
     public static final String DATA_FORMS_BY_SENSE_RELATION
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"

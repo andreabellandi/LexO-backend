@@ -132,15 +132,15 @@ public class LexiconData extends Service {
     }
 
     @GET
-    @Path("{id}/lexicalEntryLinguisticRelation")
+    @Path("{id}/linguisticRelation")
     @Produces(MediaType.APPLICATION_JSON)
     @RequestMapping(
             method = RequestMethod.GET,
-            value = "/{id}/lexicalEntryLinguisticRelation",
+            value = "/{id}/linguisticRelation",
             produces = "application/json; charset=UTF-8")
-    @ApiOperation(value = "Lexical entry links",
-            notes = "This method returns the relations with other lexical entities according to the input type")
-    public Response lexicalEntryLinguisticRelation(
+    @ApiOperation(value = "Lexical entity relation",
+            notes = "This method returns the input relation with other lexical entities, as well as the inferred ones")
+    public Response linguisticRelation(
             @ApiParam(
                     name = "key",
                     value = "authentication token",
@@ -149,19 +149,21 @@ public class LexiconData extends Service {
             @QueryParam("key") String key,
             @ApiParam(
                     name = "property",
-                    allowableValues = "denotes, evokes",
                     example = "denotes",
                     required = true)
             @QueryParam("property") String property,
             @ApiParam(
                     name = "id",
-                    value = "lexical entry ID",
+                    value = "lexical entity ID",
                     example = "MUSaccedereVERB",
                     required = true)
             @PathParam("id") String id) {
         try {
-            TupleQueryResult propertyLinks = lexiconManager.getLexicalEntryLinks(id, property);
-            List<LinkedEntity> le = linkedEntityHelper.newDataList(propertyLinks);
+            TupleQueryResult lingRel = lexiconManager.getLinguisticRelation(id, property);
+            if (!lingRel.hasNext()) {
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("There are no instances of " + property).build();
+            }
+            List<LinkedEntity> le = linkedEntityHelper.newDataList(lingRel);
             String json = linkedEntityHelper.toJson(le);
             return Response.ok(json)
                     .type(MediaType.TEXT_PLAIN)
