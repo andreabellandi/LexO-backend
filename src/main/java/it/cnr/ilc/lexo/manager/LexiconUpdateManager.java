@@ -422,14 +422,14 @@ public final class LexiconUpdateManager implements Manager, Cached {
             return updateLexicalSense(id, SparqlPrefix.LEXINFO.getPrefix() + lsu.getRelation(), "\"" + lsu.getValue() + "\"");
         } else if (lsu.getRelation().equals(EnumUtil.LexicalSenseAttributes.Reference.toString())) {
             validateURL(lsu.getValue());
-            return updateLexicalSense(id, SparqlPrefix.ONTOLEX.getPrefix() + lsu.getRelation(), lsu.getValue());
+            return updateLexicalSense(id, SparqlPrefix.ONTOLEX.getPrefix() + lsu.getRelation(), "<" + lsu.getValue() + ">");
         } else if (lsu.getRelation().equals(EnumUtil.LexicalSenseAttributes.SenseExample.toString())) {
             return updateLexicalSense(id, SparqlPrefix.LEXINFO.getPrefix() + lsu.getRelation(), "\"" + lsu.getValue() + "\"");
         } else if (lsu.getRelation().equals(EnumUtil.LexicalSenseAttributes.SenseTranslation.toString())) {
             return updateLexicalSense(id, SparqlPrefix.LEXINFO.getPrefix() + lsu.getRelation(), "\"" + lsu.getValue() + "\"");
         } else if (lsu.getRelation().equals(EnumUtil.LexicalSenseAttributes.Topic.toString())) {
             validateURL(lsu.getValue());
-            return updateLexicalSense(id, SparqlPrefix.DCT.getPrefix() + lsu.getRelation(), lsu.getValue());
+            return updateLexicalSense(id, SparqlPrefix.DCT.getPrefix() + lsu.getRelation(), "<" + lsu.getValue() + ">");
         } else if (lsu.getRelation().equals(EnumUtil.LexicalSenseAttributes.Usage.toString())) {
             return updateLexicalSense(id, SparqlPrefix.ONTOLEX.getPrefix() + lsu.getRelation(), "[ rdf:value \"" + lsu.getValue() + "\" ]");
         } else {

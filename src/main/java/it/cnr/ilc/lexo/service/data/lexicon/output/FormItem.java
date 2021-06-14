@@ -38,6 +38,10 @@ public class FormItem implements Data {
     private String form;
     @ApiModelProperty(value = "form short IRI", example = "MUSaccedereVERB")
     private String formInstanceName;
+    @ApiModelProperty(value = "lexical entry IRI", example = "namespace:MUSaccedereVERB")
+    private String lexicalEntry;
+    @ApiModelProperty(value = "lexical entry short IRI", example = "MUSaccedereVERB")
+    private String lexicalEntryInstanceName;
 
     public FormItem() {
     }
@@ -48,6 +52,22 @@ public class FormItem implements Data {
 
     public void setMorphology(ArrayList<Morphology> morphology) {
         this.morphology = morphology;
+    }
+
+    public String getLexicalEntry() {
+        return lexicalEntry;
+    }
+
+    public void setLexicalEntry(String lexicalEntry) {
+        this.lexicalEntry = lexicalEntry;
+    }
+
+    public String getLexicalEntryInstanceName() {
+        return lexicalEntryInstanceName;
+    }
+
+    public void setLexicalEntryInstanceName(String lexicalEntryInstanceName) {
+        this.lexicalEntryInstanceName = lexicalEntryInstanceName;
     }
 
     public String getForm() {

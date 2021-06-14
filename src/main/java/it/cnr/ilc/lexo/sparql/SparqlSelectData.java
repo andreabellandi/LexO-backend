@@ -165,6 +165,7 @@ public class SparqlSelectData {
             + " ?" + SparqlVariable.WRITTEN_REPRESENTATION
             + " ?" + SparqlVariable.PHONETIC_REPRESENTATION
             + " ?" + SparqlVariable.CREATION_DATE
+            + " ?" + SparqlVariable.LEXICAL_ENTRY
             + " ?" + SparqlVariable.LAST_UPDATE
             + " ?" + SparqlVariable.LEXICAL_ENTRY_POS
             + " ?" + SparqlVariable.NOTE
@@ -201,6 +202,7 @@ public class SparqlSelectData {
             + " ?" + SparqlVariable.PHONETIC_REPRESENTATION
             + " ?" + SparqlVariable.LAST_UPDATE
             + " ?" + SparqlVariable.CREATION_DATE
+            + " ?" + SparqlVariable.LEXICAL_ENTRY
             + " ?" + SparqlVariable.NOTE + "\n"
             + "  ORDER BY ?"
             + SparqlVariable.WRITTEN_REPRESENTATION

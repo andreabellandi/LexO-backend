@@ -12,6 +12,7 @@ import it.cnr.ilc.lexo.manager.LexiconDeletionManager;
 import it.cnr.ilc.lexo.manager.ManagerException;
 import it.cnr.ilc.lexo.manager.ManagerFactory;
 import it.cnr.ilc.lexo.manager.UtilityManager;
+import it.cnr.ilc.lexo.service.data.lexicon.input.LinguisticRelationUpdater;
 import it.cnr.ilc.lexo.service.helper.LexicalEntryCoreHelper;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -82,7 +83,7 @@ public class LexiconDeletion extends Service {
             return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Deletion denied, wrong key").build();
         }
     }
-    
+
     @GET
     @Path("{id}/lexicalEntry")
     @Produces(MediaType.APPLICATION_JSON)
@@ -126,7 +127,7 @@ public class LexiconDeletion extends Service {
             return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Deletion denied, wrong key").build();
         }
     }
-    
+
     @GET
     @Path("{id}/form")
     @Produces(MediaType.APPLICATION_JSON)
@@ -169,7 +170,7 @@ public class LexiconDeletion extends Service {
             return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Deletion denied, wrong key").build();
         }
     }
-    
+
     @GET
     @Path("{id}/lexicalSense")
     @Produces(MediaType.APPLICATION_JSON)
@@ -199,6 +200,47 @@ public class LexiconDeletion extends Service {
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + id + " does not exist").build();
                 }
                 lexiconManager.deleteLexicalSense(id);
+                return Response.ok()
+                        .type(MediaType.TEXT_PLAIN)
+                        .header("Access-Control-Allow-Headers", "content-type")
+                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                        .build();
+            } catch (ManagerException ex) {
+                Logger.getLogger(LexiconDeletion.class.getName()).log(Level.SEVERE, null, ex);
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            }
+        } else {
+            return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Deletion denied, wrong key").build();
+        }
+    }
+
+    @GET
+    @Path("{id}/linguisticRelation")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "linguisticRelation",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Linguistic relation deletion",
+            notes = "This method deletes a linguistic relation")
+    public Response linguisticRelation(
+            @ApiParam(
+                    name = "key",
+                    value = "authentication token",
+                    example = "lexodemo",
+                    required = true)
+            @QueryParam("key") String key,
+            @ApiParam(
+                    name = "id",
+                    value = "lexical entry ID",
+                    example = "MUSaccedereVERB",
+                    required = true)
+            @PathParam("id") String id,
+            LinguisticRelationUpdater lru) {
+        // aggiungiere che, se currentvalue è vuoto controllare se relation è un attributo (enumutil). se sì cancella
+        if (key.equals("PRINitant19")) {
+            try {
+                lexiconManager.deleteLinguisticRelation(id, lru);
                 return Response.ok()
                         .type(MediaType.TEXT_PLAIN)
                         .header("Access-Control-Allow-Headers", "content-type")

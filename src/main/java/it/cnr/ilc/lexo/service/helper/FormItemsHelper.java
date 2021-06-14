@@ -7,7 +7,6 @@ package it.cnr.ilc.lexo.service.helper;
 
 import it.cnr.ilc.lexo.service.data.lexicon.output.FormItem;
 import it.cnr.ilc.lexo.sparql.SparqlVariable;
-import java.util.regex.Pattern;
 import org.eclipse.rdf4j.query.BindingSet;
 
 /**
@@ -29,6 +28,8 @@ public class FormItemsHelper extends TripleStoreDataHelper<FormItem> {
                 getStringValue(bs, SparqlVariable.LEXICAL_ENTRY_POS)));
         data.setLastUpdate(getStringValue(bs, SparqlVariable.LAST_UPDATE));
         data.setCreationDate(getStringValue(bs, SparqlVariable.CREATION_DATE));
+        data.setLexicalEntry(getStringValue(bs, SparqlVariable.LEXICAL_ENTRY));
+        data.setLexicalEntryInstanceName(getLocalName(bs, SparqlVariable.LEXICAL_ENTRY));
     }
 
     @Override
