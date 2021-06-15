@@ -1,9 +1,14 @@
 package it.cnr.ilc.lexo;
 
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.repository.RepositoryException;
@@ -20,100 +25,131 @@ import org.slf4j.LoggerFactory;
 public class GraphDbUtil {
 
     private static final Object LOCK = new Object();
-    private static Repository REPOSITORY = null;
+    private static final RepositoryManager repositoryManager;
+    private static final Repository repository;
+
     private static final List<RepositoryConnection> POOL = new ArrayList<>();
-    private static final Map<Thread, RepositoryConnection> ACTIVES = new HashMap<>();
-    private static final int SIZE = Integer.parseInt(LexOProperties.getProperty("GraphDb.size", "5"));
-    private static int current = 0;
+    //private static final Map<Thread, RepositoryConnection> availableConnection = new HashMap<>();
+    private static final int POOLSIZE = Integer.parseInt(LexOProperties.getProperty("GraphDb.size", "5"));
     private static final Logger logger = LoggerFactory.getLogger(GraphDbUtil.class);
 
     static {
-        RepositoryManager repositoryManager = new RemoteRepositoryManager(LexOProperties.getProperty("GraphDb.url", "http://localhost:7200"));
-        repositoryManager.init();
         try {
-            REPOSITORY = repositoryManager.getRepository(LexOProperties.getProperty("GraphDb.repository", "SIMPLE"));
+            //HTTPRepository httprepo = new HTTPRepository(LexOProperties.getProperty("GraphDb.url", "http://localhost:7200"));
+            repositoryManager = new RemoteRepositoryManager(LexOProperties.getProperty("GraphDb.url", "http://localhost:7200"));
+            repositoryManager.init();
+            repository = repositoryManager.getRepository(LexOProperties.getProperty("GraphDb.repository", "SIMPLE"));
+            for (int i = 0; i < POOLSIZE; i++) {
+                POOL.add(repository.getConnection());
+            }
         } catch (RepositoryException | RepositoryConfigException e) {
             logger.error("Unable to connect to GraphDB: " + e);
+            throw new RepositoryException("Unable to connect to GraphDB: " + LexOProperties.getProperty("GraphDb.url", "http://localhost:7200"));
         }
     }
 
-    private static void testConnection(RepositoryConnection connection) throws Exception {
-        // SELECT * WHERE { ?x ?y ?z} LIMIT 1
+    private static  boolean testRDFServerHTTPConnection() {
+        logger.info("testRDFServerHTTPConnection() start");
+        boolean res = true;
+        HttpGet request = new HttpGet(LexOProperties.getProperty("GraphDb.url", "http://localhost:7200"));
+        logger.debug("testRDFServerHTTPConnection() request: " + request);
+        int timeout = 5;
+        RequestConfig config = RequestConfig.custom()
+                .setConnectTimeout(timeout * 1000)
+                .setConnectionRequestTimeout(timeout * 1000)
+                .setSocketTimeout(timeout * 1000).build();
+        try (CloseableHttpClient httpClient = HttpClientBuilder.create().setDefaultRequestConfig(config).build()) {
+            logger.debug("testRDFServerHTTPConnection() before execute: " + request);
+            CloseableHttpResponse response = httpClient.execute(request);
+            logger.debug("testRDFServerHTTPConnection() after execute: " + request);
+
+            // Get HttpResponse Status
+            logger.debug(response.getProtocolVersion().toString());              // HTTP/1.1
+            logger.debug("" + response.getStatusLine().getStatusCode());   // 200
+            logger.debug(response.getStatusLine().getReasonPhrase()); // OK
+            logger.debug(response.getStatusLine().toString());        // HTTP/1.1 200 OK
+
+            if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+                logger.info("GraphDB Response is " + response.getStatusLine().getStatusCode());
+            }
+
+        } catch (IOException e) {
+            logger.error("", e);
+            res = false;
+        }
+
+        return res;
     }
 
-    public static RepositoryConnection getConnection() {
+    public static RepositoryConnection getConnection() throws RepositoryException { 
+        logger.info("getConnection() " + Thread.currentThread().getName());
         synchronized (LOCK) {
-            RepositoryConnection connection = ACTIVES.get(Thread.currentThread()); 
-            if (connection != null) {
-                logger.debug(Thread.currentThread().getName() + " get active connection");
-                return connection;
-            }
-            try {
-                connection = POOL.remove(0);
+            RepositoryConnection connection = null;
+            while (POOL.isEmpty()) {
                 try {
-                    testConnection(connection);
-                    logger.debug(Thread.currentThread().getName() + " get pool connection");
-                } catch (Exception ex) {
-                    logger.debug(Thread.currentThread().getName() + " get inactive connection");
-                    try {
-                        connection.close();
-                    } catch (RepositoryException e) {
-                        logger.error(e.getLocalizedMessage());
-                    }
-                    current--;
-                    connection = getConnection();
-                }
-            } catch (IndexOutOfBoundsException ex) {
-                if (current < SIZE) {
-                    logger.debug(Thread.currentThread().getName() + " get repository connection");
-                    connection = REPOSITORY.getConnection();
-                    current++;
-                } else {
-                    try {
-                        LOCK.wait();
-                    } catch (InterruptedException iex) {
-                        logger.error(iex.getLocalizedMessage());
-                    }
-                    connection = getConnection();
+                    LOCK.wait();
+                    logger.info("After wait() POOL.size(): " + POOL.size());
+                } catch (InterruptedException e) {
+                    logger.error("In wait()", e);
                 }
             }
-            ACTIVES.put(Thread.currentThread(), connection);
+            connection = POOL.remove(0);
+            logger.info("connection is: " + connection + " POOL.size(): " + POOL.size());
+            if (connection != null) {
+                if (!testRDFServerHTTPConnection()) {
+                    POOL.add(connection);
+                    logger.info("RepositoryException, POOL.size(): " + POOL.size());
+                    LOCK.notifyAll();
+                    throw new RepositoryException("Repository is unreachble");
+                }
+//                logger.debug("connection is active? " + connection.isActive());
+//                logger.debug("connection is empty? " + connection.isEmpty());
+                logger.info("connection is open? " + connection.isOpen());
+//                logger.debug(Thread.currentThread().getName() + " get active connection");
+            }
+            LOCK.notifyAll();
+            logger.info("getConnection() " + Thread.currentThread().getName() + " connection: " + connection);
+
             return connection;
         }
     }
 
-    public static void releaseConnection() {
+    public static void releaseConnection(RepositoryConnection connection) {
+        logger.info("releaseConnection() " + Thread.currentThread().getName());
         synchronized (LOCK) {
-            RepositoryConnection connection = ACTIVES.remove(Thread.currentThread());
             if (connection != null) {
                 if (connection.isActive()) {
                     connection.rollback();
                 }
                 POOL.add(connection);
+                logger.info("releaseConnection, POOL.size(): " + POOL.size());
                 LOCK.notifyAll();
             }
         }
     }
 
-    public static void close() {
+    public static void shutDown() {
+        logger.info("shutDown() " + Thread.currentThread().getName());
         synchronized (LOCK) {
-            while (current != POOL.size()) {
-                try {
-                    LOCK.wait();
-                } catch (InterruptedException ex) {
-                    logger.error(ex.getLocalizedMessage());
-                    throw new RuntimeException(ex);
-                }
-            }
             for (RepositoryConnection connection : POOL) {
                 try {
-                    connection.close();
+                    if (connection != null) {
+                        if (connection.isActive()) {
+                            connection.rollback();
+                        }
+                        connection.close();
+                    }
                 } catch (RepositoryException e) {
                     logger.error(e.getLocalizedMessage());
                 }
             }
             POOL.clear();
-            current = 0;
+            if (repository != null) {
+                repository.shutDown();
+            } else {
+                logger.warn("repository is null!");
+            }
+            LOCK.notifyAll();
         }
     }
 }
