@@ -69,7 +69,7 @@ public abstract class TripleStoreDataHelper<D extends Data> extends Helper<D> {
     }
 
     public String getLiteralLanguage(BindingSet bs, String variable) {
-        return (bs.getBinding(variable) != null) ? (!(((Literal) bs.getBinding(variable).getValue()).getLanguage().isEmpty())
+        return (bs.getBinding(variable) != null) ? ((((Literal) bs.getBinding(variable).getValue()).getLanguage().isPresent())
                 ? ((Literal) bs.getBinding(variable).getValue()).getLanguage().get() : "")
                 : "";
     }
