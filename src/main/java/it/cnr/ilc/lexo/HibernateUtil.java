@@ -3,6 +3,7 @@ package it.cnr.ilc.lexo;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.Metadata;
@@ -10,6 +11,8 @@ import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.transform.ResultTransformer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -17,24 +20,57 @@ import org.hibernate.transform.ResultTransformer;
  */
 public class HibernateUtil {
 
-    private static final SessionFactory SESSION_FACTORY;
+    private static final Logger logger = LoggerFactory.getLogger("HibernateUtil");
 
-    static {
-        StandardServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder().configure().build(); 
-        Metadata metadata = new MetadataSources(serviceRegistry).buildMetadata(); 
-        SESSION_FACTORY = metadata.buildSessionFactory();
+    private static SessionFactory sessionFactory = null;
+
+    private static SessionFactory getSessionFactory() {
+        logger.debug("getSessionFactory() sessionFactory is: " + sessionFactory);
+        if (sessionFactory == null) {
+            try {
+                StandardServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder().configure().build();
+                logger.debug("Service Registry created " + serviceRegistry);
+
+                Metadata metadata = new MetadataSources(serviceRegistry).buildMetadata();
+                logger.debug("Metadata created " + metadata);
+
+                sessionFactory = metadata.buildSessionFactory();
+                logger.debug("sessionFactory is : " + sessionFactory);
+            } catch (Exception e) {
+                logger.error("Exception: " + e.getLocalizedMessage());
+                throw new HibernateException("Could not get Hibernate Session Factory: " + e.getLocalizedMessage());
+            }
+        }
+        logger.debug("getSessionFactory() sessionFactory return: " + sessionFactory);
+        return sessionFactory;
     }
 
-    public static Session getSession() {
-        return SESSION_FACTORY.getCurrentSession();
+    public static Session getSession() throws HibernateException {
+        logger.debug("getSession()");
+        if (getSessionFactory() != null) {
+            Session s = getSessionFactory().getCurrentSession();
+            logger.debug("getSession() session is: " + s);
+            return s;
+        } else {
+            throw new HibernateException("Session Factory is null!");
+        }
     }
 
-    public static Session openSession() {
-        return SESSION_FACTORY.openSession();
+    public static Session openSession() throws Exception {
+        if (getSessionFactory() != null) {
+            logger.debug("openSession()");
+            return getSessionFactory().openSession();
+        } else {
+            logger.error("Error opening session");
+            throw new HibernateException("Session Factory is null!");
+        }
     }
 
     static void closeFactory() {
-        SESSION_FACTORY.close();
+        if (getSessionFactory() != null) {
+            logger.info("closeSession()");
+            getSessionFactory().close();
+        }
     }
 
     public static ResultTransformer getResultTransformer() {
@@ -55,5 +91,5 @@ public class HibernateUtil {
             }
         };
     }
-    
+
 }

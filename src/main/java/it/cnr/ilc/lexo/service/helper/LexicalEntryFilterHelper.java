@@ -9,6 +9,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalEntryFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryItem;
 import it.cnr.ilc.lexo.sparql.SparqlVariable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.eclipse.rdf4j.query.BindingSet;
 
 /**
@@ -25,12 +27,22 @@ public class LexicalEntryFilterHelper extends TripleStoreDataHelper<LexicalEntry
         data.setType(getLocalName(bs, SparqlVariable.LEXICAL_ENTRY_TYPE));
         data.setPos(getLocalName(bs, SparqlVariable.LEXICAL_ENTRY_POS));
         data.setLabel(getLiteralLabel(bs, SparqlVariable.LABEL));
-        data.setLanguage(getLiteralLanguage(bs, SparqlVariable.LABEL));
+        try {
+            data.setLanguage(getLiteralLanguage(bs, SparqlVariable.LABEL));
+        } catch (Exception ex) {
+            Logger.getLogger(LexicalEntryFilterHelper.class.getName()).log(Level.SEVERE, null, ex);
+        }
         data.setStatus(getStringValue(bs, SparqlVariable.LEXICAL_ENTRY_STATUS));
         data.setRevisor(getStringValue(bs, SparqlVariable.LEXICAL_ENTRY_REVISOR));
-        data.setAuthor(getStringValue(bs, SparqlVariable.AUTHOR));
+        data.setCreator(getStringValue(bs, SparqlVariable.LEXICAL_ENTRY_COMPLETING_AUTHOR));
+        data.setCreator(getStringValue(bs, SparqlVariable.LEXICAL_ENTRY_CREATION_AUTHOR));
         data.setNote(getStringValue(bs, SparqlVariable.NOTE));
         data.setMorphology(getMorphology(bs, getStringValue(bs, SparqlVariable.MORPHOLOGY)));
+        data.setCompletionDate(getStringValue(bs, SparqlVariable.COMPLETION_DATE));
+        data.setCreationDate(getStringValue(bs, SparqlVariable.CREATION_DATE));
+        data.setLastUpdate(getStringValue(bs, SparqlVariable.LAST_UPDATE));
+        data.setRevisionDate(getStringValue(bs, SparqlVariable.REVISION_DATE));
+        data.setAuthor(getStringValue(bs, SparqlVariable.LEXICAL_ENTRY_COMPLETING_AUTHOR));
         data.setHasChildren(true);
     }
 

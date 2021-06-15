@@ -25,7 +25,7 @@ import org.eclipse.rdf4j.query.TupleQueryResult;
  */
 public abstract class TripleStoreDataHelper<D extends Data> extends Helper<D> {
 
-    private final String MORPHOLOGY_PATTERN = "(([a-zA-Z]+)\\:([a-zA-Z]+));?";
+    private final String MORPHOLOGY_PATTERN = "(([a-zA-Z-]+):(([a-zA-Z-]+\\s?)+));?";
     private final Pattern pattern = Pattern.compile(MORPHOLOGY_PATTERN);
 
     public abstract void fillData(D data, BindingSet bs);
@@ -91,7 +91,9 @@ public abstract class TripleStoreDataHelper<D extends Data> extends Helper<D> {
 
     public ArrayList<Morphology> getMorphologyWithPoS(BindingSet bs, String morpho, String pos) {
         ArrayList<Morphology> morphos = new ArrayList();
-        morphos.add(new Morphology("partOfSpeech", pos));
+        if (!pos.isEmpty()) {
+            morphos.add(new Morphology("partOfSpeech", pos));
+        }
         if (!morpho.isEmpty()) {
             Matcher matcher = pattern.matcher(morpho);
             while (matcher.find()) {

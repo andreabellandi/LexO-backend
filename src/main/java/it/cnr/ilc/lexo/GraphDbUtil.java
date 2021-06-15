@@ -32,6 +32,7 @@ public class GraphDbUtil {
     //private static final Map<Thread, RepositoryConnection> availableConnection = new HashMap<>();
     private static final int POOLSIZE = Integer.parseInt(LexOProperties.getProperty("GraphDb.size", "5"));
     private static final Logger logger = LoggerFactory.getLogger(GraphDbUtil.class);
+    private static final RepositoryManager repositoryManager;
 
     static {
         try {

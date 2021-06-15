@@ -52,7 +52,7 @@ abstract class Service {
         KEY_MANAGER.put(authenticationData);
     }
 
-    protected void checkKey(String key) {
+    protected void checkKey(String key) throws Exception {
         authenticationData = KEY_MANAGER.get(key);
         if (authenticationData != null) {
             account = HibernateUtil.getSession().get(Account.class, authenticationData.getId());

@@ -22,9 +22,10 @@ public class LexicalEntryCoreHelper extends TripleStoreDataHelper<LexicalEntryCo
     public void fillData(LexicalEntryCore data, BindingSet bs) {
         data.setLexicalEntry(getStringValue(bs, SparqlVariable.LEXICAL_ENTRY));
         data.setLexicalEntryInstanceName(getLocalName(bs, SparqlVariable.LEXICAL_ENTRY));
-        data.setAuthor(getStringValue(bs, SparqlVariable.AUTHOR));
-        data.setConcept(getStringValue(bs, SparqlVariable.CONCEPT));
-        data.setConceptInstanceName(getLocalName(bs, SparqlVariable.CONCEPT));
+        data.setCreator(getStringValue(bs, SparqlVariable.LEXICAL_ENTRY_CREATION_AUTHOR));
+        data.setAuthor(getStringValue(bs, SparqlVariable.LEXICAL_ENTRY_COMPLETING_AUTHOR));
+//        data.setConcept(getStringValue(bs, SparqlVariable.CONCEPT));
+//        data.setConceptInstanceName(getLocalName(bs, SparqlVariable.CONCEPT));
         data.setLabel(getLiteralLabel(bs, SparqlVariable.LABEL));
         data.setLanguage(getLiteralLanguage(bs, SparqlVariable.LABEL));
         data.setNote(getStringValue(bs, SparqlVariable.NOTE));

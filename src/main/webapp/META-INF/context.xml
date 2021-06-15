@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Context path="/LexO-backend">
+<Context path="${project.artifactId}${postfix}">
   <Manager pathname=""/>
+  <Context antiResourceLocking="true"/>
 </Context>

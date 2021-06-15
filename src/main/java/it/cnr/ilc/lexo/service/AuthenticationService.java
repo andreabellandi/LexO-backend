@@ -1,6 +1,5 @@
 package it.cnr.ilc.lexo.service;
 
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import it.cnr.ilc.lexo.manager.AccountManager;
 import it.cnr.ilc.lexo.manager.ManagerFactory;
@@ -15,6 +14,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -25,6 +26,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Path("authentication")
 //@Api("Authentication")
 public class AuthenticationService extends Service {
+
+    static final Logger logger = LoggerFactory.getLogger(AuthenticationService.class.getName());
 
     private final AccountManager accountManager = ManagerFactory.getManager(AccountManager.class);
     private final AuthenticationHelper authenticationHelper = new AuthenticationHelper();
@@ -42,7 +45,11 @@ public class AuthenticationService extends Service {
         authenticationData = authenticationHelper.fromJson(content);
         account = accountManager.authenticate(authenticationData.getUsername(), authenticationData.getPassword());
         if (account == null) {
-            account = accountManager.loadAccountByUsername(authenticationData.getUsername());
+            try {
+                account = accountManager.loadAccountByUsername(authenticationData.getUsername());
+            } catch (Exception e) {
+                logger.error("Error on server" + e.getLocalizedMessage());
+            }
             if (account == null) {
 //                log(Level.INFO, "access denied from " + request.getRemoteAddr() + " on " + request.getHeader("user-agent"));
                 return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("user not found").build();
@@ -70,11 +77,18 @@ public class AuthenticationService extends Service {
     @Path("keepAlive")
     @Produces(MediaType.APPLICATION_JSON)
     public Response keepAlive(@QueryParam("key") String key) {
-        checkKey(key);
-        if (authenticationData == null) {
-            return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("access denied").build();
-        }
+        Response resp;
+        try {
+            checkKey(key);
+            if (authenticationData == null) {
+                return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("access denied").build();
+            }
 //        log(Level.INFO, "keep alive");
-        return Response.ok().build();
+            resp = Response.ok().build();
+        } catch (Exception e) {
+            logger.error("Error on server" + e.getLocalizedMessage());
+            resp = Response.serverError().encoding("Error on Server").build();
+        }
+        return resp;
     }
 }

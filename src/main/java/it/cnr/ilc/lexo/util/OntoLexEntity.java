@@ -35,13 +35,47 @@ public class OntoLexEntity {
     }
 
     public static enum LexicalEntryTypes {
+        LexicalEntry("LexicalEntry"),
         Word("Word"),
-        Multiword("MultiwordExpression"),
+        Multiword("MultiWordExpression"),
         Affix("Affix");
 
         private final String type;
 
         private LexicalEntryTypes(String type) {
+            this.type = type;
+        }
+
+        @Override
+        public String toString() {
+            return this.type;
+        }
+    }
+    
+    public static enum FormTypes {
+        LexicalForm("lexicalForm"),
+        CanonicalForm("canonicalForm"),
+        OtherForm("otherForm");
+
+        private final String type;
+
+        private FormTypes(String type) {
+            this.type = type;
+        }
+
+        @Override
+        public String toString() {
+            return this.type;
+        }
+    }
+    
+    public static enum ReferenceTypes {
+        Reference("reference"),
+        Denotes("denotes");
+
+        private final String type;
+
+        private ReferenceTypes(String type) {
             this.type = type;
         }
 

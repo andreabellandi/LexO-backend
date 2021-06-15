@@ -12,34 +12,36 @@ package it.cnr.ilc.lexo.sparql;
 public class SparqlPrefix {
 
     // OntoLex
-    public static final String ONTOLEX = "PREFIX ontolex: <http://www.w3.org/ns/lemon/ontolex#>";
-    public static final String LIME = "PREFIX lime: <http://www.w3.org/ns/lemon/lime#>";
-    public static final String DECOMP = "PREFIX decomp: <http://www.w3.org/ns/lemon/decomp#>";
-    public static final String VARTRANS = "PREFIX vartrans: <http://www.w3.org/ns/lemon/vartrans#>";
-    public static final String SYNSEM = "PREFIX synsem: <http://www.w3.org/ns/lemon/synsem#>";
-    public static final String TRCAT = "PREFIX trcat: <http://purl.org/net/translation-categories#>";
+    public static Namespace ONTOLEX = new Namespace("ontolex:", "http://www.w3.org/ns/lemon/ontolex#");
+    public static Namespace LIME = new Namespace("lime:", "http://www.w3.org/ns/lemon/lime#");
+    public static Namespace DECOMP = new Namespace("decomp:", "http://www.w3.org/ns/lemon/decomp#");
+    public static Namespace VARTRANS = new Namespace("vartrans:", "http://www.w3.org/ns/lemon/vartrans#");
+    public static Namespace SYNSEM = new Namespace("synsem:", "http://www.w3.org/ns/lemon/synsem#");
+    public static Namespace TRCAT = new Namespace("trcat:", "http://purl.org/net/translation-categories#");
 
     // metadata
-    public static final String DCT = "PREFIX dct: <http://purl.org/dc/terms/>";
-    public static final String LOC = "PREFIX loc: <http://id.loc.gov/vocabulary/relators/>";
+    public static Namespace DCT = new Namespace("dct:", "http://purl.org/dc/terms/");
+    public static Namespace LOC = new Namespace("loc:", "http://id.loc.gov/vocabulary/relators/");
+    public static Namespace VS = new Namespace("vs:", "http://www.w3.org/2003/06/sw-vocab-status/ns#");
+    
 
     // linguistic categories
-    public static final String LEXINFO = "PREFIX lexinfo: <http://www.lexinfo.net/ontology/3.0/lexinfo#>";
+    public static Namespace LEXINFO = new Namespace("lexinfo:", "http://www.lexinfo.net/ontology/3.0/lexinfo#");
 
     // GraphDB
-    public static final String LUC = "PREFIX luc: <http://www.ontotext.com/connectors/lucene#>";
-    public static final String ONTO = "PREFIX onto: <http://www.ontotext.com/>";
-    public static final String SESAME = "PREFIX sesame: <http://www.openrdf.org/schema/sesame#>";
-    public static final String INST = "PREFIX inst: <http://www.ontotext.com/connectors/lucene/instance#>";
+    public static Namespace LUC = new Namespace("luc:", "http://www.ontotext.com/connectors/lucene#");
+    public static Namespace ONTO = new Namespace("onto:", "http://www.ontotext.com/");
+    public static Namespace SESAME = new Namespace("sesame:", "http://www.openrdf.org/schema/sesame#");
+    public static Namespace INST = new Namespace("inst:", "http://www.ontotext.com/connectors/lucene/instance#");
 
     // Ontologies
-    public static final String RDFS = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>";
-    public static final String RDF = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>";
-    public static final String SKOS = "PREFIX skos: <http://www.w3.org/2004/02/skos/core#>";
-    public static final String OWL = "PREFIX owl: <http://www.w3.org/2002/07/owl#>";
+    public static Namespace RDFS = new Namespace("rdfs:", "http://www.w3.org/2000/01/rdf-schema#");
+    public static Namespace RDF = new Namespace("rdf:", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
+    public static Namespace SKOS = new Namespace("skos:", "http://www.w3.org/2004/02/skos/core#");
+    public static Namespace OWL = new Namespace("owl:", "http://www.w3.org/2002/07/owl#");
 
     // data
-    public static final String LEX = "PREFIX lex: <http://lexica/mylexicon#>";
-    public static final String ONTOLOGY = "PREFIX ontology: <http://simpleOntology#>";
+    public static Namespace LEX = new Namespace("lex:", "http://lexica/mylexicon#");
+    public static Namespace ONTOLOGY = new Namespace("ontology:", "http://simpleOntology#");
 
 }

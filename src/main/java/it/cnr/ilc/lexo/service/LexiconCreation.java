@@ -11,8 +11,15 @@ import io.swagger.annotations.ApiParam;
 import it.cnr.ilc.lexo.manager.LexiconCreationManager;
 import it.cnr.ilc.lexo.manager.ManagerException;
 import it.cnr.ilc.lexo.manager.ManagerFactory;
+import it.cnr.ilc.lexo.manager.UtilityManager;
+import it.cnr.ilc.lexo.service.data.lexicon.output.FormCore;
+import it.cnr.ilc.lexo.service.data.lexicon.output.Language;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryCore;
+import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalSenseCore;
+import it.cnr.ilc.lexo.service.helper.FormCoreHelper;
+import it.cnr.ilc.lexo.service.helper.LanguageHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalEntryCoreHelper;
+import it.cnr.ilc.lexo.service.helper.LexicalSenseCoreHelper;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.GET;
@@ -34,7 +41,62 @@ public class LexiconCreation extends Service {
 
     private final LexiconCreationManager lexiconManager = ManagerFactory.getManager(LexiconCreationManager.class);
     private final LexicalEntryCoreHelper lexicalEntryCoreHelper = new LexicalEntryCoreHelper();
+    private final LanguageHelper languageHelper = new LanguageHelper();
+    private final FormCoreHelper formCoreHelper = new FormCoreHelper();
+    private final LexicalSenseCoreHelper lexicalSenseCoreHelper = new LexicalSenseCoreHelper();
 
+    
+     @GET
+    @Path("language")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "language",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Language creation",
+            notes = "This method creates a new language and returns its id and some metadata")
+    public Response lexicalEntry(
+            @ApiParam(
+                    name = "key",
+                    value = "authentication token",
+                    example = "lexodemo",
+                    required = true)
+            @QueryParam("key") String key,
+            @ApiParam(
+                    name = "lang",
+                    value = "language code (2 or 3 digits)",
+                    example = "en",
+                    required = true)
+            @QueryParam("lang") String lang,
+            @ApiParam(
+                    name = "author",
+                    value = "the account is being creating the language",
+                    example = "user7",
+                    required = true)
+            @QueryParam("author") String author) {
+        if (key.equals("PRINitant19")) {
+            try {
+                //        log(Level.INFO, "get lexicon entries types");
+                UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+                if (utilityManager.languageExists(lang)) {
+                    return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Language label " + lang + " already exists").build();
+                }
+                Language l = lexiconManager.createLanguage(author, lang);
+                String json = languageHelper.toJson(l);
+                return Response.ok(json)
+                        .type(MediaType.TEXT_PLAIN)
+                        .header("Access-Control-Allow-Headers", "content-type")
+                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                        .build();
+            } catch (ManagerException ex) {
+                Logger.getLogger(LexiconCreation.class.getName()).log(Level.SEVERE, null, ex);
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            }
+        } else {
+            return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Insertion denied, wrong key").build();
+        }
+    }
+    
     @GET
     @Path("lexicalEntry")
     @Produces(MediaType.APPLICATION_JSON)
@@ -62,6 +124,112 @@ public class LexiconCreation extends Service {
                 //        log(Level.INFO, "get lexicon entries types");
                 LexicalEntryCore lec = lexiconManager.createLexicalEntry(author);
                 String json = lexicalEntryCoreHelper.toJson(lec);
+                return Response.ok(json)
+                        .type(MediaType.TEXT_PLAIN)
+                        .header("Access-Control-Allow-Headers", "content-type")
+                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                        .build();
+            } catch (ManagerException ex) {
+                Logger.getLogger(LexiconCreation.class.getName()).log(Level.SEVERE, null, ex);
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            }
+        } else {
+            return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Insertion denied, wrong key").build();
+        }
+    }
+    
+    @GET
+    @Path("form")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "form",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Form creation",
+            notes = "This method creates a new form and returns its id and some metadata")
+    public Response form(
+            @ApiParam(
+                    name = "lexicalEntryID",
+                    value = "the lexical entry id, the form belongs to",
+                    example = "MUStestNOUN",
+                    required = true)
+            @QueryParam("lexicalEntryID") String lexicalEntryID,
+            @ApiParam(
+                    name = "key",
+                    value = "authentication token",
+                    example = "lexodemo",
+                    required = true)
+            @QueryParam("key") String key,
+            @ApiParam(
+                    name = "author",
+                    value = "the account is being creating the form",
+                    example = "user7",
+                    required = true)
+            @QueryParam("author") String author) {
+        if (key.equals("PRINitant19")) {
+            try {
+                //        log(Level.INFO, "get lexicon entries types");
+                UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+                if (!utilityManager.isLexicalEntry(lexicalEntryID)) {
+                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + lexicalEntryID + " does not exist").build();
+                }
+                String lang = utilityManager.getLanguage(lexicalEntryID);
+                if (lang == null) {
+                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("form cannot be created: the lexical entry language must be set first").build();
+                }
+                FormCore fc = lexiconManager.createForm(lexicalEntryID, author, lang);
+                String json = formCoreHelper.toJson(fc);
+                return Response.ok(json)
+                        .type(MediaType.TEXT_PLAIN)
+                        .header("Access-Control-Allow-Headers", "content-type")
+                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                        .build();
+            } catch (ManagerException ex) {
+                Logger.getLogger(LexiconCreation.class.getName()).log(Level.SEVERE, null, ex);
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            }
+        } else {
+            return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Insertion denied, wrong key").build();
+        }
+    }
+    
+    @GET
+    @Path("lexicalSense")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "lexicalSense",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Lexical sense creation",
+            notes = "This method creates a new lexical sense and returns its id and some metadata")
+    public Response lexicalSense(
+            @ApiParam(
+                    name = "lexicalEntryID",
+                    value = "the lexical entry id, the lexical sense belongs to",
+                    example = "MUStestNOUN",
+                    required = true)
+            @QueryParam("lexicalEntryID") String lexicalEntryID,
+            @ApiParam(
+                    name = "key",
+                    value = "authentication token",
+                    example = "lexodemo",
+                    required = true)
+            @QueryParam("key") String key,
+            @ApiParam(
+                    name = "author",
+                    value = "the account is being creating the sense",
+                    example = "user7",
+                    required = true)
+            @QueryParam("author") String author) {
+        if (key.equals("PRINitant19")) {
+            try {
+                //        log(Level.INFO, "get lexicon entries types");
+                UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+                if (!utilityManager.isLexicalEntry(lexicalEntryID)) {
+                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + lexicalEntryID + " does not exist").build();
+                }
+                LexicalSenseCore sc = lexiconManager.createLexicalSense(lexicalEntryID, author);
+                String json = lexicalSenseCoreHelper.toJson(sc);
                 return Response.ok(json)
                         .type(MediaType.TEXT_PLAIN)
                         .header("Access-Control-Allow-Headers", "content-type")

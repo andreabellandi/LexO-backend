@@ -31,15 +31,18 @@ public class LexicalEntryCore implements Data {
     private String language;
     @ApiModelProperty(value = "common morphological traits of a lexical entry")
     private ArrayList<Morphology> morphology;
-    @ApiModelProperty(value = "IRI of the concept denoted by", example = "namespace:conceptID", allowableValues = "word, multi-word expression, affix")
-    private String concept;
-    @ApiModelProperty(value = "short IRI of the concept denoted by", example = "conceptID")
-    private String conceptInstanceName;
+//    @ApiModelProperty(value = "IRI of the concept denoted by", example = "namespace:conceptID")
+//    private String concept;
+//    @ApiModelProperty(value = "short IRI of the concept denoted by", example = "conceptID")
+//    private String conceptInstanceName;
+
     @ApiModelProperty(value = "the counting of the links of a lexical entry and their type: Reference (see Also, same As, bilbiography, ...), Multimedia, Attestation, Other)")
     private ArrayList<LexicalEntryElementItem> links;
-    @ApiModelProperty(value = "lexical entry author", example = "user3")
+    @ApiModelProperty(value = "lexical entry author (who completes the entry) ", example = "user9")
     private String author;
-    @ApiModelProperty(value = "lexical entry revisor", example = "rev2")
+    @ApiModelProperty(value = "lexical entry creator (who creates the entry) ", example = "user3")
+    private String creator;
+    @ApiModelProperty(value = "lexical entry revisor(who reviews the entry) ", example = "rev2")
     private String revisor;
     @ApiModelProperty(value = "lexical entry status", example = "working", allowableValues = "working, completed, reviewed")
     private String status;
@@ -68,6 +71,14 @@ public class LexicalEntryCore implements Data {
 
     public void setLexicalEntryInstanceName(String lexicalEntryInstanceName) {
         this.lexicalEntryInstanceName = lexicalEntryInstanceName;
+    }
+
+    public String getCreator() {
+        return creator;
+    }
+
+    public void setCreator(String creator) {
+        this.creator = creator;
     }
 
     public String getLabel() {
@@ -110,21 +121,21 @@ public class LexicalEntryCore implements Data {
         this.morphology = morphology;
     }
 
-    public String getConcept() {
-        return concept;
-    }
-
-    public void setConcept(String concept) {
-        this.concept = concept;
-    }
-
-    public String getConceptInstanceName() {
-        return conceptInstanceName;
-    }
-
-    public void setConceptInstanceName(String conceptInstanceName) {
-        this.conceptInstanceName = conceptInstanceName;
-    }
+//    public String getConcept() {
+//        return concept;
+//    }
+//
+//    public void setConcept(String concept) {
+//        this.concept = concept;
+//    }
+//
+//    public String getConceptInstanceName() {
+//        return conceptInstanceName;
+//    }
+//
+//    public void setConceptInstanceName(String conceptInstanceName) {
+//        this.conceptInstanceName = conceptInstanceName;
+//    }
 
     public String getAuthor() {
         return author;

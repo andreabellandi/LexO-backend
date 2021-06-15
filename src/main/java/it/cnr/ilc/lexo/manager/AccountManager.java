@@ -10,13 +10,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
+import org.hibernate.HibernateException;
 import org.hibernate.query.NativeQuery;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author andreabellandi
  */
 public final class AccountManager implements Manager, Cached {
+
+    static final Logger logger = LoggerFactory.getLogger(AccountManager.class.getName());
 
     public enum Setting {
 
@@ -87,10 +92,14 @@ public final class AccountManager implements Manager, Cached {
         types.clear();
         typesByName.clear();
         String hql = "select at from AccountType at where at.name != 'Superuser' order by at.position";
-        List<AccountType> list = HibernateUtil.getSession().createQuery(hql).list();
-        for (AccountType accountType : list) {
-            types.add(accountType);
-            typesByName.put(accountType.getName(), accountType);
+        try {
+            List<AccountType> list = HibernateUtil.getSession().createQuery(hql).list();
+            for (AccountType accountType : list) {
+                types.add(accountType);
+                typesByName.put(accountType.getName(), accountType);
+            }
+        } catch (HibernateException e) {
+            logger.error("Error connection to MySQL", e.getLocalizedMessage());
         }
     }
 
@@ -109,11 +118,16 @@ public final class AccountManager implements Manager, Cached {
                 + "where a.username = ':u' and a.status = 1 and a.enabled = true\n"
                 + "and upper(sha1(':p')) in (a.password, s.password)";
         sql = sql.replaceFirst(":u", username).replaceFirst(":p", password);
-        NativeQuery<Account> query = HibernateUtil.getSession().createSQLQuery(sql).addEntity(Account.class);
-        return query.uniqueResult();
+        Account account = null;
+        try {
+            account = (Account) HibernateUtil.getSession().createSQLQuery(sql).addEntity(Account.class).uniqueResult();
+        } catch (HibernateException e) {
+            logger.error("Error connection to MySQL", e.getLocalizedMessage());
+        }
+        return account;
     }
 
-    public List<Map<String, Object>> loadAccounts() {
+    public List<Map<String, Object>> loadAccounts() throws Exception {
         String sql = "select \n"
                 + " a.id,\n"
                 + " at.name type,\n"
@@ -128,26 +142,26 @@ public final class AccountManager implements Manager, Cached {
         return HibernateUtil.getSession().createSQLQuery(sql).setResultTransformer(HibernateUtil.getResultTransformer()).list();
     }
 
-    public Account getAccount(Long id) {
+    public Account getAccount(Long id) throws Exception {
         return HibernateUtil.getSession().get(Account.class, id);
     }
 
-    public Account loadAccount(Long id) {
+    public Account loadAccount(Long id) throws Exception {
         Account account = HibernateUtil.getSession().get(Account.class, id);
         return account != null && account.getStatus().equals(Status.VALID) ? account : null;
     }
 
-    public Account loadAccountByUsername(String value) {
+    public Account loadAccountByUsername(String value) throws HibernateException {
         String hql = "select a from Account a where a.username = '" + value + "'";
         return (Account) HibernateUtil.getSession().createQuery(hql).uniqueResult();
     }
 
-    private boolean existsUsername(String username) {
+    private boolean existsUsername(String username) throws HibernateException {
         String sql = "select count(*) from Account where username = '" + username + "' and (status = 1 or status = 2)";
         return ((Number) HibernateUtil.getSession().createSQLQuery(sql).uniqueResult()).intValue() > 0;
     }
 
-    public Account createAccount(String type, String username, String password) throws ManagerException {
+    public Account createAccount(String type, String username, String password) throws ManagerException, HibernateException {
         Account account = new Account();
         if (type == null) {
             throw new ManagerException("missing type");
@@ -181,7 +195,7 @@ public final class AccountManager implements Manager, Cached {
         return false;
     }
 
-    public void removeAccount(Account account) throws ManagerException {
+    public void removeAccount(Account account) throws ManagerException, HibernateException {
         if (hasReferences(account)) {
             throw new ManagerException("account referenced");
         }
@@ -192,7 +206,7 @@ public final class AccountManager implements Manager, Cached {
         }
     }
 
-    public void restoreAccount(Account account) throws ManagerException {
+    public void restoreAccount(Account account) throws ManagerException, HibernateException {
         if (!account.getStatus().equals(Status.REMOVED)) {
             throw new ManagerException("account not removed");
         }
@@ -202,22 +216,22 @@ public final class AccountManager implements Manager, Cached {
         domainManager.updateWithHistory(account);
     }
 
-    public void setName(Account account, String content) {
+    public void setName(Account account, String content) throws Exception {
         account.setName(content);
         domainManager.update(account);
     }
 
-    public void setEmail(Account account, String content) {
+    public void setEmail(Account account, String content) throws Exception {
         account.setEmail(content);
         domainManager.update(account);
     }
 
-    public void setEnabled(Account account, boolean enabled) {
+    public void setEnabled(Account account, boolean enabled) throws Exception {
         account.setEnabled(enabled);
         domainManager.update(account);
     }
 
-    public void setUsername(Account account, String content) throws ManagerException {
+    public void setUsername(Account account, String content) throws ManagerException, HibernateException {
         if (content.isEmpty()) {
             throw new ManagerException("empty username not allowed");
         }
@@ -229,12 +243,12 @@ public final class AccountManager implements Manager, Cached {
         domainManager.update(account);
     }
 
-    private String getPassword(String password) {
+    private String getPassword(String password) throws HibernateException {
         String sql = "select upper(sha1('" + password + "'))";
         return (String) HibernateUtil.getSession().createSQLQuery(sql).uniqueResult();
     }
 
-    public void setPassword(Account account, String newPassword) throws ManagerException {
+    public void setPassword(Account account, String newPassword) throws ManagerException, HibernateException {
         if (newPassword.isEmpty()) {
             throw new ManagerException("empty password not allowed");
         }
@@ -243,7 +257,7 @@ public final class AccountManager implements Manager, Cached {
         domainManager.update(account);
     }
 
-    public void setPassword(Account account, String currentPassword, String newPassword) throws ManagerException {
+    public void setPassword(Account account, String currentPassword, String newPassword) throws ManagerException, HibernateException {
         if (newPassword.isEmpty()) {
             throw new ManagerException("empty password not allowed");
         }
@@ -256,7 +270,7 @@ public final class AccountManager implements Manager, Cached {
         domainManager.update(account);
     }
 
-    public void setType(Account account, String type) throws ManagerException {
+    public void setType(Account account, String type) throws ManagerException, HibernateException {
         AccountType accountType = typesByName.get(type);
         if (accountType == null) {
             throw new ManagerException("type not found");
@@ -265,7 +279,7 @@ public final class AccountManager implements Manager, Cached {
         domainManager.update(account);
     }
 
-    public void setSetting(Account account, String name, String content) throws ManagerException {
+    public void setSetting(Account account, String name, String content) throws ManagerException, HibernateException {
         Setting setting = SETTINGS.get(name);
         if (setting == null) {
             throw new ManagerException("setting name not found");

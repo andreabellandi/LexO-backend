@@ -29,6 +29,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -37,6 +39,8 @@ import javax.ws.rs.core.Response.Status;
 @Path("account")
 //@Api("User account")
 public class AccountService extends Service {
+
+    static final Logger logger = LoggerFactory.getLogger(AccountService.class.getName());
 
     private static final String ACCOUNTS = "accounts";
 
@@ -50,390 +54,502 @@ public class AccountService extends Service {
     @Path("types")
     @Produces(MediaType.APPLICATION_JSON)
     public Response types(@QueryParam("key") String key) {
-        checkKey(key);
-        if (account == null) {
-            return Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("access denied").build();
-        }
-        if (!accessManager.hasPermission(account, Topic.TYPES, Permission.READ)) {
+        Response resp;
+        try {
+            checkKey(key);
+            if (account == null) {
+                return Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("access denied").build();
+            }
+            if (!accessManager.hasPermission(account, Topic.TYPES, Permission.READ)) {
 //            // log(Level.INFO, "get account types, not allowed");
-            return Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("not allowed").build();
-        }
+                return Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("not allowed").build();
+            }
 //        // log(Level.INFO, "get account types");
-        List<AccountType> accountTypes = accountManager.getAccountTypes();
-        List<AccountTypeData> accountTypesData = accountTypeHelper.newDataList(accountTypes, accountTypeHelper.getDefaultComparator());
-        String json = accountTypeHelper.toJson(accountTypesData);
-        return Response.ok(json).build();
+            List<AccountType> accountTypes = accountManager.getAccountTypes();
+            List<AccountTypeData> accountTypesData = accountTypeHelper.newDataList(accountTypes, accountTypeHelper.getDefaultComparator());
+            String json = accountTypeHelper.toJson(accountTypesData);
+            resp = Response.ok(json).build();
+        } catch (Exception e) {
+            logger.error("Error on server" + e.getLocalizedMessage());
+            resp = Response.serverError().encoding("Error on Server").build();
+        }
+        return resp;
+
     }
 
     @GET
     @Path("list")
     @Produces(MediaType.APPLICATION_JSON)
     public Response list(@QueryParam("key") String key) {
-        checkKey(key);
-        if (account == null) {
-            return Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("access denied").build();
-        }
-        if (!accessManager.hasPermission(account, Topic.ACCOUNT, Permission.READ)) {
-//            // log(Level.INFO, "get accounts, not allowed");
-            return Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("not allowed").build();
-        }
+        Response resp;
         try {
-            List<Map<String, Object>> records = accountManager.loadAccounts();
-            List<AccountData> accountsData = accountHelper.newDataListSql(records, accountHelper.getDefaultComparator());
+            checkKey(key);
+            if (account == null) {
+                return Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("access denied").build();
+            }
+            if (!accessManager.hasPermission(account, Topic.ACCOUNT, Permission.READ)) {
+//            // log(Level.INFO, "get accounts, not allowed");
+                return Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("not allowed").build();
+            }
+            try {
+                List<Map<String, Object>> records = accountManager.loadAccounts();
+                List<AccountData> accountsData = accountHelper.newDataListSql(records, accountHelper.getDefaultComparator());
 //            // log(Level.INFO, "get accounts");
-            String json = accountHelper.toJson(accountsData);
-            session.remove(ACCOUNTS);
-            return Response.ok(json).build();
-        } catch (HelperException ex) {
+                String json = accountHelper.toJson(accountsData);
+                session.remove(ACCOUNTS);
+                return Response.ok(json).build();
+            } catch (HelperException ex) {
 //            // log(Level.INFO, "get accounts, " + ex.getMessage());
-            return Response.status(Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+                return Response.status(Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            }
+        } catch (Exception e) {
+            logger.error("Error on server" + e.getLocalizedMessage());
+            resp = Response.serverError().encoding("Error on Server").build();
         }
+        return resp;
+
     }
 
     @POST
     @Path("list")
     @Produces(MediaType.APPLICATION_JSON)
     public Response list(@QueryParam("key") String key, String content) {
-        checkKey(key);
-        if (account == null) {
-            return Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("access denied").build();
-        }
-        if (!accessManager.hasPermission(account, Topic.ACCOUNT, Permission.READ)) {
-            // log(Level.INFO, "get accounts with filter , not allowed");
-            return Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("not allowed").build();
-        }
+        Response resp;
         try {
-            boolean cache;
-            FilterData<AccountData> filterData = filterHelper.fromJson(content);
-            FilterData cacheFilterData = (FilterData) session.get(ACCOUNTS);
-            if (cache = filterHelper.isModified(filterData, cacheFilterData)) {
-                List<Map<String, Object>> records = accountManager.loadAccounts();
-                List<AccountData> accountDatas = accountHelper.newDataListSql(records, filterData);
-                filterData.setData(accountDatas);
-                filterData.setReload(Boolean.TRUE);
-                session.put(ACCOUNTS, filterData);
-            } else {
-                filterData.setData(cacheFilterData.getData());
-                filterData.setReload(Boolean.FALSE);
+            checkKey(key);
+            if (account == null) {
+                return Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("access denied").build();
             }
-            filterData = filterHelper.newRangedFilterData(filterData);
-            // log(Level.INFO, "get accounts with filter" + (!cache ? " from cache" : ""));
-            String json = filterHelper.toJson(filterData);
-            return Response.ok(json).build();
-        } catch (HelperException ex) {
-            // log(Level.INFO, "get accounts with filter, " + ex.getMessage());
-            return Response.status(Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            if (!accessManager.hasPermission(account, Topic.ACCOUNT, Permission.READ)) {
+                // log(Level.INFO, "get accounts with filter , not allowed");
+                return Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("not allowed").build();
+            }
+            try {
+                boolean cache;
+                FilterData<AccountData> filterData = filterHelper.fromJson(content);
+                FilterData cacheFilterData = (FilterData) session.get(ACCOUNTS);
+                if (cache = filterHelper.isModified(filterData, cacheFilterData)) {
+                    List<Map<String, Object>> records = accountManager.loadAccounts();
+                    List<AccountData> accountDatas = accountHelper.newDataListSql(records, filterData);
+                    filterData.setData(accountDatas);
+                    filterData.setReload(Boolean.TRUE);
+                    session.put(ACCOUNTS, filterData);
+                } else {
+                    filterData.setData(cacheFilterData.getData());
+                    filterData.setReload(Boolean.FALSE);
+                }
+                filterData = filterHelper.newRangedFilterData(filterData);
+                // log(Level.INFO, "get accounts with filter" + (!cache ? " from cache" : ""));
+                String json = filterHelper.toJson(filterData);
+                return Response.ok(json).build();
+            } catch (HelperException ex) {
+                // log(Level.INFO, "get accounts with filter, " + ex.getMessage());
+                return Response.status(Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            }
+        } catch (Exception e) {
+            logger.error("Error on list()" + e.getLocalizedMessage());
+            resp = Response.serverError().encoding("Error on Server").build();
         }
+        return resp;
+
     }
 
     @POST
     @Path("create")
     @Produces(MediaType.APPLICATION_JSON)
     public Response create(@QueryParam("key") String key, String content) {
-        checkKey(key);
-        if (account == null) {
-            return Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("access denied").build();
-        }
-        if (!accessManager.hasPermission(account, Topic.ACCOUNT, Permission.WRITE)) {
-            // log(Level.INFO, "create new account, not allowed");
-            return Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("not allowed").build();
-        }
+        Response resp;
         try {
-            AccountData accountData = accountHelper.fromJson(content);
-            Account caccount = accountManager.createAccount(accountData.getType(), accountData.getUsername(), accountData.getPassword());
-            // log(Level.INFO, "create new account '" + accountData.getUsername() + "'");
-            session.remove(ACCOUNTS);
-            accountHelper.fillAfterCreation(accountData, caccount);
-            String json = accountHelper.toJson(accountData);
-            return Response.ok(json).build();
-        } catch (HelperException | ManagerException ex) {
-            // log(Level.INFO, "create new account, " + ex.getMessage());
-            return Response.status(Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            checkKey(key);
+            if (account == null) {
+                return Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("access denied").build();
+            }
+            if (!accessManager.hasPermission(account, Topic.ACCOUNT, Permission.WRITE)) {
+                // log(Level.INFO, "create new account, not allowed");
+                return Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("not allowed").build();
+            }
+            try {
+                AccountData accountData = accountHelper.fromJson(content);
+                Account caccount = accountManager.createAccount(accountData.getType(), accountData.getUsername(), accountData.getPassword());
+                // log(Level.INFO, "create new account '" + accountData.getUsername() + "'");
+                session.remove(ACCOUNTS);
+                accountHelper.fillAfterCreation(accountData, caccount);
+                String json = accountHelper.toJson(accountData);
+                return Response.ok(json).build();
+            } catch (HelperException | ManagerException ex) {
+                // log(Level.INFO, "create new account, " + ex.getMessage());
+                return Response.status(Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            }
+        } catch (Exception e) {
+            logger.error("Error on create()" + e.getLocalizedMessage());
+            resp = Response.serverError().encoding("Error on Server").build();
         }
+        return resp;
+
     }
 
     @GET
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response get(@QueryParam("key") String key, @PathParam("id") Long id) {
-        checkKey(key);
-        if (account == null) {
-            return Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("access denied").build();
+        Response resp;
+        try {
+            checkKey(key);
+            if (account == null) {
+                return Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("access denied").build();
+            }
+            Account caccount = accountManager.loadAccount(id);
+            if (caccount == null) {
+                // log(Level.INFO, "get account " + id + ", account not found");
+                return Response.ok(Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("account not found").build();
+            }
+            if (!accessManager.hasPermissionOnAccountable(account, Topic.ACCOUNT, Permission.READ, caccount)) {
+                // log(Level.INFO, "get account '" + caccount.getUsername() + "', not allowed");
+                return Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("not allowed").build();
+            }
+            // log(Level.INFO, "get account '" + caccount.getUsername() + "'");
+            AccountData caccountData = accountHelper.newData(caccount);
+            String json = accountHelper.toJson(caccountData);
+            resp = Response.ok(json).build();
+        } catch (Exception e) {
+            logger.error("Error on get()" + e.getLocalizedMessage());
+            resp = Response.serverError().encoding("Error on Server").build();
         }
-        Account caccount = accountManager.loadAccount(id);
-        if (caccount == null) {
-            // log(Level.INFO, "get account " + id + ", account not found");
-            return Response.ok(Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("account not found").build();
-        }
-        if (!accessManager.hasPermissionOnAccountable(account, Topic.ACCOUNT, Permission.READ, caccount)) {
-            // log(Level.INFO, "get account '" + caccount.getUsername() + "', not allowed");
-            return Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("not allowed").build();
-        }
-        // log(Level.INFO, "get account '" + caccount.getUsername() + "'");
-        AccountData caccountData = accountHelper.newData(caccount);
-        String json = accountHelper.toJson(caccountData);
-        return Response.ok(json).build();
+        return resp;
+
     }
 
     @GET
     @Path("{id}/remove")
     @Produces(MediaType.APPLICATION_JSON)
     public Response remove(@QueryParam("key") String key, @PathParam("id") Long id) {
-        checkKey(key);
-        if (account == null) {
-            return Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("access denied").build();
-        }
-        Account caccount = accountManager.loadAccount(id);
-        if (caccount == null) {
-            // log(Level.INFO, "remove account " + id + ", account not found");
-            return Response.status(Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("account not found").build();
-        }
-        if (!accessManager.hasPermissionOnAccountable(account, Topic.ACCOUNT, Permission.WRITE, caccount)) {
-            // log(Level.INFO, "remove account '" + caccount.getUsername() + "', not allowed");
-            return Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("not allowed").build();
-        }
+        Response resp;
         try {
-            accountManager.removeAccount(caccount);
-            // log(Level.INFO, "remove account '" + caccount.getUsername() + "'");
-            session.remove(ACCOUNTS);
-            return Response.ok().build();
-        } catch (ManagerException ex) {
-            // log(Level.INFO, "remove account '" + caccount.getUsername() + "', " + ex.getMessage());
-            return Response.status(Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            checkKey(key);
+            if (account == null) {
+                return Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("access denied").build();
+            }
+            Account caccount = accountManager.loadAccount(id);
+            if (caccount == null) {
+                // log(Level.INFO, "remove account " + id + ", account not found");
+                return Response.status(Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("account not found").build();
+            }
+            if (!accessManager.hasPermissionOnAccountable(account, Topic.ACCOUNT, Permission.WRITE, caccount)) {
+                // log(Level.INFO, "remove account '" + caccount.getUsername() + "', not allowed");
+                return Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("not allowed").build();
+            }
+            try {
+                accountManager.removeAccount(caccount);
+                // log(Level.INFO, "remove account '" + caccount.getUsername() + "'");
+                session.remove(ACCOUNTS);
+                return Response.ok().build();
+            } catch (ManagerException ex) {
+                // log(Level.INFO, "remove account '" + caccount.getUsername() + "', " + ex.getMessage());
+                return Response.status(Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            }
+        } catch (Exception e) {
+            logger.error("Error on remove()" + e.getLocalizedMessage());
+            resp = Response.serverError().encoding("Error on Server").build();
         }
+        return resp;
+
     }
 
     @GET
     @Path("{id}/restore")
     @Produces(MediaType.APPLICATION_JSON)
     public Response restore(@QueryParam("key") String key, @PathParam("id") Long id) {
-        checkKey(key);
-        if (account == null) {
-            return Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("access denied").build();
-        }
-        Account caccount = accountManager.getAccount(id);
-        if (caccount == null) {
-            // log(Level.INFO, "restore account " + id + ", account not found");
-            return Response.status(Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("account not found").build();
-        }
-        if (!accessManager.hasPermissionOnAccountable(account, Topic.ACCOUNT, Permission.WRITE, caccount)) {
-            // log(Level.INFO, "restore account '" + caccount.getUsername() + "', not allowed");
-            return Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("not allowed").build();
-        }
+        Response resp;
         try {
-            accountManager.restoreAccount(caccount);
-            // log(Level.INFO, "restore account '" + caccount.getUsername() + "'");
-            session.remove(ACCOUNTS);
-            return Response.ok().build();
-        } catch (ManagerException ex) {
-            // log(Level.INFO, "restore account '" + caccount.getUsername() + "', " + ex.getMessage());
-            return Response.status(Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            checkKey(key);
+            if (account == null) {
+                return Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("access denied").build();
+            }
+            Account caccount = accountManager.getAccount(id);
+            if (caccount == null) {
+                // log(Level.INFO, "restore account " + id + ", account not found");
+                return Response.status(Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("account not found").build();
+            }
+            if (!accessManager.hasPermissionOnAccountable(account, Topic.ACCOUNT, Permission.WRITE, caccount)) {
+                // log(Level.INFO, "restore account '" + caccount.getUsername() + "', not allowed");
+                return Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("not allowed").build();
+            }
+            try {
+                accountManager.restoreAccount(caccount);
+                // log(Level.INFO, "restore account '" + caccount.getUsername() + "'");
+                session.remove(ACCOUNTS);
+                return Response.ok().build();
+            } catch (ManagerException ex) {
+                // log(Level.INFO, "restore account '" + caccount.getUsername() + "', " + ex.getMessage());
+                return Response.status(Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            }
+        } catch (Exception e) {
+            logger.error("Error on restore()" + e.getLocalizedMessage());
+            resp = Response.serverError().encoding("Error on Server").build();
         }
+        return resp;
+
     }
 
     @POST
     @Path("{id}/type")
     @Produces(MediaType.APPLICATION_JSON)
     public Response setType(@QueryParam("key") String key, @PathParam("id") Long id, String content) {
-        checkKey(key);
-        if (account == null) {
-            return Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("access denied").build();
-        }
-        Account caccount = accountManager.loadAccount(id);
-        if (caccount == null) {
-            // log(Level.INFO, "set type of account " + id + ", account not found");
-            return Response.status(Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("account not found").build();
-        }
-        if (!accessManager.hasPermissionOnAccountable(account, Topic.ACCOUNT, Permission.WRITE, caccount)) {
-            // log(Level.INFO, "set type of '" + caccount.getUsername() + "', not allowed");
-            return Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("not allowed").build();
-        }
+        Response resp;
         try {
-            accountManager.setType(caccount, content);
-            // log(Level.INFO, "set type of '" + caccount.getUsername() + "' to " + content);
-            session.remove(ACCOUNTS);
-            AccountData caccountData = accountHelper.newData(caccount);
-            String json = accountHelper.toJson(caccountData);
-            return Response.ok(json).build();
-        } catch (ManagerException ex) {
-            // log(Level.INFO, "set type of '" + caccount.getUsername() + "', " + ex.getMessage());
-            return Response.status(Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            checkKey(key);
+            if (account == null) {
+                return Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("access denied").build();
+            }
+            Account caccount = accountManager.loadAccount(id);
+            if (caccount == null) {
+                // log(Level.INFO, "set type of account " + id + ", account not found");
+                return Response.status(Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("account not found").build();
+            }
+            if (!accessManager.hasPermissionOnAccountable(account, Topic.ACCOUNT, Permission.WRITE, caccount)) {
+                // log(Level.INFO, "set type of '" + caccount.getUsername() + "', not allowed");
+                return Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("not allowed").build();
+            }
+            try {
+                accountManager.setType(caccount, content);
+                // log(Level.INFO, "set type of '" + caccount.getUsername() + "' to " + content);
+                session.remove(ACCOUNTS);
+                AccountData caccountData = accountHelper.newData(caccount);
+                String json = accountHelper.toJson(caccountData);
+                return Response.ok(json).build();
+            } catch (ManagerException ex) {
+                // log(Level.INFO, "set type of '" + caccount.getUsername() + "', " + ex.getMessage());
+                return Response.status(Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            }
+        } catch (Exception e) {
+            logger.error("Error on setType()" + e.getLocalizedMessage());
+            resp = Response.serverError().encoding("Error on Server").build();
         }
+        return resp;
+
     }
 
     @POST
     @Path("{id}/username")
     @Produces(MediaType.APPLICATION_JSON)
     public Response setUsername(@QueryParam("key") String key, @PathParam("id") Long id, String content) {
-        checkKey(key);
-        if (account == null) {
-            return Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("access denied").build();
-        }
-        Account caccount = accountManager.loadAccount(id);
-        if (caccount == null) {
-            // log(Level.INFO, "set username of account " + id + ", account not found");
-            return Response.status(Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("account not found").build();
-        }
-        if (!accessManager.hasPermissionOnAccountable(account, Topic.ACCOUNT, Permission.WRITE, caccount)) {
-            // log(Level.INFO, "set username of '" + caccount.getUsername() + "', not allowed");
-            return Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("not allowed").build();
-        }
+        Response resp;
         try {
-            accountManager.setUsername(caccount, content);
-            // log(Level.INFO, "set username of '" + caccount.getUsername() + "' to '" + content + "'");
-            session.remove(ACCOUNTS);
-            AccountData caccountData = accountHelper.newData(caccount);
-            String json = accountHelper.toJson(caccountData);
-            return Response.ok(json).build();
-        } catch (ManagerException ex) {
-            // log(Level.INFO, "set username of '" + caccount.getUsername() + "', not allowed");
-            return Response.status(Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            checkKey(key);
+            if (account == null) {
+                return Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("access denied").build();
+            }
+            Account caccount = accountManager.loadAccount(id);
+            if (caccount == null) {
+                // log(Level.INFO, "set username of account " + id + ", account not found");
+                return Response.status(Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("account not found").build();
+            }
+            if (!accessManager.hasPermissionOnAccountable(account, Topic.ACCOUNT, Permission.WRITE, caccount)) {
+                // log(Level.INFO, "set username of '" + caccount.getUsername() + "', not allowed");
+                return Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("not allowed").build();
+            }
+            try {
+                accountManager.setUsername(caccount, content);
+                // log(Level.INFO, "set username of '" + caccount.getUsername() + "' to '" + content + "'");
+                session.remove(ACCOUNTS);
+                AccountData caccountData = accountHelper.newData(caccount);
+                String json = accountHelper.toJson(caccountData);
+                return Response.ok(json).build();
+            } catch (ManagerException ex) {
+                // log(Level.INFO, "set username of '" + caccount.getUsername() + "', not allowed");
+                return Response.status(Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            }
+        } catch (Exception e) {
+            logger.error("Error on setUsername()" + e.getLocalizedMessage());
+            resp = Response.serverError().encoding("Error on Server").build();
         }
+        return resp;
+
     }
 
     @POST
     @Path("{id}/password")
     @Produces(MediaType.APPLICATION_JSON)
     public Response setPassword(@QueryParam("key") String key, @PathParam("id") Long id, String content) {
-        checkKey(key);
-        if (account == null) {
-            return Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("access denied").build();
-        }
-        Account caccount = accountManager.loadAccount(id);
-        if (caccount == null) {
-            // log(Level.INFO, "set password of account " + id + ", account not found");
-            return Response.status(Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("account not found").build();
-        }
-        if (!accessManager.hasPermissionOnAccountable(account, Topic.ACCOUNT, Permission.WRITE, caccount)) {
-            // log(Level.INFO, "set password of account " + id + ", not allowed");
-            return Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("not allowed").build();
-        }
+        Response resp;
         try {
-            PasswordData passwordData = accountHelper.fromJsonPassword(content);
-            if (accessManager.hasPermission(account, Topic.ACCOUNT, Permission.WRITE)) {
-                accountManager.setPassword(caccount, passwordData.getNewPassword());
-            } else {
-                accountManager.setPassword(caccount, passwordData.getCurrentPassword(), passwordData.getNewPassword());
+            checkKey(key);
+            if (account == null) {
+                return Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("access denied").build();
             }
-            // log(Level.INFO, "set password of '" + caccount.getUsername() + "'");
-            session.remove(ACCOUNTS);
-            AccountData caccountData = accountHelper.newData(caccount);
-            String json = accountHelper.toJson(caccountData);
-            return Response.ok(json).build();
-        } catch (ManagerException | HelperException ex) {
-            // log(Level.INFO, "set password of '" + caccount.getUsername() + "', " + ex.getMessage());
-            return Response.status(Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            Account caccount = accountManager.loadAccount(id);
+            if (caccount == null) {
+                // log(Level.INFO, "set password of account " + id + ", account not found");
+                return Response.status(Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("account not found").build();
+            }
+            if (!accessManager.hasPermissionOnAccountable(account, Topic.ACCOUNT, Permission.WRITE, caccount)) {
+                // log(Level.INFO, "set password of account " + id + ", not allowed");
+                return Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("not allowed").build();
+            }
+            try {
+                PasswordData passwordData = accountHelper.fromJsonPassword(content);
+                if (accessManager.hasPermission(account, Topic.ACCOUNT, Permission.WRITE)) {
+                    accountManager.setPassword(caccount, passwordData.getNewPassword());
+                } else {
+                    accountManager.setPassword(caccount, passwordData.getCurrentPassword(), passwordData.getNewPassword());
+                }
+                // log(Level.INFO, "set password of '" + caccount.getUsername() + "'");
+                session.remove(ACCOUNTS);
+                AccountData caccountData = accountHelper.newData(caccount);
+                String json = accountHelper.toJson(caccountData);
+                return Response.ok(json).build();
+            } catch (ManagerException | HelperException ex) {
+                // log(Level.INFO, "set password of '" + caccount.getUsername() + "', " + ex.getMessage());
+                return Response.status(Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
 
+            }
+        } catch (Exception e) {
+            logger.error("Error on setPassword()" + e.getLocalizedMessage());
+            resp = Response.serverError().encoding("Error on Server").build();
         }
+        return resp;
+
     }
 
     @POST
     @Path("{id}/name")
     @Produces(MediaType.APPLICATION_JSON)
     public Response setName(@QueryParam("key") String key, @PathParam("id") Long id, String content) {
-        checkKey(key);
-        if (account == null) {
-            return Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("access denied").build();
+        Response resp;
+        try {
+            checkKey(key);
+            if (account == null) {
+                return Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("access denied").build();
+            }
+            Account caccount = accountManager.loadAccount(id);
+            if (caccount == null) {
+                // log(Level.INFO, "set name of account " + id + ", account not found");
+                return Response.status(Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("account not found").build();
+            }
+            if (!accessManager.hasPermissionOnAccountable(account, Topic.ACCOUNT, Permission.WRITE, caccount)) {
+                // log(Level.INFO, "set name of account " + id + ", not allopwed");
+                return Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("not allowed").build();
+            }
+            // log(Level.INFO, "set name of '" + caccount.getUsername() + "' to '" + content + "'");
+            session.remove(ACCOUNTS);
+            accountManager.setName(caccount, content);
+            AccountData caccountData = accountHelper.newData(caccount);
+            String json = accountHelper.toJson(caccountData);
+            resp = Response.ok(json).build();
+        } catch (Exception e) {
+            logger.error("Error on setName()" + e.getLocalizedMessage());
+            resp = Response.serverError().encoding("Error on Server").build();
         }
-        Account caccount = accountManager.loadAccount(id);
-        if (caccount == null) {
-            // log(Level.INFO, "set name of account " + id + ", account not found");
-            return Response.status(Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("account not found").build();
-        }
-        if (!accessManager.hasPermissionOnAccountable(account, Topic.ACCOUNT, Permission.WRITE, caccount)) {
-            // log(Level.INFO, "set name of account " + id + ", not allopwed");
-            return Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("not allowed").build();
-        }
-        // log(Level.INFO, "set name of '" + caccount.getUsername() + "' to '" + content + "'");
-        session.remove(ACCOUNTS);
-        accountManager.setName(caccount, content);
-        AccountData caccountData = accountHelper.newData(caccount);
-        String json = accountHelper.toJson(caccountData);
-        return Response.ok(json).build();
+        return resp;
+
     }
 
     @POST
     @Path("{id}/email")
     @Produces(MediaType.APPLICATION_JSON)
     public Response setEmail(@QueryParam("key") String key, @PathParam("id") Long id, String content) {
-        checkKey(key);
-        if (account == null) {
-            return Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("access denied").build();
+        Response resp;
+        try {
+            checkKey(key);
+            if (account == null) {
+                return Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("access denied").build();
+            }
+            Account caccount = accountManager.loadAccount(id);
+            if (caccount == null) {
+                // log(Level.INFO, "set email of account " + id + ", account not found");
+                return Response.status(Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("account not found").build();
+            }
+            if (!accessManager.hasPermissionOnAccountable(account, Topic.ACCOUNT, Permission.WRITE, caccount)) {
+                // log(Level.INFO, "set email of account " + id + ", not allopwed");
+                return Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("not allowed").build();
+            }
+            // log(Level.INFO, "set email of '" + caccount.getUsername() + "' to '" + content + "'");
+            session.remove(ACCOUNTS);
+            accountManager.setEmail(caccount, content);
+            AccountData caccountData = accountHelper.newData(caccount);
+            String json = accountHelper.toJson(caccountData);
+            resp = Response.ok(json).build();
+        } catch (Exception e) {
+            logger.error("Error on setEmail()" + e.getLocalizedMessage());
+            resp = Response.serverError().encoding("Error on Server").build();
         }
-        Account caccount = accountManager.loadAccount(id);
-        if (caccount == null) {
-            // log(Level.INFO, "set email of account " + id + ", account not found");
-            return Response.status(Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("account not found").build();
-        }
-        if (!accessManager.hasPermissionOnAccountable(account, Topic.ACCOUNT, Permission.WRITE, caccount)) {
-            // log(Level.INFO, "set email of account " + id + ", not allopwed");
-            return Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("not allowed").build();
-        }
-        // log(Level.INFO, "set email of '" + caccount.getUsername() + "' to '" + content + "'");
-        session.remove(ACCOUNTS);
-        accountManager.setEmail(caccount, content);
-        AccountData caccountData = accountHelper.newData(caccount);
-        String json = accountHelper.toJson(caccountData);
-        return Response.ok(json).build();
+        return resp;
+
     }
 
     @POST
     @Path("{id}/enabled")
     @Produces(MediaType.TEXT_HTML)
     public Response setEnabled(@QueryParam("key") String key, @PathParam("id") Long id, String content) {
-        checkKey(key);
-        if (account == null) {
-            return Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("access denied").build();
-        }
-        Account caccount = accountManager.loadAccount(id);
-        if (caccount == null) {
-            // log(Level.INFO, "set enabled of account " + id + ", account not found");
-            return Response.status(Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("account not found").build();
-        }
-        if (!accessManager.hasPermissionOnAccountable(account, Topic.ACCOUNT, Permission.WRITE, caccount)) {
-            // log(Level.INFO, "set enabled of account " + id + ", not allowed");
-            return Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("not allowed").build();
-        }
+        Response resp;
         try {
-            // log(Level.INFO, "set enabled of account '" + caccount.getUsername() + "' to " + content);
-            session.remove(ACCOUNTS);
-            accountManager.setEnabled(caccount, Helper.parseBoolean(content));
-            AccountData caccountData = accountHelper.newData(caccount);
-            String json = accountHelper.toJson(caccountData);
-            return Response.ok(json).build();
-        } catch (HelperException ex) {
-            // log(Level.INFO, "set enabled of '" + caccount.getUsername() + "', " + ex.getMessage());
-            return Response.status(Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            checkKey(key);
+            if (account == null) {
+                return Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("access denied").build();
+            }
+            Account caccount = accountManager.loadAccount(id);
+            if (caccount == null) {
+                // log(Level.INFO, "set enabled of account " + id + ", account not found");
+                return Response.status(Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("account not found").build();
+            }
+            if (!accessManager.hasPermissionOnAccountable(account, Topic.ACCOUNT, Permission.WRITE, caccount)) {
+                // log(Level.INFO, "set enabled of account " + id + ", not allowed");
+                return Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("not allowed").build();
+            }
+            try {
+                // log(Level.INFO, "set enabled of account '" + caccount.getUsername() + "' to " + content);
+                session.remove(ACCOUNTS);
+                accountManager.setEnabled(caccount, Helper.parseBoolean(content));
+                AccountData caccountData = accountHelper.newData(caccount);
+                String json = accountHelper.toJson(caccountData);
+                return Response.ok(json).build();
+            } catch (HelperException ex) {
+                // log(Level.INFO, "set enabled of '" + caccount.getUsername() + "', " + ex.getMessage());
+                return Response.status(Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            }
+        } catch (Exception e) {
+            logger.error("Error on setEnabled" + e.getLocalizedMessage());
+            resp = Response.serverError().encoding("Error on Server").build();
         }
+        return resp;
+
     }
 
     @POST
     @Path("{id}/settings/{name}")
     @Produces(MediaType.TEXT_HTML)
     public Response setSetting(@QueryParam("key") String key, @PathParam("id") Long id, @PathParam("name") String name, String content) {
-        checkKey(key);
-        if (account == null) {
-            return Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("access denied").build();
-        }
-        Account caccount = accountManager.loadAccount(id);
-        if (caccount == null) {
-            // log(Level.INFO, "set setting " + name + " of account " + id + ", account not found");
-            return Response.status(Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("account not found").build();
-        }
-        if (!accessManager.hasPermissionOnAccountable(account, Topic.ACCOUNT, Permission.WRITE, caccount)) {
-            // log(Level.INFO, "set setting " + name + " of account " + id + ", not allowed");
-            return Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("not allowed").build();
-        }
+        Response resp;
         try {
-            accountManager.setSetting(caccount, name, content);
-            // log(Level.INFO, "set setting " + name + " of '" + caccount.getUsername() + "' to '" + content + "'");
-            AccountData caccountData = accountHelper.newData(caccount);
-            String json = accountHelper.toJson(caccountData);
-            return Response.ok(json).build();
-        } catch (ManagerException ex) {
-            // log(Level.INFO, "set name of '" + caccount.getUsername() + "', " + ex.getMessage());
-            return Response.status(Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            checkKey(key);
+            if (account == null) {
+                return Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("access denied").build();
+            }
+            Account caccount = accountManager.loadAccount(id);
+            if (caccount == null) {
+                // log(Level.INFO, "set setting " + name + " of account " + id + ", account not found");
+                return Response.status(Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("account not found").build();
+            }
+            if (!accessManager.hasPermissionOnAccountable(account, Topic.ACCOUNT, Permission.WRITE, caccount)) {
+                // log(Level.INFO, "set setting " + name + " of account " + id + ", not allowed");
+                return Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("not allowed").build();
+            }
+            try {
+                accountManager.setSetting(caccount, name, content);
+                // log(Level.INFO, "set setting " + name + " of '" + caccount.getUsername() + "' to '" + content + "'");
+                AccountData caccountData = accountHelper.newData(caccount);
+                String json = accountHelper.toJson(caccountData);
+                return Response.ok(json).build();
+            } catch (ManagerException ex) {
+                // log(Level.INFO, "set name of '" + caccount.getUsername() + "', " + ex.getMessage());
+                return Response.status(Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            }
+        } catch (Exception e) {
+            logger.error("Error on setSettings" + e.getLocalizedMessage());
+            resp = Response.serverError().encoding("Error on Server").build();
         }
+        return resp;
+
     }
 
 }

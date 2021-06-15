@@ -17,25 +17,31 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryElementItem;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalEntryFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalSenseFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Counting;
+import it.cnr.ilc.lexo.service.data.lexicon.output.FormCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.FormList;
 import it.cnr.ilc.lexo.service.data.lexicon.output.HitsDataList;
+import it.cnr.ilc.lexo.service.data.lexicon.output.Language;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryItem;
+import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalSenseCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalSenseItem;
+import it.cnr.ilc.lexo.service.data.lexicon.output.LinkedEntity;
+import it.cnr.ilc.lexo.service.helper.FormCoreHelper;
 import it.cnr.ilc.lexo.service.helper.FormItemsHelper;
 import it.cnr.ilc.lexo.service.helper.FormListHelper;
 import it.cnr.ilc.lexo.service.helper.HelperException;
+import it.cnr.ilc.lexo.service.helper.LanguageHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalEntryCoreHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalEntryFilterHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalEntryElementHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalEntryReferenceLinkHelper;
+import it.cnr.ilc.lexo.service.helper.LexicalSenseCoreHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalSenseFilterHelper;
+import it.cnr.ilc.lexo.service.helper.LinkedEntityHelper;
 import it.cnr.ilc.lexo.service.helper.PathLenghtHelper;
 import it.cnr.ilc.lexo.util.EnumUtil;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.Consumes;
@@ -64,10 +70,14 @@ public class LexiconData extends Service {
     private final LexicalSenseFilterHelper lexicalSenseFilterHelper = new LexicalSenseFilterHelper();
     private final FormItemsHelper formItemsHelper = new FormItemsHelper();
     private final FormListHelper formListHelper = new FormListHelper();
+    private final LanguageHelper languageHelper = new LanguageHelper();
     private final LexicalEntryElementHelper lexicalEntryElementHelper = new LexicalEntryElementHelper();
     private final LexicalEntryCoreHelper lexicalEntryCoreHelper = new LexicalEntryCoreHelper();
     private final LexicalEntryReferenceLinkHelper lexicalEntryReferenceLinkHelper = new LexicalEntryReferenceLinkHelper();
     private final PathLenghtHelper pathLenghtHelper = new PathLenghtHelper();
+    private final FormCoreHelper formCoreHelper = new FormCoreHelper();
+    private final LexicalSenseCoreHelper lexicalSenseCoreHelper = new LexicalSenseCoreHelper();
+    private final LinkedEntityHelper linkedEntityHelper = new LinkedEntityHelper();
 
     @GET
     @Path("{id}/lexicalEntry")
@@ -87,7 +97,7 @@ public class LexiconData extends Service {
             @QueryParam("key") String key,
             @ApiParam(
                     name = "aspect",
-                    allowableValues = "core, decomposition, etymology, variation and translation, syntax and semantics",
+                    allowableValues = "core, decomposition, variation and translation, syntax and semantics",
                     example = "core",
                     required = true)
             @QueryParam("aspect") String aspect,
@@ -115,6 +125,181 @@ public class LexiconData extends Service {
                         .build();
             }
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("lexical aspect not available").build();
+        } catch (ManagerException ex) {
+            Logger.getLogger(LexiconData.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        }
+    }
+
+    @GET
+    @Path("{id}/linguisticRelation")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "/{id}/linguisticRelation",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Lexical entity relation",
+            notes = "This method returns the input relation with other lexical entities, as well as the inferred ones")
+    public Response linguisticRelation(
+            @ApiParam(
+                    name = "key",
+                    value = "authentication token",
+                    example = "lexodemo",
+                    required = true)
+            @QueryParam("key") String key,
+            @ApiParam(
+                    name = "property",
+                    example = "denotes",
+                    required = true)
+            @QueryParam("property") String property,
+            @ApiParam(
+                    name = "id",
+                    value = "lexical entity ID",
+                    example = "MUSaccedereVERB",
+                    required = true)
+            @PathParam("id") String id) {
+        try {
+            TupleQueryResult lingRel = lexiconManager.getLinguisticRelation(id, property);
+            if (!lingRel.hasNext()) {
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("There are no instances of " + property).build();
+            }
+            List<LinkedEntity> le = linkedEntityHelper.newDataList(lingRel);
+            String json = linkedEntityHelper.toJson(le);
+            return Response.ok(json)
+                    .type(MediaType.TEXT_PLAIN)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
+        } catch (ManagerException ex) {
+            Logger.getLogger(LexiconData.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        }
+    }
+
+    @GET
+    @Path("{id}/form")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "/{id}/form",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Form",
+            notes = "This method returns the core data related to given form")
+    public Response form(
+            @ApiParam(
+                    name = "key",
+                    value = "authentication token",
+                    example = "lexodemo",
+                    required = true)
+            @QueryParam("key") String key,
+            @ApiParam(
+                    name = "aspect",
+                    allowableValues = "core, variation and translation",
+                    example = "core",
+                    required = true)
+            @QueryParam("aspect") String aspect,
+            @ApiParam(
+                    name = "id",
+                    value = "form ID",
+                    example = "MUSabbacchiareVERB_PHUabbacchiammo_P1IR",
+                    required = true)
+            @PathParam("id") String id) {
+        try {
+            TupleQueryResult form = lexiconManager.getForm(id, aspect);
+            if (aspect.equals(EnumUtil.LexicalAspects.Core.toString())) {
+                List<FormCore> fc = formCoreHelper.newDataList(form);
+//                TupleQueryResult lexicalEntryReferenceLinks = lexiconManager.getLexicalEntryReferenceLinks(id);
+//                LexicalEntryElementItem referenceLinks = lexicalEntryReferenceLinkHelper.newData(lexicalEntryReferenceLinks);
+//                lexiconManager.addLexicalEntryLinks(lec, referenceLinks,
+//                        new LexicalEntryElementItem("Multimedia", new ArrayList()),
+//                        new LexicalEntryElementItem("Attestation", new ArrayList()),
+//                        new LexicalEntryElementItem("Other", new ArrayList()));
+                String json = formCoreHelper.toJson(lexiconManager.getMorphologyInheritance(fc));
+                return Response.ok(json)
+                        .type(MediaType.TEXT_PLAIN)
+                        .header("Access-Control-Allow-Headers", "content-type")
+                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                        .build();
+            }
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("lexical aspect not available").build();
+        } catch (ManagerException ex) {
+            Logger.getLogger(LexiconData.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        }
+    }
+
+    @GET
+    @Path("{id}/lexicalSense")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "/{id}/lexicalSense",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Lexical Sense",
+            notes = "This method returns the core data related to given sense")
+    public Response lexicalSense(
+            @ApiParam(
+                    name = "key",
+                    value = "authentication token",
+                    example = "lexodemo",
+                    required = true)
+            @QueryParam("key") String key,
+            @ApiParam(
+                    name = "aspect",
+                    allowableValues = "core, variation and translation, syntax and semantics",
+                    example = "core",
+                    required = true)
+            @QueryParam("aspect") String aspect,
+            @ApiParam(
+                    name = "id",
+                    value = "sense ID",
+                    example = "USem73621abolizione",
+                    required = true)
+            @PathParam("id") String id) {
+        try {
+            TupleQueryResult sense = lexiconManager.getLexicalSense(id, aspect);
+            if (aspect.equals(EnumUtil.LexicalAspects.Core.toString())) {
+                LexicalSenseCore lsc = lexicalSenseCoreHelper.newData(sense);
+//                TupleQueryResult lexicalEntryReferenceLinks = lexiconManager.getLexicalEntryReferenceLinks(id);
+//                LexicalEntryElementItem referenceLinks = lexicalEntryReferenceLinkHelper.newData(lexicalEntryReferenceLinks);
+//                lexiconManager.addLexicalEntryLinks(lec, referenceLinks,
+//                        new LexicalEntryElementItem("Multimedia", new ArrayList()),
+//                        new LexicalEntryElementItem("Attestation", new ArrayList()),
+//                        new LexicalEntryElementItem("Other", new ArrayList()));
+                String json = lexicalSenseCoreHelper.toJson(lsc);
+                return Response.ok(json)
+                        .type(MediaType.TEXT_PLAIN)
+                        .header("Access-Control-Allow-Headers", "content-type")
+                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                        .build();
+            }
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("lexical aspect not available").build();
+        } catch (ManagerException ex) {
+            Logger.getLogger(LexiconData.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        }
+    }
+
+    @GET
+    @Path("languages")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.POST,
+            value = "/languages",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Lexicon languages list",
+            notes = "This method returns a list of lexicon languages according to the input filter")
+    public Response languages(@QueryParam("key") String key) throws HelperException {
+        try {
+            TupleQueryResult languages = lexiconManager.getLexiconLanguages();
+            List<Language> entries = languageHelper.newDataList(languages);
+            String json = languageHelper.toJson(entries);
+            return Response.ok(json)
+                    .type(MediaType.TEXT_PLAIN)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
         } catch (ManagerException ex) {
             Logger.getLogger(LexiconData.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
@@ -211,7 +396,7 @@ public class LexiconData extends Service {
                             }
                         }
                         list.add(new FormList(ff.getExtendTo(), lenght, lexiconManager.getNamespace() + sense, sense,
-                                            lexiconManager.getFormItemListCopy(forms)));
+                                lexiconManager.getFormItemListCopy(forms)));
                     } else if (ff.getExtendTo().equals(EnumUtil.AcceptedSearchFormExtendTo.Synonym.toString())) {
                         TupleQueryResult _resForms = lexiconManager.getFormsBySenseRelation(ff, sense);
                         if (_resForms.hasNext()) {
@@ -264,8 +449,8 @@ public class LexiconData extends Service {
                 .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                 .build();
     }
-    
-     @GET
+
+    @GET
     @Path("{id}/senses")
     @Produces(MediaType.APPLICATION_JSON)
     @RequestMapping(

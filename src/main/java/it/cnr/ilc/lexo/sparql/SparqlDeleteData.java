@@ -11,8 +11,41 @@ package it.cnr.ilc.lexo.sparql;
  */
 public class SparqlDeleteData {
 
+    public static final String DELETE_LEXICON_LANGUAGE
+            = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
+            + "DELETE { lex:_ID_ ?predicate ?object . } \n"
+            + "WHERE { lex:_ID_ ?predicate ?object . }";
+
     public static final String DELETE_LEXICAL_ENTRY
-            = SparqlPrefix.LEX + "\n"
-            + "DELETE WHERE { lex:_ID_ ?predicate ?object . }";
+            = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
+            + "DELETE { lex:_ID_ ?predicate ?object . \n"
+            + "         ?subject ?_predicate lex:_ID_ . }\n"
+            + "WHERE { lex:_ID_ ?predicate ?object . \n"
+            + "         OPTIONAL { ?subject ?_predicate lex:_ID_ . } }";
+
+    public static final String DELETE_FORM
+            = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
+            + "DELETE { lex:_ID_ ?predicate ?object . \n"
+            + "         ?subject ?_predicate lex:_ID_ . }\n"
+            + "WHERE { lex:_ID_ ?predicate ?object . \n"
+            + "         OPTIONAL { ?subject ?_predicate lex:_ID_ . } }";
+
+    public static final String DELETE_LEXICAL_SENSE
+            = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
+            + "DELETE { lex:_ID_ ?predicate ?object . \n"
+            + "         ?subject ?_predicate lex:_ID_ . }\n"
+            + "WHERE { lex:_ID_ ?predicate ?object . \n"
+            + "         OPTIONAL { ?subject ?_predicate lex:_ID_ . } }";
+
+    public static final String DELETE_LINGUISTIC_RELATION
+            = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
+            + "DELETE {\n"
+            + "    lex:_ID_ ?relation lex:_ID_TARGET_\n"
+            + "} WHERE {\n"
+            + "    lex:_ID_ ?relation lex:_ID_TARGET_ .\n"
+            + "    FILTER(regex(str(?relation), \"_RELATION_\"))\n"
+            + "}";
 
 }

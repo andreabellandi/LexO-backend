@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-    <property name="HOME_LOG" value="${catalina.home}/logs/lexo-server.log"/>
+    <property name="HOME_LOG" value="${catalina.home}/logs/lexo-server${postfix}.log"/>
 
     <appender name="FILE-ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${HOME_LOG}</file>
@@ -17,7 +17,7 @@
         </rollingPolicy>
 
         <encoder>
-            <pattern>%d %p %c{1.} [%t] %m%n</pattern>
+            <pattern>%d %p %c{1.}:%L [%t] %m%n</pattern>
         </encoder>
     </appender>
 

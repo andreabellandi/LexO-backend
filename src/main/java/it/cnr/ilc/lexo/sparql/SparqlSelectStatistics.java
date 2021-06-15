@@ -12,8 +12,8 @@ package it.cnr.ilc.lexo.sparql;
 public class SparqlSelectStatistics {
 
     public static final String STATISTICS_AUTHORS
-            = SparqlPrefix.INST + "\n"
-            + SparqlPrefix.LUC + "\n"
+            = SparqlPrefix.INST.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LUC.getSparqlPrefix() + "\n"
             + "SELECT ?"
             + SparqlVariable.LABEL
             + " ?"
@@ -27,8 +27,8 @@ public class SparqlSelectStatistics {
             + "} order by ?" + SparqlVariable.LABEL;
 
     public static final String STATISTICS_TYPES
-            = SparqlPrefix.INST + "\n"
-            + SparqlPrefix.LUC + "\n"
+            = SparqlPrefix.INST.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LUC.getSparqlPrefix() + "\n"
             + "SELECT ?"
             + SparqlVariable.LABEL
             + " ?"
@@ -43,8 +43,8 @@ public class SparqlSelectStatistics {
             + "}";
 
     public static final String STATISTICS_LANGUAGES
-            = SparqlPrefix.INST + "\n"
-            + SparqlPrefix.LUC + "\n"
+            = SparqlPrefix.INST.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LUC.getSparqlPrefix() + "\n"
             + "SELECT ?"
             + SparqlVariable.LABEL
             + " ?"
@@ -58,8 +58,8 @@ public class SparqlSelectStatistics {
             + "} order by ?" + SparqlVariable.LABEL;
 
     public static final String STATISTICS_POS
-            = SparqlPrefix.INST + "\n"
-            + SparqlPrefix.LUC + "\n"
+            = SparqlPrefix.INST.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LUC.getSparqlPrefix() + "\n"
             + "SELECT ?"
             + SparqlVariable.LABEL
             + " ?"
@@ -76,8 +76,8 @@ public class SparqlSelectStatistics {
             + "}";
 
     public static final String STATISTICS_STATUS
-            = SparqlPrefix.INST + "\n"
-            + SparqlPrefix.LUC + "\n"
+            = SparqlPrefix.INST.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LUC.getSparqlPrefix() + "\n"
             + "SELECT ?"
             + SparqlVariable.LABEL
             + " ?"
@@ -90,4 +90,10 @@ public class SparqlSelectStatistics {
             + "  _:f luc:facetCount ?" + SparqlVariable.LABEL_COUNT + " .\n"
             + "} order by ?" + SparqlVariable.LABEL;
 
+    public static final String STATISTICS_LANGUAGES_LIST
+            = SparqlPrefix.LIME.getSparqlPrefix() + "\n"
+            + "SELECT ?" + SparqlVariable.LEXICON_LANGUAGE + "\n"
+            + "WHERE { ?" + SparqlVariable.LEXICON + " a " + SparqlPrefix.LIME.getPrefix() + "Lexicon ;\n"
+            + "                 " + SparqlPrefix.LIME.getPrefix() + "language ?" + SparqlVariable.LEXICON_LANGUAGE + " . }\n"
+            + "ORDER BY ?" + SparqlVariable.LEXICON_LANGUAGE + "";
 }

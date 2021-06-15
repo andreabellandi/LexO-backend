@@ -7,14 +7,15 @@ package it.cnr.ilc.lexo.service.data.lexicon.output;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import it.cnr.ilc.lexo.service.data.Data;
 
 /**
  *
  * @author andreabellandi
  */
 @ApiModel(description = "Output model representing label and IRI of a linked entity")
-public class LinkedEntity {
-    
+public class LinkedEntity implements Data {
+
     @ApiModelProperty(value = "lexical entity IRI")
     private String lexicalEntity;
     @ApiModelProperty(value = "lexical entity shor IRI")
@@ -23,8 +24,10 @@ public class LinkedEntity {
     private String label;
     @ApiModelProperty(value = "lexical entity type")
     private String lexicalType;
+    @ApiModelProperty(value = "explicit or implicit link")
+    private boolean inferred;
     @ApiModelProperty(value = "the type of linked the lexical entity", allowableValues = "internal, external")
-    private String entityType;
+    private String linkType;
 
     public String getLexicalEntity() {
         return lexicalEntity;
@@ -58,13 +61,20 @@ public class LinkedEntity {
         this.lexicalType = lexicalType;
     }
 
-    public String getEntityType() {
-        return entityType;
+    public String getLinkType() {
+        return linkType;
     }
 
-    public void setEntityType(String entityType) {
-        this.entityType = entityType;
+    public void setLinkType(String linkType) {
+        this.linkType = linkType;
     }
-    
-    
+
+    public boolean isInferred() {
+        return inferred;
+    }
+
+    public void setInferred(boolean inferred) {
+        this.inferred = inferred;
+    }
+
 }

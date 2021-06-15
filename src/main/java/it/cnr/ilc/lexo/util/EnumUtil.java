@@ -105,6 +105,22 @@ public class EnumUtil {
         }
     }
     
+    public static enum LexicalEntryPropertyLinks {
+        Denotes("denotes"),
+        Evokes("evokes");
+
+        private final String property;
+
+        private LexicalEntryPropertyLinks(String property) {
+            this.property = property;
+        }
+
+        @Override
+        public String toString() {
+            return this.property;
+        }
+    }
+    
     public static enum LexicalAspects {
         Core("core"),
         Decomp("decomposition"),
@@ -155,6 +171,132 @@ public class EnumUtil {
         @Override
         public String toString() {
             return this.searchFormTypes;
+        }
+        
+    }
+    
+    public static enum LanguageAttributes {
+        Description("description"),
+        Language("language"),
+        Lexvo("lexvo");
+
+        private final String languageAttributes;
+
+        private LanguageAttributes(String languageAttributes) {
+            this.languageAttributes = languageAttributes;
+        }
+
+        @Override
+        public String toString() {
+            return this.languageAttributes;
+        }
+        
+    }
+    
+    public static enum LexicalEntryAttributes {
+        Label("label"),
+        Type("type"),
+        Status("status"),
+        Note("note"),
+        Language("language"),
+        Denotes("denotes");
+
+        private final String lexicalEntryAttributes;
+
+        private LexicalEntryAttributes(String lexicalEntryAttributes) {
+            this.lexicalEntryAttributes = lexicalEntryAttributes;
+        }
+
+        @Override
+        public String toString() {
+            return this.lexicalEntryAttributes;
+        }
+        
+    }
+    
+    public static enum FormAttributes {
+        Note("note"),
+        Type("type"),
+        WrittenRep("writtenRep"),
+        PhoneticRep("phoneticRep"),
+        Pronunciation("pronunciation"),
+        Segmentation("segmentation"),
+        Transliteration("transliteration"),
+        Romanization("romanization");
+
+        private final String formAttributes;
+
+        private FormAttributes(String formAttributes) {
+            this.formAttributes = formAttributes;
+        }
+
+        @Override
+        public String toString() {
+            return this.formAttributes;
+        }
+        
+    }
+    
+    public static enum LexicalSenseAttributes {
+        Note("note"),
+        Usage("usage"),
+        Reference("reference"),
+        Topic("topic"),
+        Definition("definition"),
+        Description("description"),
+        Explanation("explanation"),
+        Gloss("gloss"),
+        SenseExample("senseExample"),
+        SenseTranslation("senseTranslation");
+
+        private final String senseAttributes;
+
+        private LexicalSenseAttributes(String senseAttributes) {
+            this.senseAttributes = senseAttributes;
+        }
+
+        @Override
+        public String toString() {
+            return this.senseAttributes;
+        }
+        
+    }
+    
+    public static enum LinguisticRelation {
+        Morphology("morphology"),
+        LexicalRel("lexicalRel"),
+        SenseRel("senseRel"),
+        ConceptRef("conceptRef"),
+        ConceptRel("conceptRel");
+
+        private final String linguisticRelation;
+
+        private LinguisticRelation(String linguisticRelation) {
+            this.linguisticRelation = linguisticRelation;
+        }        
+
+        @Override
+        public String toString() {
+            return this.linguisticRelation;
+        }
+        
+    }
+    
+    public static enum GenericRelation {
+        Reference("reference"),
+        Bibliography("bibliography"),
+        Multimedia("multimedia"),
+        Attestation("attestation");
+
+        private final String genericRelation;
+
+        private GenericRelation(String genericRelation) {
+            this.genericRelation = genericRelation;
+        }        
+
+        @Override
+        public String toString() {
+            return this.genericRelation;
         }
         
     }
