@@ -6,9 +6,10 @@
     <version>1.0.0</version>
     <packaging>war</packaging>
     <name>LexO-backend</name>
-    
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <postfix></postfix>
     </properties>
     
     <dependencies>
@@ -120,6 +121,7 @@
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
+                    <debug>true</debug>
                 </configuration>
             </plugin>
             <plugin>
@@ -127,7 +129,18 @@
                 <artifactId>maven-war-plugin</artifactId>
                 <version>3.3.1</version>
                 <configuration>
+                    <classifier>${envClassifier}</classifier>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
+                    <!-- https://stackoverflow.com/questions/21018252/not-getting-values-from-properties-files-in-context-xml-file -->
+                    <webResources>
+                        <resource>
+                            <filtering>true</filtering>
+                            <directory>src/main/webapp</directory>
+                            <includes>
+                                <include>**/META-INF/context.xml</include>
+                            </includes>
+                        </resource>
+                    </webResources>
                 </configuration>
             </plugin>
             <plugin>
@@ -135,7 +148,70 @@
                 <artifactId>maven-dependency-plugin</artifactId>
                 <version>3.1.2</version>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.2.0</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                    <resources>
+                        <resource>                            
+                            <directory>src/main/resources</directory>
+                            <filtering>true</filtering>
+                        </resource>
+                    </resources>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
-    
+    <profiles>
+        <profile>
+            <id>devel-simone</id> 
+            <properties>
+                <db.jdbcUrl>jdbc:mysql://localhost/lexo_server</db.jdbcUrl>
+                <envClassifier></envClassifier>
+                <postfix></postfix>
+                <db.user>lexo</db.user>
+                <db.password>LexOServer12</db.password>
+                <graphdb.url>https://lexo-datasets.ilc.cnr.it:7200</graphdb.url>
+                <graphdb.repository>Simple</graphdb.repository>
+                <graphdb.poolSize>5</graphdb.poolSize>
+            </properties>
+        </profile>
+        <profile>
+            <id>beta-release-simone</id> 
+            <properties>
+                <db.jdbcUrl>jdbc:mysql://localhost/lexo_server</db.jdbcUrl>
+                <envClassifier>beta</envClassifier>
+                <postfix>-beta</postfix>
+                <db.user>lexo</db.user>
+                <db.password>LexOServer12</db.password>
+                <graphdb.url>https://lexo-datasets.ilc.cnr.it:7200</graphdb.url>
+                <graphdb.repository>Simple</graphdb.repository>
+                <graphdb.poolSize>5</graphdb.poolSize>
+            </properties>
+        </profile>       
+        <profile>
+            <id>devel-andrea</id> 
+            <properties>
+                <db.jdbcUrl>jdbc:mysql://localhost/lexo_server</db.jdbcUrl>
+                <db.user>root</db.user>
+                <db.password>root</db.password>
+                <graphdb.url>https://localhost:7200</graphdb.url>
+                <graphdb.repository>SIMPLE</graphdb.repository>
+                <graphdb.poolSize>5</graphdb.poolSize>
+            </properties>
+        </profile>
+        <profile>
+            <id>release</id>
+            <properties>
+                <db.jdbcUrl>jdbc:mysql://localhost/lexo_server</db.jdbcUrl>
+                <db.user>lexo</db.user>
+                <db.password>LexOServer12</db.password>
+                <graphdb.url>https://lexo-datasets.ilc.cnr.it:7200</graphdb.url>
+                <graphdb.repository>Simple</graphdb.repository>
+                <graphdb.poolSize>5</graphdb.poolSize>
+            </properties>
+        </profile>
+    </profiles>
 </project>
