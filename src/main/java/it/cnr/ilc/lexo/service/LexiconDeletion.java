@@ -17,6 +17,7 @@ import it.cnr.ilc.lexo.service.helper.LexicalEntryCoreHelper;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -214,7 +215,7 @@ public class LexiconDeletion extends Service {
         }
     }
 
-    @GET
+    @POST
     @Path("{id}/linguisticRelation")
     @Produces(MediaType.APPLICATION_JSON)
     @RequestMapping(
@@ -235,8 +236,7 @@ public class LexiconDeletion extends Service {
                     value = "lexical entry ID",
                     example = "MUSaccedereVERB",
                     required = true)
-            @PathParam("id") String id,
-            LinguisticRelationUpdater lru) {
+            @PathParam("id") String id, LinguisticRelationUpdater lru) {
         // aggiungiere che, se currentvalue è vuoto controllare se relation è un attributo (enumutil). se sì cancella
         if (key.equals("PRINitant19")) {
             try {
