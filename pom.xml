@@ -187,7 +187,7 @@
                 <db.user>lexo</db.user>
                 <db.password>LexOServer12</db.password>
                 <graphdb.url>https://lexo-datasets.ilc.cnr.it:7200</graphdb.url>
-                <graphdb.repository>Simple</graphdb.repository>
+                <graphdb.repository>Simple_beta</graphdb.repository>
                 <graphdb.poolSize>5</graphdb.poolSize>
             </properties>
         </profile>       
