@@ -5,18 +5,13 @@
  */
 package it.cnr.ilc.lexo.manager;
 
-import it.cnr.ilc.lexo.GraphDbUtil;
-import it.cnr.ilc.lexo.LexOProperties;
-import it.cnr.ilc.lexo.service.data.vocabulary.MorphologicalProperty;
 import it.cnr.ilc.lexo.sparql.SparqlSelectStatistics;
 import it.cnr.ilc.lexo.sparql.SparqlVariable;
-import it.cnr.ilc.lexo.util.StringUtil;
+import it.cnr.ilc.lexo.util.RDFQueryUtil;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.rdf4j.query.BindingSet;
 import org.eclipse.rdf4j.query.QueryEvaluationException;
-import org.eclipse.rdf4j.query.QueryLanguage;
-import org.eclipse.rdf4j.query.TupleQuery;
 import org.eclipse.rdf4j.query.TupleQueryResult;
 
 /**
@@ -30,7 +25,7 @@ public final class LexiconStatisticsManager implements Manager, Cached {
     public List<String> getLexiconLanguages() {
         return languages;
     }
-    
+
     LexiconStatisticsManager() {
         reloadCache();
     }
@@ -38,8 +33,9 @@ public final class LexiconStatisticsManager implements Manager, Cached {
     @Override
     public void reloadCache() {
         languages.clear();
-        TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL, SparqlSelectStatistics.STATISTICS_LANGUAGES_LIST);
-        try (TupleQueryResult result = tupleQuery.evaluate()) {
+//        TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL, SparqlSelectStatistics.STATISTICS_LANGUAGES_LIST);
+//        try (TupleQueryResult result = tupleQuery.evaluate()) {
+        try (TupleQueryResult result = RDFQueryUtil.evaluateTQuery(SparqlSelectStatistics.STATISTICS_LANGUAGES_LIST)) {
             while (result.hasNext()) {
                 BindingSet bs = result.next();
                 if (bs.getBinding(SparqlVariable.LEXICON_LANGUAGE) != null) {
@@ -51,27 +47,27 @@ public final class LexiconStatisticsManager implements Manager, Cached {
     }
 
     public TupleQueryResult getTypes() {
-        TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL, SparqlSelectStatistics.STATISTICS_TYPES);
-        return tupleQuery.evaluate();
+//        TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL, SparqlSelectStatistics.STATISTICS_TYPES);
+        return RDFQueryUtil.evaluateTQuery(SparqlSelectStatistics.STATISTICS_TYPES);
     }
 
     public TupleQueryResult getPos() {
-        TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL, SparqlSelectStatistics.STATISTICS_POS);
-        return tupleQuery.evaluate();
+//        TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL, SparqlSelectStatistics.STATISTICS_POS);
+        return RDFQueryUtil.evaluateTQuery(SparqlSelectStatistics.STATISTICS_POS);
     }
 
     public TupleQueryResult getStates() {
-        TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL, SparqlSelectStatistics.STATISTICS_STATUS);
-        return tupleQuery.evaluate();
+//        TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL, SparqlSelectStatistics.STATISTICS_STATUS);
+        return RDFQueryUtil.evaluateTQuery(SparqlSelectStatistics.STATISTICS_STATUS);
     }
 
     public TupleQueryResult getAuthors() {
-        TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL, SparqlSelectStatistics.STATISTICS_AUTHORS);
-        return tupleQuery.evaluate();
+//        TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL, SparqlSelectStatistics.STATISTICS_AUTHORS);
+        return RDFQueryUtil.evaluateTQuery(SparqlSelectStatistics.STATISTICS_AUTHORS);
     }
 
     public TupleQueryResult getLanguages() {
-        TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL, SparqlSelectStatistics.STATISTICS_LANGUAGES);
-        return tupleQuery.evaluate();
+//        TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL, SparqlSelectStatistics.STATISTICS_LANGUAGES);
+        return RDFQueryUtil.evaluateTQuery(SparqlSelectStatistics.STATISTICS_LANGUAGES);
     }
 }
