@@ -5,24 +5,16 @@
  */
 package it.cnr.ilc.lexo.manager;
 
-import it.cnr.ilc.lexo.GraphDbUtil;
-import it.cnr.ilc.lexo.service.data.vocabulary.MorphologicalProperty;
 import it.cnr.ilc.lexo.service.data.vocabulary.Value;
-import it.cnr.ilc.lexo.sparql.SparqlSelectLexinfoData;
 import it.cnr.ilc.lexo.sparql.SparqlSelectOntolexData;
 import it.cnr.ilc.lexo.sparql.SparqlVariable;
+import it.cnr.ilc.lexo.util.RDFQueryUtil;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Literal;
 import org.eclipse.rdf4j.query.BindingSet;
 import org.eclipse.rdf4j.query.QueryEvaluationException;
-import org.eclipse.rdf4j.query.QueryLanguage;
-import org.eclipse.rdf4j.query.TupleQuery;
 import org.eclipse.rdf4j.query.TupleQueryResult;
 
 /**
@@ -54,8 +46,9 @@ public final class OntolexManager implements Manager, Cached {
 
     private void reloadLexicalEntryTypeCache() {
         lexicalEntryTypes.clear();
-        TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL, SparqlSelectOntolexData.LEXICAL_ENTRY_TYPE);
-        try (TupleQueryResult result = tupleQuery.evaluate()) {
+//        TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL, SparqlSelectOntolexData.LEXICAL_ENTRY_TYPE);
+//        try (TupleQueryResult result = tupleQuery.evaluate()) {
+        try (TupleQueryResult result = RDFQueryUtil.evaluateTQuery(SparqlSelectOntolexData.LEXICAL_ENTRY_TYPE)) {
             while (result.hasNext()) {
                 BindingSet bs = result.next();
                 Value value = new Value();
@@ -67,11 +60,13 @@ public final class OntolexManager implements Manager, Cached {
         } catch (QueryEvaluationException qee) {
         }
     }
-    
+
     private void reloadFormTypeCache() {
         formTypes.clear();
-        TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL, SparqlSelectOntolexData.FORM_TYPE);
-        try (TupleQueryResult result = tupleQuery.evaluate()) {
+//        TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL, SparqlSelectOntolexData.FORM_TYPE);
+//        try (TupleQueryResult result = tupleQuery.evaluate()) {
+        try (TupleQueryResult result = RDFQueryUtil.evaluateTQuery(SparqlSelectOntolexData.FORM_TYPE)) {
+
             while (result.hasNext()) {
                 BindingSet bs = result.next();
                 Value value = new Value();
