@@ -5,13 +5,10 @@
  */
 package it.cnr.ilc.lexo.manager;
 
-import it.cnr.ilc.lexo.GraphDbUtil;
 import it.cnr.ilc.lexo.LexOProperties;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LinguisticRelationUpdater;
 import it.cnr.ilc.lexo.sparql.SparqlDeleteData;
-import java.text.SimpleDateFormat;
-import org.eclipse.rdf4j.query.QueryLanguage;
-import org.eclipse.rdf4j.query.Update;
+import it.cnr.ilc.lexo.util.RDFQueryUtil;
 
 /**
  *
@@ -31,16 +28,18 @@ public class LexiconDeletionManager implements Manager, Cached {
     }
 
     public void deleteLexiconLanguage(String id) throws ManagerException {
-        Update updateOperation = GraphDbUtil.getConnection().prepareUpdate(QueryLanguage.SPARQL,
-                SparqlDeleteData.DELETE_LEXICON_LANGUAGE.replaceAll("_ID_", id));
-        updateOperation.execute();
+//        Update updateOperation = GraphDbUtil.getConnection().prepareUpdate(QueryLanguage.SPARQL,
+//                SparqlDeleteData.DELETE_LEXICON_LANGUAGE.replaceAll("_ID_", id));
+//        updateOperation.execute();
+        RDFQueryUtil.update(SparqlDeleteData.DELETE_LEXICON_LANGUAGE.replaceAll("_ID_", id));
     }
 
     public void deleteLexicalEntry(String id) throws ManagerException {
         if (!ManagerFactory.getManager(UtilityManager.class).hasLexicalEntryChildren(id)) {
-            Update updateOperation = GraphDbUtil.getConnection().prepareUpdate(QueryLanguage.SPARQL,
-                    SparqlDeleteData.DELETE_LEXICAL_ENTRY.replaceAll("_ID_", id));
-            updateOperation.execute();
+//            Update updateOperation = GraphDbUtil.getConnection().prepareUpdate(QueryLanguage.SPARQL,
+//                    SparqlDeleteData.DELETE_LEXICAL_ENTRY.replaceAll("_ID_", id));
+//            updateOperation.execute();
+            RDFQueryUtil.update(SparqlDeleteData.DELETE_LEXICAL_ENTRY.replaceAll("_ID_", id));
         } else {
             throw new ManagerException("The lexical entry cannot be deleted. Remove its forms and/or senses first.");
         }
@@ -48,26 +47,34 @@ public class LexiconDeletionManager implements Manager, Cached {
     }
 
     public void deleteForm(String id) throws ManagerException {
-        Update updateOperation = GraphDbUtil.getConnection().prepareUpdate(QueryLanguage.SPARQL,
-                SparqlDeleteData.DELETE_FORM.replaceAll("_ID_", id));
-        updateOperation.execute();
+//        Update updateOperation = GraphDbUtil.getConnection().prepareUpdate(QueryLanguage.SPARQL,
+//                SparqlDeleteData.DELETE_FORM.replaceAll("_ID_", id));
+//        updateOperation.execute();
+        RDFQueryUtil.update(SparqlDeleteData.DELETE_FORM.replaceAll("_ID_", id));
     }
 
     public void deleteLexicalSense(String id) throws ManagerException {
-        Update updateOperation = GraphDbUtil.getConnection().prepareUpdate(QueryLanguage.SPARQL,
-                SparqlDeleteData.DELETE_LEXICAL_SENSE.replaceAll("_ID_", id));
-        updateOperation.execute();
+//        Update updateOperation = GraphDbUtil.getConnection().prepareUpdate(QueryLanguage.SPARQL,
+//                SparqlDeleteData.DELETE_LEXICAL_SENSE.replaceAll("_ID_", id));
+//        updateOperation.execute();
+        RDFQueryUtil.update(SparqlDeleteData.DELETE_LEXICAL_SENSE.replaceAll("_ID_", id));
+
     }
 
     public void deleteLinguisticRelation(String id, LinguisticRelationUpdater lru) throws ManagerException {
         if (lru.getCurrentValue() != null && lru.getRelation() != null) {
             if (!lru.getCurrentValue().isEmpty() && !lru.getRelation().isEmpty()) {
-                Update updateOperation = GraphDbUtil.getConnection().prepareUpdate(QueryLanguage.SPARQL,
-                        SparqlDeleteData.DELETE_LINGUISTIC_RELATION
-                                .replaceAll("_ID_", id)
-                                .replaceAll("_ID_TARGET_", lru.getCurrentValue())
-                                .replaceAll("_RELATION_", lru.getRelation()));
-                updateOperation.execute();
+//                Update updateOperation = GraphDbUtil.getConnection().prepareUpdate(QueryLanguage.SPARQL,
+//                        SparqlDeleteData.DELETE_LINGUISTIC_RELATION
+//                                .replaceAll("_ID_", id)
+//                                .replaceAll("_ID_TARGET_", lru.getCurrentValue())
+//                                .replaceAll("_RELATION_", lru.getRelation()));
+//                updateOperation.execute();
+                RDFQueryUtil.update(SparqlDeleteData.DELETE_LINGUISTIC_RELATION
+                        .replaceAll("_ID_", id)
+                        .replaceAll("_ID_TARGET_", lru.getCurrentValue())
+                        .replaceAll("_RELATION_", lru.getRelation()));
+
             } else {
                 throw new ManagerException("Relation and current value cannot be empty");
             }
