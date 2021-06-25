@@ -82,33 +82,33 @@ public class GraphDbUtil {
     }
 
     public static RepositoryConnection getConnection() throws RepositoryException { 
-        logger.info("getConnection() " + Thread.currentThread().getName());
+        logger.info("getConnection(): {}  available connections: {}", Thread.currentThread().getName() , POOL.size());
         synchronized (LOCK) {
             RepositoryConnection connection = null;
             while (POOL.isEmpty()) {
+                
                 try {
                     LOCK.wait();
-                    logger.info("After wait() POOL.size(): " + POOL.size());
+                    logger.info("getConnection(): After wait() POOL.size(): {} " , POOL.size());
                 } catch (InterruptedException e) {
-                    logger.error("In wait()", e);
+                    logger.error("In wait() {} ", e);
                 }
             }
             connection = POOL.remove(0);
-            logger.info("connection is: " + connection + " POOL.size(): " + POOL.size());
             if (connection != null) {
                 if (!testRDFServerHTTPConnection()) {
                     POOL.add(connection);
-                    logger.info("RepositoryException, POOL.size(): " + POOL.size());
+                    logger.warn("getConnection(): Repository is unreachable");
                     LOCK.notifyAll();
-                    throw new RepositoryException("Repository is unreachble");
+                    throw new RepositoryException("Repository is unreachable");
                 }
 //                logger.debug("connection is active? " + connection.isActive());
 //                logger.debug("connection is empty? " + connection.isEmpty());
-                logger.info("connection is open? " + connection.isOpen());
+                logger.info("getConnection(): connection is open? {}", connection.isOpen());
 //                logger.debug(Thread.currentThread().getName() + " get active connection");
             }
             LOCK.notifyAll();
-            logger.info("getConnection() " + Thread.currentThread().getName() + " connection: " + connection);
+            logger.info("getConnection(): successful, remaining connections {} ", POOL.size());
 
             return connection;
         }
