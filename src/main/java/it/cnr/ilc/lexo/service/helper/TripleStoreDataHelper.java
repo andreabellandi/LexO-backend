@@ -37,7 +37,7 @@ public abstract class TripleStoreDataHelper<D extends Data> extends Helper<D> {
     }
 
     public D newData(TupleQueryResult res) {
-        try {// if res.next == null ??????//
+        try {// if res.next == null ?????? //java.util.NoSuchElementException
             D data = getDataClass().getDeclaredConstructor().newInstance();
             fillData(data, res.next());
             return data;
