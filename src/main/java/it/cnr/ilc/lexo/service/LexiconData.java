@@ -42,8 +42,6 @@ import it.cnr.ilc.lexo.service.helper.PathLenghtHelper;
 import it.cnr.ilc.lexo.util.EnumUtil;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -54,6 +52,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.eclipse.rdf4j.query.TupleQueryResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -64,6 +64,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Path("lexicon/data")
 @Api("Lexicon data")
 public class LexiconData extends Service {
+
+    private static final Logger logger = LoggerFactory.getLogger(LexiconData.class);
 
     private final LexiconDataManager lexiconManager = ManagerFactory.getManager(LexiconDataManager.class);
     private final LexicalEntryFilterHelper lexicalEntryFilterHelper = new LexicalEntryFilterHelper();
@@ -108,6 +110,8 @@ public class LexiconData extends Service {
                     required = true)
             @PathParam("id") String id) {
         try {
+            logger.info("lexicalEntry({}, {}, {})", key, aspect, id);
+            long start = System.currentTimeMillis();
             TupleQueryResult lexicalEntry = lexiconManager.getLexicalEntry(id, aspect);
             if (aspect.equals(EnumUtil.LexicalAspects.Core.toString())) {
                 LexicalEntryCore lec = lexicalEntryCoreHelper.newData(lexicalEntry);
@@ -118,16 +122,25 @@ public class LexiconData extends Service {
                         new LexicalEntryElementItem("Attestation", new ArrayList()),
                         new LexicalEntryElementItem("Other", new ArrayList()));
                 String json = lexicalEntryCoreHelper.toJson(lec);
+                long finish = System.currentTimeMillis();
+                long timeElapsed = finish - start;
+                logger.info("lexicalEntry response: {}ms {}", timeElapsed, json.substring(0, Math.min(json.length(), 20)));
                 return Response.ok(json)
                         .type(MediaType.TEXT_PLAIN)
                         .header("Access-Control-Allow-Headers", "content-type")
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
             }
-            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("lexical aspect not available").build();
+            long finish = System.currentTimeMillis();
+            long timeElapsed = finish - start;
+            logger.info("lexicalEntry response: lexical aspect not available {}ms", timeElapsed);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity("lexical aspect not available").build();
         } catch (ManagerException ex) {
-            Logger.getLogger(LexiconData.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
-            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            logger.error(ex.getMessage(), ex);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        } catch (Exception ex2) {
+            logger.error(ex2.getMessage(), ex2);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex2.getMessage()).build();
         }
     }
 
@@ -171,7 +184,7 @@ public class LexiconData extends Service {
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
         } catch (ManagerException ex) {
-            Logger.getLogger(LexiconData.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }
     }
@@ -223,7 +236,7 @@ public class LexiconData extends Service {
             }
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("lexical aspect not available").build();
         } catch (ManagerException ex) {
-            Logger.getLogger(LexiconData.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }
     }
@@ -275,7 +288,7 @@ public class LexiconData extends Service {
             }
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("lexical aspect not available").build();
         } catch (ManagerException ex) {
-            Logger.getLogger(LexiconData.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }
     }
@@ -301,7 +314,7 @@ public class LexiconData extends Service {
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
         } catch (ManagerException ex) {
-            Logger.getLogger(LexiconData.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }
     }
@@ -327,7 +340,7 @@ public class LexiconData extends Service {
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
         } catch (ManagerException ex) {
-            Logger.getLogger(LexiconData.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }
     }
@@ -354,7 +367,7 @@ public class LexiconData extends Service {
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
         } catch (ManagerException ex) {
-            Logger.getLogger(LexiconData.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }
     }
@@ -412,7 +425,7 @@ public class LexiconData extends Service {
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
         } catch (ManagerException ex) {
-            Logger.getLogger(LexiconData.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }
     }
