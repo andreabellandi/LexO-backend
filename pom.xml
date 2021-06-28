@@ -197,7 +197,7 @@
                 <db.jdbcUrl>jdbc:mysql://localhost/lexo_server</db.jdbcUrl>
                 <db.user>root</db.user>
                 <db.password>root</db.password>
-                <graphdb.url>https://localhost:7200</graphdb.url>
+                <graphdb.url>http://localhost:7200</graphdb.url>
                 <graphdb.repository>SIMPLE</graphdb.repository>
                 <graphdb.poolSize>5</graphdb.poolSize>
             </properties>
