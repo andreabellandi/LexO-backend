@@ -66,6 +66,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class LexiconData extends Service {
 
     private static final Logger logger = LoggerFactory.getLogger(LexiconData.class);
+    Logger statLog = LoggerFactory.getLogger("statistics");
 
     private final LexiconDataManager lexiconManager = ManagerFactory.getManager(LexiconDataManager.class);
     private final LexicalEntryFilterHelper lexicalEntryFilterHelper = new LexicalEntryFilterHelper();
@@ -125,6 +126,7 @@ public class LexiconData extends Service {
                 long finish = System.currentTimeMillis();
                 long timeElapsed = finish - start;
                 logger.info("lexicalEntry response: {}ms {}", timeElapsed, json.substring(0, Math.min(json.length(), 20)));
+                statLog.info("STAT lexicalEntry response: {}ms {}", timeElapsed, json.substring(0, Math.min(json.length(), 20)));
                 return Response.ok(json)
                         .type(MediaType.TEXT_PLAIN)
                         .header("Access-Control-Allow-Headers", "content-type")
