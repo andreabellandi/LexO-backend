@@ -301,6 +301,23 @@ public class EnumUtil {
         
     }
     
+    public static enum GenericRelationReference {
+        seeAlso("seeAlso"),
+        sameAs("sameAs");
+
+        private final String genericRelationReference;
+
+        private GenericRelationReference(String genericRelationReference) {
+            this.genericRelationReference = genericRelationReference;
+        }        
+
+        @Override
+        public String toString() {
+            return this.genericRelationReference;
+        }
+        
+    }
+    
     public static enum AcceptedSearchFormExtendTo {
         None(""),
         Hypernym("hypernym"),

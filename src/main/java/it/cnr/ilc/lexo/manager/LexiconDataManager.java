@@ -300,14 +300,16 @@ public class LexiconDataManager implements Manager, Cached {
     }
 
     public TupleQueryResult getLinguisticRelation(String lexicalEntryID, String property) throws ManagerException {
-//        TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL,
-//                SparqlSelectData.DATA_LINGUISTIC_RELATION
-//                        .replace("_ID_", lexicalEntryID)
-//                        .replace("_RELATION_", property));
         String query = SparqlSelectData.DATA_LINGUISTIC_RELATION
                 .replace("_ID_", lexicalEntryID)
                 .replace("_RELATION_", property);
-
+        return RDFQueryUtil.evaluateTQuery(query);
+    }
+    
+    public TupleQueryResult getGenericRelation(String lexicalEntryID, String property) throws ManagerException {
+        String query = SparqlSelectData.DATA_GENERIC_RELATION
+                .replace("_ID_", lexicalEntryID)
+                .replace("_RELATION_", property);
         return RDFQueryUtil.evaluateTQuery(query);
     }
 

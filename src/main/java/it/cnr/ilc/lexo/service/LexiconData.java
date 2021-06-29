@@ -147,51 +147,6 @@ public class LexiconData extends Service {
     }
 
     @GET
-    @Path("{id}/linguisticRelation")
-    @Produces(MediaType.APPLICATION_JSON)
-    @RequestMapping(
-            method = RequestMethod.GET,
-            value = "/{id}/linguisticRelation",
-            produces = "application/json; charset=UTF-8")
-    @ApiOperation(value = "Lexical entity relation",
-            notes = "This method returns the input relation with other lexical entities, as well as the inferred ones")
-    public Response linguisticRelation(
-            @ApiParam(
-                    name = "key",
-                    value = "authentication token",
-                    example = "lexodemo",
-                    required = true)
-            @QueryParam("key") String key,
-            @ApiParam(
-                    name = "property",
-                    example = "denotes",
-                    required = true)
-            @QueryParam("property") String property,
-            @ApiParam(
-                    name = "id",
-                    value = "lexical entity ID",
-                    example = "MUSaccedereVERB",
-                    required = true)
-            @PathParam("id") String id) {
-        try {
-            TupleQueryResult lingRel = lexiconManager.getLinguisticRelation(id, property);
-            if (!lingRel.hasNext()) {
-                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("There are no instances of " + property).build();
-            }
-            List<LinkedEntity> le = linkedEntityHelper.newDataList(lingRel);
-            String json = linkedEntityHelper.toJson(le);
-            return Response.ok(json)
-                    .type(MediaType.TEXT_PLAIN)
-                    .header("Access-Control-Allow-Headers", "content-type")
-                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                    .build();
-        } catch (ManagerException ex) {
-            logger.error(ex.getMessage(), ex);
-            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
-        }
-    }
-
-    @GET
     @Path("{id}/form")
     @Produces(MediaType.APPLICATION_JSON)
     @RequestMapping(
@@ -529,6 +484,96 @@ public class LexiconData extends Service {
                 .header("Access-Control-Allow-Headers", "content-type")
                 .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                 .build();
+    }
+    
+    @GET
+    @Path("{id}/linguisticRelation")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "/{id}/linguisticRelation",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Lexical entity linguistic relation",
+            notes = "This method returns the input linguistic relation with other lexical entities, as well as the inferred ones")
+    public Response linguisticRelation(
+            @ApiParam(
+                    name = "key",
+                    value = "authentication token",
+                    example = "lexodemo",
+                    required = true)
+            @QueryParam("key") String key,
+            @ApiParam(
+                    name = "property",
+                    example = "denotes",
+                    required = true)
+            @QueryParam("property") String property,
+            @ApiParam(
+                    name = "id",
+                    value = "lexical entity ID",
+                    example = "MUSaccedereVERB",
+                    required = true)
+            @PathParam("id") String id) {
+        try {
+            TupleQueryResult lingRel = lexiconManager.getLinguisticRelation(id, property);
+            if (!lingRel.hasNext()) {
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("There are no instances of " + property).build();
+            }
+            List<LinkedEntity> le = linkedEntityHelper.newDataList(lingRel);
+            String json = linkedEntityHelper.toJson(le);
+            return Response.ok(json)
+                    .type(MediaType.TEXT_PLAIN)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
+        } catch (ManagerException ex) {
+            logger.error(ex.getMessage(), ex);
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        }
+    }
+    
+    @GET
+    @Path("{id}/genericRelation")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "/{id}/genericRelation",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Lexical entity generic relation",
+            notes = "This method returns the input generic relation with other lexical entities, as well as the inferred ones")
+    public Response genericRelation(
+            @ApiParam(
+                    name = "key",
+                    value = "authentication token",
+                    example = "lexodemo",
+                    required = true)
+            @QueryParam("key") String key,
+            @ApiParam(
+                    name = "property",
+                    example = "seeAlso",
+                    required = true)
+            @QueryParam("property") String property,
+            @ApiParam(
+                    name = "id",
+                    value = "lexical entity ID",
+                    example = "MUScanatreVERB",
+                    required = true)
+            @PathParam("id") String id) {
+        try {
+            TupleQueryResult genRel = lexiconManager.getGenericRelation(id, property);
+            if (!genRel.hasNext()) {
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("There are no instances of " + property).build();
+            }
+            List<LinkedEntity> le = linkedEntityHelper.newDataList(genRel);
+            String json = linkedEntityHelper.toJson(le);
+            return Response.ok(json)
+                    .type(MediaType.TEXT_PLAIN)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
+        } catch (ManagerException ex) {
+            logger.error(ex.getMessage(), ex);
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        }
     }
 
 }

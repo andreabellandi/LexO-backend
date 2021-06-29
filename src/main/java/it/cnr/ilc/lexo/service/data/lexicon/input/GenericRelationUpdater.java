@@ -32,8 +32,6 @@ public class GenericRelationUpdater {
     public void setCurrentValue(String currentValue) {
         this.currentValue = currentValue;
     }
-    
-    
 
     public String getType() {
         return type;

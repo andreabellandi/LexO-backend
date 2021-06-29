@@ -23,6 +23,7 @@ import it.cnr.ilc.lexo.util.RDFQueryUtil;
 import it.cnr.ilc.lexo.util.StringUtil;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.eclipse.rdf4j.model.Literal;
@@ -81,12 +82,26 @@ public final class LexiconUpdateManager implements Manager, Cached {
         Manager.validateLanguage(lang);
     }
 
+    public void validateGenericReferenceRelation(String relation) throws ManagerException {
+        Manager.validateWithEnum("relation", EnumUtil.GenericRelationReference.class, relation);
+    }
+
+    public boolean validateIRI(String id) throws ManagerException {
+        UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+        if (!utilityManager.exists(id)) {
+            return false;
+        }
+        return true;
+    }
+
     public void validateURL(String url, String... urlPrefix) throws ManagerException {
         if (!StringUtil.validateURL(url)) {
             throw new ManagerException(url + " is not a valid url");
         } else {
-            if (!StringUtil.prefixedURL(url, urlPrefix)) {
-                throw new ManagerException(url + " is not an admissible url");
+            if (urlPrefix.length > 0) {
+                if (!StringUtil.prefixedURL(url, urlPrefix)) {
+                    throw new ManagerException(url + " is not an admissible url");
+                }
             }
         }
     }
@@ -230,9 +245,6 @@ public final class LexiconUpdateManager implements Manager, Cached {
     }
 
     private String getStatus(String id) {
-//        TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL,
-//                SparqlSelectData.LEXICON_ENTRY_STATUS.replaceAll("_ID_", id));
-//        try (TupleQueryResult result = tupleQuery.evaluate()) {
         try (TupleQueryResult result = RDFQueryUtil.evaluateTQuery(SparqlSelectData.LEXICON_ENTRY_STATUS.replaceAll("_ID_", id))) {
             while (result.hasNext()) {
                 BindingSet bs = result.next();
@@ -261,14 +273,6 @@ public final class LexiconUpdateManager implements Manager, Cached {
 
     private String statusForewarding(String id, String status, String currentStatus, String user) throws QueryEvaluationException {
         String lastupdate = timestampFormat.format(new Timestamp(System.currentTimeMillis()));
-//        Update updateOperation = GraphDbUtil.getConnection().prepareUpdate(QueryLanguage.SPARQL,
-//                SparqlUpdateData.UPDATE_LEXICAL_ENTRY_FOREWARDING_STATUS.replaceAll("_ID_", id)
-//                        .replaceAll("_NEW_ROLE_", getRoleName(status))
-//                        .replaceAll("_NEW_DATE_", getDateName(status))
-//                        .replaceAll("_USER_", "\"" + user + "\"")
-//                        .replaceAll("_STATUS_", "\"" + status + "\"")
-//                        .replaceAll("_LAST_UPDATE_", "\"" + lastupdate + "\""));
-//        updateOperation.execute();
         RDFQueryUtil.update(SparqlUpdateData.UPDATE_LEXICAL_ENTRY_FOREWARDING_STATUS.replaceAll("_ID_", id)
                 .replaceAll("_NEW_ROLE_", getRoleName(status))
                 .replaceAll("_NEW_DATE_", getDateName(status))
@@ -281,16 +285,6 @@ public final class LexiconUpdateManager implements Manager, Cached {
 
     private String statusBackwarding(String id, String status, String currentStatus, String user) throws QueryEvaluationException {
         String lastupdate = timestampFormat.format(new Timestamp(System.currentTimeMillis()));
-//        Update updateOperation = GraphDbUtil.getConnection().prepareUpdate(QueryLanguage.SPARQL,
-//                SparqlUpdateData.UPDATE_LEXICAL_ENTRY_BACKWARDING_STATUS.replaceAll("_ID_", id)
-//                        .replaceAll("_CURRENT_ROLE_", getRoleName(currentStatus))
-//                        .replaceAll("_CURRENT_DATE_", getDateName(currentStatus))
-//                        .replaceAll("_NEW_ROLE_", getRoleName(status))
-//                        .replaceAll("_NEW_DATE_", getDateName(status))
-//                        .replaceAll("_USER_", "\"" + user + "\"")
-//                        .replaceAll("_STATUS_", "\"" + status + "\"")
-//                        .replaceAll("_LAST_UPDATE_", "\"" + lastupdate + "\""));
-//        updateOperation.execute();
         RDFQueryUtil.update(SparqlUpdateData.UPDATE_LEXICAL_ENTRY_BACKWARDING_STATUS.replaceAll("_ID_", id)
                 .replaceAll("_CURRENT_ROLE_", getRoleName(currentStatus))
                 .replaceAll("_CURRENT_DATE_", getDateName(currentStatus))
@@ -407,13 +401,6 @@ public final class LexiconUpdateManager implements Manager, Cached {
             throw new ManagerException("value cannot be empty");
         }
         String lastupdate = timestampFormat.format(new Timestamp(System.currentTimeMillis()));
-//        Update updateOperation = GraphDbUtil.getConnection().prepareUpdate(QueryLanguage.SPARQL,
-//                SparqlUpdateData.UPDATE_FORM.replaceAll("_ID_", id)
-//                        .replaceAll("_RELATION_", relation)
-//                        .replaceAll("_VALUE_TO_INSERT_", valueToInsert)
-//                        .replaceAll("_VALUE_TO_DELETE_", "?" + SparqlVariable.TARGET)
-//                        .replaceAll("_LAST_UPDATE_", "\"" + lastupdate + "\""));
-//        updateOperation.execute();
         RDFQueryUtil.update(SparqlUpdateData.UPDATE_FORM.replaceAll("_ID_", id)
                 .replaceAll("_RELATION_", relation)
                 .replaceAll("_VALUE_TO_INSERT_", valueToInsert)
@@ -425,12 +412,6 @@ public final class LexiconUpdateManager implements Manager, Cached {
 
     public String updateFormType(String id, String leid, String formType) throws ManagerException, UpdateExecutionException {
         String lastupdate = timestampFormat.format(new Timestamp(System.currentTimeMillis()));
-//        Update updateOperation = GraphDbUtil.getConnection().prepareUpdate(QueryLanguage.SPARQL,
-//                SparqlUpdateData.UPDATE_FORM_TYPE.replaceAll("_ID_", id)
-//                        .replaceAll("_LEID_", leid)
-//                        .replaceAll("_FORM_TYPE_", formType)
-//                        .replaceAll("_LAST_UPDATE_", "\"" + lastupdate + "\""));
-//        updateOperation.execute();
         RDFQueryUtil.update(SparqlUpdateData.UPDATE_FORM_TYPE.replaceAll("_ID_", id)
                 .replaceAll("_LEID_", leid)
                 .replaceAll("_FORM_TYPE_", formType)
@@ -472,13 +453,6 @@ public final class LexiconUpdateManager implements Manager, Cached {
             throw new ManagerException("value cannot be empty");
         }
         String lastupdate = timestampFormat.format(new Timestamp(System.currentTimeMillis()));
-//        Update updateOperation = GraphDbUtil.getConnection().prepareUpdate(QueryLanguage.SPARQL,
-//                SparqlUpdateData.UPDATE_LEXICAL_SENSE.replaceAll("_ID_", id)
-//                        .replaceAll("_RELATION_", relation)
-//                        .replaceAll("_VALUE_TO_INSERT_", valueToInsert)
-//                        .replaceAll("_VALUE_TO_DELETE_", "?" + SparqlVariable.TARGET)
-//                        .replaceAll("_LAST_UPDATE_", "\"" + lastupdate + "\""));
-//        updateOperation.execute();
         RDFQueryUtil.update(SparqlUpdateData.UPDATE_LEXICAL_SENSE.replaceAll("_ID_", id)
                 .replaceAll("_RELATION_", relation)
                 .replaceAll("_VALUE_TO_INSERT_", valueToInsert)
@@ -495,7 +469,11 @@ public final class LexiconUpdateManager implements Manager, Cached {
             // currently the property ranges over an external url only 
             validateURL(lru.getValue());
             validateConceptRef(lru.getRelation());
-            setPrefixes(lru, SparqlPrefix.ONTOLEX.getUri(), "", "");
+            if (lru.getValue().contains(namespace)) {
+                throw new ManagerException("External links only supported");
+            } else {
+                setPrefixes(lru, SparqlPrefix.ONTOLEX.getUri(), "", "");
+            }
         } else {
             throw new ManagerException(lru.getType() + " is not a valid relation type");
         }
@@ -517,6 +495,7 @@ public final class LexiconUpdateManager implements Manager, Cached {
     }
 
     public String createLinguisticRelation(String id, String relation, String valueToInsert) throws ManagerException, UpdateExecutionException {
+        // TODO: it should be verified if the relation can be applied to the id type (for example, denotes requires the id type to be LexicalEntry)
         return updateLinguisticRelation(SparqlInsertData.CREATE_LINGUISTIC_RELATION, id, relation,
                 valueToInsert, "?" + SparqlVariable.TARGET);
     }
@@ -531,14 +510,10 @@ public final class LexiconUpdateManager implements Manager, Cached {
     }
 
     public String updateLinguisticRelation(String query, String id, String relation, String valueToInsert, String valueToDelete) throws ManagerException, UpdateExecutionException {
+        if (valueToInsert.isEmpty() || valueToDelete.isEmpty()) {
+            throw new ManagerException("values cannot be empty");
+        }
         String lastupdate = timestampFormat.format(new Timestamp(System.currentTimeMillis()));
-//        Update updateOperation = GraphDbUtil.getConnection().prepareUpdate(QueryLanguage.SPARQL,
-//                query.replaceAll("_ID_", id)
-//                        .replaceAll("_RELATION_", relation)
-//                        .replaceAll("_VALUE_TO_INSERT_", valueToInsert)
-//                        .replaceAll("_VALUE_TO_DELETE_", valueToDelete)
-//                        .replaceAll("_LAST_UPDATE_", "\"" + lastupdate + "\""));
-//        updateOperation.execute();
         RDFQueryUtil.update(query.replaceAll("_ID_", id)
                 .replaceAll("_RELATION_", relation)
                 .replaceAll("_VALUE_TO_INSERT_", valueToInsert)
@@ -548,35 +523,67 @@ public final class LexiconUpdateManager implements Manager, Cached {
     }
 
     public String updateGenericRelation(String id, GenericRelationUpdater gru) throws ManagerException {
-        UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
         if (gru.getType().equals(EnumUtil.GenericRelation.Reference.toString())) {
-            if (!utilityManager.exists(id)) {
-                throw new ManagerException(id + " does not exist in the lexicon");
+            validateGenericReferenceRelation(gru.getRelation());
+            if (validateIRI(gru.getValue())) {
+                // CONSTRAINT: sameAs holds with external links only
+                if (gru.getRelation().equals(EnumUtil.GenericRelationReference.sameAs.toString())) {
+                    throw new ManagerException(gru.getRelation() + " links to external links only");
+                }
+                setPrefixes(gru,
+                        gru.getRelation().equals(EnumUtil.GenericRelationReference.sameAs.toString()) ? SparqlPrefix.OWL.getUri() : SparqlPrefix.RDFS.getUri(),
+                        namespace,
+                        namespace);
             } else {
                 validateURL(gru.getValue());
+                setPrefixes(gru, gru.getRelation().equals(EnumUtil.GenericRelationReference.sameAs.toString()) ? SparqlPrefix.OWL.getUri() : SparqlPrefix.RDFS.getUri(), 
+                        "", 
+                        "");
             }
-            return updateGenericRelation(id, SparqlPrefix.RDFS.getPrefix() + gru.getRelation(), gru.getValue());
+            return (gru.getCurrentValue() != null)
+                    ? (gru.getCurrentValue().isEmpty()
+                    ? createGenericRelation(id, gru.getRelation(), gru.getValue())
+                    : updateGenericRelation(id, gru.getRelation(), gru.getValue(), gru.getCurrentValue()))
+                    : createGenericRelation(id, gru.getRelation(), gru.getValue());
         } else {
             throw new ManagerException(gru.getType() + " is not a valid relation type");
         }
     }
 
-    public String updateGenericRelation(String id, String relation, String valueToInsert) throws ManagerException, UpdateExecutionException {
-        if (valueToInsert.isEmpty()) {
-            throw new ManagerException("value cannot be empty");
+    private void setPrefixes(GenericRelationUpdater gru, String... prefix) {
+        gru.setRelation("<" + prefix[0] + gru.getRelation() + ">");
+        gru.setValue("<" + prefix[1] + gru.getValue() + ">");
+        if (gru.getCurrentValue() != null) {
+            if (!gru.getCurrentValue().isEmpty()) {
+                gru.setCurrentValue("<" + prefix[2] + gru.getCurrentValue() + ">");
+            }
+        }
+    }
+
+    public String createGenericRelation(String id, String relation, String valueToInsert) throws ManagerException, UpdateExecutionException {
+        // TODO: it should be verified if the relation can be applied to the id type (for example, sameAs must link same types)
+        return updateGenericRelation(SparqlInsertData.CREATE_GENERIC_RELATION, id, relation,
+                valueToInsert, "?" + SparqlVariable.TARGET);
+    }
+
+    public String updateGenericRelation(String id, String relation, String valueToInsert, String currentValue) throws ManagerException, UpdateExecutionException {
+        if (ManagerFactory.getManager(UtilityManager.class).existsLinguisticRelation(id, relation, currentValue)) {
+            return updateGenericRelation(SparqlUpdateData.UPDATE_GENERIC_RELATION, id, relation,
+                    valueToInsert, currentValue);
+        } else {
+            throw new ManagerException("IRI " + id + " does not exist or <" + id + ", " + relation + ", " + currentValue + "> does not exist");
+        }
+    }
+
+    public String updateGenericRelation(String query, String id, String relation, String valueToInsert, String valueToDelete) throws ManagerException, UpdateExecutionException {
+        if (valueToInsert.isEmpty() || valueToDelete.isEmpty()) {
+            throw new ManagerException("values cannot be empty");
         }
         String lastupdate = timestampFormat.format(new Timestamp(System.currentTimeMillis()));
-//        Update updateOperation = GraphDbUtil.getConnection().prepareUpdate(QueryLanguage.SPARQL,
-//                SparqlUpdateData.UPDATE_GENERIC_RELATION.replaceAll("_ID_", id)
-//                        .replaceAll("_RELATION_", relation)
-//                        .replaceAll("_VALUE_TO_INSERT_", valueToInsert)
-//                        .replaceAll("_VALUE_TO_DELETE_", "?" + SparqlVariable.TARGET)
-//                        .replaceAll("_LAST_UPDATE_", "\"" + lastupdate + "\""));
-//        updateOperation.execute();
-        RDFQueryUtil.update(SparqlUpdateData.UPDATE_GENERIC_RELATION.replaceAll("_ID_", id)
+        RDFQueryUtil.update(query.replaceAll("_ID_", id)
                 .replaceAll("_RELATION_", relation)
                 .replaceAll("_VALUE_TO_INSERT_", valueToInsert)
-                .replaceAll("_VALUE_TO_DELETE_", "?" + SparqlVariable.TARGET)
+                .replaceAll("_VALUE_TO_DELETE_", valueToDelete)
                 .replaceAll("_LAST_UPDATE_", "\"" + lastupdate + "\""));
         return lastupdate;
     }

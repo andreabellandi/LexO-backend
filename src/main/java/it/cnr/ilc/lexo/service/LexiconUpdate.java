@@ -203,10 +203,6 @@ public class LexiconUpdate extends Service {
     public Response genericRelation(@QueryParam("key") String key, @PathParam("id") String id, GenericRelationUpdater gru) {
         if (key.equals("PRINitant19")) {
             try {
-                UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
-                if (!utilityManager.exists(id)) {
-                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + id + " does not exist").build();
-                }
                 return Response.ok(lexiconManager.updateGenericRelation(id, gru))
                         .type(MediaType.TEXT_PLAIN)
                         .header("Access-Control-Allow-Headers", "content-type")

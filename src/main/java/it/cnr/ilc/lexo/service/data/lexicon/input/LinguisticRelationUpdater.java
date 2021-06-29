@@ -32,7 +32,7 @@ public class LinguisticRelationUpdater {
     public void setCurrentValue(String currentValue) {
         this.currentValue = currentValue;
     }
-    
+
     public String getType() {
         return type;
     }
@@ -57,5 +57,4 @@ public class LinguisticRelationUpdater {
         this.value = value;
     }
 
-    
 }
