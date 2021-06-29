@@ -13,6 +13,7 @@ import it.cnr.ilc.lexo.manager.ManagerException;
 import it.cnr.ilc.lexo.manager.ManagerFactory;
 import it.cnr.ilc.lexo.manager.UtilityManager;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LinguisticRelationUpdater;
+import it.cnr.ilc.lexo.service.data.lexicon.input.RelationDeleter;
 import it.cnr.ilc.lexo.service.helper.LexicalEntryCoreHelper;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -216,14 +217,14 @@ public class LexiconDeletion extends Service {
     }
 
     @POST
-    @Path("{id}/linguisticRelation")
+    @Path("{id}/relation")
     @Produces(MediaType.APPLICATION_JSON)
     @RequestMapping(
             method = RequestMethod.GET,
             value = "linguisticRelation",
             produces = "application/json; charset=UTF-8")
-    @ApiOperation(value = "Linguistic relation deletion",
-            notes = "This method deletes a linguistic relation")
+    @ApiOperation(value = "Relation deletion",
+            notes = "This method deletes a relation")
     public Response linguisticRelation(
             @ApiParam(
                     name = "key",
@@ -236,11 +237,10 @@ public class LexiconDeletion extends Service {
                     value = "lexical entry ID",
                     example = "MUSaccedereVERB",
                     required = true)
-            @PathParam("id") String id, LinguisticRelationUpdater lru) {
-        // aggiungiere che, se currentvalue è vuoto controllare se relation è un attributo (enumutil). se sì cancella
+            @PathParam("id") String id, RelationDeleter rd) {
         if (key.equals("PRINitant19")) {
             try {
-                lexiconManager.deleteLinguisticRelation(id, lru);
+                lexiconManager.deleteRelation(id, rd);
                 return Response.ok()
                         .type(MediaType.TEXT_PLAIN)
                         .header("Access-Control-Allow-Headers", "content-type")

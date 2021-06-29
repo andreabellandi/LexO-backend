@@ -7,6 +7,7 @@ package it.cnr.ilc.lexo.manager;
 
 import it.cnr.ilc.lexo.LexOProperties;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LinguisticRelationUpdater;
+import it.cnr.ilc.lexo.service.data.lexicon.input.RelationDeleter;
 import it.cnr.ilc.lexo.sparql.SparqlDeleteData;
 import it.cnr.ilc.lexo.util.RDFQueryUtil;
 
@@ -61,19 +62,19 @@ public class LexiconDeletionManager implements Manager, Cached {
 
     }
 
-    public void deleteLinguisticRelation(String id, LinguisticRelationUpdater lru) throws ManagerException {
-        if (lru.getCurrentValue() != null && lru.getRelation() != null) {
-            if (!lru.getCurrentValue().isEmpty() && !lru.getRelation().isEmpty()) {
+    public void deleteRelation(String id, RelationDeleter rd) throws ManagerException {
+        if (rd.getRelation() != null && rd.getValue() != null) {
+            if (!rd.getRelation().isEmpty() && !rd.getValue().isEmpty()) {
 //                Update updateOperation = GraphDbUtil.getConnection().prepareUpdate(QueryLanguage.SPARQL,
 //                        SparqlDeleteData.DELETE_LINGUISTIC_RELATION
 //                                .replaceAll("_ID_", id)
 //                                .replaceAll("_ID_TARGET_", lru.getCurrentValue())
 //                                .replaceAll("_RELATION_", lru.getRelation()));
 //                updateOperation.execute();
-                RDFQueryUtil.update(SparqlDeleteData.DELETE_LINGUISTIC_RELATION
+                RDFQueryUtil.update(SparqlDeleteData.DELETE_RELATION
                         .replaceAll("_ID_", id)
-                        .replaceAll("_ID_TARGET_", lru.getCurrentValue())
-                        .replaceAll("_RELATION_", lru.getRelation()));
+                        .replaceAll("_TARGET_", rd.getValue())
+                        .replaceAll("_RELATION_", rd.getRelation()));
 
             } else {
                 throw new ManagerException("Relation and current value cannot be empty");

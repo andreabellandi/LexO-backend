@@ -37,15 +37,17 @@ public class SparqlDeleteData {
             + "WHERE { lex:_ID_ ?predicate ?object . \n"
             + "         OPTIONAL { ?subject ?_predicate lex:_ID_ . } }";
 
-    public static final String DELETE_LINGUISTIC_RELATION
+    // TODO: update lastupdate field
+    public static final String DELETE_RELATION
             = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
             + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
             + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
             + "DELETE {\n"
-            + "    lex:_ID_ ?relation lex:_ID_TARGET_\n"
+            + "    lex:_ID_ ?relation ?target\n"
             + "} WHERE {\n"
-            + "    lex:_ID_ ?relation lex:_ID_TARGET_ .\n"
-            + "    FILTER(regex(str(?relation), \"_RELATION_\"))\n"
+            + "    lex:_ID_ ?relation ?target .\n"
+            + "    FILTER(regex(str(?relation), \"_RELATION_$\"))\n"
+            + "    FILTER(regex(str(?target), \"_TARGET_$\"))\n"
             + "}";
 
 }
