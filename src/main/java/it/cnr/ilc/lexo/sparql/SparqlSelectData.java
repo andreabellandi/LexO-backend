@@ -516,6 +516,7 @@ public class SparqlSelectData {
             + "    OPTIONAL { ?" + SparqlVariable.TARGET + " " + SparqlPrefix.RDFS.getPrefix() + "label|" + SparqlPrefix.SKOS.getPrefix() + "definition ?" + SparqlVariable.LABEL + " . }\n"
             + "    OPTIONAL { ?" + SparqlVariable.TARGET + " " + SparqlPrefix.SESAME.getPrefix() + "directType ?" + SparqlVariable.TYPE + " . \n"
             + "    FILTER (!regex(str(?" + SparqlVariable.TYPE + "), \"http://www.w3.org/2000/01/rdf-schema#|http://www.w3.org/1999/02/22-rdf-syntax-ns#|http://www.w3.org/2002/07/owl#\")) }\n"
+            + "    FILTER (!regex(str(?relation), \"http://www.ontologydesignpatterns.org/cp/owl/semiotics.owl#\"))\n"
             + "   } ORDER BY ?graph";
 
     public static final String DATA_FORMS_BY_SENSE_RELATION
