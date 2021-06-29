@@ -17,12 +17,13 @@ public class LinkedEntityHelper extends TripleStoreDataHelper<LinkedEntity> {
 
     @Override
     public void fillData(LinkedEntity data, BindingSet bs) {
+        data.setLinkType(isExternalUri(getStringValue(bs, SparqlVariable.TARGET)) ? "external" : "internal");
         data.setLexicalType(getLocalName(bs, SparqlVariable.TYPE));
         data.setInferred(getStringValue(bs, SparqlVariable.GRAPH).contains("implicit"));
         data.setLabel(getStringValue(bs, SparqlVariable.LABEL));
         data.setLexicalEntity(getStringValue(bs, SparqlVariable.TARGET));
-        data.setLexicalEntityInstanceName(getLocalName(bs, SparqlVariable.TARGET));
-        data.setLinkType("");
+        data.setLexicalEntityInstanceName(isExternalUri(getStringValue(bs, SparqlVariable.TARGET)) ? "" : getLocalName(bs, SparqlVariable.TARGET));
+        
     }
 
     @Override
