@@ -1,12 +1,17 @@
 package it.cnr.ilc.lexo.util;
 
 import java.text.Normalizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  *
  * @author andreabellandi
  */
 public class StringUtil {
+
+    public static final String URL_PATTERN = "https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)";
+    public static final Pattern pattern = Pattern.compile(URL_PATTERN);
 
     public static String escapeMetaCharacters(String inputString) {
         final String[] metaCharacters = {"\\", "^", "$", "{", "}", "[", "]", "(", ")", "/", "*", "+", "?", "|", "<", ">", ":", "&", "%"};
@@ -45,6 +50,32 @@ public class StringUtil {
             }
         }
         return builder.toString();
+    }
+
+    public static boolean validateURL(String url) {
+        Matcher matcher = pattern.matcher(url);
+        if (!matcher.find()) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public static boolean prefixedURL(String url, String... urlPrefix) {
+        if (urlPrefix.length > 0) {
+            boolean prefixed = false;
+            for (String p : urlPrefix) {
+                if (url.startsWith(p)) {
+                    prefixed = true;
+                    break;
+                }
+            }
+            if (!prefixed) {
+                return false;
+            }
+            return true;
+        }
+        return false;
     }
 
 }

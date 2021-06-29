@@ -20,6 +20,7 @@ import it.cnr.ilc.lexo.sparql.SparqlVariable;
 import it.cnr.ilc.lexo.util.EnumUtil;
 import it.cnr.ilc.lexo.util.OntoLexEntity;
 import it.cnr.ilc.lexo.util.RDFQueryUtil;
+import it.cnr.ilc.lexo.util.StringUtil;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.regex.Matcher;
@@ -81,21 +82,11 @@ public final class LexiconUpdateManager implements Manager, Cached {
     }
 
     public void validateURL(String url, String... urlPrefix) throws ManagerException {
-        Matcher matcher = pattern.matcher(url);
-        if (!matcher.find()) {
+        if (!StringUtil.validateURL(url)) {
             throw new ManagerException(url + " is not a valid url");
         } else {
-            if (urlPrefix.length > 0) {
-                boolean prefixed = false;
-                for (String p : urlPrefix) {
-                    if (url.startsWith(p)) {
-                        prefixed = true;
-                        break;
-                    }
-                }
-                if (!prefixed) {
-                    throw new ManagerException(url + " is not an admissible url");
-                }
+            if (!StringUtil.prefixedURL(url, urlPrefix)) {
+                throw new ManagerException(url + " is not an admissible url");
             }
         }
     }
@@ -498,7 +489,6 @@ public final class LexiconUpdateManager implements Manager, Cached {
 
     public String updateLinguisticRelation(String id, LinguisticRelationUpdater lru) throws ManagerException {
         if (lru.getType().equals(EnumUtil.LinguisticRelation.Morphology.toString())) {
-
             validateMorphology(lru.getRelation(), lru.getValue());
             setPrefixes(lru, SparqlPrefix.LEXINFO.getUri(), SparqlPrefix.LEXINFO.getUri(), SparqlPrefix.LEXINFO.getUri());
         } else if (lru.getType().equals(EnumUtil.LinguisticRelation.ConceptRef.toString())) {

@@ -5,8 +5,10 @@
  */
 package it.cnr.ilc.lexo.service.helper;
 
+import it.cnr.ilc.lexo.LexOProperties;
 import it.cnr.ilc.lexo.service.data.Data;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Morphology;
+import it.cnr.ilc.lexo.util.StringUtil;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +29,8 @@ public abstract class TripleStoreDataHelper<D extends Data> extends Helper<D> {
 
     private final String MORPHOLOGY_PATTERN = "(([a-zA-Z-]+):(([a-zA-Z-]+\\s?)+));?";
     private final Pattern pattern = Pattern.compile(MORPHOLOGY_PATTERN);
+    
+    private final String namespace = LexOProperties.getProperty("repository.lexicon.namespace");
 
     public abstract void fillData(D data, BindingSet bs);
 
@@ -101,6 +105,15 @@ public abstract class TripleStoreDataHelper<D extends Data> extends Helper<D> {
             }
         }
         return morphos;
+    }
+    
+    public boolean isExternalUri(String uri) {
+        if (StringUtil.validateURL(uri)) {
+            if (!uri.contains(namespace)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
