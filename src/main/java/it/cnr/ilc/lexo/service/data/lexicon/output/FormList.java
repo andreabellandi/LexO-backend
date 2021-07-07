@@ -20,6 +20,8 @@ public class FormList implements Data {
     private String senseInstanceName;
 //    private String label;
 //    private String definition;
+    private String targetSense;
+    private String targetSenseInstanceName;
     private List<FormItem> target;
 
     public String getSemanticRelation() {
@@ -78,9 +80,26 @@ public class FormList implements Data {
         this.target = target;
     }
 
+    public String getTargetSense() {
+        return targetSense;
+    }
+
+    public void setTargetSense(String targetSense) {
+        this.targetSense = targetSense;
+    }
+
+    public String getTargetSenseInstanceName() {
+        return targetSenseInstanceName;
+    }
+
+    public void setTargetSenseInstanceName(String targetSenseInstanceName) {
+        this.targetSenseInstanceName = targetSenseInstanceName;
+    }
+
+    
     public FormList() {}
     
-    public FormList(String semanticRelation, int distance, String sense, String senseInstanceName, 
+    public FormList(String semanticRelation, int distance, String sense, String senseInstanceName, String targetSense, String targetSenseInstanceName, 
 //            String label, String definition, 
             List<FormItem> target) {
 //        this.definition = definition;
@@ -90,5 +109,7 @@ public class FormList implements Data {
         this.sense = sense;
         this.senseInstanceName = senseInstanceName;
         this.target = target;
+        this.targetSense = targetSense;
+        this.targetSenseInstanceName = targetSenseInstanceName;
     }
 }

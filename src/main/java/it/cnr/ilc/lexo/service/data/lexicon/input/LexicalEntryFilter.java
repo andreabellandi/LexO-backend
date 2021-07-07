@@ -24,7 +24,7 @@ public class LexicalEntryFilter implements Data {
     private String type;
     @ApiModelProperty(value = "part of speech (empty means all)", example = "noun", allowEmptyValue = true)
     private String pos;
-    @ApiModelProperty(value = "the type of form the serach is performed on (entry refers to the entry label only, and flexed means all the forms)", allowableValues = "flexed, entry", example = "flexed", allowEmptyValue = false)
+    @ApiModelProperty(value = "the type of form the search is performed on (entry refers to the entry label only, and flexed means all the forms)", allowableValues = "flexed, entry", example = "flexed", allowEmptyValue = false)
     private String formType;
     @ApiModelProperty(value = "author (empty means all)", example = "user1", allowEmptyValue = true)
     private String author;

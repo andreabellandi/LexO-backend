@@ -262,6 +262,27 @@ public class EnumUtil {
         
     }
     
+    public static enum LexicalSenseSearchFilter {
+        Definition("definition"),
+        Description("description"),
+        Explanation("explanation"),
+        Gloss("gloss"),
+        SenseExample("senseExample"),
+        SenseTranslation("senseTranslation");
+
+        private final String lexicalSenseSearchFilter;
+
+        private LexicalSenseSearchFilter(String lexicalSenseSearchFilter) {
+            this.lexicalSenseSearchFilter = lexicalSenseSearchFilter;
+        }
+
+        @Override
+        public String toString() {
+            return this.lexicalSenseSearchFilter;
+        }
+        
+    }
+    
     public static enum LinguisticRelation {
         Morphology("morphology"),
         LexicalRel("lexicalRel"),

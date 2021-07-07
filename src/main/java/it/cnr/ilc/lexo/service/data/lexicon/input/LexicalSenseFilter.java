@@ -16,15 +16,19 @@ import it.cnr.ilc.lexo.service.data.Data;
 @ApiModel(description = "Input model representing lexical sense filter options")
 public class LexicalSenseFilter implements Data {
 
-    @ApiModelProperty(value = "chars sequence to search", example = "pesca", allowEmptyValue = false)
+    @ApiModelProperty(value = "chars sequence to search", example = "chi per", allowEmptyValue = false)
     private String text;
     @ApiModelProperty(value = "search type to perform (it cannot be empty)", example = "equals", allowableValues = "equals, startsWith, contains, endsWith", allowEmptyValue = false)
     private String searchMode;
-    @ApiModelProperty(value = "lexcial entry types (empty means all)", example = "word", allowableValues = "word, multi-word expression, affix", allowEmptyValue = true)
+    @ApiModelProperty(value = "lexial entry types (empty means all)", example = "word", allowableValues = "word, multi-word expression, affix", allowEmptyValue = true)
     private String type;
-    @ApiModelProperty(value = "part of speech (empty means all)", example= "noun", allowEmptyValue = true)
+    @ApiModelProperty(value = "lexical sense field the search is performed on", example = "word",
+            allowableValues = "definition, description, etymology, explanation, gloss, senseExample, senseTranslation", allowEmptyValue = true)
+    private String field;
+    @ApiModelProperty(value = "part of speech (empty means all)", example = "noun", allowEmptyValue = true)
     private String pos;
-    @ApiModelProperty(value = "the type of form the search is performed on (entry refers to the entry label only, and flexed means all the forms)", allowableValues = "flexed, entry", example = "flexed", allowEmptyValue = false)
+    @ApiModelProperty(value = "the type of form the search is performed on (entry refers to the entry label only, and flexed means all the forms)",
+            allowableValues = "flexed, entry, (leave empty if the serach has to be performed on a value of the field attribute)", example = "flexed", allowEmptyValue = true)
     private String formType;
     @ApiModelProperty(value = "author (empty means all)", example = "user1", allowEmptyValue = true)
     private String author;
@@ -118,6 +122,14 @@ public class LexicalSenseFilter implements Data {
 
     public void setFormType(String formType) {
         this.formType = formType;
+    }
+
+    public String getField() {
+        return field;
+    }
+
+    public void setField(String field) {
+        this.field = field;
     }
 
 }

@@ -26,6 +26,7 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalSenseCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalSenseItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LinkedEntity;
+import it.cnr.ilc.lexo.service.data.lexicon.output.RelationPath;
 import it.cnr.ilc.lexo.service.helper.FormCoreHelper;
 import it.cnr.ilc.lexo.service.helper.FormItemsHelper;
 import it.cnr.ilc.lexo.service.helper.FormListHelper;
@@ -41,7 +42,9 @@ import it.cnr.ilc.lexo.service.helper.LinkedEntityHelper;
 import it.cnr.ilc.lexo.service.helper.PathLenghtHelper;
 import it.cnr.ilc.lexo.util.EnumUtil;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -343,34 +346,56 @@ public class LexiconData extends Service {
         try {
             List<FormList> list = new ArrayList();
             TupleQueryResult res = lexiconManager.getFilterdForms(ff);
-            list.add(new FormList("", 0, "", "", formItemsHelper.newDataList(res)));
+            String targetSense = "", targetSenseInstanceName = "";
+            list.add(new FormList("", 0, "", "", targetSense, targetSenseInstanceName, formItemsHelper.newDataList(res)));
             if (!ff.getExtendTo().equals(EnumUtil.AcceptedSearchFormExtendTo.None.toString())) {
                 for (String sense : ff.getSenseUris()) {
                     if (ff.getExtendTo().equals(EnumUtil.AcceptedSearchFormExtendTo.Hypernym.toString())
                             || ff.getExtendTo().equals(EnumUtil.AcceptedSearchFormExtendTo.Hyponym.toString())) {
                         int lenght = 1;
                         List<FormItem> forms = new ArrayList();
-                        for (Counting c : pathLenghtHelper.newDataList(lexiconManager.getRelationByLenght(ff.getExtendTo(), sense))) {
-                            if (ff.getExtensionDegree() >= c.getCount()) {
-                                if (lenght == c.getCount()) {
-                                    TupleQueryResult _res = lexiconManager.getFilterdForms(c.getLabel());
+                        for (RelationPath c : pathLenghtHelper.newDataList(lexiconManager.getRelationByLenght(ff.getExtendTo(), sense))) {
+                            if (ff.getExtensionDegree() >= c.getLenght()) {
+                                if (lenght == c.getLenght()) {
+                                    targetSense = c.getLexicalSense();
+                                    targetSenseInstanceName = c.getLexicalSenseInstanceName();
+                                    TupleQueryResult _res = lexiconManager.getFilterdForms(c.getLexicalEntryInstanceName());
                                     forms.addAll(formItemsHelper.newDataList(_res));
                                 } else {
                                     list.add(new FormList(ff.getExtendTo(), lenght, lexiconManager.getNamespace() + sense, sense,
-                                            lexiconManager.getFormItemListCopy(forms)));
+                                            targetSense, targetSenseInstanceName, lexiconManager.getFormItemListCopy(forms)));
                                     forms.clear();
                                     lenght++;
-                                    TupleQueryResult _res = lexiconManager.getFilterdForms(c.getLabel());
+                                    TupleQueryResult _res = lexiconManager.getFilterdForms(c.getLexicalEntryInstanceName());
                                     forms.addAll(formItemsHelper.newDataList(_res));
+                                    targetSense = c.getLexicalSense();
+                                    targetSenseInstanceName = c.getLexicalSenseInstanceName();
                                 }
                             }
                         }
                         list.add(new FormList(ff.getExtendTo(), lenght, lexiconManager.getNamespace() + sense, sense,
-                                lexiconManager.getFormItemListCopy(forms)));
+                                targetSense, targetSenseInstanceName, lexiconManager.getFormItemListCopy(forms)));
                     } else if (ff.getExtendTo().equals(EnumUtil.AcceptedSearchFormExtendTo.Synonym.toString())) {
                         TupleQueryResult _resForms = lexiconManager.getFormsBySenseRelation(ff, sense);
                         if (_resForms.hasNext()) {
-                            list.add(new FormList("synonym", 1, lexiconManager.getNamespace() + sense, sense, formItemsHelper.newDataList(_resForms)));
+                            List<FormItem> lfi = formItemsHelper.newDataList(_resForms);
+                            List<FormItem> newFormList = new ArrayList<>();
+                            String target = "";
+                            for (FormItem fi : lfi) {
+                                if (target.isEmpty()) {
+                                    target = fi.getTargetSenseInstanceName();
+                                }
+                                if (target.equals(fi.getTargetSenseInstanceName())) {
+                                    newFormList.add(fi);
+                                } else {
+                                    list.add(new FormList("synonym", 1, lexiconManager.getNamespace() + sense, sense,
+                                            target, target, lexiconManager.getFormItemListCopy(newFormList)));
+                                    target = fi.getTargetSenseInstanceName();
+                                    newFormList.clear();
+                                }
+                            }
+                            list.add(new FormList("synonym", 1, lexiconManager.getNamespace() + sense, sense,
+                                    target, target, lexiconManager.getFormItemListCopy(newFormList)));
                         }
                     }
                 }
@@ -452,6 +477,38 @@ public class LexiconData extends Service {
                 .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                 .build();
     }
+    
+    @GET
+    @Path("{id}/sensesByConcept")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "/{id}/sensesByConcept",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Lexical senses by concept",
+            notes = "This method returns all the senses referred by a concept")
+    public Response sensesByConcept(
+            @ApiParam(
+                    name = "key",
+                    value = "authentication token",
+                    example = "lexodemo",
+                    required = true)
+            @QueryParam("key") String key,
+            @ApiParam(
+                    name = "id",
+                    value = "concept ID",
+                    example = "97-Cause_Change",
+                    required = true)
+            @PathParam("id") String id) {
+        TupleQueryResult _forms = lexiconManager.getLexicalSensesByConcept(id);
+        List<LexicalSenseItem> senses = lexicalSenseFilterHelper.newDataList(_forms);
+        String json = lexicalSenseFilterHelper.toJson(senses);
+        return Response.ok(json)
+                .type(MediaType.TEXT_PLAIN)
+                .header("Access-Control-Allow-Headers", "content-type")
+                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                .build();
+    }
 
     @GET
     @Path("{id}/elements")
@@ -485,7 +542,7 @@ public class LexiconData extends Service {
                 .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                 .build();
     }
-    
+
     @GET
     @Path("{id}/linguisticRelation")
     @Produces(MediaType.APPLICATION_JSON)
@@ -530,7 +587,7 @@ public class LexiconData extends Service {
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }
     }
-    
+
     @GET
     @Path("{id}/genericRelation")
     @Produces(MediaType.APPLICATION_JSON)

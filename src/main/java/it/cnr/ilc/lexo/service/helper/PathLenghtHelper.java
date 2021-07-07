@@ -6,6 +6,7 @@
 package it.cnr.ilc.lexo.service.helper;
 
 import it.cnr.ilc.lexo.service.data.lexicon.output.Counting;
+import it.cnr.ilc.lexo.service.data.lexicon.output.RelationPath;
 import it.cnr.ilc.lexo.sparql.SparqlVariable;
 import org.eclipse.rdf4j.query.BindingSet;
 
@@ -13,17 +14,20 @@ import org.eclipse.rdf4j.query.BindingSet;
  *
  * @author andreabellandi
  */
-public class PathLenghtHelper extends TripleStoreDataHelper<Counting> {
+public class PathLenghtHelper extends TripleStoreDataHelper<RelationPath> {
 
     @Override
-    public Class<Counting> getDataClass() {
-        return Counting.class;
+    public Class<RelationPath> getDataClass() {
+        return RelationPath.class;
     }
 
     @Override
-    public void fillData(Counting data, BindingSet bs) {
-        data.setLabel(getLocalName(bs, SparqlVariable.LEXICAL_ENTRY));
-        data.setCount(getIntegerNumber(bs, SparqlVariable.LENGHT));
+    public void fillData(RelationPath data, BindingSet bs) {
+        data.setLenght(getIntegerNumber(bs, SparqlVariable.LENGHT));
+        data.setLexicalEntry(getStringValue(bs, SparqlVariable.LEXICAL_ENTRY));
+        data.setLexicalEntryInstanceName(getLocalName(bs, SparqlVariable.LEXICAL_ENTRY));
+        data.setLexicalSense(getStringValue(bs, SparqlVariable.IRI));
+        data.setLexicalSenseInstanceName(getLocalName(bs, SparqlVariable.IRI));
     }
     
     

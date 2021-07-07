@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import it.cnr.ilc.lexo.service.data.Data;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -42,6 +43,8 @@ public class FormItem implements Data {
     private String lexicalEntry;
     @ApiModelProperty(value = "lexical entry short IRI", example = "MUSaccedereVERB")
     private String lexicalEntryInstanceName;
+    private String targetSense;
+    private String targetSenseInstanceName;
 
     public FormItem() {
     }
@@ -140,6 +143,22 @@ public class FormItem implements Data {
 
     public void setPhoneticRep(String phoneticRep) {
         this.phoneticRep = phoneticRep;
+    }
+
+    public String getTargetSense() {
+        return targetSense;
+    }
+
+    public void setTargetSense(String targetSense) {
+        this.targetSense = targetSense;
+    }
+
+    public String getTargetSenseInstanceName() {
+        return targetSenseInstanceName;
+    }
+
+    public void setTargetSenseInstanceName(String targetSenseInstanceName) {
+        this.targetSenseInstanceName = targetSenseInstanceName;
     }
 
 }
