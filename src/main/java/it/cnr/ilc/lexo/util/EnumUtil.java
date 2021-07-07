@@ -241,7 +241,7 @@ public class EnumUtil {
         Note("note"),
         Usage("usage"),
         Reference("reference"),
-        Topic("topic"),
+        Topic("subject"),
         Definition("definition"),
         Description("description"),
         Explanation("explanation"),
