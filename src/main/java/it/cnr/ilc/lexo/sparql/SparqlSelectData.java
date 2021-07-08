@@ -537,7 +537,9 @@ public class SparqlSelectData {
             + SparqlPrefix.OWL.getSparqlPrefix() + "\n"
             + "\n"
             + "SELECT (count(?" + SparqlVariable.SEEALSO + ") as ?" + SparqlVariable.SEEALSO + "Count) "
-            + "((count(?" + SparqlVariable.SAMEAS + ") - 1) as ?" + SparqlVariable.SAMEAS + "Count)\n"
+            // owl:sameAs reasoning disabled
+            //            + "((count(?" + SparqlVariable.SAMEAS + ") - 1) as ?" + SparqlVariable.SAMEAS + "Count)\n"
+            + "(count(?" + SparqlVariable.SAMEAS + ") as ?" + SparqlVariable.SAMEAS + "Count)\n"
             + "WHERE {\n"
             + "  ?search a inst:" + SparqlVariable.LEXICAL_ENTRY_INDEX + " ;\n"
             + "      luc:query \"lexicalEntryIRI:[IRI]\" ;\n"
