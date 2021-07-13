@@ -17,6 +17,7 @@ public class FormItemsHelper extends TripleStoreDataHelper<FormItem> {
 
     @Override
     public void fillData(FormItem data, BindingSet bs) {
+        setTotalHits(getIntegerNumber(bs, SparqlVariable.TOTAL_HITS));
         data.setCreator(getStringValue(bs, SparqlVariable.LEXICAL_ENTRY_CREATION_AUTHOR));
         data.setForm(getStringValue(bs, SparqlVariable.FORM));
         data.setFormInstanceName(getStringValue(bs, SparqlVariable.FORM_INSTANCE_NAME));

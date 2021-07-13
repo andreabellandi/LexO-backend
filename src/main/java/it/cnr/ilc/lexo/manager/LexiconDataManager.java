@@ -326,7 +326,7 @@ public class LexiconDataManager implements Manager, Cached {
             String query = filterLexicalSensesByForm(lsf);
             return RDFQueryUtil.evaluateTQuery(query);
         } else {
-            if (lsf.getFormType() != null && !lsf.getFormType().isEmpty()) {
+            if (lsf.getField() != null && !lsf.getField().isEmpty()) {
                 String query = filterLexicalSenses(lsf);
                 return RDFQueryUtil.evaluateTQuery(query);
             } else {

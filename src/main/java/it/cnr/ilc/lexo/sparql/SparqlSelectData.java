@@ -231,6 +231,7 @@ public class SparqlSelectData {
             + " ?" + SparqlVariable.LEXICAL_ENTRY
             + " ?" + SparqlVariable.LAST_UPDATE
             + " ?" + SparqlVariable.LEXICAL_ENTRY_POS
+            + " ?" + SparqlVariable.TOTAL_HITS
             + " ?" + SparqlVariable.NOTE
             + " ?" + SparqlVariable.FORM_INSTANCE_NAME
             + " (GROUP_CONCAT(concat(str(?tn),\":\",str(?tv));SEPARATOR=\";\") AS ?" + SparqlVariable.MORPHOLOGY + ")\n"
@@ -274,6 +275,7 @@ public class SparqlSelectData {
             + " ?" + SparqlVariable.TRANSLITERATION
             + " ?" + SparqlVariable.ROMANIZATION
             + " ?" + SparqlVariable.CREATION_DATE
+            + " ?" + SparqlVariable.TOTAL_HITS
             + " ?" + SparqlVariable.LEXICAL_ENTRY
             + " ?" + SparqlVariable.LAST_UPDATE
             + " ?" + SparqlVariable.LEXICAL_ENTRY_POS

@@ -22,13 +22,13 @@ public class LexicalSenseFilter implements Data {
     private String searchMode;
     @ApiModelProperty(value = "lexial entry types (empty means all)", example = "word", allowableValues = "word, multi-word expression, affix", allowEmptyValue = true)
     private String type;
-    @ApiModelProperty(value = "lexical sense field the search is performed on", example = "word",
-            allowableValues = "definition, description, etymology, explanation, gloss, senseExample, senseTranslation", allowEmptyValue = true)
+    @ApiModelProperty(value = "lexical sense field the search is performed on", example = "definition",
+            allowableValues = "definition, description, explanation, gloss, senseExample, senseTranslation", allowEmptyValue = true)
     private String field;
     @ApiModelProperty(value = "part of speech (empty means all)", example = "noun", allowEmptyValue = true)
     private String pos;
     @ApiModelProperty(value = "the type of form the search is performed on (entry refers to the entry label only, and flexed means all the forms)",
-            allowableValues = "flexed, entry, (leave empty if the serach has to be performed on a value of the field attribute)", example = "flexed", allowEmptyValue = true)
+            allowableValues = "flexed, entry, (leave empty if the search has to be performed on a value of the field attribute)", example = "flexed", allowEmptyValue = true)
     private String formType;
     @ApiModelProperty(value = "author (empty means all)", example = "user1", allowEmptyValue = true)
     private String author;

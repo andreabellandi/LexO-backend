@@ -424,19 +424,6 @@ public class LexiconData extends Service {
     @ApiOperation(value = "Forms list",
             notes = "This method returns a list of forms according to the input filter")
     public Response forms(@QueryParam("key") String key, FormFilter ff) throws HelperException {
-//        try {
-//            List<FormList> list = new ArrayList();
-//            TupleQueryResult res = lexiconManager.getFilterdForms(ff);
-//            String json = formListHelper.toJson(list);
-//            return Response.ok(json)
-//                    .type(MediaType.TEXT_PLAIN)
-//                    .header("Access-Control-Allow-Headers", "content-type")
-//                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-//                    .build();
-//        } catch (ManagerException ex) {
-//            logger.error(ex.getMessage(), ex);
-//            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
-//        }
         try {
             TupleQueryResult forms = lexiconManager.getFilterdForms(ff);
             List<FormItem> fi = formItemsHelper.newDataList(forms);
