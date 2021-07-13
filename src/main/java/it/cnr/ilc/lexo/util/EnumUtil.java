@@ -193,6 +193,27 @@ public class EnumUtil {
         
     }
     
+    public static enum FormRepresentationType {
+        WrittenRepresentation("writtenRep"),
+        PhoneticRepresentation("phoneticRep"),
+        Segmentation("segmentation"),
+        Pronunciation("pronunciation"),
+        Transliteration("transliteration"),
+        Romanization("romanization");
+
+        private final String formRepresentationType;
+
+        private FormRepresentationType(String formRepresentationType) {
+            this.formRepresentationType = formRepresentationType;
+        }
+
+        @Override
+        public String toString() {
+            return this.formRepresentationType;
+        }
+        
+    }
+    
     public static enum LexicalEntryAttributes {
         Label("label"),
         Type("type"),

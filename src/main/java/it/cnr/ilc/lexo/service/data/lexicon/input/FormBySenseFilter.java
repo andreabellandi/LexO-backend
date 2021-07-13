@@ -15,7 +15,7 @@ import java.util.ArrayList;
  * @author andreabellandi
  */
 
-@ApiModel(description = "Input model representing form filter options")
+@ApiModel(description = "Input model representing form filter by sense options (used for the Talmud project)")
 public class FormBySenseFilter implements Data {
 
     @ApiModelProperty(value = "chars sequence to search", example = "pesca", allowEmptyValue = false)

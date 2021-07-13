@@ -149,7 +149,7 @@ public class SparqlSelectData {
             + "    { ?" + SparqlVariable.LEXICAL_ENTRY + " decomp:consituent+ ?" + SparqlVariable.LEXICAL_ENTRY_CONSTITUENT + " . }\n"
             + "}";
 
-    public static final String DATA_FORMS
+    public static final String DATA_FORMS_BY_LEXICAL_ENTRY
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
             + SparqlPrefix.INST.getSparqlPrefix() + "\n"
             + SparqlPrefix.ONTO.getSparqlPrefix() + "\n"
@@ -207,6 +207,77 @@ public class SparqlSelectData {
             + "  ORDER BY ?"
             + SparqlVariable.WRITTEN_REPRESENTATION
             + " ?" + SparqlVariable.FORM_INSTANCE_NAME;
+
+    public static final String DATA_FORMS
+            = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+            + SparqlPrefix.INST.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTO.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LUC.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
+            + SparqlPrefix.SKOS.getSparqlPrefix() + "\n"
+            + "SELECT ?" + SparqlVariable.FORM_TYPE
+            + " ?" + SparqlVariable.FORM
+            + " ?" + SparqlVariable.FORM_CREATION_AUTHOR
+            + " ?" + SparqlVariable.WRITTEN_REPRESENTATION
+            + " ?" + SparqlVariable.PHONETIC_REPRESENTATION
+            + " ?" + SparqlVariable.PRONUNCIATION
+            + " ?" + SparqlVariable.SEGMENTATION
+            + " ?" + SparqlVariable.TRANSLITERATION
+            + " ?" + SparqlVariable.ROMANIZATION
+            + " ?" + SparqlVariable.CREATION_DATE
+            + " ?" + SparqlVariable.LEXICAL_ENTRY
+            + " ?" + SparqlVariable.LAST_UPDATE
+            + " ?" + SparqlVariable.LEXICAL_ENTRY_POS
+            + " ?" + SparqlVariable.NOTE
+            + " ?" + SparqlVariable.FORM_INSTANCE_NAME
+            + " (GROUP_CONCAT(concat(str(?tn),\":\",str(?tv));SEPARATOR=\";\") AS ?" + SparqlVariable.MORPHOLOGY + ")\n"
+            + "FROM onto:explicit\n"
+            + "WHERE {\n"
+            + "  ?search a inst:" + SparqlVariable.FORM_INDEX + " ;\n"
+            + "      luc:query \"[FILTER]\" ;\n"
+            + "      luc:totalHits ?totalHits ;\n"
+            + "      luc:orderBy \"writtenRep\" ;\n"
+            + "      luc:offset \"[OFFSET]\" ;\n"
+            + "      luc:limit \"[LIMIT]\" ;\n"
+            + "      luc:entities ?" + SparqlVariable.FORM + " .\n"
+            + "   ?" + SparqlVariable.FORM + " ontolex:writtenRep ?" + SparqlVariable.WRITTEN_REPRESENTATION + " .\n"
+            + "   ?" + SparqlVariable.LEXICAL_ENTRY + " ?" + SparqlVariable.FORM_TYPE + " ?" + SparqlVariable.FORM + " .\n"
+            + "   OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " lexinfo:partOfSpeech ?posTag } .\n"
+            + "   OPTIONAL { ?" + SparqlVariable.FORM + " ontolex:phoneticRep ?" + SparqlVariable.PHONETIC_REPRESENTATION + " . }\n"
+            + "   OPTIONAL { ?" + SparqlVariable.FORM + " ontolex:pronunciation ?" + SparqlVariable.PRONUNCIATION + " . }\n"
+            + "   OPTIONAL { ?" + SparqlVariable.FORM + " ontolex:romanization ?" + SparqlVariable.ROMANIZATION + " . }\n"
+            + "   OPTIONAL { ?" + SparqlVariable.FORM + " ontolex:transliteration ?" + SparqlVariable.TRANSLITERATION + " . }\n"
+            + "   OPTIONAL { ?" + SparqlVariable.FORM + " ontolex:segmentation ?" + SparqlVariable.SEGMENTATION + " . }\n"
+            + "   OPTIONAL { ?" + SparqlVariable.FORM + " dct:created ?" + SparqlVariable.CREATION_DATE + " . }\n"
+            + "   OPTIONAL { ?" + SparqlVariable.FORM + " dct:creator ?" + SparqlVariable.FORM_CREATION_AUTHOR + " . }\n"
+            + "   OPTIONAL { ?" + SparqlVariable.FORM + " dct:modified ?" + SparqlVariable.LAST_UPDATE + " . }\n"
+            + "   OPTIONAL { ?" + SparqlVariable.FORM + " skos:note ?" + SparqlVariable.NOTE + " . }\n"
+            + "   OPTIONAL { ?" + SparqlVariable.FORM + " ?" + SparqlVariable.MORPHOLOGY_TRAIT_NAME + " ?" + SparqlVariable.MORPHOLOGY_TRAIT_VALUE + " .\n"
+            + "              FILTER(STRSTARTS(STR(?" + SparqlVariable.MORPHOLOGY_TRAIT_NAME + "), str(lexinfo:))) }\n"
+            + "   ?" + SparqlVariable.FORM_TYPE + " rdfs:subPropertyOf ontolex:lexicalForm .\n"
+            + "   BIND(strafter(str(?" + SparqlVariable.FORM + "), str(lex:)) as ?" + SparqlVariable.FORM_INSTANCE_NAME + ")\n"
+            + "   BIND(strafter(str(?posTag), str(lexinfo:)) as ?" + SparqlVariable.LEXICAL_ENTRY_POS + ")\n"
+            + "   BIND(strafter(str(?" + SparqlVariable.MORPHOLOGY_TRAIT_NAME + "),str(lexinfo:)) as ?tn)\n"
+            + "   BIND(strafter(str(?" + SparqlVariable.MORPHOLOGY_TRAIT_VALUE + "),str(lexinfo:)) as ?tv)\n"
+            + "} GROUP BY ?"
+            + SparqlVariable.FORM
+            + " ?" + SparqlVariable.FORM_INSTANCE_NAME
+            + " ?" + SparqlVariable.FORM_TYPE
+            + " ?" + SparqlVariable.FORM_CREATION_AUTHOR
+            + " ?" + SparqlVariable.WRITTEN_REPRESENTATION
+            + " ?" + SparqlVariable.PHONETIC_REPRESENTATION
+            + " ?" + SparqlVariable.PRONUNCIATION
+            + " ?" + SparqlVariable.SEGMENTATION
+            + " ?" + SparqlVariable.TRANSLITERATION
+            + " ?" + SparqlVariable.ROMANIZATION
+            + " ?" + SparqlVariable.CREATION_DATE
+            + " ?" + SparqlVariable.LEXICAL_ENTRY
+            + " ?" + SparqlVariable.LAST_UPDATE
+            + " ?" + SparqlVariable.LEXICAL_ENTRY_POS
+            + " ?" + SparqlVariable.NOTE;
 
     public static final String DATA_LEXICAL_SENSES_BY_FORM
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"

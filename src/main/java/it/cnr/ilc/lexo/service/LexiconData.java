@@ -12,6 +12,7 @@ import it.cnr.ilc.lexo.manager.LexiconDataManager;
 import it.cnr.ilc.lexo.manager.ManagerException;
 import it.cnr.ilc.lexo.manager.ManagerFactory;
 import it.cnr.ilc.lexo.service.data.lexicon.input.FormBySenseFilter;
+import it.cnr.ilc.lexo.service.data.lexicon.input.FormFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.output.FormItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryElementItem;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalEntryFilter;
@@ -412,6 +413,46 @@ public class LexiconData extends Service {
         }
     }
 
+    @POST
+    @Path("forms")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.POST,
+            value = "/forms",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Forms list",
+            notes = "This method returns a list of forms according to the input filter")
+    public Response forms(@QueryParam("key") String key, FormFilter ff) throws HelperException {
+//        try {
+//            List<FormList> list = new ArrayList();
+//            TupleQueryResult res = lexiconManager.getFilterdForms(ff);
+//            String json = formListHelper.toJson(list);
+//            return Response.ok(json)
+//                    .type(MediaType.TEXT_PLAIN)
+//                    .header("Access-Control-Allow-Headers", "content-type")
+//                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+//                    .build();
+//        } catch (ManagerException ex) {
+//            logger.error(ex.getMessage(), ex);
+//            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+//        }
+        try {
+            TupleQueryResult forms = lexiconManager.getFilterdForms(ff);
+            List<FormItem> fi = formItemsHelper.newDataList(forms);
+            HitsDataList hdl = new HitsDataList(formItemsHelper.getTotalHits(), fi);
+            String json = formItemsHelper.toJson(hdl);
+            return Response.ok(json)
+                    .type(MediaType.TEXT_PLAIN)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
+        } catch (ManagerException ex) {
+            logger.error(ex.getMessage(), ex);
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        }
+    }
+
     @GET
     @Path("{id}/forms")
     @Produces(MediaType.APPLICATION_JSON)
@@ -477,7 +518,7 @@ public class LexiconData extends Service {
                 .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                 .build();
     }
-    
+
     @GET
     @Path("{id}/sensesByConcept")
     @Produces(MediaType.APPLICATION_JSON)
