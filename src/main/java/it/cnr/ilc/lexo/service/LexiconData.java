@@ -11,7 +11,7 @@ import io.swagger.annotations.ApiParam;
 import it.cnr.ilc.lexo.manager.LexiconDataManager;
 import it.cnr.ilc.lexo.manager.ManagerException;
 import it.cnr.ilc.lexo.manager.ManagerFactory;
-import it.cnr.ilc.lexo.service.data.lexicon.input.FormFilter;
+import it.cnr.ilc.lexo.service.data.lexicon.input.FormBySenseFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.output.FormItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryElementItem;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalEntryFilter;
@@ -342,7 +342,7 @@ public class LexiconData extends Service {
             produces = "application/json; charset=UTF-8")
     @ApiOperation(value = "Forms list",
             notes = "This method returns a list of forms according to the input filter")
-    public Response formsList(@QueryParam("key") String key, FormFilter ff) throws HelperException {
+    public Response formsList(@QueryParam("key") String key, FormBySenseFilter ff) throws HelperException {
         try {
             List<FormList> list = new ArrayList();
             TupleQueryResult res = lexiconManager.getFilterdForms(ff);

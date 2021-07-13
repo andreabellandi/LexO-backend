@@ -6,7 +6,7 @@
 package it.cnr.ilc.lexo.manager;
 
 import it.cnr.ilc.lexo.LexOProperties;
-import it.cnr.ilc.lexo.service.data.lexicon.input.FormFilter;
+import it.cnr.ilc.lexo.service.data.lexicon.input.FormBySenseFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalEntryFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalSenseFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Counting;
@@ -196,7 +196,7 @@ public class LexiconDataManager implements Manager, Cached {
         return _morpho;
     }
 
-    public TupleQueryResult getFilterdForms(FormFilter ff) throws ManagerException {
+    public TupleQueryResult getFilterdForms(FormBySenseFilter ff) throws ManagerException {
         Manager.validateWithEnum("searchFormTypes", SearchFormTypes.class, ff.getFormType());
         Manager.validateWithEnum("acceptedSearchFormExtendTo", AcceptedSearchFormExtendTo.class, ff.getExtendTo());
         Manager.validateWithEnum("acceptedSearchFormExtensionDegree", AcceptedSearchFormExtensionDegree.class, String.valueOf(ff.getExtensionDegree()));
@@ -270,7 +270,7 @@ public class LexiconDataManager implements Manager, Cached {
         return RDFQueryUtil.evaluateTQuery(query);
     }
 
-    public TupleQueryResult getFormsBySenseRelation(FormFilter ff, String sense) throws ManagerException {
+    public TupleQueryResult getFormsBySenseRelation(FormBySenseFilter ff, String sense) throws ManagerException {
 //        TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL,
 //                SparqlSelectData.DATA_FORMS_BY_SENSE_RELATION
 //                        .replace("[RELATION_DISTANCE_PATH]", "lex:" + sense + " lexinfo:" + ff.getExtendTo() + " ?" + SparqlVariable.TARGET + " . "));
@@ -280,7 +280,7 @@ public class LexiconDataManager implements Manager, Cached {
         return RDFQueryUtil.evaluateTQuery(query);
     }
 
-    public TupleQueryResult getFormsBySenseRelation(FormFilter ff, String sense, int distance) throws ManagerException {
+    public TupleQueryResult getFormsBySenseRelation(FormBySenseFilter ff, String sense, int distance) throws ManagerException {
         String relationDistancePath = "";
         switch (distance) {
             case 1:

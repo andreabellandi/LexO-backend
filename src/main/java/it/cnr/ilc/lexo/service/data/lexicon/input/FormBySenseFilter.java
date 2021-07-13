@@ -16,7 +16,7 @@ import java.util.ArrayList;
  */
 
 @ApiModel(description = "Input model representing form filter options")
-public class FormFilter implements Data {
+public class FormBySenseFilter implements Data {
 
     @ApiModelProperty(value = "chars sequence to search", example = "pesca", allowEmptyValue = false)
     private String form;
