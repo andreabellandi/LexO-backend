@@ -333,16 +333,16 @@ public class LexiconData extends Service {
     }
 
     @POST
-    @Path("forms")
+    @Path("formsBySense")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @RequestMapping(
             method = RequestMethod.POST,
-            value = "/forms",
+            value = "/formsBySense",
             produces = "application/json; charset=UTF-8")
     @ApiOperation(value = "Forms list",
-            notes = "This method returns a list of forms according to the input filter")
-    public Response formsList(@QueryParam("key") String key, FormBySenseFilter ff) throws HelperException {
+            notes = "This method returns a list of forms according to the sense input filter")
+    public Response formsBySense(@QueryParam("key") String key, FormBySenseFilter ff) throws HelperException {
         try {
             List<FormList> list = new ArrayList();
             TupleQueryResult res = lexiconManager.getFilterdForms(ff);
