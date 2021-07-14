@@ -29,6 +29,11 @@ public class LexicalSenseItem implements Data {
     private String usage;
     private String concept;
     private String conceptInstanceName;
+    private String description;
+    private String gloss;
+    private String senseExample;
+    private String senseTranslation;
+    
 
     public String getSense() {
         return sense;
@@ -156,6 +161,38 @@ public class LexicalSenseItem implements Data {
 
     public void setLexicalEntryInstanceName(String lexicalEntryInstanceName) {
         this.lexicalEntryInstanceName = lexicalEntryInstanceName;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getGloss() {
+        return gloss;
+    }
+
+    public void setGloss(String gloss) {
+        this.gloss = gloss;
+    }
+
+    public String getSenseExample() {
+        return senseExample;
+    }
+
+    public void setSenseExample(String senseExample) {
+        this.senseExample = senseExample;
+    }
+
+    public String getSenseTranslation() {
+        return senseTranslation;
+    }
+
+    public void setSenseTranslation(String senseTranslation) {
+        this.senseTranslation = senseTranslation;
     }
 
 }

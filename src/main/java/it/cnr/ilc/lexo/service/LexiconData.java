@@ -293,8 +293,9 @@ public class LexiconData extends Service {
     public Response sensesList(@QueryParam("key") String key, LexicalSenseFilter lsf) throws HelperException {
         try {
             TupleQueryResult lexicalSenses = lexiconManager.getFilterdLexicalSenses(lsf);
-            List<LexicalSenseItem> entries = lexicalSenseFilterHelper.newDataList(lexicalSenses);
-            String json = lexicalSenseFilterHelper.toJson(entries);
+            List<LexicalSenseItem> senses = lexicalSenseFilterHelper.newDataList(lexicalSenses);
+            HitsDataList hdl = new HitsDataList(lexicalSenseFilterHelper.getTotalHits(), senses);
+            String json = lexicalSenseFilterHelper.toJson(hdl);
             return Response.ok(json)
                     .type(MediaType.TEXT_PLAIN)
                     .header("Access-Control-Allow-Headers", "content-type")

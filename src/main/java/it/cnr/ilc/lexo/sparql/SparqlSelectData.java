@@ -296,6 +296,7 @@ public class SparqlSelectData {
             + "SELECT ?" + SparqlVariable.LEXICAL_ENTRY
             + " ?" + SparqlVariable.LEXICAL_ENTRY_POS
             + " ?" + SparqlVariable.SENSE
+            + " ?" + SparqlVariable.TOTAL_HITS
             + " ?" + SparqlVariable.LEXICAL_ENTRY_CREATION_AUTHOR
             + " ?" + SparqlVariable.SENSE_DEFINITION
             + " ?" + SparqlVariable.NOTE
@@ -304,13 +305,17 @@ public class SparqlSelectData {
             + " ?" + SparqlVariable.CREATION_DATE
             + " ?" + SparqlVariable.SENSE_INSTANCE_NAME
             + " ?" + SparqlVariable.CONCEPT
+            + " ?" + SparqlVariable.SENSE_DESCRIPTION
+            + " ?" + SparqlVariable.SENSE_EXAMPLE
+            + " ?" + SparqlVariable.SENSE_GLOSS
+            + " ?" + SparqlVariable.SENSE_TRANSLATION
             + " ?" + SparqlVariable.CONCEPT_INSTANCE_NAME
             + " ?" + SparqlVariable.SENSE_USAGE + "\n"
             + "FROM onto:explicit\n"
             + "WHERE {\n"
             + "   ?search a inst:" + SparqlVariable.LEXICAL_ENTRY_INDEX + " ;\n"
             + "      luc:query \"[FILTER]\" ;\n"
-            + "      luc:totalHits ?totalHits ;\n"
+            + "      luc:totalHits ?" + SparqlVariable.TOTAL_HITS + " ;\n"
             + "      luc:orderBy \"lexicalEntryLabel\" ;\n"
             + "      luc:offset \"[OFFSET]\" ;\n"
             + "      luc:limit \"[LIMIT]\" ;\n"
@@ -324,6 +329,10 @@ public class SparqlSelectData {
             + "    OPTIONAL { ?" + SparqlVariable.LEXICAL_ENTRY + " ontolex:sense ?" + SparqlVariable.SENSE + " . ?" + SparqlVariable.SENSE + " dct:modified ?" + SparqlVariable.LAST_UPDATE + " . } \n"
             + "    OPTIONAL { ?" + SparqlVariable.LEXICAL_ENTRY + " ontolex:sense ?" + SparqlVariable.SENSE + " . ?" + SparqlVariable.SENSE + " dct:created ?" + SparqlVariable.CREATION_DATE + " . } \n"
             + "    OPTIONAL { ?" + SparqlVariable.LEXICAL_ENTRY + " ontolex:sense ?" + SparqlVariable.SENSE + " . ?" + SparqlVariable.SENSE + " skos:definition ?" + SparqlVariable.SENSE_DEFINITION + " . }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.LEXICAL_ENTRY + " ontolex:sense ?" + SparqlVariable.SENSE + " . ?" + SparqlVariable.SENSE + " lexinfo:description ?" + SparqlVariable.SENSE_DESCRIPTION + " . }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.LEXICAL_ENTRY + " ontolex:sense ?" + SparqlVariable.SENSE + " . ?" + SparqlVariable.SENSE + " lexinfo:gloss ?" + SparqlVariable.SENSE_GLOSS + " . }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.LEXICAL_ENTRY + " ontolex:sense ?" + SparqlVariable.SENSE + " . ?" + SparqlVariable.SENSE + " lexinfo:senseExample ?" + SparqlVariable.SENSE_EXAMPLE + " . }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.LEXICAL_ENTRY + " ontolex:sense ?" + SparqlVariable.SENSE + " . ?" + SparqlVariable.SENSE + " lexinfo:senseTranslation ?" + SparqlVariable.SENSE_TRANSLATION + " . }\n"
             + "    OPTIONAL { ?" + SparqlVariable.LEXICAL_ENTRY + " ontolex:sense ?" + SparqlVariable.SENSE + " . ?" + SparqlVariable.SENSE + " skos:note ?" + SparqlVariable.NOTE + " . }\n"
             + "    OPTIONAL { ?" + SparqlVariable.LEXICAL_ENTRY + " ontolex:sense ?" + SparqlVariable.SENSE + " . ?" + SparqlVariable.SENSE + " ontolex:reference ?" + SparqlVariable.CONCEPT + " . \n"
             + "               BIND(strafter(str(?" + SparqlVariable.CONCEPT + "), str(ontology:)) as ?" + SparqlVariable.CONCEPT_INSTANCE_NAME + ") }\n"
@@ -343,10 +352,13 @@ public class SparqlSelectData {
             + SparqlPrefix.LOC.getSparqlPrefix() + "\n"
             + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
             + SparqlPrefix.ONTOLOGY.getSparqlPrefix() + "\n"
-            + "SELECT ?" + SparqlVariable.LEXICAL_ENTRY
+            + SparqlPrefix.RDF.getSparqlPrefix() + "\n"
+            + "SELECT"
+            + " ?" + SparqlVariable.LEXICAL_ENTRY
             + " ?" + SparqlVariable.LEXICAL_ENTRY_POS
             + " ?" + SparqlVariable.SENSE
-            + " ?" + SparqlVariable.LEXICAL_ENTRY_CREATION_AUTHOR
+            + " ?" + SparqlVariable.TOTAL_HITS
+            + " ?" + SparqlVariable.SENSE_CREATION_AUTHOR
             + " ?" + SparqlVariable.SENSE_DEFINITION
             + " ?" + SparqlVariable.NOTE
             + " ?" + SparqlVariable.LAST_UPDATE
@@ -355,30 +367,37 @@ public class SparqlSelectData {
             + " ?" + SparqlVariable.SENSE_INSTANCE_NAME
             + " ?" + SparqlVariable.CONCEPT
             + " ?" + SparqlVariable.CONCEPT_INSTANCE_NAME
-            + " ?" + SparqlVariable.SENSE_USAGE + "\n"
+            + " ?" + SparqlVariable.SENSE_USAGE
+            + " ?" + SparqlVariable.SENSE_DESCRIPTION
+            + " ?" + SparqlVariable.SENSE_EXAMPLE
+            + " ?" + SparqlVariable.SENSE_GLOSS
+            + " ?" + SparqlVariable.SENSE_TRANSLATION + "\n"
             + "FROM onto:explicit\n"
             + "WHERE {\n"
-            + "   ?search a inst:" + SparqlVariable.LEXICAL_ENTRY_INDEX + " ;\n"
+            + "   ?search a inst:" + SparqlVariable.LEXICAL_SENSE_INDEX + " ;\n"
             + "      luc:query \"[FILTER]\" ;\n"
-            + "      luc:totalHits ?totalHits ;\n"
-            + "      luc:orderBy \"lexicalEntryLabel\" ;\n"
+            + "      luc:totalHits ?" + SparqlVariable.TOTAL_HITS + " ;\n"
+            + "      luc:orderBy \"definition\" ;\n"
             + "      luc:offset \"[OFFSET]\" ;\n"
             + "      luc:limit \"[LIMIT]\" ;\n"
-            + "      luc:entities ?" + SparqlVariable.LEXICAL_ENTRY + " .\n"
-            + "    OPTIONAL { ?" + SparqlVariable.LEXICAL_ENTRY + " ontolex:sense ?" + SparqlVariable.SENSE + " . \n"
-            + "               BIND(strafter(str(?" + SparqlVariable.SENSE + "), str(lex:)) as ?" + SparqlVariable.SENSE_INSTANCE_NAME + ") }\n"
-            + "    OPTIONAL { ?" + SparqlVariable.LEXICAL_ENTRY + " ontolex:canonicalForm ?" + SparqlVariable.FORM + " . \n"
-            + "               ?" + SparqlVariable.FORM + " ontolex:writtenRep ?" + SparqlVariable.WRITTEN_REPRESENTATION + " . }\n"
-            + "    OPTIONAL { ?" + SparqlVariable.LEXICAL_ENTRY + " lexinfo:partOfSpeech ?" + SparqlVariable.LEXICAL_ENTRY_POS + " . } \n"
-            + "    OPTIONAL { ?" + SparqlVariable.LEXICAL_ENTRY + " ontolex:sense ?" + SparqlVariable.SENSE + " . ?" + SparqlVariable.SENSE + " dct:creator ?" + SparqlVariable.LEXICAL_ENTRY_CREATION_AUTHOR + " . } \n"
-            + "    OPTIONAL { ?" + SparqlVariable.LEXICAL_ENTRY + " ontolex:sense ?" + SparqlVariable.SENSE + " . ?" + SparqlVariable.SENSE + " dct:modified ?" + SparqlVariable.LAST_UPDATE + " . } \n"
-            + "    OPTIONAL { ?" + SparqlVariable.LEXICAL_ENTRY + " ontolex:sense ?" + SparqlVariable.SENSE + " . ?" + SparqlVariable.SENSE + " dct:created ?" + SparqlVariable.CREATION_DATE + " . } \n"
-            + "    OPTIONAL { ?" + SparqlVariable.LEXICAL_ENTRY + " ontolex:sense ?" + SparqlVariable.SENSE + " . ?" + SparqlVariable.SENSE + " skos:definition ?" + SparqlVariable.SENSE_DEFINITION + " . }\n"
-            + "    OPTIONAL { ?" + SparqlVariable.LEXICAL_ENTRY + " ontolex:sense ?" + SparqlVariable.SENSE + " . ?" + SparqlVariable.SENSE + " skos:note ?" + SparqlVariable.NOTE + " . }\n"
-            + "    OPTIONAL { ?" + SparqlVariable.LEXICAL_ENTRY + " ontolex:sense ?" + SparqlVariable.SENSE + " . ?" + SparqlVariable.SENSE + " ontolex:reference ?" + SparqlVariable.CONCEPT + " . \n"
+            + "      luc:entities ?" + SparqlVariable.SENSE + " .\n"
+            + "    BIND(strafter(str(?" + SparqlVariable.SENSE + "), str(lex:)) as ?" + SparqlVariable.SENSE_INSTANCE_NAME + ") \n"
+            + "    ?" + SparqlVariable.LEXICAL_ENTRY + " ontolex:sense ?" + SparqlVariable.SENSE + " .\n"
+            + "    OPTIONAL { ?" + SparqlVariable.LEXICAL_ENTRY + " ontolex:canonicalForm [ ontolex:writtenRep ?" + SparqlVariable.WRITTEN_REPRESENTATION + " ] . }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.LEXICAL_ENTRY + " lexinfo:partOfSpeech ?" + SparqlVariable.LEXICAL_ENTRY_POS + " . }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.SENSE + " dct:creator ?" + SparqlVariable.SENSE_CREATION_AUTHOR + " . } \n"
+            + "    OPTIONAL { ?" + SparqlVariable.SENSE + " dct:modified ?" + SparqlVariable.LAST_UPDATE + " . } \n"
+            + "    OPTIONAL { ?" + SparqlVariable.SENSE + " dct:created ?" + SparqlVariable.CREATION_DATE + " . } \n"
+            + "    OPTIONAL { ?" + SparqlVariable.SENSE + " skos:definition ?" + SparqlVariable.SENSE_DEFINITION + " . }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.SENSE + " skos:note ?" + SparqlVariable.NOTE + " . }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.SENSE + " lexinfo:description ?" + SparqlVariable.SENSE_DESCRIPTION + " . } \n"
+            + "    OPTIONAL { ?" + SparqlVariable.SENSE + " lexinfo:gloss ?" + SparqlVariable.SENSE_GLOSS + " . }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.SENSE + " lexinfo:senseExample ?" + SparqlVariable.SENSE_EXAMPLE + " . }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.SENSE + " lexinfo:senseTranslation ?" + SparqlVariable.SENSE_TRANSLATION + " . }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.SENSE + " ontolex:reference ?" + SparqlVariable.CONCEPT + " . \n"
             + "               BIND(strafter(str(?" + SparqlVariable.CONCEPT + "), str(ontology:)) as ?" + SparqlVariable.CONCEPT_INSTANCE_NAME + ") }\n"
-            + "    OPTIONAL { ?" + SparqlVariable.LEXICAL_ENTRY + " ontolex:sense ?" + SparqlVariable.SENSE + " . ?" + SparqlVariable.SENSE + " ontolex:usage [ rdf:value ?" + SparqlVariable.SENSE_USAGE + " ] . }\n"
-            + "}\n"
+            + "    OPTIONAL { ?" + SparqlVariable.SENSE + " ontolex:usage [ rdf:value ?" + SparqlVariable.SENSE_USAGE + " ] . }\n"
+            + "} ORDER BY ?" + SparqlVariable.LEXICAL_ENTRY + "\n"
             + " ";
 
     public static final String DATA_FRAMES

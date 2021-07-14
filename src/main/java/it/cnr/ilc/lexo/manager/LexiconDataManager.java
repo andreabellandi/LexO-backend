@@ -127,10 +127,10 @@ public class LexiconDataManager implements Manager, Cached {
 
     private String createFilter(LexicalSenseFilter lsf) {
         String text = lsf.getText().isEmpty() ? "*" : lsf.getText();
-        String filter = "(" + (lsf.getSearchMode().equals(EnumUtil.SearchModes.Equals.toString()) ? getSearchLexicalSenseField(lsf.getFormType(), text)
-                : (lsf.getSearchMode().equals(EnumUtil.SearchModes.StartsWith.toString()) ? getSearchLexicalSenseField(lsf.getFormType(), text + "*")
-                : (lsf.getSearchMode().equals(EnumUtil.SearchModes.Contains.toString()) ? getSearchLexicalSenseField(lsf.getFormType(), "*" + text + "*")
-                : getSearchLexicalSenseField(lsf.getFormType(), "*" + text)))) + ")";
+        String filter = "(" + (lsf.getSearchMode().equals(EnumUtil.SearchModes.Equals.toString()) ? getSearchLexicalSenseField(lsf.getField(), text)
+                : (lsf.getSearchMode().equals(EnumUtil.SearchModes.StartsWith.toString()) ? getSearchLexicalSenseField(lsf.getField(), text + "*")
+                : (lsf.getSearchMode().equals(EnumUtil.SearchModes.Contains.toString()) ? getSearchLexicalSenseField(lsf.getField(), "*" + text + "*")
+                : getSearchLexicalSenseField(lsf.getField(), "*" + text)))) + ")";
         filter = filter + (!lsf.getLang().isEmpty() ? " AND senseLanguage:" + lsf.getLang() : "");
         filter = filter + (!lsf.getAuthor().isEmpty() ? " AND author:" + lsf.getAuthor() : "");
         filter = filter + (!lsf.getPos().isEmpty() ? " AND pos:" + "\\\"" + lsf.getPos() + "\\\"" : "");

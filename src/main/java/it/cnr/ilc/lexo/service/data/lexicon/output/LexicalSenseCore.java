@@ -43,6 +43,12 @@ public class LexicalSenseCore implements Data {
     @ApiModelProperty(value = "short IRI of the concept denoted by", example = "conceptID")
     private String conceptInstanceName;
 
+    private String description;
+    private String explanation;
+    private String gloss;
+    private String senseExample;
+    private String senseTranslation;
+
     public String getSense() {
         return sense;
     }
@@ -137,6 +143,46 @@ public class LexicalSenseCore implements Data {
 
     public void setConceptInstanceName(String conceptInstanceName) {
         this.conceptInstanceName = conceptInstanceName;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getExplanation() {
+        return explanation;
+    }
+
+    public void setExplanation(String explanation) {
+        this.explanation = explanation;
+    }
+
+    public String getGloss() {
+        return gloss;
+    }
+
+    public void setGloss(String gloss) {
+        this.gloss = gloss;
+    }
+
+    public String getSenseExample() {
+        return senseExample;
+    }
+
+    public void setSenseExample(String senseExample) {
+        this.senseExample = senseExample;
+    }
+
+    public String getSenseTranslation() {
+        return senseTranslation;
+    }
+
+    public void setSenseTranslation(String senseTranslation) {
+        this.senseTranslation = senseTranslation;
     }
 
 }

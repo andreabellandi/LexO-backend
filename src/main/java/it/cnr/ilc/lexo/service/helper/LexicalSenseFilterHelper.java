@@ -9,7 +9,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import it.cnr.ilc.lexo.Constant;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalEntryFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalSenseItem;
+import it.cnr.ilc.lexo.service.data.lexicon.output.Property;
 import it.cnr.ilc.lexo.sparql.SparqlVariable;
+import java.util.ArrayList;
+import java.util.List;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Literal;
 import org.eclipse.rdf4j.query.BindingSet;
@@ -22,6 +25,7 @@ public class LexicalSenseFilterHelper extends TripleStoreDataHelper<LexicalSense
 
     @Override
     public void fillData(LexicalSenseItem data, BindingSet bs) {
+        setTotalHits(getIntegerNumber(bs, SparqlVariable.TOTAL_HITS));
         String definition = (bs.getBinding(SparqlVariable.SENSE_DEFINITION) != null) ? ((Literal) bs.getBinding(SparqlVariable.SENSE_DEFINITION).getValue()).getLabel() : "";
         String name = (!definition.isEmpty() && definition.length() > Constant.SENSE_NAME_MAX_LENGHT) ? definition.substring(0, Constant.SENSE_NAME_MAX_LENGHT - 1).concat(" ...") : definition;
         data.setLexicalEntry(getStringValue(bs, SparqlVariable.LEXICAL_ENTRY));
@@ -40,6 +44,11 @@ public class LexicalSenseFilterHelper extends TripleStoreDataHelper<LexicalSense
         data.setLemma(getStringValue(bs, SparqlVariable.WRITTEN_REPRESENTATION));
         data.setLastUpdate(getStringValue(bs, SparqlVariable.LAST_UPDATE));
         data.setCreationDate(getStringValue(bs, SparqlVariable.CREATION_DATE));
+        data.setDefinition(getStringValue(bs, SparqlVariable.SENSE_DEFINITION));
+        data.setDescription(getStringValue(bs, SparqlVariable.SENSE_DESCRIPTION));
+        data.setSenseExample(getStringValue(bs, SparqlVariable.SENSE_EXAMPLE));
+        data.setGloss(getStringValue(bs, SparqlVariable.SENSE_GLOSS));
+        data.setSenseTranslation(getStringValue(bs, SparqlVariable.SENSE_TRANSLATION));
     }
 
     @Override

@@ -23,7 +23,7 @@ public class LexicalSenseFilter implements Data {
     @ApiModelProperty(value = "lexial entry types (empty means all)", example = "word", allowableValues = "word, multi-word expression, affix", allowEmptyValue = true)
     private String type;
     @ApiModelProperty(value = "lexical sense field the search is performed on", example = "definition",
-            allowableValues = "definition, description, explanation, gloss, senseExample, senseTranslation", allowEmptyValue = true)
+            allowableValues = "definition, description, gloss, senseExample, senseTranslation", allowEmptyValue = true)
     private String field;
     @ApiModelProperty(value = "part of speech (empty means all)", example = "noun", allowEmptyValue = true)
     private String pos;
