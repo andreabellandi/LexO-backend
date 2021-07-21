@@ -746,7 +746,10 @@ public class SparqlSelectData {
             + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
             + SparqlPrefix.ONTOLOGY.getSparqlPrefix() + "\n"
             + "\n"
-            + "SELECT ?" + SparqlVariable.WRITTEN_REPRESENTATION + " ?" + SparqlVariable.LEXICAL_ENTRY_POS + " ?" + SparqlVariable.SENSE_DEFINITION + "\n"
+            + "SELECT ?" + SparqlVariable.WRITTEN_REPRESENTATION + " ?"
+            + SparqlVariable.LEXICAL_ENTRY + " ?"
+            + SparqlVariable.LEXICAL_ENTRY_POS
+            + " ?" + SparqlVariable.SENSE_DEFINITION + "\n"
             + "FROM onto:explicit\n"
             + "WHERE {\n"
             + "    ?" + SparqlVariable.SENSE + " ontolex:reference ontology:_CONCEPT_ ;\n"
