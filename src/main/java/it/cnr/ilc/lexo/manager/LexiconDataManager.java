@@ -350,7 +350,7 @@ public class LexiconDataManager implements Manager, Cached {
         String filter = createFilter(lsf);
         int limit = lsf.getLimit();
         int offset = lsf.getOffset();
-        return SparqlSelectData.DATA_LEXICAL_SENSES.replace("[FILTER]", filter)
+        return SparqlSelectData.DATA_LEXICAL_SENSES_FILTER.replace("[FILTER]", filter)
                 .replace("[LIMIT]", String.valueOf(limit))
                 .replace("[OFFSET]", String.valueOf(offset));
     }
