@@ -52,6 +52,25 @@ public class OntolexData extends Service {
     }
     
     @GET
+    @Path("etymologicalEntryType")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "etymologicalEntryType",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Etymological entry types from the LemonEty module of the OntoLex vocabulary",
+            notes = "This method returns the etymological entry types from the LemonEty module of the OntoLex vocabulary")
+    public Response etymologicalEntryType() {
+//        log(Level.INFO, "get lexicon entries types");
+        String json = ontolexValuesHelper.toJson(lexiconManager.getEtymologicalEntryTypes());
+        return Response.ok(json)
+                .type(MediaType.TEXT_PLAIN)
+                .header("Access-Control-Allow-Headers", "content-type")
+                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                .build();
+    }
+    
+    @GET
     @Path("formType")
     @Produces(MediaType.APPLICATION_JSON)
     @RequestMapping(

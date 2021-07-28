@@ -25,6 +25,7 @@ public final class OntolexManager implements Manager, Cached {
 
     private final List<Value> lexicalEntryTypes = new ArrayList<>();
     private final List<Value> formTypes = new ArrayList<>();
+    private final List<Value> etymologicalEntryTypes = new ArrayList<>();
 
     public List<Value> getFormTypes() {
         return formTypes;
@@ -32,6 +33,10 @@ public final class OntolexManager implements Manager, Cached {
 
     public List<Value> getLexicalEntryTypes() {
         return lexicalEntryTypes;
+    }
+
+    public List<Value> getEtymologicalEntryTypes() {
+        return etymologicalEntryTypes;
     }
 
     OntolexManager() {
@@ -42,6 +47,7 @@ public final class OntolexManager implements Manager, Cached {
     public void reloadCache() {
         reloadLexicalEntryTypeCache();
         reloadFormTypeCache();
+        reloadEtymologicalEntryTypeCache();
     }
 
     private void reloadLexicalEntryTypeCache() {
@@ -61,6 +67,23 @@ public final class OntolexManager implements Manager, Cached {
         }
     }
 
+    
+    private void reloadEtymologicalEntryTypeCache() {
+        etymologicalEntryTypes.clear();
+        try (TupleQueryResult result = RDFQueryUtil.evaluateTQuery(SparqlSelectOntolexData.ETYMOLOGICAL_ENTRY_TYPE)) {
+            while (result.hasNext()) {
+                BindingSet bs = result.next();
+                Value value = new Value();
+                value.setValueDescription((bs.getBinding(SparqlVariable.CLASS_COMMENT) != null) ? ((Literal) bs.getBinding(SparqlVariable.CLASS_COMMENT).getValue()).getLabel() : "");
+                value.setValueId((bs.getBinding(SparqlVariable.LEXICAL_ENTRY_TYPE) != null) ? ((IRI) bs.getBinding(SparqlVariable.LEXICAL_ENTRY_TYPE).getValue()).getLocalName() : "");
+                value.setValueLabel((bs.getBinding(SparqlVariable.LABEL) != null) ? ((Literal) bs.getBinding(SparqlVariable.LABEL).getValue()).getLabel() : "");
+                etymologicalEntryTypes.add(value);
+            }
+        } catch (QueryEvaluationException qee) {
+        }
+    }
+    
+    
     private void reloadFormTypeCache() {
         formTypes.clear();
 //        TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL, SparqlSelectOntolexData.FORM_TYPE);
