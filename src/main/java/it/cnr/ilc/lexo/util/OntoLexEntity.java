@@ -37,6 +37,7 @@ public class OntoLexEntity {
     public static enum LexicalEntryTypes {
         LexicalEntry("LexicalEntry"),
         Word("Word"),
+        Etymon("Etymon"),
         Multiword("MultiWordExpression"),
         Affix("Affix");
 

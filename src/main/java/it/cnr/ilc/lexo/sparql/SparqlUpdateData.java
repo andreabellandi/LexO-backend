@@ -33,6 +33,7 @@ public class SparqlUpdateData {
             + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
             + SparqlPrefix.SKOS.getSparqlPrefix() + "\n"
             + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ETY.getSparqlPrefix() + "\n"
             + "DELETE { lex:_ID_ _RELATION_ _VALUE_TO_DELETE_ ;\n "
             + "                  dct:modified ?modified . } \n"
             + "INSERT { lex:_ID_ _RELATION_ _VALUE_TO_INSERT_ ;\n"

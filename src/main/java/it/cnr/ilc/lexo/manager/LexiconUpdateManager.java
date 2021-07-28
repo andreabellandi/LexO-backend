@@ -188,7 +188,9 @@ public final class LexiconUpdateManager implements Manager, Cached {
                     (lang != null) ? ("\"" + leu.getValue() + "\"@" + lang) : "\"" + leu.getValue() + "\"", "?" + SparqlVariable.TARGET);
         } else if (leu.getRelation().equals(EnumUtil.LexicalEntryAttributes.Type.toString())) {
             validateLexicalEntryType(leu.getValue());
-            return updateLexicalEntry(id, SparqlPrefix.RDF.getPrefix() + leu.getRelation(), SparqlPrefix.ONTOLEX.getPrefix() + leu.getValue(), "?" + SparqlVariable.TARGET);
+            return updateLexicalEntry(id, SparqlPrefix.RDF.getPrefix() + leu.getRelation(), 
+                    (!leu.getValue().equals(OntoLexEntity.LexicalEntryTypes.Etymon.toString())) ? SparqlPrefix.ONTOLEX.getPrefix() + leu.getValue() : SparqlPrefix.ETY.getPrefix() + leu.getValue(), 
+                    "?" + SparqlVariable.TARGET);
         } else if (leu.getRelation().equals(EnumUtil.LexicalEntryAttributes.Status.toString())) {
             validateLexicalEntryStatus(leu.getValue());
             if (leu.getValue().isEmpty()) {

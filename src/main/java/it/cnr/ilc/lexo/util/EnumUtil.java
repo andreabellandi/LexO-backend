@@ -90,6 +90,7 @@ public class EnumUtil {
     public static enum LexicalEntryTypes {
         All(""),
         Word("word"),
+        Etymon("etymon"),
         Multiword("multi-word expression"),
         Affix("affix");
 
