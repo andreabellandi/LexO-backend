@@ -39,7 +39,7 @@ public class SparqlSelectStatistics {
             + "    luc:facets _:f .\n"
             + "  _:f luc:facetValue ?" + SparqlVariable.LABEL + " .\n"
             + "  _:f luc:facetCount ?" + SparqlVariable.LABEL_COUNT + " .\n"
-            + "  FILTER (regex(str(?" + SparqlVariable.LABEL + "), \"word|multi-word expression|affix\"))"
+            + "  FILTER (regex(str(?" + SparqlVariable.LABEL + "), \"word|multi-word expression|affix|etymon\"))"
             + "}";
 
     public static final String STATISTICS_LANGUAGES
