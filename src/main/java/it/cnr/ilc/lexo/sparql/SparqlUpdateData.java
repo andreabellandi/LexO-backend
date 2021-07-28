@@ -115,14 +115,13 @@ public class SparqlUpdateData {
             + "DELETE { lex:_LEID_ ontolex:lexicalForm lex:_ID_ . \n "
             + "         lex:_LEID_ ontolex:canonicalForm lex:_ID_ . \n "
             + "         lex:_LEID_ ontolex:otherForm lex:_ID_ . \n "
-            + "         lex:_ID_ dct:modified ?modified . } \n"
+            + "         lex:_LEID_ dct:modified ?modified . } \n"
             + "INSERT { lex:_LEID_ ontolex:_FORM_TYPE_ lex:_ID_ . \n"
-            + "         lex:_ID_ dct:modified _LAST_UPDATE_ . }\n"
-            + "WHERE {  OPTIONAL {"
-            + "         lex:_LEID_ ontolex:lexicalForm lex:_ID_ . \n "
+            + "         lex:_LEID_ dct:modified _LAST_UPDATE_ . }\n"
+            + "WHERE {  lex:_LEID_ dct:modified ?modified . \n"
+            + "         OPTIONAL { lex:_LEID_ ontolex:lexicalForm lex:_ID_ . \n "
             + "         lex:_LEID_ ontolex:canonicalForm lex:_ID_ . \n "
-            + "         lex:_LEID_ ontolex:otherForm lex:_ID_ . \n "
-            + "         lex:_ID_ dct:modified ?modified . }\n"
+            + "         lex:_LEID_ ontolex:otherForm lex:_ID_ . }\n"
             + "} ";
 
     public static final String UPDATE_LEXICAL_SENSE
