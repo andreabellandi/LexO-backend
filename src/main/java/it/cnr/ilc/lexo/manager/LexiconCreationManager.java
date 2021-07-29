@@ -6,6 +6,7 @@
 package it.cnr.ilc.lexo.manager;
 
 import it.cnr.ilc.lexo.LexOProperties;
+import it.cnr.ilc.lexo.service.data.lexicon.output.Etymology;
 import it.cnr.ilc.lexo.service.data.lexicon.output.FormCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Language;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryCore;
@@ -142,6 +143,32 @@ public class LexiconCreationManager implements Manager, Cached {
         return fc;
     }
 
+    public Etymology createEtymology(String leID, String author, String label) throws ManagerException {
+        Timestamp tm = new Timestamp(System.currentTimeMillis());
+        String id = idInstancePrefix + tm.toString();
+        String created = timestampFormat.format(tm);
+        String _id = id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
+        RDFQueryUtil.update(SparqlInsertData.CREATE_ETYMOLOGY.replaceAll("_ID_", _id)
+                .replace("_LABEL_", label)
+                .replace("_AUTHOR_", author)
+                .replace("_CREATED_", created)
+                .replace("_MODIFIED_", created)
+                .replaceAll("_LEID_", leID));
+        return setEtymology(_id, created, author, label);
+    }
+    
+    private Etymology setEtymology(String id, String created, String author, String label) {
+        Etymology e = new Etymology();
+        e.setCreator(author);
+        e.setConfidence(1.0);
+        e.setLabel("Etymology of: " + label);
+        e.setEtymologyInstanceName(id);
+        e.setEtymology(getNamespace() + id);
+        e.setLastUpdate(created);
+        e.setCreationDate(created);
+        return e;
+    }
+    
     public LexicalSenseCore createLexicalSense(String leID, String author) throws ManagerException {
         Timestamp tm = new Timestamp(System.currentTimeMillis());
         String id = idInstancePrefix + tm.toString();

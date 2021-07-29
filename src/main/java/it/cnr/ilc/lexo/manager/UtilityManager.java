@@ -87,6 +87,18 @@ public final class UtilityManager implements Manager, Cached {
         }
         return null;
     }
+    
+    public String getLabel(String id) throws QueryEvaluationException {
+        String query = SparqlQueryUtil.LEXICAL_ENTRY_LABEL.replaceAll("_ID_", id);
+        try (TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {
+            while (result.hasNext()) {
+                BindingSet bs = result.next();
+                return (bs.getBinding(SparqlVariable.LABEL) != null) ? ((Literal) bs.getBinding(SparqlVariable.LABEL).getValue()).getLabel() : null;
+            }
+        } catch (QueryEvaluationException qee) {
+        }
+        return null;
+    }
 
     public String getLexicalEntryByForm(String id) throws QueryEvaluationException {
 //        TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL,

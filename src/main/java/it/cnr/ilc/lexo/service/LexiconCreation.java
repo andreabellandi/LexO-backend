@@ -12,10 +12,12 @@ import it.cnr.ilc.lexo.manager.LexiconCreationManager;
 import it.cnr.ilc.lexo.manager.ManagerException;
 import it.cnr.ilc.lexo.manager.ManagerFactory;
 import it.cnr.ilc.lexo.manager.UtilityManager;
+import it.cnr.ilc.lexo.service.data.lexicon.output.Etymology;
 import it.cnr.ilc.lexo.service.data.lexicon.output.FormCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Language;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalSenseCore;
+import it.cnr.ilc.lexo.service.helper.EtymologyHelper;
 import it.cnr.ilc.lexo.service.helper.FormCoreHelper;
 import it.cnr.ilc.lexo.service.helper.LanguageHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalEntryCoreHelper;
@@ -43,6 +45,7 @@ public class LexiconCreation extends Service {
     private final LexicalEntryCoreHelper lexicalEntryCoreHelper = new LexicalEntryCoreHelper();
     private final LanguageHelper languageHelper = new LanguageHelper();
     private final FormCoreHelper formCoreHelper = new FormCoreHelper();
+    private final EtymologyHelper etymologyHelper = new EtymologyHelper();
     private final LexicalSenseCoreHelper lexicalSenseCoreHelper = new LexicalSenseCoreHelper();
 
     
@@ -230,6 +233,60 @@ public class LexiconCreation extends Service {
                 }
                 LexicalSenseCore sc = lexiconManager.createLexicalSense(lexicalEntryID, author);
                 String json = lexicalSenseCoreHelper.toJson(sc);
+                return Response.ok(json)
+                        .type(MediaType.TEXT_PLAIN)
+                        .header("Access-Control-Allow-Headers", "content-type")
+                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                        .build();
+            } catch (ManagerException ex) {
+                Logger.getLogger(LexiconCreation.class.getName()).log(Level.SEVERE, null, ex);
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            }
+        } else {
+            return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Insertion denied, wrong key").build();
+        }
+    }
+    
+    @GET
+    @Path("etymology")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "etymology",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Etimology creation",
+            notes = "This method creates a new etymology and returns its id and some metadata")
+    public Response etymology(
+            @ApiParam(
+                    name = "lexicalEntryID",
+                    value = "the lexical entry id, the etymology belongs to",
+                    example = "MUStestNOUN",
+                    required = true)
+            @QueryParam("lexicalEntryID") String lexicalEntryID,
+            @ApiParam(
+                    name = "key",
+                    value = "authentication token",
+                    example = "lexodemo",
+                    required = true)
+            @QueryParam("key") String key,
+            @ApiParam(
+                    name = "author",
+                    value = "the account is being creating the etymology",
+                    example = "user7",
+                    required = true)
+            @QueryParam("author") String author) {
+        if (key.equals("PRINitant19")) {
+            try {
+                UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+                if (!utilityManager.isLexicalEntry(lexicalEntryID)) {
+                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + lexicalEntryID + " does not exist").build();
+                }
+                String label = utilityManager.getLabel(lexicalEntryID);
+                if (label == null) {
+                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("etymology cannot be created: the lexical entry label is not definied").build();
+                }
+                Etymology e = lexiconManager.createEtymology(lexicalEntryID, author, label);
+                String json = etymologyHelper.toJson(e);
                 return Response.ok(json)
                         .type(MediaType.TEXT_PLAIN)
                         .header("Access-Control-Allow-Headers", "content-type")

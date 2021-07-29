@@ -90,4 +90,9 @@ public class SparqlQueryUtil {
             + "SELECT (count(?count) as ?" + SparqlVariable.LABEL_COUNT + ") \n"
             + "WHERE { lex:_ID_ " + SparqlPrefix.LIME.getPrefix() + "entry ?count }";
 
+     public static final String LEXICAL_ENTRY_LABEL
+            = SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEX.getSparqlPrefix() + "\n"
+            + "SELECT ?" + SparqlVariable.LABEL + " \n"
+            + "WHERE { lex:_ID_ " + SparqlPrefix.RDFS.getPrefix() + "label ?" + SparqlVariable.LABEL + " }";
 }

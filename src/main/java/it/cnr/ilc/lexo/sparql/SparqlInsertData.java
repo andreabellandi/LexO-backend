@@ -30,8 +30,8 @@ public class SparqlInsertData {
             = SparqlPrefix.LIME.getSparqlPrefix() + "\n"
             + SparqlPrefix.LEX.getSparqlPrefix() + "\n"
             + SparqlPrefix.DCT.getSparqlPrefix() + "\n"
-            + "INSERT DATA { " + SparqlPrefix.LEX.getPrefix() + "_ID_ a " + SparqlPrefix.LIME.getPrefix() + "Lexicon ;\n" +
-              SparqlPrefix.LIME.getPrefix() + "language \"_LANG_\" ;\n"
+            + "INSERT DATA { " + SparqlPrefix.LEX.getPrefix() + "_ID_ a " + SparqlPrefix.LIME.getPrefix() + "Lexicon ;\n"
+            + SparqlPrefix.LIME.getPrefix() + "language \"_LANG_\" ;\n"
             + SparqlPrefix.LIME.getPrefix() + "linguisticCatalog <http://www.lexinfo.net/ontologies/3.0/lexinfo> ;\n"
             + SparqlPrefix.DCT.getPrefix() + "creator \"_AUTHOR_\" ;\n"
             + SparqlPrefix.DCT.getPrefix() + "created \"_CREATED_\" ;\n"
@@ -52,6 +52,24 @@ public class SparqlInsertData {
             + "    lex:_LEID_ ontolex:lexicalForm lex:_ID_ .\n"
             + "}";
 
+    public static final String CREATE_ETYMOLOGY
+            = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ETY.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.VS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
+            + "INSERT DATA {\n"
+            + "    lex:_ID_ a ety:Etymology ;\n"
+            + "                   rdfs:label \"Etymology of: _LABEL_\" ;\n"
+            + "                   lexinfo:confidence 1.0 ;\n"
+            + "                   dct:creator \"_AUTHOR_\" ;\n"
+            + "                   dct:created \"_CREATED_\" ;\n"
+            + "                   dct:modified \"_MODIFIED_\" . \n"
+            + "    lex:_LEID_ ety:etymology lex:_ID_ .\n"
+            + "}";
+
     public static final String CREATE_LEXICAL_SENSE
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
             + SparqlPrefix.LEX.getSparqlPrefix() + "\n"
@@ -65,7 +83,7 @@ public class SparqlInsertData {
             + "                   dct:modified \"_MODIFIED_\" . \n"
             + "    lex:_LEID_ ontolex:sense lex:_ID_ .\n"
             + "}";
-    
+
     public static final String CREATE_LINGUISTIC_RELATION
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
             + SparqlPrefix.LEX.getSparqlPrefix() + "\n"
@@ -77,7 +95,7 @@ public class SparqlInsertData {
             + "INSERT { lex:_ID_ _RELATION_ _VALUE_TO_INSERT_ ;\n"
             + "                  dct:modified _LAST_UPDATE_ . }\n"
             + "WHERE {  OPTIONAL { lex:_ID_ dct:modified ?modified . } }";
-    
+
     public static final String CREATE_GENERIC_RELATION
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
             + SparqlPrefix.LEX.getSparqlPrefix() + "\n"
