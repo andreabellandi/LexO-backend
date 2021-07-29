@@ -38,6 +38,7 @@ public class SparqlVariable {
     public static final String LEXICAL_ENTRY_TYPE = "type";
     public static final String LEXICAL_ENTRY_SUBTERM = "subterm";
     public static final String LEXICAL_ENTRY_CONSTITUENT = "constituent";
+    public static final String LEXICAL_ENTRY_ETYMOLOGY = "etymology";
     
     public static final String FORM = "form";
     public static final String FORM_INSTANCE_NAME = "formInstanceName";   

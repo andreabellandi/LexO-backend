@@ -38,6 +38,7 @@ public class LexicalEntryElementHelper extends TripleStoreDataHelper<LexicalEntr
         elems.add(getElement(bs, SparqlVariable.CONCEPT));
         elems.add(getElement(bs, SparqlVariable.LEXICAL_ENTRY_SUBTERM));
         elems.add(getElement(bs, SparqlVariable.LEXICAL_ENTRY_CONSTITUENT));
+        elems.add(getElement(bs, SparqlVariable.LEXICAL_ENTRY_ETYMOLOGY));
         return elems;
     }
     
