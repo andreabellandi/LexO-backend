@@ -46,7 +46,7 @@ public class LexiconCreation extends Service {
     private final LexicalSenseCoreHelper lexicalSenseCoreHelper = new LexicalSenseCoreHelper();
 
     
-     @GET
+    @GET
     @Path("language")
     @Produces(MediaType.APPLICATION_JSON)
     @RequestMapping(
