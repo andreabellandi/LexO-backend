@@ -38,8 +38,8 @@ public class SparqlUpdateData {
             + "                  dct:modified ?modified . } \n"
             + "INSERT { lex:_ID_ _RELATION_ _VALUE_TO_INSERT_ ;\n"
             + "                  dct:modified _LAST_UPDATE_ . }\n"
-            + "WHERE {  lex:_ID_ dct:modified ?modified . \n"
-            + "      OPTIONAL {  lex:_ID_ _RELATION_ _VALUE_TO_DELETE_ . } }";
+            + "WHERE {  OPTIONAL { lex:_ID_ dct:modified ?modified .} \n"
+            + "         OPTIONAL { lex:_ID_ _RELATION_ _VALUE_TO_DELETE_ . } }";
 
     public static final String UPDATE_LEXICAL_ENTRY_BACKWARDING_STATUS
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
@@ -106,8 +106,8 @@ public class SparqlUpdateData {
             + "                  dct:modified ?modified . } \n"
             + "INSERT { lex:_ID_ _RELATION_ _VALUE_TO_INSERT_ ;\n"
             + "                  dct:modified _LAST_UPDATE_ . }\n"
-            + "WHERE {  lex:_ID_ dct:modified ?modified . \n"
-            + "      OPTIONAL {  lex:_ID_ _RELATION_ _VALUE_TO_DELETE_ . } }";
+            + "WHERE {  OPTIONAL { lex:_ID_ dct:modified ?modified . }\n"
+            + "         OPTIONAL { lex:_ID_ _RELATION_ _VALUE_TO_DELETE_ . } }";
 
     public static final String UPDATE_FORM_TYPE
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
@@ -119,10 +119,10 @@ public class SparqlUpdateData {
             + "         lex:_LEID_ dct:modified ?modified . } \n"
             + "INSERT { lex:_LEID_ ontolex:_FORM_TYPE_ lex:_ID_ . \n"
             + "         lex:_LEID_ dct:modified _LAST_UPDATE_ . }\n"
-            + "WHERE {  lex:_LEID_ dct:modified ?modified . \n"
-            + "         OPTIONAL { lex:_LEID_ ontolex:lexicalForm lex:_ID_ . \n "
-            + "         lex:_LEID_ ontolex:canonicalForm lex:_ID_ . \n "
-            + "         lex:_LEID_ ontolex:otherForm lex:_ID_ . }\n"
+            + "WHERE {  OPTIONAL { lex:_LEID_ dct:modified ?modified . }\n"
+            + "         OPTIONAL { lex:_LEID_ ontolex:lexicalForm lex:_ID_ . }\n "
+            + "         OPTIONAL { lex:_LEID_ ontolex:canonicalForm lex:_ID_ . }\n "
+            + "         OPTIONAL { lex:_LEID_ ontolex:otherForm lex:_ID_ . }\n"
             + "} ";
 
     public static final String UPDATE_LEXICAL_SENSE
@@ -136,8 +136,8 @@ public class SparqlUpdateData {
             + "                  dct:modified ?modified . } \n"
             + "INSERT { lex:_ID_ _RELATION_ _VALUE_TO_INSERT_ ;\n"
             + "                  dct:modified _LAST_UPDATE_ . }\n"
-            + "WHERE {  lex:_ID_ dct:modified ?modified . \n"
-            + "      OPTIONAL {  lex:_ID_ _RELATION_ _VALUE_TO_DELETE_ . } }";
+            + "WHERE {  OPTIONAL { lex:_ID_ dct:modified ?modified . }\n"
+            + "         OPTIONAL { lex:_ID_ _RELATION_ _VALUE_TO_DELETE_ . } }";
 
     public static final String UPDATE_LINGUISTIC_RELATION
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
@@ -150,8 +150,8 @@ public class SparqlUpdateData {
             + "                  dct:modified ?modified . } \n"
             + "INSERT { lex:_ID_ _RELATION_ _VALUE_TO_INSERT_ ;\n"
             + "                  dct:modified _LAST_UPDATE_ . }\n"
-            + "WHERE {  lex:_ID_ dct:modified ?modified ; \n"
-            + "                 _RELATION_ _VALUE_TO_DELETE_ . }";
+            + "WHERE {  OPTIONAL { lex:_ID_ dct:modified ?modified . }\n"
+            + "         OPTIONAL { lex:_ID_ _RELATION_ _VALUE_TO_DELETE_ . } }";
 
     public static final String UPDATE_GENERIC_RELATION
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
@@ -164,7 +164,7 @@ public class SparqlUpdateData {
             + "                  dct:modified ?modified . } \n"
             + "INSERT { lex:_ID_ _RELATION_ _VALUE_TO_INSERT_ ;\n"
             + "                  dct:modified _LAST_UPDATE_ . }\n"
-            + "WHERE {  lex:_ID_ dct:modified ?modified . \n"
-            + "      OPTIONAL {  lex:_ID_ _RELATION_ _VALUE_TO_DELETE_ . } }";
+            + "WHERE {  OPTIONAL { lex:_ID_ dct:modified ?modified . }\n"
+            + "         OPTIONAL { lex:_ID_ _RELATION_ _VALUE_TO_DELETE_ . } }";
 
 }

@@ -356,7 +356,9 @@ public class LexiconData extends Service {
                             || ff.getExtendTo().equals(EnumUtil.AcceptedSearchFormExtendTo.Hyponym.toString())) {
                         int lenght = 1;
                         List<FormItem> forms = new ArrayList();
+                        int count = 0;
                         for (RelationPath c : pathLenghtHelper.newDataList(lexiconManager.getRelationByLenght(ff.getExtendTo(), sense))) {
+                            count++;
                             if (ff.getExtensionDegree() >= c.getLenght()) {
                                 if (lenght == c.getLenght()) {
                                     targetSense = c.getLexicalSense();
@@ -374,6 +376,7 @@ public class LexiconData extends Service {
                                     targetSenseInstanceName = c.getLexicalSenseInstanceName();
                                 }
                             }
+                            System.out.println(" --- " + count);
                         }
                         list.add(new FormList(ff.getExtendTo(), lenght, lexiconManager.getNamespace() + sense, sense,
                                 targetSense, targetSenseInstanceName, lexiconManager.getFormItemListCopy(forms)));

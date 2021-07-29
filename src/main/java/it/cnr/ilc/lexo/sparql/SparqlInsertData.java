@@ -76,7 +76,7 @@ public class SparqlInsertData {
             + "DELETE { lex:_ID_ dct:modified ?modified . } \n"
             + "INSERT { lex:_ID_ _RELATION_ _VALUE_TO_INSERT_ ;\n"
             + "                  dct:modified _LAST_UPDATE_ . }\n"
-            + "WHERE {  lex:_ID_ dct:modified ?modified . }";
+            + "WHERE {  OPTIONAL { lex:_ID_ dct:modified ?modified . } }";
     
     public static final String CREATE_GENERIC_RELATION
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
@@ -88,5 +88,5 @@ public class SparqlInsertData {
             + "DELETE { lex:_ID_ dct:modified ?modified . } \n"
             + "INSERT { lex:_ID_ _RELATION_ _VALUE_TO_INSERT_ ;\n"
             + "                  dct:modified _LAST_UPDATE_ . }\n"
-            + "WHERE {  lex:_ID_ dct:modified ?modified . }";
+            + "WHERE {  OPTIONAL { lex:_ID_ dct:modified ?modified . } }";
 }
