@@ -161,7 +161,7 @@ public class LexiconCreationManager implements Manager, Cached {
         Etymology e = new Etymology();
         e.setCreator(author);
         e.setConfidence(1.0);
-        e.setLabel("Etymology of: " + label);
+        e.setLabel("Etymology of " + label);
         e.setEtymologyInstanceName(id);
         e.setEtymology(getNamespace() + id);
         e.setLastUpdate(created);
