@@ -385,22 +385,24 @@ public class LexiconData extends Service {
                         if (_resForms.hasNext()) {
                             List<FormItem> lfi = formItemsHelper.newDataList(_resForms);
                             List<FormItem> newFormList = new ArrayList<>();
-                            String target = "";
+                            String target = "", targetInstanceName = "";
                             for (FormItem fi : lfi) {
                                 if (target.isEmpty()) {
-                                    target = fi.getTargetSenseInstanceName();
+                                    target = fi.getTargetSense();
+                                    targetInstanceName = fi.getTargetSenseInstanceName();
                                 }
-                                if (target.equals(fi.getTargetSenseInstanceName())) {
+                                if (target.equals(fi.getTargetSense())) {
                                     newFormList.add(fi);
                                 } else {
                                     list.add(new FormList("synonym", 1, lexiconManager.getNamespace() + sense, sense,
-                                            target, target, lexiconManager.getFormItemListCopy(newFormList)));
-                                    target = fi.getTargetSenseInstanceName();
+                                            target, targetInstanceName, lexiconManager.getFormItemListCopy(newFormList)));
+                                    target = fi.getTargetSense();
+                                    targetInstanceName = fi.getTargetSenseInstanceName();
                                     newFormList.clear();
                                 }
                             }
                             list.add(new FormList("synonym", 1, lexiconManager.getNamespace() + sense, sense,
-                                    target, target, lexiconManager.getFormItemListCopy(newFormList)));
+                                    target, targetInstanceName, lexiconManager.getFormItemListCopy(newFormList)));
                         }
                     }
                 }
