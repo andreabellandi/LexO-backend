@@ -205,6 +205,8 @@ public class LexiconDataManager implements Manager, Cached {
             _fi.setLexicalEntry(fi.getLexicalEntry());
             _fi.setLexicalEntryInstanceName(fi.getLexicalEntryInstanceName());
             _fi.setMorphology(getMorphologyListCopy(fi.getMorphology()));
+            _fi.setTargetSense(fi.getTargetSense());
+            _fi.setTargetSenseInstanceName(fi.getTargetSenseInstanceName());
             _forms.add(_fi);
         }
         return _forms;

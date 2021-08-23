@@ -349,7 +349,9 @@ public class LexiconData extends Service {
             List<FormList> list = new ArrayList();
             TupleQueryResult res = lexiconManager.getFilterdForms(ff);
             String targetSense = "", targetSenseInstanceName = "";
-            list.add(new FormList("", 0, "", "", targetSense, targetSenseInstanceName, formItemsHelper.newDataList(res)));
+            list.add(new FormList("", 0, "", "", 
+//                    targetSense, targetSenseInstanceName, 
+                    formItemsHelper.newDataList(res)));
             if (!ff.getExtendTo().equals(EnumUtil.AcceptedSearchFormExtendTo.None.toString())) {
                 for (String sense : ff.getSenseUris()) {
                     if (ff.getExtendTo().equals(EnumUtil.AcceptedSearchFormExtendTo.Hypernym.toString())
@@ -364,22 +366,36 @@ public class LexiconData extends Service {
                                     targetSense = c.getLexicalSense();
                                     targetSenseInstanceName = c.getLexicalSenseInstanceName();
                                     TupleQueryResult _res = lexiconManager.getFilterdForms(c.getLexicalEntryInstanceName());
-                                    forms.addAll(formItemsHelper.newDataList(_res));
+                                    List<FormItem> _forms = new ArrayList();
+                                    _forms.addAll(formItemsHelper.newDataList(_res));
+                                    for (FormItem fi : _forms) {
+                                        fi.setTargetSense(targetSense);
+                                        fi.setTargetSenseInstanceName(targetSenseInstanceName);
+                                    }
+                                    forms.addAll(_forms);
                                 } else {
                                     list.add(new FormList(ff.getExtendTo(), lenght, lexiconManager.getNamespace() + sense, sense,
-                                            targetSense, targetSenseInstanceName, lexiconManager.getFormItemListCopy(forms)));
+//                                            targetSense, targetSenseInstanceName, 
+                                            lexiconManager.getFormItemListCopy(forms)));
                                     forms.clear();
                                     lenght++;
-                                    TupleQueryResult _res = lexiconManager.getFilterdForms(c.getLexicalEntryInstanceName());
-                                    forms.addAll(formItemsHelper.newDataList(_res));
                                     targetSense = c.getLexicalSense();
                                     targetSenseInstanceName = c.getLexicalSenseInstanceName();
+                                    TupleQueryResult _res = lexiconManager.getFilterdForms(c.getLexicalEntryInstanceName());
+                                    List<FormItem> _forms = new ArrayList();
+                                    _forms.addAll(formItemsHelper.newDataList(_res));
+                                    for (FormItem fi : _forms) {
+                                        fi.setTargetSense(targetSense);
+                                        fi.setTargetSenseInstanceName(targetSenseInstanceName);
+                                    }
+                                    forms.addAll(_forms);
                                 }
                             }
                             System.out.println(" --- " + count);
                         }
                         list.add(new FormList(ff.getExtendTo(), lenght, lexiconManager.getNamespace() + sense, sense,
-                                targetSense, targetSenseInstanceName, lexiconManager.getFormItemListCopy(forms)));
+//                                targetSense, targetSensceInstanceName, 
+                                lexiconManager.getFormItemListCopy(forms)));
                     } else if (ff.getExtendTo().equals(EnumUtil.AcceptedSearchFormExtendTo.Synonym.toString())) {
                         TupleQueryResult _resForms = lexiconManager.getFormsBySenseRelation(ff, sense);
                         if (_resForms.hasNext()) {
@@ -395,14 +411,16 @@ public class LexiconData extends Service {
                                     newFormList.add(fi);
                                 } else {
                                     list.add(new FormList("synonym", 1, lexiconManager.getNamespace() + sense, sense,
-                                            target, targetInstanceName, lexiconManager.getFormItemListCopy(newFormList)));
+//                                            target, targetInstanceName, 
+                                            lexiconManager.getFormItemListCopy(newFormList)));
                                     target = fi.getTargetSense();
                                     targetInstanceName = fi.getTargetSenseInstanceName();
                                     newFormList.clear();
                                 }
                             }
                             list.add(new FormList("synonym", 1, lexiconManager.getNamespace() + sense, sense,
-                                    target, targetInstanceName, lexiconManager.getFormItemListCopy(newFormList)));
+//                                    target, targetInstanceName, 
+                                    lexiconManager.getFormItemListCopy(newFormList)));
                         }
                     }
                 }
