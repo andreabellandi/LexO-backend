@@ -31,8 +31,8 @@ public class FormItemsHelper extends TripleStoreDataHelper<FormItem> {
         data.setCreationDate(getStringValue(bs, SparqlVariable.CREATION_DATE));
         data.setLexicalEntry(getStringValue(bs, SparqlVariable.LEXICAL_ENTRY));
         data.setLexicalEntryInstanceName(getLocalName(bs, SparqlVariable.LEXICAL_ENTRY));
-        data.setTargetSense(getLocalName(bs, SparqlVariable.TARGET));
-        data.setTargetSenseInstanceName(getStringValue(bs, SparqlVariable.TARGET));
+        data.setTargetSenseInstanceName(getLocalName(bs, SparqlVariable.TARGET));
+        data.setTargetSense(getStringValue(bs, SparqlVariable.TARGET));
     }
 
     @Override
