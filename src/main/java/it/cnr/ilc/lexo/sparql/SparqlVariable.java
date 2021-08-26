@@ -15,6 +15,7 @@ public class SparqlVariable {
     public static final String LEXICAL_ENTRY_INDEX = "lexicalEntryIndex";
     public static final String FORM_INDEX = "formIndex";
     public static final String LEXICAL_SENSE_INDEX = "lexicalSenseIndex";
+    public static final String CONCEPT_REFERENCE_INDEX = "conceptReferenceIndex";
     
     // varibale names
     public static final String TOTAL_HITS = "totalHits";
