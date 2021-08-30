@@ -18,8 +18,10 @@ import it.cnr.ilc.lexo.service.data.lexicon.input.FormFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.output.FormItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryElementItem;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalEntryFilter;
+import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalEntryList;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalSenseFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Counting;
+import it.cnr.ilc.lexo.service.data.lexicon.output.FormByLexicalEntry;
 import it.cnr.ilc.lexo.service.data.lexicon.output.FormCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.FormList;
 import it.cnr.ilc.lexo.service.data.lexicon.output.HitsDataList;
@@ -31,6 +33,7 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalSenseItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LinkedEntity;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ReferencedLinguisticObject;
 import it.cnr.ilc.lexo.service.data.lexicon.output.RelationPath;
+import it.cnr.ilc.lexo.service.helper.FormByLexicalEntryHelper;
 import it.cnr.ilc.lexo.service.helper.FormCoreHelper;
 import it.cnr.ilc.lexo.service.helper.FormItemsHelper;
 import it.cnr.ilc.lexo.service.helper.FormListHelper;
@@ -70,7 +73,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * @author andreabellandi
  */
 @Path("queryExpansion")
-@Api("Query Expansion")
+@Api("Query Expansion Support")
 public class QueryExpansion extends Service {
 
     private static final Logger logger = LoggerFactory.getLogger(QueryExpansion.class);
@@ -78,6 +81,7 @@ public class QueryExpansion extends Service {
 
     private final QueryExpansionManager queryExpansionManager = ManagerFactory.getManager(QueryExpansionManager.class);
     private final ReferencedLinguisticObjectListHelper referencedLinguisticObjectListHelper = new ReferencedLinguisticObjectListHelper();
+    private final FormByLexicalEntryHelper formByLexicalEntryHelper = new FormByLexicalEntryHelper();
  
     @POST
     @Path("referencedLinguisticObject")
@@ -93,6 +97,27 @@ public class QueryExpansion extends Service {
         TupleQueryResult lingObjs = queryExpansionManager.getReferencedLinguisticObject(cl);
         List<ReferencedLinguisticObject> los = referencedLinguisticObjectListHelper.newDataList(lingObjs);
         String json = referencedLinguisticObjectListHelper.toJson(los);
+        return Response.ok(json)
+                .type(MediaType.TEXT_PLAIN)
+                .header("Access-Control-Allow-Headers", "content-type")
+                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                .build();
+    }
+    
+    @POST
+    @Path("forms")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.POST,
+            value = "/forms",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Lexical entry forms",
+            notes = "This method returns all the forms of a set of lexical entries according to the input")
+    public Response forms(@QueryParam("key") String key, LexicalEntryList lel) throws ManagerException {
+        TupleQueryResult _forms = queryExpansionManager.getForms(lel);
+        List<FormByLexicalEntry> forms = formByLexicalEntryHelper.newDataList(_forms);
+        String json = formByLexicalEntryHelper.toJson(forms);
         return Response.ok(json)
                 .type(MediaType.TEXT_PLAIN)
                 .header("Access-Control-Allow-Headers", "content-type")

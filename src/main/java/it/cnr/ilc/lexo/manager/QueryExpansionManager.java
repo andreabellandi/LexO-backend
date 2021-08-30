@@ -10,6 +10,7 @@ import it.cnr.ilc.lexo.service.data.lexicon.input.ConceptList;
 import it.cnr.ilc.lexo.service.data.lexicon.input.FormBySenseFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.input.FormFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalEntryFilter;
+import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalEntryList;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalSenseFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Counting;
 import it.cnr.ilc.lexo.service.data.lexicon.output.FormCore;
@@ -60,10 +61,10 @@ public class QueryExpansionManager implements Manager, Cached {
     public TupleQueryResult getReferencedLinguisticObject(ConceptList cl) throws ManagerException {
         String conceptsList = "";
         if (cl.getConceptList() == null) {
-            throw new ManagerException("concepts list canot be empty");
+            throw new ManagerException("concepts list cannot be empty");
         } else {
             if (cl.getConceptList().isEmpty()) {
-                throw new ManagerException("concepts list canot be empty");
+                throw new ManagerException("concepts list cannot be empty");
             } else {
                 for (String c : cl.getConceptList()) {
                     conceptsList = conceptsList + "\\\"" + ontologyNamespace + c + "\\\"" + " OR ";
@@ -72,6 +73,24 @@ public class QueryExpansionManager implements Manager, Cached {
         }
         String query = SparqlQueryExpansion.QUERY_EXPANSION_REFERENCED_LINGUISTIC_OBJECT.
                 replace("[CONCEPTS_LIST]", conceptsList.substring(0, conceptsList.length() - 3));
+        return RDFQueryUtil.evaluateTQuery(query);
+    }
+
+    public TupleQueryResult getForms(LexicalEntryList lel) throws ManagerException {
+        String lexicalEntryList = "";
+        if (lel.getLexicalEntryList() == null) {
+            throw new ManagerException("lexical entries list cannot be empty");
+        } else {
+            if (lel.getLexicalEntryList().isEmpty()) {
+                throw new ManagerException("lexical entries list cannot be empty");
+            } else {
+                for (String le : lel.getLexicalEntryList()) {
+                    lexicalEntryList = lexicalEntryList + "\\\"" + namespace + le + "\\\"" + " OR ";
+                }
+            }
+        }
+        String query = SparqlQueryExpansion.QUERY_EXPANSION_FORMS.
+                replace("[LEXICAL_ENTRY_LIST]", lexicalEntryList.substring(0, lexicalEntryList.length() - 3));
         return RDFQueryUtil.evaluateTQuery(query);
     }
 

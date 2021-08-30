@@ -36,4 +36,36 @@ public class SparqlQueryExpansion {
             + "    ?" + SparqlVariable.LEXICAL_ENTRY + " ontolex:canonicalForm [ ontolex:writtenRep ?" + SparqlVariable.WRITTEN_REPRESENTATION + " ] . \n"
             + "    ?" + SparqlVariable.LEXICAL_ENTRY + " lexinfo:partOfSpeech ?" + SparqlVariable.LEXICAL_ENTRY_POS + " .\n"
             + "}";
+
+    public static final String QUERY_EXPANSION_FORMS 
+            = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+            + SparqlPrefix.INST.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTO.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LUC.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
+            + SparqlPrefix.SKOS.getSparqlPrefix() + "\n"
+            + "SELECT"
+            + " ?" + SparqlVariable.FORM
+            + " ?" + SparqlVariable.WRITTEN_REPRESENTATION
+            + " ?" + SparqlVariable.LEXICAL_ENTRY
+            + " ?" + SparqlVariable.LEXICAL_ENTRY_POS
+            + " (GROUP_CONCAT(concat(str(?tn),\":\",str(?tv));SEPARATOR=\";\") AS ?" + SparqlVariable.MORPHOLOGY + ")\n"
+            + "FROM onto:explicit\n"
+            + "WHERE {\n"
+            + "   ?search a inst:" + SparqlVariable.LEXICAL_ENTRY_INDEX + " ;\n"
+            + "             luc:query \"lexicalEntryIRI:[LEXICAL_ENTRY_LIST]\" ;\n"
+            + "             luc:orderBy \"lexicalEntryLabel\" ;\n"
+            + "             luc:entities ?" + SparqlVariable.LEXICAL_ENTRY + " .\n"
+            + "   ?" + SparqlVariable.LEXICAL_ENTRY + " ontolex:canonicalForm|ontolex:otherForm ?" + SparqlVariable.FORM + " .\n"
+            + "   ?" + SparqlVariable.LEXICAL_ENTRY + " lexinfo:partOfSpeech ?" + SparqlVariable.LEXICAL_ENTRY_POS + " .\n"
+            + "   ?" + SparqlVariable.FORM + " ontolex:writtenRep ?" + SparqlVariable.WRITTEN_REPRESENTATION + " .\n"
+            + "   OPTIONAL { ?" + SparqlVariable.FORM + " ?" + SparqlVariable.MORPHOLOGY_TRAIT_NAME + " ?" + SparqlVariable.MORPHOLOGY_TRAIT_VALUE + " .\n"
+            + "              FILTER(STRSTARTS(STR(?" + SparqlVariable.MORPHOLOGY_TRAIT_NAME + "), str(lexinfo:))) }\n"
+            + "   BIND(strafter(str(?" + SparqlVariable.MORPHOLOGY_TRAIT_NAME + "),str(lexinfo:)) as ?tn)\n"
+            + "   BIND(strafter(str(?" + SparqlVariable.MORPHOLOGY_TRAIT_VALUE + "),str(lexinfo:)) as ?tv)\n"
+            + "   } GROUP BY ?" + SparqlVariable.FORM + " ?" + SparqlVariable.LEXICAL_ENTRY_POS + " ?" + SparqlVariable.WRITTEN_REPRESENTATION + " ?" + SparqlVariable.LEXICAL_ENTRY + "\n"
+            + "  ";
 }
