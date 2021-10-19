@@ -8,15 +8,19 @@ package it.cnr.ilc.lexo.service;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import it.cnr.ilc.lexo.manager.BibliographyManager;
 import it.cnr.ilc.lexo.manager.LexiconCreationManager;
 import it.cnr.ilc.lexo.manager.ManagerException;
 import it.cnr.ilc.lexo.manager.ManagerFactory;
 import it.cnr.ilc.lexo.manager.UtilityManager;
+import it.cnr.ilc.lexo.service.data.lexicon.input.Bibliography;
+import it.cnr.ilc.lexo.service.data.lexicon.output.BibliographicItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Etymology;
 import it.cnr.ilc.lexo.service.data.lexicon.output.FormCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Language;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalSenseCore;
+import it.cnr.ilc.lexo.service.helper.BibliographyHelper;
 import it.cnr.ilc.lexo.service.helper.EtymologyHelper;
 import it.cnr.ilc.lexo.service.helper.FormCoreHelper;
 import it.cnr.ilc.lexo.service.helper.LanguageHelper;
@@ -24,7 +28,9 @@ import it.cnr.ilc.lexo.service.helper.LexicalEntryCoreHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalSenseCoreHelper;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -42,13 +48,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class LexiconCreation extends Service {
 
     private final LexiconCreationManager lexiconManager = ManagerFactory.getManager(LexiconCreationManager.class);
+    private final BibliographyManager bibliographyManager = ManagerFactory.getManager(BibliographyManager.class);
     private final LexicalEntryCoreHelper lexicalEntryCoreHelper = new LexicalEntryCoreHelper();
     private final LanguageHelper languageHelper = new LanguageHelper();
     private final FormCoreHelper formCoreHelper = new FormCoreHelper();
     private final EtymologyHelper etymologyHelper = new EtymologyHelper();
+    private final BibliographyHelper bibliographyHelper = new BibliographyHelper();
     private final LexicalSenseCoreHelper lexicalSenseCoreHelper = new LexicalSenseCoreHelper();
 
-    
     @GET
     @Path("language")
     @Produces(MediaType.APPLICATION_JSON)
@@ -99,7 +106,7 @@ public class LexiconCreation extends Service {
             return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Insertion denied, wrong key").build();
         }
     }
-    
+
     @GET
     @Path("lexicalEntry")
     @Produces(MediaType.APPLICATION_JSON)
@@ -140,7 +147,7 @@ public class LexiconCreation extends Service {
             return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Insertion denied, wrong key").build();
         }
     }
-    
+
     @GET
     @Path("form")
     @Produces(MediaType.APPLICATION_JSON)
@@ -195,7 +202,7 @@ public class LexiconCreation extends Service {
             return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Insertion denied, wrong key").build();
         }
     }
-    
+
     @GET
     @Path("lexicalSense")
     @Produces(MediaType.APPLICATION_JSON)
@@ -246,7 +253,7 @@ public class LexiconCreation extends Service {
             return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Insertion denied, wrong key").build();
         }
     }
-    
+
     @GET
     @Path("etymology")
     @Produces(MediaType.APPLICATION_JSON)
@@ -287,6 +294,60 @@ public class LexiconCreation extends Service {
                 }
                 Etymology e = lexiconManager.createEtymology(lexicalEntryID, author, label);
                 String json = etymologyHelper.toJson(e);
+                return Response.ok(json)
+                        .type(MediaType.TEXT_PLAIN)
+                        .header("Access-Control-Allow-Headers", "content-type")
+                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                        .build();
+            } catch (ManagerException ex) {
+                Logger.getLogger(LexiconCreation.class.getName()).log(Level.SEVERE, null, ex);
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            }
+        } else {
+            return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Insertion denied, wrong key").build();
+        }
+    }
+
+    @POST
+    @Path("bibliography")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.POST,
+            value = "bibliography",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Bibliographic reference creation",
+            notes = "This method creates a new bibliography for a lexical entity and returns it")
+    public Response bibliography(
+            @ApiParam(
+                    name = "lexicalEntityID",
+                    value = "the lexical entity id, the bibliography refers to",
+                    example = "MUStestNOUN",
+                    required = true)
+            @QueryParam("lexicalEntityID") String lexicalEntityID,
+            @ApiParam(
+                    name = "key",
+                    value = "authentication token",
+                    example = "lexodemo",
+                    required = true)
+            @QueryParam("key") String key,
+            @ApiParam(
+                    name = "author",
+                    value = "the account is being creating the bibliographic link",
+                    example = "user7",
+                    required = true)
+            @QueryParam("author") String author,
+            Bibliography bibliography) {
+        if (key.equals("PRINitant19")) {
+            try {
+                if ((bibliography.getId() == null || bibliography.getId().isEmpty())
+                        || (bibliography.getAuthor() == null || bibliography.getAuthor().isEmpty())
+                        || (bibliography.getTitle() == null || bibliography.getTitle().isEmpty())
+                        || (bibliography.getDate() == null || bibliography.getDate().isEmpty())) {
+                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("id, title, author, and date fileds of bibliography must be defined").build();
+                }
+                BibliographicItem bi = bibliographyManager.createBibliographyReference(lexicalEntityID, author, bibliography);
+                String json = bibliographyHelper.toJson(bi);
                 return Response.ok(json)
                         .type(MediaType.TEXT_PLAIN)
                         .header("Access-Control-Allow-Headers", "content-type")

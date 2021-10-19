@@ -43,6 +43,7 @@ public class SparqlPrefix {
 
     // data
     public static Namespace LEX = new Namespace("lex:", "http://lexica/mylexicon#");
+    public static Namespace LEXBIB = new Namespace("lexbib:", "http://lexica/mylexicon/bibliography#");
     public static Namespace ONTOLOGY = new Namespace("ontology:", "http://simpleOntology#");
 
 }

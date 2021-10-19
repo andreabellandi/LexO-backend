@@ -5,7 +5,7 @@
  */
 package it.cnr.ilc.lexo.service.helper;
 
-import it.cnr.ilc.lexo.service.data.lexicon.output.FormList;
+import it.cnr.ilc.lexo.service.data.lexicon.output.queryExpansion.FormList;
 import org.eclipse.rdf4j.query.BindingSet;
 
 /**

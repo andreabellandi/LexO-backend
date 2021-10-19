@@ -6,6 +6,7 @@
 package it.cnr.ilc.lexo.manager;
 
 import it.cnr.ilc.lexo.LexOProperties;
+import it.cnr.ilc.lexo.service.data.lexicon.input.EtymologyUpdater;
 import it.cnr.ilc.lexo.service.data.lexicon.input.FormUpdater;
 import it.cnr.ilc.lexo.service.data.lexicon.input.GenericRelationUpdater;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LanguageUpdater;
@@ -124,6 +125,10 @@ public final class LexiconUpdateManager implements Manager, Cached {
         Manager.validateWithEnum("attribute", EnumUtil.LexicalSenseAttributes.class, attribute);
     }
 
+    public void validateEtymologyAttribute(String attribute) throws ManagerException {
+        Manager.validateWithEnum("attribute", EnumUtil.EtymologyAttributes.class, attribute);
+    }
+
     public String updateLexiconLanguage(String id, LanguageUpdater lu, String user) throws ManagerException {
         validateLexiconLanguageAttribute(lu.getRelation());
         if (lu.getRelation().equals(EnumUtil.LanguageAttributes.Lexvo.toString())) {
@@ -188,8 +193,8 @@ public final class LexiconUpdateManager implements Manager, Cached {
                     (lang != null) ? ("\"" + leu.getValue() + "\"@" + lang) : "\"" + leu.getValue() + "\"", "?" + SparqlVariable.TARGET);
         } else if (leu.getRelation().equals(EnumUtil.LexicalEntryAttributes.Type.toString())) {
             validateLexicalEntryType(leu.getValue());
-            return updateLexicalEntry(id, SparqlPrefix.RDF.getPrefix() + leu.getRelation(), 
-                    (!leu.getValue().equals(OntoLexEntity.LexicalEntryTypes.Etymon.toString())) ? SparqlPrefix.ONTOLEX.getPrefix() + leu.getValue() : SparqlPrefix.ETY.getPrefix() + leu.getValue(), 
+            return updateLexicalEntry(id, SparqlPrefix.RDF.getPrefix() + leu.getRelation(),
+                    (!leu.getValue().equals(OntoLexEntity.LexicalEntryTypes.Etymon.toString())) ? SparqlPrefix.ONTOLEX.getPrefix() + leu.getValue() : SparqlPrefix.ETY.getPrefix() + leu.getValue(),
                     "?" + SparqlVariable.TARGET);
         } else if (leu.getRelation().equals(EnumUtil.LexicalEntryAttributes.Status.toString())) {
             validateLexicalEntryStatus(leu.getValue());
@@ -463,6 +468,36 @@ public final class LexiconUpdateManager implements Manager, Cached {
         return lastupdate;
     }
 
+    public String updateEtymology(String id, EtymologyUpdater eu, String user) throws ManagerException {
+        validateEtymologyAttribute(eu.getRelation());
+        if (eu.getRelation().equals(EnumUtil.EtymologyAttributes.Note.toString())) {
+            return updateEtymology(id, SparqlPrefix.SKOS.getPrefix() + eu.getRelation(), "\"" + eu.getValue() + "\"");
+        } else if (eu.getRelation().equals(EnumUtil.EtymologyAttributes.Confidence.toString())) {
+            return updateEtymology(id, SparqlPrefix.LEXINFO.getPrefix() + eu.getRelation(), Float.toString(Float.parseFloat(eu.getValue())));
+        } else if (eu.getRelation().equals(EnumUtil.EtymologyAttributes.Label.toString())) {
+            return updateEtymology(id, SparqlPrefix.RDFS.getPrefix() + eu.getRelation(),  "\"" + eu.getValue() + "\"");
+        } else if (eu.getRelation().equals(EnumUtil.EtymologyAttributes.HypothesisOf.toString())) {
+            return updateEtymology(id, SparqlPrefix.RDFS.getPrefix() + "comment", //eu.getRelation(),
+                    "\"" + eu.getValue() + "\"");
+        } else {
+            return null;
+        }
+    }
+
+    public String updateEtymology(String id, String relation, String valueToInsert) throws ManagerException, UpdateExecutionException {
+        if (valueToInsert.isEmpty()) {
+            throw new ManagerException("value cannot be empty");
+        }
+        String lastupdate = timestampFormat.format(new Timestamp(System.currentTimeMillis()));
+        RDFQueryUtil.update(SparqlUpdateData.UPDATE_ETYMOLOGY.replaceAll("_ID_", id)
+                .replaceAll("_RELATION_", relation)
+                .replaceAll("_VALUE_TO_INSERT_", valueToInsert)
+                .replaceAll("_VALUE_TO_DELETE_", "?" + SparqlVariable.TARGET)
+                .replaceAll("_LAST_UPDATE_", "\"" + lastupdate + "\""));
+
+        return lastupdate;
+    }
+
     public String updateLinguisticRelation(String id, LinguisticRelationUpdater lru) throws ManagerException {
         if (lru.getType().equals(EnumUtil.LinguisticRelation.Morphology.toString())) {
             validateMorphology(lru.getRelation(), lru.getValue());
@@ -538,8 +573,8 @@ public final class LexiconUpdateManager implements Manager, Cached {
                         namespace);
             } else {
                 validateURL(gru.getValue());
-                setPrefixes(gru, gru.getRelation().equals(EnumUtil.GenericRelationReference.sameAs.toString()) ? SparqlPrefix.OWL.getUri() : SparqlPrefix.RDFS.getUri(), 
-                        "", 
+                setPrefixes(gru, gru.getRelation().equals(EnumUtil.GenericRelationReference.sameAs.toString()) ? SparqlPrefix.OWL.getUri() : SparqlPrefix.RDFS.getUri(),
+                        "",
                         "");
             }
             return (gru.getCurrentValue() != null)

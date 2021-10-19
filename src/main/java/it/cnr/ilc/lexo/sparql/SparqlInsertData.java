@@ -63,7 +63,7 @@ public class SparqlInsertData {
             + "INSERT DATA {\n"
             + "    lex:_ID_ a ety:Etymology ;\n"
             + "                   rdfs:label \"Etymology of: _LABEL_\" ;\n"
-            + "                   lexinfo:confidence 1.0 ;\n"
+            + "                   lexinfo:confidence 1 ;\n"
             + "                   dct:creator \"_AUTHOR_\" ;\n"
             + "                   dct:created \"_CREATED_\" ;\n"
             + "                   dct:modified \"_MODIFIED_\" . \n"
@@ -107,4 +107,25 @@ public class SparqlInsertData {
             + "INSERT { lex:_ID_ _RELATION_ _VALUE_TO_INSERT_ ;\n"
             + "                  dct:modified _LAST_UPDATE_ . }\n"
             + "WHERE {  OPTIONAL { lex:_ID_ dct:modified ?modified . } }";
+
+    public static final String CREATE_BIBLIOGRAPHIC_REFERENCE
+            = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.VS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXBIB.getSparqlPrefix() + "\n"
+            + "INSERT DATA {\n"
+            + "    lexbib:_ID_ a rdf:Description ; \n"
+            + "        rdfs:label \"zotero key _KEY_\" ;\n"
+            + "        _OPTIONAL_"
+            + "        dct:title \"_TITLE_\" ;\n"
+            + "        dct:date \"_DATE_\" ;\n"
+            + "        dct:contributor \"_AUTHORS_\" ;\n  "
+            + "        dct:creator \"_AUTHOR_\" ;\n"
+            + "        dct:created \"_CREATED_\" ;\n"
+            + "        dct:modified \"_MODIFIED_\" . \n"
+            + "    lex:_LEID_ dct:references lexbib:_ID_ .\n"
+            + "}";
 }

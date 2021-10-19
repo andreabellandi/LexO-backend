@@ -180,5 +180,12 @@ public final class UtilityManager implements Manager, Cached {
         String query = SparqlQueryUtil.IS_LEXICALSENSE_ID.replaceAll("_ID_", id);
         return RDFQueryUtil.evaluateBQuery(query);
     }
+    
+    public boolean isEtymology(String id) throws QueryEvaluationException {
+//        BooleanQuery ask = GraphDbUtil.getConnection().prepareBooleanQuery(QueryLanguage.SPARQL,
+//                SparqlQueryUtil.IS_FORM_ID.replaceAll("_ID_", id));
+        String query = SparqlQueryUtil.IS_ETYMOLOGY_ID.replaceAll("_ID_", id);
+        return RDFQueryUtil.evaluateBQuery(query);
+    }
 
 }

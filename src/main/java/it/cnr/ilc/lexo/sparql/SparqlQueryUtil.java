@@ -58,6 +58,11 @@ public class SparqlQueryUtil {
             = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
             + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
             + "ASK { " + SparqlPrefix.LEX.getPrefix() + "_ID_ a " + SparqlPrefix.ONTOLEX.getPrefix() + "Form }";
+    
+    public static final String IS_ETYMOLOGY_ID
+            = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ETY.getSparqlPrefix() + "\n"
+            + "ASK { " + SparqlPrefix.LEX.getPrefix() + "_ID_ a " + SparqlPrefix.ETY.getPrefix() + "Etymology }";
 
     public static final String IS_LEXICALSENSE_ID
             = SparqlPrefix.LEX.getSparqlPrefix() + "\n"

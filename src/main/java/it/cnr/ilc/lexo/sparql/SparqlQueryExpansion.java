@@ -68,4 +68,65 @@ public class SparqlQueryExpansion {
             + "   BIND(strafter(str(?" + SparqlVariable.MORPHOLOGY_TRAIT_VALUE + "),str(lexinfo:)) as ?tv)\n"
             + "   } GROUP BY ?" + SparqlVariable.FORM + " ?" + SparqlVariable.LEXICAL_ENTRY_POS + " ?" + SparqlVariable.WRITTEN_REPRESENTATION + " ?" + SparqlVariable.LEXICAL_ENTRY + "\n"
             + "  ";
+    
+    public static final String DATA_FORMS_BY_LEXICAL_SENSE
+            = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+            + SparqlPrefix.INST.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTO.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LUC.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
+            + SparqlPrefix.SKOS.getSparqlPrefix() + "\n"
+            + "SELECT "
+            + " ?" + SparqlVariable.FORM
+            + " ?" + SparqlVariable.WRITTEN_REPRESENTATION
+            + " ?" + SparqlVariable.LEXICAL_ENTRY
+            + " ?" + SparqlVariable.FORM_TYPE
+            + " ?" + SparqlVariable.LEXICAL_ENTRY_POS
+            + " ?" + SparqlVariable.SENSE_DEFINITION
+            + " ?" + SparqlVariable.SENSE
+            + " (GROUP_CONCAT(concat(str(?tn),\":\",str(?tv));SEPARATOR=\";\") AS ?" + SparqlVariable.MORPHOLOGY + ")\n"
+            + "FROM onto:explicit\n"
+            + "WHERE {\n"
+            + "   ?search a inst:" + SparqlVariable.LEXICAL_SENSE_INDEX + " ;\n"
+            + "             luc:query \"lexicalSenseIRI:[IRI]\" ;\n"
+            + "             luc:entities ?" + SparqlVariable.SENSE + " .\n"
+            + "   ?" + SparqlVariable.LEXICAL_ENTRY + " ontolex:sense ?" + SparqlVariable.SENSE + " .\n"
+            + "   ?" + SparqlVariable.SENSE + " skos:definition ?" + SparqlVariable.SENSE_DEFINITION + " .\n"
+            + "   ?" + SparqlVariable.LEXICAL_ENTRY + " ?" + SparqlVariable.FORM_TYPE + " ?" + SparqlVariable.FORM + " .\n"
+            + "   FILTER(STRSTARTS(STR(?" + SparqlVariable.FORM_TYPE + "), str(ontolex:)))"
+            + "   OPTIONAL { ?" + SparqlVariable.LEXICAL_ENTRY + " lexinfo:partOfSpeech ?_pos . }\n"
+            + "   ?" + SparqlVariable.FORM + " ontolex:writtenRep ?" + SparqlVariable.WRITTEN_REPRESENTATION + " .\n"
+            + "   OPTIONAL { ?" + SparqlVariable.FORM + " ?" + SparqlVariable.MORPHOLOGY_TRAIT_NAME + " ?" + SparqlVariable.MORPHOLOGY_TRAIT_VALUE + " .\n"
+            + "              FILTER(STRSTARTS(STR(?" + SparqlVariable.MORPHOLOGY_TRAIT_NAME + "), str(lexinfo:))) }\n"
+            + "   BIND(strafter(str(?" + SparqlVariable.MORPHOLOGY_TRAIT_NAME + "),str(lexinfo:)) as ?tn)\n"
+            + "   BIND(strafter(str(?" + SparqlVariable.MORPHOLOGY_TRAIT_VALUE + "),str(lexinfo:)) as ?tv)\n"
+            + "   BIND(strafter(str(?_pos), str(lexinfo:)) as ?" + SparqlVariable.LEXICAL_ENTRY_POS + ") "
+            + "   [FORM_CONSTRAINT]"
+            + "} GROUP BY ?"
+            + SparqlVariable.FORM
+            + " ?" + SparqlVariable.LEXICAL_ENTRY_POS
+            + " ?" + SparqlVariable.WRITTEN_REPRESENTATION
+            + " ?" + SparqlVariable.LEXICAL_ENTRY
+            + " ?" + SparqlVariable.FORM_TYPE
+            + " ?" + SparqlVariable.SENSE 
+            + " ?" + SparqlVariable.SENSE_DEFINITION
+            + "\n"
+            + "  ORDER BY ?"
+            + SparqlVariable.WRITTEN_REPRESENTATION;
+    
+    
+    public static final String DATA_PATH_LENGTH
+            = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
+            + "SELECT ?lexicalEntry ?" + SparqlVariable.IRI + " (count(?mid) as ?lenght) { \n"
+            + "  lex:[START_NODE] lexinfo:[START_RELATION]* ?mid .\n"
+            + "  ?mid lexinfo:[MID_RELATION]+ ?" + SparqlVariable.IRI + " .\n"
+            + "  ?lexicalEntry ontolex:sense ?" + SparqlVariable.IRI + " .\n"
+            + "}\n"
+            + "GROUP BY ?" + SparqlVariable.IRI + " ?lexicalEntry \n"
+            + "ORDER BY ?lenght";
 }

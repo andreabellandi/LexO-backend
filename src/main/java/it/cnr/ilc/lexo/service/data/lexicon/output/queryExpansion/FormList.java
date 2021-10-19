@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package it.cnr.ilc.lexo.service.data.lexicon.output;
+package it.cnr.ilc.lexo.service.data.lexicon.output.queryExpansion;
 
 import it.cnr.ilc.lexo.service.data.Data;
+import it.cnr.ilc.lexo.service.data.lexicon.output.FormItem;
 import java.util.List;
 
 /**
@@ -22,7 +23,7 @@ public class FormList implements Data {
 //    private String definition;
 //    private String targetSense;
 //    private String targetSenseInstanceName;
-    private List<FormItem> target;
+    private List<Form> target;
 
     public String getSemanticRelation() {
         return semanticRelation;
@@ -72,11 +73,11 @@ public class FormList implements Data {
 //        this.definition = definition;
 //    }
 
-    public List<FormItem> getTarget() {
+    public List<Form> getTarget() {
         return target;
     }
 
-    public void setTarget(List<FormItem> target) {
+    public void setTarget(List<Form> target) {
         this.target = target;
     }
 
@@ -102,7 +103,7 @@ public class FormList implements Data {
     public FormList(String semanticRelation, int distance, String sense, String senseInstanceName, 
 //            String targetSense, String targetSenseInstanceName, 
 //            String label, String definition, 
-            List<FormItem> target) {
+            List<Form> target) {
 //        this.definition = definition;
         this.distance = distance;
 //        this.label = label;

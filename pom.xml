@@ -14,6 +14,11 @@
     
     <dependencies>
         <dependency>
+            <groupId>org.glassfish.jersey.core</groupId>
+            <artifactId>jersey-client</artifactId>
+            <version>2.33</version>
+        </dependency>
+        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <version>4.0.1</version>
@@ -200,6 +205,19 @@
                 <graphdb.url>http://localhost:7200</graphdb.url>
                 <graphdb.repository>SIMPLE</graphdb.repository>
                 <graphdb.poolSize>5</graphdb.poolSize>
+            </properties>
+        </profile>
+        <profile>
+            <id>itant</id> 
+            <properties>
+                <db.jdbcUrl>jdbc:mysql://localhost/lexo_server</db.jdbcUrl>
+                <envClassifier>itant</envClassifier>
+                <postfix>-itant</postfix>
+                <db.user>lexo</db.user>
+                <db.password>LexOServer12</db.password>
+                <graphdb.url>https://lari2.ilc.cnr.it/graphdb</graphdb.url>
+                <graphdb.repository>ItAnt</graphdb.repository>
+                <graphdb.poolSize>2</graphdb.poolSize>
             </properties>
         </profile>
         <profile>

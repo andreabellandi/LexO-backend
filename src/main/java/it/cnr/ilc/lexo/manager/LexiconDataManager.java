@@ -183,50 +183,9 @@ public class LexiconDataManager implements Manager, Cached {
         return RDFQueryUtil.evaluateTQuery(query);
     }
 
-    public List<FormItem> getFormItemListCopy(List<FormItem> forms) {
-        List<FormItem> _forms = new ArrayList();
-        for (FormItem fi : forms) {
-            FormItem _fi = new FormItem();
-            _fi.setCreator(fi.getCreator());
-            _fi.setForm(fi.getForm());
-            _fi.setFormInstanceName(fi.getFormInstanceName());
-            _fi.setLabel(fi.getLabel());
-            _fi.setNote(fi.getNote());
-            _fi.setPhoneticRep(fi.getPhoneticRep());
-            _fi.setType(fi.getType());
-            _fi.setLexicalEntry(fi.getLexicalEntry());
-            _fi.setLexicalEntryInstanceName(fi.getLexicalEntryInstanceName());
-            _fi.setMorphology(getMorphologyListCopy(fi.getMorphology()));
-            _fi.setTargetSense(fi.getTargetSense());
-            _fi.setTargetSenseInstanceName(fi.getTargetSenseInstanceName());
-            _forms.add(_fi);
-        }
-        return _forms;
-    }
+ 
 
-    private ArrayList<Morphology> getMorphologyListCopy(ArrayList<Morphology> morpho) {
-        ArrayList<Morphology> _morpho = new ArrayList();
-        for (Morphology m : morpho) {
-            Morphology _m = new Morphology(m.getTrait(), m.getValue());
-            _morpho.add(_m);
-        }
-        return _morpho;
-    }
-
-    public TupleQueryResult getFilterdForms(FormBySenseFilter ff) throws ManagerException {
-        Manager.validateWithEnum("searchFormTypes", SearchFormTypes.class, ff.getFormType());
-        Manager.validateWithEnum("acceptedSearchFormExtendTo", AcceptedSearchFormExtendTo.class, ff.getExtendTo());
-        Manager.validateWithEnum("acceptedSearchFormExtensionDegree", AcceptedSearchFormExtensionDegree.class, String.valueOf(ff.getExtensionDegree()));
-        String query = (ff.getFormType().equals(EnumUtil.SearchFormTypes.Lemma.toString()))
-                ? SparqlSelectData.DATA_FORMS_BY_LEXICAL_ENTRY.replace("[IRI]", "\\\"" + namespace + ff.getLexicalEntry() + "\\\"")
-                        .replace("[FORM_CONSTRAINT]", "")
-                : ff.getExtensionDegree() == 0
-                ? SparqlSelectData.DATA_FORMS_BY_LEXICAL_ENTRY.replace("[IRI]", "\\\"" + namespace + ff.getLexicalEntry() + "\\\"")
-                        .replace("[FORM_CONSTRAINT]", "FILTER(regex(str(?" + SparqlVariable.WRITTEN_REPRESENTATION + "), \"^" + ff.getForm().trim() + "$\"))\n")
-                : SparqlSelectData.DATA_FORMS_BY_LEXICAL_ENTRY.replace("[IRI]", "\\\"" + namespace + ff.getLexicalEntry() + "\\\"")
-                        .replace("[FORM_CONSTRAINT]", "");
-        return RDFQueryUtil.evaluateTQuery(query);
-    }
+    
 
     public TupleQueryResult getFilterdForms(FormFilter ff) throws ManagerException {
         Manager.validateWithEnum("formRepresentationType", EnumUtil.FormRepresentationType.class, ff.getRepresentationType());
@@ -239,23 +198,9 @@ public class LexiconDataManager implements Manager, Cached {
         return RDFQueryUtil.evaluateTQuery(query);
     }
     
-    public TupleQueryResult getFilterdForms(String id) throws ManagerException {
-        String query = SparqlSelectData.DATA_FORMS_BY_LEXICAL_ENTRY.replace("[IRI]", "\\\"" + namespace + id + "\\\"")
-                .replace("[FORM_CONSTRAINT]", "");
-        return RDFQueryUtil.evaluateTQuery(query);
-    }
+    
 
-    public TupleQueryResult getRelationByLenght(String relation, String startNode) {
-//        TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL,
-//                SparqlSelectData.DATA_PATH_LENGTH.replace("[START_NODE]", startNode)
-//                        .replace("[START_RELATION]", relation)
-//                        .replace("[MID_RELATION]", relation));
-//        return tupleQuery.evaluate();
-        String query = SparqlSelectData.DATA_PATH_LENGTH.replace("[START_NODE]", startNode)
-                .replace("[START_RELATION]", relation)
-                .replace("[MID_RELATION]", relation);
-        return RDFQueryUtil.evaluateTQuery(query);
-    }
+    
 
     public TupleQueryResult getForms(String lexicalEntryID) {
         String query = SparqlSelectData.DATA_FORMS_BY_LEXICAL_ENTRY.replace("[IRI]", "\\\"" + namespace + lexicalEntryID + "\\\"")
@@ -280,15 +225,6 @@ public class LexiconDataManager implements Manager, Cached {
         return RDFQueryUtil.evaluateTQuery(query);
     }
 
-    public TupleQueryResult getFormsBySenseRelation(FormBySenseFilter ff, String sense) throws ManagerException {
-//        TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL,
-//                SparqlSelectData.DATA_FORMS_BY_SENSE_RELATION
-//                        .replace("[RELATION_DISTANCE_PATH]", "lex:" + sense + " lexinfo:" + ff.getExtendTo() + " ?" + SparqlVariable.TARGET + " . "));
-//        return tupleQuery.evaluate();
-        String query = SparqlSelectData.DATA_FORMS_BY_SENSE_RELATION
-                .replace("[RELATION_DISTANCE_PATH]", "lex:" + sense + " lexinfo:" + ff.getExtendTo() + " ?" + SparqlVariable.TARGET + " . ");
-        return RDFQueryUtil.evaluateTQuery(query);
-    }
 
     public TupleQueryResult getFormsBySenseRelation(FormBySenseFilter ff, String sense, int distance) throws ManagerException {
         String relationDistancePath = "";

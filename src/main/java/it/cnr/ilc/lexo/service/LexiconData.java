@@ -11,15 +11,12 @@ import io.swagger.annotations.ApiParam;
 import it.cnr.ilc.lexo.manager.LexiconDataManager;
 import it.cnr.ilc.lexo.manager.ManagerException;
 import it.cnr.ilc.lexo.manager.ManagerFactory;
-import it.cnr.ilc.lexo.service.data.lexicon.input.FormBySenseFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.input.FormFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.output.FormItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryElementItem;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalEntryFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalSenseFilter;
-import it.cnr.ilc.lexo.service.data.lexicon.output.Counting;
 import it.cnr.ilc.lexo.service.data.lexicon.output.FormCore;
-import it.cnr.ilc.lexo.service.data.lexicon.output.FormList;
 import it.cnr.ilc.lexo.service.data.lexicon.output.HitsDataList;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Language;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryCore;
@@ -27,10 +24,8 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalSenseCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalSenseItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LinkedEntity;
-import it.cnr.ilc.lexo.service.data.lexicon.output.RelationPath;
 import it.cnr.ilc.lexo.service.helper.FormCoreHelper;
 import it.cnr.ilc.lexo.service.helper.FormItemsHelper;
-import it.cnr.ilc.lexo.service.helper.FormListHelper;
 import it.cnr.ilc.lexo.service.helper.HelperException;
 import it.cnr.ilc.lexo.service.helper.LanguageHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalEntryCoreHelper;
@@ -40,12 +35,9 @@ import it.cnr.ilc.lexo.service.helper.LexicalEntryReferenceLinkHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalSenseCoreHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalSenseFilterHelper;
 import it.cnr.ilc.lexo.service.helper.LinkedEntityHelper;
-import it.cnr.ilc.lexo.service.helper.PathLenghtHelper;
 import it.cnr.ilc.lexo.util.EnumUtil;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -76,12 +68,10 @@ public class LexiconData extends Service {
     private final LexicalEntryFilterHelper lexicalEntryFilterHelper = new LexicalEntryFilterHelper();
     private final LexicalSenseFilterHelper lexicalSenseFilterHelper = new LexicalSenseFilterHelper();
     private final FormItemsHelper formItemsHelper = new FormItemsHelper();
-    private final FormListHelper formListHelper = new FormListHelper();
     private final LanguageHelper languageHelper = new LanguageHelper();
     private final LexicalEntryElementHelper lexicalEntryElementHelper = new LexicalEntryElementHelper();
     private final LexicalEntryCoreHelper lexicalEntryCoreHelper = new LexicalEntryCoreHelper();
     private final LexicalEntryReferenceLinkHelper lexicalEntryReferenceLinkHelper = new LexicalEntryReferenceLinkHelper();
-    private final PathLenghtHelper pathLenghtHelper = new PathLenghtHelper();
     private final FormCoreHelper formCoreHelper = new FormCoreHelper();
     private final LexicalSenseCoreHelper lexicalSenseCoreHelper = new LexicalSenseCoreHelper();
     private final LinkedEntityHelper linkedEntityHelper = new LinkedEntityHelper();
@@ -323,109 +313,6 @@ public class LexiconData extends Service {
             List<LexicalEntryItem> entries = lexicalEntryFilterHelper.newDataList(lexicalEnties);
             HitsDataList hdl = new HitsDataList(lexicalEntryFilterHelper.getTotalHits(), entries);
             String json = lexicalEntryFilterHelper.toJson(hdl);
-            return Response.ok(json)
-                    .type(MediaType.TEXT_PLAIN)
-                    .header("Access-Control-Allow-Headers", "content-type")
-                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                    .build();
-        } catch (ManagerException ex) {
-            logger.error(ex.getMessage(), ex);
-            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
-        }
-    }
-
-    @POST
-    @Path("formsBySense")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    @RequestMapping(
-            method = RequestMethod.POST,
-            value = "/formsBySense",
-            produces = "application/json; charset=UTF-8")
-    @ApiOperation(value = "Forms list",
-            notes = "This method returns a list of forms according to the sense input filter")
-    public Response formsBySense(@QueryParam("key") String key, FormBySenseFilter ff) throws HelperException {
-        try {
-            List<FormList> list = new ArrayList();
-            TupleQueryResult res = lexiconManager.getFilterdForms(ff);
-            String targetSense = "", targetSenseInstanceName = "";
-            list.add(new FormList("", 0, "", "", 
-//                    targetSense, targetSenseInstanceName, 
-                    formItemsHelper.newDataList(res)));
-            if (!ff.getExtendTo().equals(EnumUtil.AcceptedSearchFormExtendTo.None.toString())) {
-                for (String sense : ff.getSenseUris()) {
-                    if (ff.getExtendTo().equals(EnumUtil.AcceptedSearchFormExtendTo.Hypernym.toString())
-                            || ff.getExtendTo().equals(EnumUtil.AcceptedSearchFormExtendTo.Hyponym.toString())) {
-                        int lenght = 1;
-                        List<FormItem> forms = new ArrayList();
-                        int count = 0;
-                        for (RelationPath c : pathLenghtHelper.newDataList(lexiconManager.getRelationByLenght(ff.getExtendTo(), sense))) {
-                            count++;
-                            if (ff.getExtensionDegree() >= c.getLenght()) {
-                                if (lenght == c.getLenght()) {
-                                    targetSense = c.getLexicalSense();
-                                    targetSenseInstanceName = c.getLexicalSenseInstanceName();
-                                    TupleQueryResult _res = lexiconManager.getFilterdForms(c.getLexicalEntryInstanceName());
-                                    List<FormItem> _forms = new ArrayList();
-                                    _forms.addAll(formItemsHelper.newDataList(_res));
-                                    for (FormItem fi : _forms) {
-                                        fi.setTargetSense(targetSense);
-                                        fi.setTargetSenseInstanceName(targetSenseInstanceName);
-                                    }
-                                    forms.addAll(_forms);
-                                } else {
-                                    list.add(new FormList(ff.getExtendTo(), lenght, lexiconManager.getNamespace() + sense, sense,
-//                                            targetSense, targetSenseInstanceName, 
-                                            lexiconManager.getFormItemListCopy(forms)));
-                                    forms.clear();
-                                    lenght++;
-                                    targetSense = c.getLexicalSense();
-                                    targetSenseInstanceName = c.getLexicalSenseInstanceName();
-                                    TupleQueryResult _res = lexiconManager.getFilterdForms(c.getLexicalEntryInstanceName());
-                                    List<FormItem> _forms = new ArrayList();
-                                    _forms.addAll(formItemsHelper.newDataList(_res));
-                                    for (FormItem fi : _forms) {
-                                        fi.setTargetSense(targetSense);
-                                        fi.setTargetSenseInstanceName(targetSenseInstanceName);
-                                    }
-                                    forms.addAll(_forms);
-                                }
-                            }
-                            System.out.println(" --- " + count);
-                        }
-                        list.add(new FormList(ff.getExtendTo(), lenght, lexiconManager.getNamespace() + sense, sense,
-//                                targetSense, targetSensceInstanceName, 
-                                lexiconManager.getFormItemListCopy(forms)));
-                    } else if (ff.getExtendTo().equals(EnumUtil.AcceptedSearchFormExtendTo.Synonym.toString())) {
-                        TupleQueryResult _resForms = lexiconManager.getFormsBySenseRelation(ff, sense);
-                        if (_resForms.hasNext()) {
-                            List<FormItem> lfi = formItemsHelper.newDataList(_resForms);
-                            List<FormItem> newFormList = new ArrayList<>();
-                            String target = "", targetInstanceName = "";
-                            for (FormItem fi : lfi) {
-                                if (target.isEmpty()) {
-                                    target = fi.getTargetSense();
-                                    targetInstanceName = fi.getTargetSenseInstanceName();
-                                }
-                                if (target.equals(fi.getTargetSense())) {
-                                    newFormList.add(fi);
-                                } else {
-                                    list.add(new FormList("synonym", 1, lexiconManager.getNamespace() + sense, sense,
-//                                            target, targetInstanceName, 
-                                            lexiconManager.getFormItemListCopy(newFormList)));
-                                    target = fi.getTargetSense();
-                                    targetInstanceName = fi.getTargetSenseInstanceName();
-                                    newFormList.clear();
-                                }
-                            }
-                            list.add(new FormList("synonym", 1, lexiconManager.getNamespace() + sense, sense,
-//                                    target, targetInstanceName, 
-                                    lexiconManager.getFormItemListCopy(newFormList)));
-                        }
-                    }
-                }
-            }
-            String json = formListHelper.toJson(list);
             return Response.ok(json)
                     .type(MediaType.TEXT_PLAIN)
                     .header("Access-Control-Allow-Headers", "content-type")

@@ -284,6 +284,25 @@ public class EnumUtil {
         
     }
     
+    public static enum EtymologyAttributes {
+        Note("note"),
+        Confidence("confidence"),
+        HypothesisOf("hypothesisOf"),
+        Label("label");
+
+        private final String etymologyAttributes;
+
+        private EtymologyAttributes(String etymologyAttributes) {
+            this.etymologyAttributes = etymologyAttributes;
+        }
+
+        @Override
+        public String toString() {
+            return this.etymologyAttributes;
+        }
+        
+    }
+    
     public static enum LexicalSenseSearchFilter {
         Definition("definition"),
         Description("description"),
