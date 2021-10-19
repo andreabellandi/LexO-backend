@@ -193,10 +193,10 @@ public class SparqlSelectData {
             + "   ?" + SparqlVariable.LEXICAL_ENTRY + " ?" + SparqlVariable.FORM_TYPE + " ?" + SparqlVariable.FORM + " .\n"
             + "   OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " lexinfo:partOfSpeech ?posTag } .\n"
             + "   OPTIONAL { ?" + SparqlVariable.FORM + " ontolex:phoneticRep ?" + SparqlVariable.PHONETIC_REPRESENTATION + " . }\n"
-            + "   OPTIONAL { ?" + SparqlVariable.FORM + " ontolex:pronunciation ?" + SparqlVariable.PRONUNCIATION + " . }\n"
-            + "   OPTIONAL { ?" + SparqlVariable.FORM + " ontolex:romanization ?" + SparqlVariable.ROMANIZATION + " . }\n"
-            + "   OPTIONAL { ?" + SparqlVariable.FORM + " ontolex:transliteration ?" + SparqlVariable.TRANSLITERATION + " . }\n"
-            + "   OPTIONAL { ?" + SparqlVariable.FORM + " ontolex:segmentation ?" + SparqlVariable.SEGMENTATION + " . }\n"
+            + "   OPTIONAL { ?" + SparqlVariable.FORM + " lexinfo:pronunciation ?" + SparqlVariable.PRONUNCIATION + " . }\n"
+            + "   OPTIONAL { ?" + SparqlVariable.FORM + " lexinfo:romanization ?" + SparqlVariable.ROMANIZATION + " . }\n"
+            + "   OPTIONAL { ?" + SparqlVariable.FORM + " lexinfo:transliteration ?" + SparqlVariable.TRANSLITERATION + " . }\n"
+            + "   OPTIONAL { ?" + SparqlVariable.FORM + " lexinfo:segmentation ?" + SparqlVariable.SEGMENTATION + " . }\n"
             + "   OPTIONAL { ?" + SparqlVariable.FORM + " dct:created ?" + SparqlVariable.CREATION_DATE + " . }\n"
             + "   OPTIONAL { ?" + SparqlVariable.FORM + " dct:creator ?" + SparqlVariable.FORM_CREATION_AUTHOR + " . }\n"
             + "   OPTIONAL { ?" + SparqlVariable.FORM + " dct:modified ?" + SparqlVariable.LAST_UPDATE + " . }\n"
@@ -765,7 +765,7 @@ public class SparqlSelectData {
             + "        ontolex:canonicalForm ?" + SparqlVariable.FORM + " . \n"
             + "    ?" + SparqlVariable.FORM + " ontolex:writtenRep ?" + SparqlVariable.WRITTEN_REPRESENTATION + " .\n"
             + "} ORDER BY ?" + SparqlVariable.WRITTEN_REPRESENTATION;
-    
+
     public static final String DATA_FORMS_BY_LEXICAL_ENTRY
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
             + SparqlPrefix.INST.getSparqlPrefix() + "\n"
@@ -853,5 +853,37 @@ public class SparqlSelectData {
             + "SELECT"
             + " ?" + SparqlVariable.LABEL + "\n"
             + "where { " + SparqlPrefix.LEX.getPrefix() + "_ID_ " + SparqlPrefix.VS.getPrefix() + "term_status ?" + SparqlVariable.LABEL + " .\n"
+            + "}";
+
+    public static final String LEXICAL_ENTITY_BIBLIOGRAPHY
+            = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+            + SparqlPrefix.SKOS.getSparqlPrefix() + "\n"
+            + "SELECT"
+            + " ?" + SparqlVariable.BIBLIOGRAPHY
+            + " ?" + SparqlVariable.BIBLIOGRAPHY_AUTHOR
+            + " ?" + SparqlVariable.BIBLIOGRAPHY_DATE
+            + " ?" + SparqlVariable.BIBLIOGRAPHY_ID
+            + " ?" + SparqlVariable.BIBLIOGRAPHY_NOTE
+            + " ?" + SparqlVariable.BIBLIOGRAPHY_SEE_ALSO_LINK
+            + " ?" + SparqlVariable.BIBLIOGRAPHY_TEXTUAL_REF
+            + " ?" + SparqlVariable.BIBLIOGRAPHY_TITLE
+            + " ?" + SparqlVariable.BIBLIOGRAPHY_URL
+            + " ?" + SparqlVariable.CREATION_DATE
+            + " ?" + SparqlVariable.BIBLIOGRAPHY_CREATOR
+            + " ?" + SparqlVariable.LAST_UPDATE
+            + "WHERE {\n"
+            + "    lex:_ID_ dct:references ?" + SparqlVariable.BIBLIOGRAPHY + " .\n"
+            + "   ?" + SparqlVariable.BIBLIOGRAPHY + " dct:publisher ?" + SparqlVariable.BIBLIOGRAPHY_ID + " .\n"
+            + "   OPTIONAL { ?" + SparqlVariable.BIBLIOGRAPHY + " rdfs:seeAlso ?" + SparqlVariable.BIBLIOGRAPHY_SEE_ALSO_LINK + " } .\n"
+            + "   OPTIONAL { ?" + SparqlVariable.BIBLIOGRAPHY + " dct:identifier ?" + SparqlVariable.BIBLIOGRAPHY_URL + " } .\n"
+            + "   OPTIONAL { ?" + SparqlVariable.BIBLIOGRAPHY + " dct:title ?" + SparqlVariable.BIBLIOGRAPHY_TITLE + " } .\n"
+            + "   OPTIONAL { ?" + SparqlVariable.BIBLIOGRAPHY + " rdfs:label ?" + SparqlVariable.BIBLIOGRAPHY_TEXTUAL_REF + " } .\n"
+            + "   OPTIONAL { ?" + SparqlVariable.BIBLIOGRAPHY + " dct:contributor ?" + SparqlVariable.BIBLIOGRAPHY_AUTHOR + " } .\n"
+            + "   OPTIONAL { ?" + SparqlVariable.BIBLIOGRAPHY + " dct:date ?" + SparqlVariable.BIBLIOGRAPHY_DATE + " } .\n"
+            + "   OPTIONAL { ?" + SparqlVariable.BIBLIOGRAPHY + " skos:note ?" + SparqlVariable.BIBLIOGRAPHY_NOTE + " } .\n"
+            + "   OPTIONAL { ?" + SparqlVariable.BIBLIOGRAPHY + " dct:created ?" + SparqlVariable.CREATION_DATE + " } . \n"
+            + "   OPTIONAL { ?" + SparqlVariable.BIBLIOGRAPHY + " dct:creator ?" + SparqlVariable.BIBLIOGRAPHY_CREATOR + " } . \n"
+            + "   OPTIONAL { ?" + SparqlVariable.BIBLIOGRAPHY + " dct:modified ?" + SparqlVariable.LAST_UPDATE + " } . \n"
             + "}";
 }

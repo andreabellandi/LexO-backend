@@ -24,6 +24,19 @@ public class BibliographyHelper extends TripleStoreDataHelper<BibliographicItem>
 
     @Override
     public void fillData(BibliographicItem data, BindingSet bs) {
+        data.setAuthor(getStringValue(bs, SparqlVariable.BIBLIOGRAPHY_AUTHOR));
+        data.setCreationDate(getStringValue(bs, SparqlVariable.CREATION_DATE));
+        data.setCreator(getStringValue(bs, SparqlVariable.BIBLIOGRAPHY_CREATOR));
+        data.setDate(getStringValue(bs, SparqlVariable.BIBLIOGRAPHY_DATE));
+        data.setId(getStringValue(bs, SparqlVariable.BIBLIOGRAPHY_ID));
+        data.setLastUpdate(getStringValue(bs, SparqlVariable.LAST_UPDATE));
+        data.setNote(getStringValue(bs, SparqlVariable.BIBLIOGRAPHY_NOTE));
+        data.setSeeAlsoLink(getStringValue(bs, SparqlVariable.BIBLIOGRAPHY_SEE_ALSO_LINK));
+        data.setTextualReference(getStringValue(bs, SparqlVariable.BIBLIOGRAPHY_TEXTUAL_REF));
+        data.setTitle(getStringValue(bs, SparqlVariable.BIBLIOGRAPHY_TITLE));
+        data.setUrl(getStringValue(bs, SparqlVariable.BIBLIOGRAPHY_URL));
+        data.setBibliography(getStringValue(bs, SparqlVariable.BIBLIOGRAPHY));
+        data.setBibliographyInstanceName(getLocalName(bs, SparqlVariable.BIBLIOGRAPHY));
     }
 
     @Override

@@ -118,7 +118,7 @@ public class SparqlInsertData {
             + SparqlPrefix.LEXBIB.getSparqlPrefix() + "\n"
             + "INSERT DATA {\n"
             + "    lexbib:_ID_ a rdf:Description ; \n"
-            + "        rdfs:label \"zotero key _KEY_\" ;\n"
+            + "        dct:publisher \"_KEY_\" ;\n"
             + "        _OPTIONAL_"
             + "        dct:title \"_TITLE_\" ;\n"
             + "        dct:date \"_DATE_\" ;\n"

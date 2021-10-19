@@ -8,6 +8,7 @@ package it.cnr.ilc.lexo.service;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import it.cnr.ilc.lexo.manager.BibliographyManager;
 import it.cnr.ilc.lexo.manager.LexiconDataManager;
 import it.cnr.ilc.lexo.manager.ManagerException;
 import it.cnr.ilc.lexo.manager.ManagerFactory;
@@ -16,6 +17,7 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.FormItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryElementItem;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalEntryFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalSenseFilter;
+import it.cnr.ilc.lexo.service.data.lexicon.output.BibliographicItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.FormCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.HitsDataList;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Language;
@@ -24,6 +26,7 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalSenseCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalSenseItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LinkedEntity;
+import it.cnr.ilc.lexo.service.helper.BibliographyHelper;
 import it.cnr.ilc.lexo.service.helper.FormCoreHelper;
 import it.cnr.ilc.lexo.service.helper.FormItemsHelper;
 import it.cnr.ilc.lexo.service.helper.HelperException;
@@ -75,6 +78,8 @@ public class LexiconData extends Service {
     private final FormCoreHelper formCoreHelper = new FormCoreHelper();
     private final LexicalSenseCoreHelper lexicalSenseCoreHelper = new LexicalSenseCoreHelper();
     private final LinkedEntityHelper linkedEntityHelper = new LinkedEntityHelper();
+    private final BibliographyHelper bibliographyHelper = new BibliographyHelper();
+    private final BibliographyManager bibliographyManager = ManagerFactory.getManager(BibliographyManager.class);
 
     @GET
     @Path("{id}/lexicalEntry")
@@ -570,6 +575,37 @@ public class LexiconData extends Service {
             logger.error(ex.getMessage(), ex);
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }
+    }
+    
+    @GET
+    @Path("{id}/bibliography")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "/{id}/bibliography",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Lexical entity bibliography",
+            notes = "This method returns the bibliography of a given lexical entity")
+    public Response bibliography(
+            @ApiParam(
+                    name = "key",
+                    value = "authentication token",
+                    example = "lexodemo",
+                    required = true)
+            @QueryParam("key") String key,
+            @ApiParam(
+                    name = "id",
+                    value = "lexical entity ID",
+                    required = true)
+            @PathParam("id") String id) {
+        TupleQueryResult bib = bibliographyManager.getBibliography(id);
+        List<BibliographicItem> bibs = bibliographyHelper.newDataList(bib);
+        String json = bibliographyHelper.toJson(bibs);
+        return Response.ok(json)
+                .type(MediaType.TEXT_PLAIN)
+                .header("Access-Control-Allow-Headers", "content-type")
+                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                .build();
     }
 
 }

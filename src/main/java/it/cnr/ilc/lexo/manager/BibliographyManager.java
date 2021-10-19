@@ -7,14 +7,14 @@ package it.cnr.ilc.lexo.manager;
 
 import it.cnr.ilc.lexo.LexOProperties;
 import it.cnr.ilc.lexo.service.data.lexicon.input.Bibliography;
-import it.cnr.ilc.lexo.service.data.lexicon.input.LinguisticRelationUpdater;
-import it.cnr.ilc.lexo.service.data.lexicon.input.RelationDeleter;
 import it.cnr.ilc.lexo.service.data.lexicon.output.BibliographicItem;
-import it.cnr.ilc.lexo.sparql.SparqlDeleteData;
 import it.cnr.ilc.lexo.sparql.SparqlInsertData;
+import it.cnr.ilc.lexo.sparql.SparqlPrefix;
+import it.cnr.ilc.lexo.sparql.SparqlSelectData;
 import it.cnr.ilc.lexo.util.RDFQueryUtil;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import org.eclipse.rdf4j.query.TupleQueryResult;
 
 /**
  *
@@ -58,6 +58,8 @@ public class BibliographyManager implements Manager, Cached {
     private BibliographicItem setBibliographicItem(String id, String created, String author, Bibliography bibliography) {
         BibliographicItem b = new BibliographicItem();
         b.setAuthor(bibliography.getAuthor());
+        b.setBibliography(SparqlPrefix.LEXBIB.getUri() + id);
+        b.setBibliographyInstanceName(id);
         b.setDate(bibliography.getDate());
         b.setId(bibliography.getId());
         b.setSeeAlsoLink((bibliography.getSeeAlsoLink() == null || bibliography.getSeeAlsoLink().isEmpty()) ? "" : bibliography.getSeeAlsoLink());
@@ -70,5 +72,10 @@ public class BibliographyManager implements Manager, Cached {
         b.setNote("");
         return b;
     }
+    
+    public TupleQueryResult getBibliography(String id) {
+        String query = SparqlSelectData.LEXICAL_ENTITY_BIBLIOGRAPHY.replaceAll("_ID_", id);
+        return RDFQueryUtil.evaluateTQuery(query);
+    } 
 
 }

@@ -5,6 +5,8 @@
  */
 package it.cnr.ilc.lexo.sparql;
 
+import it.cnr.ilc.lexo.LexOProperties;
+
 /**
  *
  * @author andreabellandi
@@ -42,8 +44,8 @@ public class SparqlPrefix {
     public static Namespace OWL = new Namespace("owl:", "http://www.w3.org/2002/07/owl#");
 
     // data
-    public static Namespace LEX = new Namespace("lex:", "http://lexica/mylexicon#");
-    public static Namespace LEXBIB = new Namespace("lexbib:", "http://lexica/mylexicon/bibliography#");
-    public static Namespace ONTOLOGY = new Namespace("ontology:", "http://simpleOntology#");
+    public static Namespace LEX = new Namespace("lex:", LexOProperties.getProperty("repository.lexicon.namespace"));
+    public static Namespace LEXBIB = new Namespace("lexbib:", LexOProperties.getProperty("repository.lexicon.bibliography.namespace"));
+    public static Namespace ONTOLOGY = new Namespace("ontology:", LexOProperties.getProperty("repository.ontology.namespace"));
 
 }

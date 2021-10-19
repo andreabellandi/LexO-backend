@@ -18,6 +18,10 @@ public class BibliographicItem implements Data {
 
     @ApiModelProperty(value = "bibliographic item ID")
     private String id;
+    @ApiModelProperty(value = "internal bibliographic IRI")
+    private String bibliography;
+    @ApiModelProperty(value = "internal bibliographic Ishort RI")
+    private String bibliographyInstanceName;
     @ApiModelProperty(value = "title of the bibliographic item")
     private String title;
     @ApiModelProperty(value = "authors of the bibliographic item")
@@ -28,7 +32,7 @@ public class BibliographicItem implements Data {
     private String url;
     @ApiModelProperty(value = "external link to the document")
     private String seeAlsoLink;
-    @ApiModelProperty(value = "external link to the document", notes = "page number followed by line numbers range", example = "4[12-34]")
+    @ApiModelProperty(value = "external link to the document", notes = "series of page number followed by line numbers range", example = "4[12-34]; 9[7-21]")
     private String textualReference;
     @ApiModelProperty(value = "bibliographic link creator")
     private String creator;
@@ -38,6 +42,22 @@ public class BibliographicItem implements Data {
     private String creationDate;
     @ApiModelProperty(value = "bibliographic link last update")
     private String lastUpdate;
+
+    public String getBibliography() {
+        return bibliography;
+    }
+
+    public void setBibliography(String bibliography) {
+        this.bibliography = bibliography;
+    }
+
+    public String getBibliographyInstanceName() {
+        return bibliographyInstanceName;
+    }
+
+    public void setBibliographyInstanceName(String bibliographyInstanceName) {
+        this.bibliographyInstanceName = bibliographyInstanceName;
+    }
 
     public String getId() {
         return id;

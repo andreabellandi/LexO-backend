@@ -105,5 +105,16 @@ public class SparqlVariable {
     public static final String VALUE = "value";
     
     public static final String GRAPH = "graph";
+    
+    public static final String BIBLIOGRAPHY = "bib";
+    public static final String BIBLIOGRAPHY_CREATOR = "bibCreator";
+    public static final String BIBLIOGRAPHY_ID = "bibId";
+    public static final String BIBLIOGRAPHY_TITLE = "bibTitle";
+    public static final String BIBLIOGRAPHY_AUTHOR = "bibAuthor";
+    public static final String BIBLIOGRAPHY_DATE = "bibDate";
+    public static final String BIBLIOGRAPHY_URL = "bibUrl";
+    public static final String BIBLIOGRAPHY_NOTE = "bibNote";
+    public static final String BIBLIOGRAPHY_SEE_ALSO_LINK = "bibSeeAlsoLink";
+    public static final String BIBLIOGRAPHY_TEXTUAL_REF = "bibTextRef";
 
 }
