@@ -8,6 +8,7 @@ package it.cnr.ilc.lexo.service;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import it.cnr.ilc.lexo.manager.BibliographyManager;
 import it.cnr.ilc.lexo.manager.LexiconDeletionManager;
 import it.cnr.ilc.lexo.manager.ManagerException;
 import it.cnr.ilc.lexo.manager.ManagerFactory;
@@ -38,6 +39,7 @@ public class LexiconDeletion extends Service {
 
     private final LexiconDeletionManager lexiconManager = ManagerFactory.getManager(LexiconDeletionManager.class);
     private final LexicalEntryCoreHelper lexicalEntryCoreHelper = new LexicalEntryCoreHelper();
+    private final BibliographyManager bibliographyManager = ManagerFactory.getManager(BibliographyManager.class);
 
     @GET
     @Path("{id}/language")
@@ -202,6 +204,44 @@ public class LexiconDeletion extends Service {
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + id + " does not exist").build();
                 }
                 lexiconManager.deleteLexicalSense(id);
+                return Response.ok()
+                        .type(MediaType.TEXT_PLAIN)
+                        .header("Access-Control-Allow-Headers", "content-type")
+                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                        .build();
+            } catch (ManagerException ex) {
+                Logger.getLogger(LexiconDeletion.class.getName()).log(Level.SEVERE, null, ex);
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            }
+        } else {
+            return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Deletion denied, wrong key").build();
+        }
+    }
+    
+    @GET
+    @Path("{id}/bibliography")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "bibliography",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Bibliography deletion",
+            notes = "This method deletes a bibliography")
+    public Response bibliography(
+            @ApiParam(
+                    name = "key",
+                    value = "authentication token",
+                    example = "lexodemo",
+                    required = true)
+            @QueryParam("key") String key,
+            @ApiParam(
+                    name = "id",
+                    value = "bibliography ID",
+                    required = true)
+            @PathParam("id") String id) {
+        if (key.equals("PRINitant19")) {
+            try {
+                bibliographyManager.deleteBibliography(id);
                 return Response.ok()
                         .type(MediaType.TEXT_PLAIN)
                         .header("Access-Control-Allow-Headers", "content-type")

@@ -8,6 +8,7 @@ package it.cnr.ilc.lexo.manager;
 import it.cnr.ilc.lexo.LexOProperties;
 import it.cnr.ilc.lexo.service.data.lexicon.input.Bibliography;
 import it.cnr.ilc.lexo.service.data.lexicon.output.BibliographicItem;
+import it.cnr.ilc.lexo.sparql.SparqlDeleteData;
 import it.cnr.ilc.lexo.sparql.SparqlInsertData;
 import it.cnr.ilc.lexo.sparql.SparqlPrefix;
 import it.cnr.ilc.lexo.sparql.SparqlSelectData;
@@ -76,6 +77,11 @@ public class BibliographyManager implements Manager, Cached {
     public TupleQueryResult getBibliography(String id) {
         String query = SparqlSelectData.LEXICAL_ENTITY_BIBLIOGRAPHY.replaceAll("_ID_", id);
         return RDFQueryUtil.evaluateTQuery(query);
-    } 
+    }
+    
+     public void deleteBibliography(String id) throws ManagerException {
+        RDFQueryUtil.update(SparqlDeleteData.DELETE_BIBLIOGRAPHY.replaceAll("_ID_", id));
+
+    }
 
 }
