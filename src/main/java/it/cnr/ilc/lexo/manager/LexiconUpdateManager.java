@@ -87,6 +87,10 @@ public final class LexiconUpdateManager implements Manager, Cached {
         Manager.validateWithEnum("relation", EnumUtil.GenericRelationReference.class, relation);
     }
 
+    public void validateGenericBibliographyRelation(String relation) throws ManagerException {
+        Manager.validateWithEnum("relation", EnumUtil.GenericRelationBibliography.class, relation);
+    }
+
     public boolean validateIRI(String id) throws ManagerException {
         UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
         if (!utilityManager.exists(id)) {
@@ -240,7 +244,7 @@ public final class LexiconUpdateManager implements Manager, Cached {
 //        TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL,
 //                SparqlSelectData.LEXICON_ENTRY_LANGUAGE.replaceAll("_ID_", id));
 //        try (TupleQueryResult result = tupleQuery.evaluate()) {
-        try (TupleQueryResult result = RDFQueryUtil.evaluateTQuery(SparqlSelectData.LEXICON_ENTRY_LANGUAGE.replaceAll("_ID_", id))) {
+        try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(SparqlSelectData.LEXICON_ENTRY_LANGUAGE.replaceAll("_ID_", id))) {
 
             while (result.hasNext()) {
                 BindingSet bs = result.next();
@@ -252,7 +256,7 @@ public final class LexiconUpdateManager implements Manager, Cached {
     }
 
     private String getStatus(String id) {
-        try (TupleQueryResult result = RDFQueryUtil.evaluateTQuery(SparqlSelectData.LEXICON_ENTRY_STATUS.replaceAll("_ID_", id))) {
+        try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(SparqlSelectData.LEXICON_ENTRY_STATUS.replaceAll("_ID_", id))) {
             while (result.hasNext()) {
                 BindingSet bs = result.next();
                 return (bs.getBinding(SparqlVariable.LABEL) != null) ? ((Literal) bs.getBinding(SparqlVariable.LABEL).getValue()).getLabel() : null;
@@ -475,7 +479,7 @@ public final class LexiconUpdateManager implements Manager, Cached {
         } else if (eu.getRelation().equals(EnumUtil.EtymologyAttributes.Confidence.toString())) {
             return updateEtymology(id, SparqlPrefix.LEXINFO.getPrefix() + eu.getRelation(), Float.toString(Float.parseFloat(eu.getValue())));
         } else if (eu.getRelation().equals(EnumUtil.EtymologyAttributes.Label.toString())) {
-            return updateEtymology(id, SparqlPrefix.RDFS.getPrefix() + eu.getRelation(),  "\"" + eu.getValue() + "\"");
+            return updateEtymology(id, SparqlPrefix.RDFS.getPrefix() + eu.getRelation(), "\"" + eu.getValue() + "\"");
         } else if (eu.getRelation().equals(EnumUtil.EtymologyAttributes.HypothesisOf.toString())) {
             return updateEtymology(id, SparqlPrefix.RDFS.getPrefix() + "comment", //eu.getRelation(),
                     "\"" + eu.getValue() + "\"");
@@ -560,6 +564,7 @@ public final class LexiconUpdateManager implements Manager, Cached {
     }
 
     public String updateGenericRelation(String id, GenericRelationUpdater gru) throws ManagerException {
+        String _id = "";
         if (gru.getType().equals(EnumUtil.GenericRelation.Reference.toString())) {
             validateGenericReferenceRelation(gru.getRelation());
             if (validateIRI(gru.getValue())) {
@@ -567,32 +572,40 @@ public final class LexiconUpdateManager implements Manager, Cached {
                 if (gru.getRelation().equals(EnumUtil.GenericRelationReference.sameAs.toString())) {
                     throw new ManagerException(gru.getRelation() + " links to external links only");
                 }
-                setPrefixes(gru,
+                setPrefixes(gru, false,
                         gru.getRelation().equals(EnumUtil.GenericRelationReference.sameAs.toString()) ? SparqlPrefix.OWL.getUri() : SparqlPrefix.RDFS.getUri(),
                         namespace,
                         namespace);
             } else {
                 validateURL(gru.getValue());
-                setPrefixes(gru, gru.getRelation().equals(EnumUtil.GenericRelationReference.sameAs.toString()) ? SparqlPrefix.OWL.getUri() : SparqlPrefix.RDFS.getUri(),
+                setPrefixes(gru, false, gru.getRelation().equals(EnumUtil.GenericRelationReference.sameAs.toString()) ? SparqlPrefix.OWL.getUri() : SparqlPrefix.RDFS.getUri(),
                         "",
                         "");
             }
-            return (gru.getCurrentValue() != null)
-                    ? (gru.getCurrentValue().isEmpty()
-                    ? createGenericRelation(id, gru.getRelation(), gru.getValue())
-                    : updateGenericRelation(id, gru.getRelation(), gru.getValue(), gru.getCurrentValue()))
-                    : createGenericRelation(id, gru.getRelation(), gru.getValue());
+            _id = SparqlPrefix.LEX.getUri() + id;
+        } else if (gru.getType().equals(EnumUtil.GenericRelation.Bibliography.toString())) {
+            validateGenericBibliographyRelation(gru.getRelation());
+            setPrefixes(gru, true,
+                    gru.getRelation().equals(EnumUtil.GenericRelationBibliography.textualReference.toString()) ? SparqlPrefix.RDFS.getUri() : SparqlPrefix.SKOS.getUri(),
+                    "",
+                    "");
+            _id = SparqlPrefix.LEXBIB.getUri() + id;
         } else {
             throw new ManagerException(gru.getType() + " is not a valid relation type");
         }
+        return (gru.getCurrentValue() != null)
+                ? (gru.getCurrentValue().isEmpty()
+                ? createGenericRelation(_id, gru.getRelation(), gru.getValue())
+                : updateGenericRelation(_id, gru.getRelation(), gru.getValue(), gru.getCurrentValue()))
+                : createGenericRelation(_id, gru.getRelation(), gru.getValue());
     }
 
-    private void setPrefixes(GenericRelationUpdater gru, String... prefix) {
+    private void setPrefixes(GenericRelationUpdater gru, boolean literal, String... prefix) {
         gru.setRelation("<" + prefix[0] + gru.getRelation() + ">");
-        gru.setValue("<" + prefix[1] + gru.getValue() + ">");
+        gru.setValue((literal ? "\"" : "<") + prefix[1] + gru.getValue() + (literal ? "\"" : ">"));
         if (gru.getCurrentValue() != null) {
             if (!gru.getCurrentValue().isEmpty()) {
-                gru.setCurrentValue("<" + prefix[2] + gru.getCurrentValue() + ">");
+                gru.setCurrentValue((literal ? "\"" : "<") + prefix[2] + gru.getCurrentValue() + (literal ? "\"" : ">"));
             }
         }
     }
@@ -604,7 +617,7 @@ public final class LexiconUpdateManager implements Manager, Cached {
     }
 
     public String updateGenericRelation(String id, String relation, String valueToInsert, String currentValue) throws ManagerException, UpdateExecutionException {
-        if (ManagerFactory.getManager(UtilityManager.class).existsLinguisticRelation(id, relation, currentValue)) {
+        if (ManagerFactory.getManager(UtilityManager.class).existsGenericRelation(id, relation, currentValue)) {
             return updateGenericRelation(SparqlUpdateData.UPDATE_GENERIC_RELATION, id, relation,
                     valueToInsert, currentValue);
         } else {

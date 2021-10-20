@@ -52,7 +52,14 @@ public final class UtilityManager implements Manager, Cached {
 //                SparqlQueryUtil.ASK_ENTITY_RELATION.replaceAll("_ID_", id)
 //                        .replaceAll("_RELATION_", relation)
 //                        .replaceAll("_VALUE_", value));
-        String query = SparqlQueryUtil.ASK_ENTITY_RELATION.replaceAll("_ID_", id)
+        String query = SparqlQueryUtil.ASK_ENTITY_LINGUISTIC_RELATION.replaceAll("_ID_", id)
+                .replaceAll("_RELATION_", relation)
+                .replaceAll("_VALUE_", value);
+        return RDFQueryUtil.evaluateBQuery(query);
+    }
+    
+    public boolean existsGenericRelation(String id, String relation, String value) throws QueryEvaluationException {
+        String query = SparqlQueryUtil.ASK_ENTITY_GENERIC_RELATION.replaceAll("_ID_", id)
                 .replaceAll("_RELATION_", relation)
                 .replaceAll("_VALUE_", value);
         return RDFQueryUtil.evaluateBQuery(query);

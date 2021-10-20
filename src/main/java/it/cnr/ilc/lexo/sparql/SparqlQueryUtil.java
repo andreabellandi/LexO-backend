@@ -25,9 +25,13 @@ public class SparqlQueryUtil {
             + "    FILTER(!STRSTARTS(STR(?type), str(" + SparqlPrefix.OWL.getPrefix() + ")))\n"
             + "}";
 
-    public static final String ASK_ENTITY_RELATION
+    public static final String ASK_ENTITY_LINGUISTIC_RELATION
             = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
             + "ASK { lex:_ID_ _RELATION_ _VALUE_ }";
+    
+    public static final String ASK_ENTITY_GENERIC_RELATION
+            = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
+            + "ASK { <_ID_> _RELATION_ _VALUE_ }";
 
     public static final String IS_LEXICON_LANGUAGE
             = SparqlPrefix.LEX.getSparqlPrefix() + "\n"

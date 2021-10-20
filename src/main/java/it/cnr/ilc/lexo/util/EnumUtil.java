@@ -380,6 +380,23 @@ public class EnumUtil {
         
     }
     
+    public static enum GenericRelationBibliography {
+        textualReference("label"),
+        note("note");
+
+        private final String genericRelationBibliography;
+
+        private GenericRelationBibliography(String genericRelationBibliography) {
+            this.genericRelationBibliography = genericRelationBibliography;
+        }        
+
+        @Override
+        public String toString() {
+            return this.genericRelationBibliography;
+        }
+        
+    }
+    
     public static enum AcceptedSearchFormExtendTo {
         None(""),
         Hypernym("hypernym"),
