@@ -69,6 +69,20 @@ public class SparqlInsertData {
             + "                   dct:modified \"_MODIFIED_\" . \n"
             + "    lex:_LEID_ ety:etymology lex:_ID_ .\n"
             + "}";
+    
+    public static final String CREATE_ETYMOLOGICAL_LINK
+            = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ETY.getSparqlPrefix() + "\n"
+            + "INSERT DATA {\n"
+            + "    lex:_ID_ a ety:EtyLink ;\n"
+            + "                   ety:etyLinkType \"inheritance\" ;\n"
+            + "                   ety:etyTarget lex:_LEID_ ;\n"
+            + "                   dct:creator \"_AUTHOR_\" ;\n"
+            + "                   dct:created \"_CREATED_\" ;\n"
+            + "                   dct:modified \"_MODIFIED_\" . \n"
+            + "    lex:_ETID_ ety:hasEtyLink lex:_ID_ .\n"
+            + "}";
 
     public static final String CREATE_LEXICAL_SENSE
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"

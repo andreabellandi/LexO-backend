@@ -159,7 +159,7 @@ public final class UtilityManager implements Manager, Cached {
         String query = SparqlQueryUtil.IS_LEXICALENTRY_ID.replaceAll("_ID_", id);
         return RDFQueryUtil.evaluateBQuery(query);
     }
-
+    
     public boolean exists(String id) throws QueryEvaluationException {
 //        BooleanQuery ask = GraphDbUtil.getConnection().prepareBooleanQuery(QueryLanguage.SPARQL,
 //                SparqlQueryUtil.EXISTS_ID.replaceAll("_ID_", id));

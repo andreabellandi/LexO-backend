@@ -6,6 +6,7 @@
 package it.cnr.ilc.lexo.manager;
 
 import it.cnr.ilc.lexo.LexOProperties;
+import it.cnr.ilc.lexo.service.data.lexicon.output.EtymologicalLink;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Etymology;
 import it.cnr.ilc.lexo.service.data.lexicon.output.FormCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Language;
@@ -13,6 +14,7 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Property;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalSenseCore;
 import it.cnr.ilc.lexo.sparql.SparqlInsertData;
+import it.cnr.ilc.lexo.sparql.SparqlPrefix;
 import it.cnr.ilc.lexo.util.RDFQueryUtil;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -167,6 +169,33 @@ public class LexiconCreationManager implements Manager, Cached {
         e.setLastUpdate(created);
         e.setCreationDate(created);
         return e;
+    }
+    
+    public EtymologicalLink createEtymologicalLink(String leID, String author, String etymologyID) throws ManagerException {
+        Timestamp tm = new Timestamp(System.currentTimeMillis());
+        String id = idInstancePrefix + tm.toString();
+        String created = timestampFormat.format(tm);
+        String _id = id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
+        RDFQueryUtil.update(SparqlInsertData.CREATE_ETYMOLOGICAL_LINK.replaceAll("_ID_", _id)
+                .replace("_ETID_", etymologyID)
+                .replace("_AUTHOR_", author)
+                .replace("_CREATED_", created)
+                .replace("_MODIFIED_", created)
+                .replaceAll("_LEID_", leID));
+        return setEtymologicalLink(_id, created, author, leID);
+    }
+    
+    private EtymologicalLink setEtymologicalLink(String id, String created, String author, String leID) {
+        EtymologicalLink el = new EtymologicalLink();
+        el.setEtyLinkType("inheritance");
+        el.setEtyTargetInstanceName(leID);
+        el.setEtyTarget(SparqlPrefix.LEX.getUri() + leID);
+        el.setEtymologicalLink(SparqlPrefix.LEX.getUri() + id);
+        el.setEtymologicalLinkInstanceName(id);
+        el.setCreator(author);
+        el.setLastUpdate(created);
+        el.setCreationDate(created);
+        return el;
     }
     
     public LexicalSenseCore createLexicalSense(String leID, String author) throws ManagerException {
