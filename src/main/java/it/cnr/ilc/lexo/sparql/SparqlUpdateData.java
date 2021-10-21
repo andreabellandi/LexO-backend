@@ -115,6 +115,21 @@ public class SparqlUpdateData {
             + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
             + SparqlPrefix.SKOS.getSparqlPrefix() + "\n"
             + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ETY.getSparqlPrefix() + "\n"
+            + "DELETE { lex:_ID_ _RELATION_ _VALUE_TO_DELETE_ ;\n "
+            + "                  dct:modified ?modified . } \n"
+            + "INSERT { lex:_ID_ _RELATION_ _VALUE_TO_INSERT_ ;\n"
+            + "                  dct:modified _LAST_UPDATE_ . }\n"
+            + "WHERE {  OPTIONAL { lex:_ID_ dct:modified ?modified . }\n"
+            + "         OPTIONAL { lex:_ID_ _RELATION_ _VALUE_TO_DELETE_ . } }";
+    
+    public static final String UPDATE_ETYMOLOGICAL_LINK
+            = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.SKOS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ETY.getSparqlPrefix() + "\n"
             + "DELETE { lex:_ID_ _RELATION_ _VALUE_TO_DELETE_ ;\n "
             + "                  dct:modified ?modified . } \n"
             + "INSERT { lex:_ID_ _RELATION_ _VALUE_TO_INSERT_ ;\n"

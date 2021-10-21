@@ -6,6 +6,7 @@
 package it.cnr.ilc.lexo.manager;
 
 import it.cnr.ilc.lexo.LexOProperties;
+import it.cnr.ilc.lexo.service.data.lexicon.input.EtymologicalLinkUpdater;
 import it.cnr.ilc.lexo.service.data.lexicon.input.EtymologyUpdater;
 import it.cnr.ilc.lexo.service.data.lexicon.input.FormUpdater;
 import it.cnr.ilc.lexo.service.data.lexicon.input.GenericRelationUpdater;
@@ -131,6 +132,10 @@ public final class LexiconUpdateManager implements Manager, Cached {
 
     public void validateEtymologyAttribute(String attribute) throws ManagerException {
         Manager.validateWithEnum("attribute", EnumUtil.EtymologyAttributes.class, attribute);
+    }
+    
+    public void validateEtymologicalLinkAttribute(String attribute) throws ManagerException {
+        Manager.validateWithEnum("attribute", EnumUtil.EtymologicalLinkAttributes.class, attribute);
     }
 
     public String updateLexiconLanguage(String id, LanguageUpdater lu, String user) throws ManagerException {
@@ -487,6 +492,17 @@ public final class LexiconUpdateManager implements Manager, Cached {
             return null;
         }
     }
+    
+    public String updateEtymologicalLink(String id, EtymologicalLinkUpdater elu, String user) throws ManagerException {
+        validateEtymologicalLinkAttribute(elu.getRelation());
+        if (elu.getRelation().equals(EnumUtil.EtymologicalLinkAttributes.Note.toString())) {
+            return updateEtymologicalLink(id, SparqlPrefix.SKOS.getPrefix() + elu.getRelation(), "\"" + elu.getValue() + "\"");
+        } else if (elu.getRelation().equals(EnumUtil.EtymologicalLinkAttributes.Type.toString())) {
+            return updateEtymologicalLink(id, SparqlPrefix.ETY.getPrefix() + elu.getRelation(), "\"" + elu.getValue() + "\"");
+        } else {
+            return null;
+        }
+    }
 
     public String updateEtymology(String id, String relation, String valueToInsert) throws ManagerException, UpdateExecutionException {
         if (valueToInsert.isEmpty()) {
@@ -498,7 +514,19 @@ public final class LexiconUpdateManager implements Manager, Cached {
                 .replaceAll("_VALUE_TO_INSERT_", valueToInsert)
                 .replaceAll("_VALUE_TO_DELETE_", "?" + SparqlVariable.TARGET)
                 .replaceAll("_LAST_UPDATE_", "\"" + lastupdate + "\""));
-
+        return lastupdate;
+    }
+    
+    public String updateEtymologicalLink(String id, String relation, String valueToInsert) throws ManagerException, UpdateExecutionException {
+        if (valueToInsert.isEmpty()) {
+            throw new ManagerException("value cannot be empty");
+        }
+        String lastupdate = timestampFormat.format(new Timestamp(System.currentTimeMillis()));
+        RDFQueryUtil.update(SparqlUpdateData.UPDATE_ETYMOLOGICAL_LINK.replaceAll("_ID_", id)
+                .replaceAll("_RELATION_", relation)
+                .replaceAll("_VALUE_TO_INSERT_", valueToInsert)
+                .replaceAll("_VALUE_TO_DELETE_", "?" + SparqlVariable.TARGET)
+                .replaceAll("_LAST_UPDATE_", "\"" + lastupdate + "\""));
         return lastupdate;
     }
 

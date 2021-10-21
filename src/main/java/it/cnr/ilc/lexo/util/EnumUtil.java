@@ -303,6 +303,25 @@ public class EnumUtil {
         
     }
     
+    public static enum EtymologicalLinkAttributes {
+        Type("etyLinkType"),
+        Note("note"),
+        Source("etySource"),
+        Target("etyTarget");
+
+        private final String etyLinkAttributes;
+
+        private EtymologicalLinkAttributes(String etyLinkAttributes) {
+            this.etyLinkAttributes = etyLinkAttributes;
+        }
+
+        @Override
+        public String toString() {
+            return this.etyLinkAttributes;
+        }
+        
+    }
+    
     public static enum LexicalSenseSearchFilter {
         Definition("definition"),
         Description("description"),
@@ -329,6 +348,8 @@ public class EnumUtil {
         LexicalRel("lexicalRel"),
         SenseRel("senseRel"),
         ConceptRef("conceptRef"),
+        EtymologicalLink("etyLink"),
+        Cognate("cognate"),
         ConceptRel("conceptRel");
 
         private final String linguisticRelation;

@@ -11,6 +11,7 @@ import it.cnr.ilc.lexo.manager.LexiconUpdateManager;
 import it.cnr.ilc.lexo.manager.ManagerException;
 import it.cnr.ilc.lexo.manager.ManagerFactory;
 import it.cnr.ilc.lexo.manager.UtilityManager;
+import it.cnr.ilc.lexo.service.data.lexicon.input.EtymologicalLinkUpdater;
 import it.cnr.ilc.lexo.service.data.lexicon.input.EtymologyUpdater;
 import it.cnr.ilc.lexo.service.data.lexicon.input.FormUpdater;
 import it.cnr.ilc.lexo.service.data.lexicon.input.GenericRelationUpdater;
@@ -184,6 +185,37 @@ public class LexiconUpdate extends Service {
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + id + " does not exist").build();
                 }
                 return Response.ok(lexiconManager.updateEtymology(id, eu, user))
+                        .type(MediaType.TEXT_PLAIN)
+                        .header("Access-Control-Allow-Headers", "content-type")
+                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                        .build();
+            } catch (ManagerException | UpdateExecutionException ex) {
+                Logger.getLogger(LexiconUpdate.class.getName()).log(Level.SEVERE, null, ex);
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            }
+        } else {
+            return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Insertion denied, wrong key").build();
+        }
+    }
+    
+    @POST
+    @Path("{id}/etymologicalLink")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.POST,
+            value = "/{id}/etymologicalLink",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Etymological link update",
+            notes = "This method updates the etymological link according to the input updater")
+    public Response etymologicalLink(@QueryParam("key") String key, @QueryParam("user") String user,
+            @PathParam("id") String id, EtymologicalLinkUpdater elu) {
+        if (key.equals("PRINitant19")) {
+            try {
+                UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+                if (!utilityManager.isEtymologicalLink(id)) {
+                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + id + " does not exist").build();
+                }
+                return Response.ok(lexiconManager.updateEtymologicalLink(id, elu, user))
                         .type(MediaType.TEXT_PLAIN)
                         .header("Access-Control-Allow-Headers", "content-type")
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")

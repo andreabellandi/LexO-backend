@@ -194,5 +194,10 @@ public final class UtilityManager implements Manager, Cached {
         String query = SparqlQueryUtil.IS_ETYMOLOGY_ID.replaceAll("_ID_", id);
         return RDFQueryUtil.evaluateBQuery(query);
     }
+    
+    public boolean isEtymologicalLink(String id) throws QueryEvaluationException {
+        String query = SparqlQueryUtil.IS_ETYMOLOGICAL_LINK_ID.replaceAll("_ID_", id);
+        return RDFQueryUtil.evaluateBQuery(query);
+    }
 
 }
