@@ -92,6 +92,10 @@ public final class LexiconUpdateManager implements Manager, Cached {
         Manager.validateWithEnum("relation", EnumUtil.GenericRelationBibliography.class, relation);
     }
 
+    public void validateEtyLink(String type) throws ManagerException {
+        Manager.validateWithOntoLexEntity("type", OntoLexEntity.EtyLinkTypes.class, type);
+    }
+    
     public boolean validateIRI(String id) throws ManagerException {
         UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
         if (!utilityManager.exists(id)) {
@@ -133,7 +137,7 @@ public final class LexiconUpdateManager implements Manager, Cached {
     public void validateEtymologyAttribute(String attribute) throws ManagerException {
         Manager.validateWithEnum("attribute", EnumUtil.EtymologyAttributes.class, attribute);
     }
-    
+
     public void validateEtymologicalLinkAttribute(String attribute) throws ManagerException {
         Manager.validateWithEnum("attribute", EnumUtil.EtymologicalLinkAttributes.class, attribute);
     }
@@ -492,7 +496,7 @@ public final class LexiconUpdateManager implements Manager, Cached {
             return null;
         }
     }
-    
+
     public String updateEtymologicalLink(String id, EtymologicalLinkUpdater elu, String user) throws ManagerException {
         validateEtymologicalLinkAttribute(elu.getRelation());
         if (elu.getRelation().equals(EnumUtil.EtymologicalLinkAttributes.Note.toString())) {
@@ -516,7 +520,7 @@ public final class LexiconUpdateManager implements Manager, Cached {
                 .replaceAll("_LAST_UPDATE_", "\"" + lastupdate + "\""));
         return lastupdate;
     }
-    
+
     public String updateEtymologicalLink(String id, String relation, String valueToInsert) throws ManagerException, UpdateExecutionException {
         if (valueToInsert.isEmpty()) {
             throw new ManagerException("value cannot be empty");
@@ -539,10 +543,13 @@ public final class LexiconUpdateManager implements Manager, Cached {
             validateURL(lru.getValue());
             validateConceptRef(lru.getRelation());
             if (lru.getValue().contains(namespace)) {
-                throw new ManagerException("External links only supported");
+                throw new ManagerException("External links supported only");
             } else {
                 setPrefixes(lru, SparqlPrefix.ONTOLEX.getUri(), "", "");
             }
+        } else if (lru.getType().equals(EnumUtil.LinguisticRelation.EtymologicalLink.toString())) {
+            validateEtyLink(lru.getRelation());
+            setPrefixes(lru, SparqlPrefix.ETY.getUri(), SparqlPrefix.ETY.getUri(), SparqlPrefix.LEX.getUri());
         } else {
             throw new ManagerException(lru.getType() + " is not a valid relation type");
         }

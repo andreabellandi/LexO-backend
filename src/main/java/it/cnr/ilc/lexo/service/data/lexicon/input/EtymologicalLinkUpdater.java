@@ -17,7 +17,7 @@ import it.cnr.ilc.lexo.service.data.Data;
 public class EtymologicalLinkUpdater implements Data {
 
     @ApiModelProperty(value = "etymological link relation/attribute", example = "type", allowEmptyValue = false,
-            allowableValues = "note, type")
+            allowableValues = "note, etyLinkType")
     private String relation;
     @ApiModelProperty(value = "realtion/attribute value", example = "inheritance", allowEmptyValue = false)
     private String value;

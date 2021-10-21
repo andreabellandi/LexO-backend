@@ -85,5 +85,20 @@ public class OntoLexEntity {
             return this.type;
         }
     }
+    
+    public static enum EtyLinkTypes {
+        EtySource("etySource");
+
+        private final String type;
+
+        private EtyLinkTypes(String type) {
+            this.type = type;
+        }
+
+        @Override
+        public String toString() {
+            return this.type;
+        }
+    }
 
 }
