@@ -185,18 +185,10 @@ public class LexiconData extends Service {
             TupleQueryResult form = lexiconManager.getForm(id, aspect);
             if (aspect.equals(EnumUtil.LexicalAspects.Core.toString())) {
                 List<FormCore> fc = formCoreHelper.newDataList(form);
-//                TupleQueryResult lexicalEntryReferenceLinks = lexiconManager.getLexicalEntryReferenceLinks(id);
-//                LexicalEntryElementItem referenceLinks = lexicalEntryReferenceLinkHelper.newData(lexicalEntryReferenceLinks);
-//                lexiconManager.addLexicalEntryLinks(lec, referenceLinks,
-//                        new LexicalEntryElementItem("Multimedia", new ArrayList()),
-//                        new LexicalEntryElementItem("Attestation", new ArrayList()),
-//                        new LexicalEntryElementItem("Other", new ArrayList()));
                 FormCore _fc = lexiconManager.getMorphologyInheritance(fc);
-                
                 TupleQueryResult lexicalEntityLinks = lexiconManager.getLexicalEntityLinks(id);
                 LexicalEntityLinksItem links = lexicalEntityLinksItemHelper.newData(lexicalEntityLinks);
                 lexiconManager.addLexicalEntityLink(_fc, links);
-                
                 String json = formCoreHelper.toJson(_fc);
                 return Response.ok(json)
                         .type(MediaType.TEXT_PLAIN)
@@ -243,12 +235,9 @@ public class LexiconData extends Service {
             TupleQueryResult sense = lexiconManager.getLexicalSense(id, aspect);
             if (aspect.equals(EnumUtil.LexicalAspects.Core.toString())) {
                 LexicalSenseCore lsc = lexicalSenseCoreHelper.newData(sense);
-//                TupleQueryResult lexicalEntryReferenceLinks = lexiconManager.getLexicalEntryReferenceLinks(id);
-//                LexicalEntryElementItem referenceLinks = lexicalEntryReferenceLinkHelper.newData(lexicalEntryReferenceLinks);
-//                lexiconManager.addLexicalEntryLinks(lec, referenceLinks,
-//                        new LexicalEntryElementItem("Multimedia", new ArrayList()),
-//                        new LexicalEntryElementItem("Attestation", new ArrayList()),
-//                        new LexicalEntryElementItem("Other", new ArrayList()));
+                TupleQueryResult lexicalEntityLinks = lexiconManager.getLexicalEntityLinks(id);
+                LexicalEntityLinksItem links = lexicalEntityLinksItemHelper.newData(lexicalEntityLinks);
+                lexiconManager.addLexicalEntityLink(lsc, links);
                 String json = lexicalSenseCoreHelper.toJson(lsc);
                 return Response.ok(json)
                         .type(MediaType.TEXT_PLAIN)

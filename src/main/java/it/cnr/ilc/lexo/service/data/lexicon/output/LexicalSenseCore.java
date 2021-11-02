@@ -8,6 +8,7 @@ package it.cnr.ilc.lexo.service.data.lexicon.output;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import it.cnr.ilc.lexo.service.data.Data;
+import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntityLinksItem.Link;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,8 +29,8 @@ public class LexicalSenseCore implements Data {
     private String usage;
     @ApiModelProperty(value = "sense topic", example = "concept url")
     private String topic;
-    @ApiModelProperty(value = "the counting of the links of a sense and their type: Reference (see Also, same As, bilbiography, ...), Multimedia, Attestation, Other)")
-    private ArrayList<LexicalEntryElementItem> links;
+    @ApiModelProperty(value = "the counting of the links of a lexical entry and their type: Reference (see Also, same As) Bilbiography, Multimedia, Attestation, Other)")
+    private ArrayList<Link> links;
     @ApiModelProperty(value = "sense creator (who creates the entry) ", example = "user3")
     private String creator;
     @ApiModelProperty(value = "sense note", example = "some note ...")
@@ -89,11 +90,11 @@ public class LexicalSenseCore implements Data {
         this.usage = usage;
     }
 
-    public ArrayList<LexicalEntryElementItem> getLinks() {
+    public ArrayList<Link> getLinks() {
         return links;
     }
 
-    public void setLinks(ArrayList<LexicalEntryElementItem> links) {
+    public void setLinks(ArrayList<Link> links) {
         this.links = links;
     }
 

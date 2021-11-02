@@ -17,6 +17,7 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntityLinksItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntityLinksItem.Link;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryElementItem;
+import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalSenseCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Morphology;
 import it.cnr.ilc.lexo.sparql.SparqlSelectData;
 import it.cnr.ilc.lexo.sparql.SparqlVariable;
@@ -353,6 +354,14 @@ public class LexiconDataManager implements Manager, Cached {
             _links.add(link);
         }
         fc.setLinks(_links);
+    }
+    
+    public void addLexicalEntityLink(LexicalSenseCore lsc, LexicalEntityLinksItem links) {
+        ArrayList<Link> _links = new ArrayList();
+        for(Link link : links.getLinks()) {
+            _links.add(link);
+        }
+        lsc.setLinks(_links);
     }
 
     public TupleQueryResult getForm(String formID, String aspect) throws ManagerException {
