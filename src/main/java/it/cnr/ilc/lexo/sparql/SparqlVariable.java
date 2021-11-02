@@ -15,6 +15,7 @@ public class SparqlVariable {
     public static final String LEXICAL_ENTRY_INDEX = "lexicalEntryIndex";
     public static final String FORM_INDEX = "formIndex";
     public static final String LEXICAL_SENSE_INDEX = "lexicalSenseIndex";
+    public static final String ETYMOLOGY_INDEX = "etymologyIndex";
     public static final String CONCEPT_REFERENCE_INDEX = "conceptReferenceIndex";
     
     // varibale names
@@ -69,6 +70,11 @@ public class SparqlVariable {
     public static final String SENSE_CREATION_AUTHOR = "creator";
     public static final String SENSE_TOPIC = "topic";
 
+    public static final String ETYMOLOGY = "etymology";
+    public static final String ETYMOLOGY_CREATION_AUTHOR = "creator";
+    public static final String CONFIDENCE = "confidence";
+    public static final String HYPOTHESIS_OF = "hypothesisOf";
+    
     public static final String FRAME = "frame";
     
     public static final String LEXICAL_FORM = "lexicalForm";

@@ -8,6 +8,7 @@ package it.cnr.ilc.lexo.service.data.lexicon.output;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import it.cnr.ilc.lexo.service.data.Data;
+import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntityLinksItem.Link;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +25,8 @@ public class Etymology implements Data {
     private String etymologyInstanceName;
     @ApiModelProperty(value = "label")
     private String label;
+    @ApiModelProperty(value = "the counting of the links of a lexical entry and their type: Reference (see Also, same As) Bilbiography, Multimedia, Attestation, Other)")
+    private ArrayList<Link> links;
     @ApiModelProperty(value = "confidence of the hypothesis")
     private double confidence;
     @ApiModelProperty(value = "string representing the name of who made the hypothesis")
@@ -107,6 +110,14 @@ public class Etymology implements Data {
 
     public void setLastUpdate(String lastUpdate) {
         this.lastUpdate = lastUpdate;
+    }
+
+    public ArrayList<Link> getLinks() {
+        return links;
+    }
+
+    public void setLinks(ArrayList<Link> links) {
+        this.links = links;
     }
 
 }

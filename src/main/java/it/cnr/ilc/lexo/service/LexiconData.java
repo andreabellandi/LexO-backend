@@ -18,6 +18,7 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryElementItem;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalEntryFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalSenseFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.output.BibliographicItem;
+import it.cnr.ilc.lexo.service.data.lexicon.output.Etymology;
 import it.cnr.ilc.lexo.service.data.lexicon.output.FormCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.HitsDataList;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Language;
@@ -28,6 +29,7 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalSenseCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalSenseItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LinkedEntity;
 import it.cnr.ilc.lexo.service.helper.BibliographyHelper;
+import it.cnr.ilc.lexo.service.helper.EtymologyHelper;
 import it.cnr.ilc.lexo.service.helper.FormCoreHelper;
 import it.cnr.ilc.lexo.service.helper.FormItemsHelper;
 import it.cnr.ilc.lexo.service.helper.HelperException;
@@ -43,6 +45,7 @@ import it.cnr.ilc.lexo.service.helper.LinkedEntityHelper;
 import it.cnr.ilc.lexo.util.EnumUtil;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -83,6 +86,7 @@ public class LexiconData extends Service {
     private final LinkedEntityHelper linkedEntityHelper = new LinkedEntityHelper();
     private final BibliographyHelper bibliographyHelper = new BibliographyHelper();
     private final BibliographyManager bibliographyManager = ManagerFactory.getManager(BibliographyManager.class);
+    private final EtymologyHelper etymologyHelper = new EtymologyHelper();
 
     @GET
     @Path("{id}/lexicalEntry")
@@ -118,17 +122,9 @@ public class LexiconData extends Service {
             TupleQueryResult lexicalEntry = lexiconManager.getLexicalEntry(id, aspect);
             if (aspect.equals(EnumUtil.LexicalAspects.Core.toString())) {
                 LexicalEntryCore lec = lexicalEntryCoreHelper.newData(lexicalEntry);
-
                 TupleQueryResult lexicalEntityLinks = lexiconManager.getLexicalEntityLinks(id);
                 LexicalEntityLinksItem links = lexicalEntityLinksItemHelper.newData(lexicalEntityLinks);
                 lexiconManager.addLexicalEntityLink(lec, links);
-
-//                TupleQueryResult lexicalEntryReferenceLinks = lexiconManager.getLexicalEntryReferenceLinks(id);
-//                LexicalEntryElementItem referenceLinks = lexicalEntryReferenceLinkHelper.newData(lexicalEntryReferenceLinks);
-//                lexiconManager.addLexicalEntryLinks(lec, referenceLinks,
-//                        new LexicalEntryElementItem("Multimedia", new ArrayList()),
-//                        new LexicalEntryElementItem("Attestation", new ArrayList()),
-//                        new LexicalEntryElementItem("Other", new ArrayList()));
                 String json = lexicalEntryCoreHelper.toJson(lec);
                 long finish = System.currentTimeMillis();
                 long timeElapsed = finish - start;
@@ -246,6 +242,45 @@ public class LexiconData extends Service {
                         .build();
             }
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("lexical aspect not available").build();
+        } catch (ManagerException ex) {
+            logger.error(ex.getMessage(), ex);
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        }
+    }
+
+    @GET
+    @Path("{id}/etymology")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "/{id}/etymology",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Etymology",
+            notes = "This method returns the etymological data related to a given etymology")
+    public Response etymology(
+            @ApiParam(
+                    name = "key",
+                    value = "authentication token",
+                    example = "lexodemo",
+                    required = true)
+            @QueryParam("key") String key,
+            @ApiParam(
+                    name = "id",
+                    value = "etymology ID",
+                    required = true)
+            @PathParam("id") String id) {
+        try {
+            TupleQueryResult etymology = lexiconManager.getEtymology(id);
+            Etymology e = etymologyHelper.newData(etymology);
+            TupleQueryResult lexicalEntityLinks = lexiconManager.getLexicalEntityLinks(id);
+            LexicalEntityLinksItem links = lexicalEntityLinksItemHelper.newData(lexicalEntityLinks);
+            lexiconManager.addLexicalEntityLink(e, links);
+            String json = etymologyHelper.toJson(e);
+            return Response.ok(json)
+                    .type(MediaType.TEXT_PLAIN)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
         } catch (ManagerException ex) {
             logger.error(ex.getMessage(), ex);
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();

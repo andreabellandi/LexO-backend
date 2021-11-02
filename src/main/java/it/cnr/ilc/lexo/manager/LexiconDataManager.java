@@ -11,6 +11,7 @@ import it.cnr.ilc.lexo.service.data.lexicon.input.FormFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalEntryFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalSenseFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Counting;
+import it.cnr.ilc.lexo.service.data.lexicon.output.Etymology;
 import it.cnr.ilc.lexo.service.data.lexicon.output.FormCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.FormItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntityLinksItem;
@@ -363,6 +364,14 @@ public class LexiconDataManager implements Manager, Cached {
         }
         lsc.setLinks(_links);
     }
+    
+    public void addLexicalEntityLink(Etymology e, LexicalEntityLinksItem links) {
+        ArrayList<Link> _links = new ArrayList();
+        for(Link link : links.getLinks()) {
+            _links.add(link);
+        }
+        e.setLinks(_links);
+    }
 
     public TupleQueryResult getForm(String formID, String aspect) throws ManagerException {
         if (!aspect.equals(EnumUtil.LexicalAspects.Core.toString()) && !aspect.equals(EnumUtil.LexicalAspects.VarTrans.toString())) {
@@ -396,6 +405,11 @@ public class LexiconDataManager implements Manager, Cached {
 //        TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL,
 //                SparqlSelectData.DATA_LEXICAL_SENSE_CORE.replace("[IRI]", "\\\"" + namespace + senseID + "\\\""));
         String query = SparqlSelectData.DATA_LEXICAL_SENSE_CORE.replace("[IRI]", "\\\"" + namespace + senseID + "\\\"");
+        return RDFQueryUtil.evaluateTQuery(query);
+    }
+    
+    public TupleQueryResult getEtymology(String etymologyID) throws ManagerException {
+        String query = SparqlSelectData.DATA_ETYMOLOGY.replace("[IRI]", "\\\"" + namespace + etymologyID + "\\\"");
         return RDFQueryUtil.evaluateTQuery(query);
     }
 

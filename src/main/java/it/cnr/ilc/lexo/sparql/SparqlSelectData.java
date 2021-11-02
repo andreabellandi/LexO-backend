@@ -626,6 +626,39 @@ public class SparqlSelectData {
             + "    OPTIONAL { ?" + SparqlVariable.SENSE + " " + SparqlPrefix.DCT.getPrefix() + "subject ?" + SparqlVariable.SENSE_TOPIC + " }\n"
             + "}";
 
+    public static final String DATA_ETYMOLOGY
+            = SparqlPrefix.LUC.getSparqlPrefix() + "\n"
+            + SparqlPrefix.INST.getSparqlPrefix() + "\n"
+            + SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.OWL.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ETY.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDF.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
+            + SparqlPrefix.SKOS.getSparqlPrefix() + "\n"
+            + "SELECT ?" + SparqlVariable.ETYMOLOGY
+            + " ?" + SparqlVariable.LABEL
+            + " ?" + SparqlVariable.CREATION_DATE
+            + " ?" + SparqlVariable.LAST_UPDATE
+            + " ?" + SparqlVariable.NOTE
+            + " ?" + SparqlVariable.CONFIDENCE
+            + " ?" + SparqlVariable.HYPOTHESIS_OF
+            + " ?" + SparqlVariable.ETYMOLOGY_CREATION_AUTHOR
+            + "\n"
+            + "WHERE {\n"
+            + "  ?search a " + SparqlPrefix.INST.getPrefix() + SparqlVariable.ETYMOLOGY_INDEX + " ;\n"
+            + "      " + SparqlPrefix.LUC.getPrefix() + "query \"etymologyIRI:[IRI]\" ;\n"
+            + "      " + SparqlPrefix.LUC.getPrefix() + "entities ?" + SparqlVariable.ETYMOLOGY + " .\n"
+            + "  ?" + SparqlVariable.ETYMOLOGY + " rdfs:label ?" + SparqlVariable.LABEL + " ;\n"
+            + "             dct:creator ?" + SparqlVariable.ETYMOLOGY_CREATION_AUTHOR + " ;\n"
+            + "             dct:modified ?" + SparqlVariable.LAST_UPDATE + " ;\n"
+            + "             dct:created ?" + SparqlVariable.CREATION_DATE + " ;\n"
+            + "             lexinfo:confidence ?" + SparqlVariable.CONFIDENCE + " .\n"
+            + "    OPTIONAL { ?etymology rdfs:comment ?" + SparqlVariable.HYPOTHESIS_OF + " }\n"
+            + "    OPTIONAL { ?etymology skos:note ?" + SparqlVariable.NOTE + " }\n"
+            + "}";
+
     public static final String DATA_LEXICAL_ENTRY_REFERENCE_LINKS
             = SparqlPrefix.LUC.getSparqlPrefix() + "\n"
             + SparqlPrefix.INST.getSparqlPrefix() + "\n"
@@ -644,7 +677,7 @@ public class SparqlSelectData {
             + " UNION \n"
             + "    { ?" + SparqlVariable.LEXICAL_ENTRY + " owl:sameAs ?" + SparqlVariable.SAMEAS + " . }\n"
             + "}";
-    
+
     public static final String DATA_LEXICAL_ENTITY_LINKS
             = SparqlPrefix.LUC.getSparqlPrefix() + "\n"
             + SparqlPrefix.INST.getSparqlPrefix() + "\n"
