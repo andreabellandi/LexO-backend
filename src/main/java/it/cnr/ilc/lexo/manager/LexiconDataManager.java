@@ -346,6 +346,14 @@ public class LexiconDataManager implements Manager, Cached {
         }
         lec.setLinks(_links);
     }
+    
+    public void addLexicalEntityLink(FormCore fc, LexicalEntityLinksItem links) {
+        ArrayList<Link> _links = new ArrayList();
+        for(Link link : links.getLinks()) {
+            _links.add(link);
+        }
+        fc.setLinks(_links);
+    }
 
     public TupleQueryResult getForm(String formID, String aspect) throws ManagerException {
         if (!aspect.equals(EnumUtil.LexicalAspects.Core.toString()) && !aspect.equals(EnumUtil.LexicalAspects.VarTrans.toString())) {

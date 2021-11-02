@@ -37,7 +37,7 @@ public class LexicalEntryCore implements Data {
 //    @ApiModelProperty(value = "short IRI of the concept denoted by", example = "conceptID")
 //    private String conceptInstanceName;
 
-    @ApiModelProperty(value = "the counting of the links of a lexical entry and their type: Reference (see Also, same As, bilbiography, ...), Multimedia, Attestation, Other)")
+    @ApiModelProperty(value = "the counting of the links of a lexical entry and their type: Reference (see Also, same As) Bilbiography, Multimedia, Attestation, Other)")
 //    private ArrayList<LexicalEntryElementItem> links;
     private ArrayList<Link> links;
     @ApiModelProperty(value = "lexical entry author (who completes the entry) ", example = "user9")

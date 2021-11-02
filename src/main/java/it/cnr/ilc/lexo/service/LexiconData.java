@@ -122,15 +122,13 @@ public class LexiconData extends Service {
                 TupleQueryResult lexicalEntityLinks = lexiconManager.getLexicalEntityLinks(id);
                 LexicalEntityLinksItem links = lexicalEntityLinksItemHelper.newData(lexicalEntityLinks);
                 lexiconManager.addLexicalEntityLink(lec, links);
-                
+
 //                TupleQueryResult lexicalEntryReferenceLinks = lexiconManager.getLexicalEntryReferenceLinks(id);
 //                LexicalEntryElementItem referenceLinks = lexicalEntryReferenceLinkHelper.newData(lexicalEntryReferenceLinks);
 //                lexiconManager.addLexicalEntryLinks(lec, referenceLinks,
 //                        new LexicalEntryElementItem("Multimedia", new ArrayList()),
 //                        new LexicalEntryElementItem("Attestation", new ArrayList()),
 //                        new LexicalEntryElementItem("Other", new ArrayList()));
-                
-
                 String json = lexicalEntryCoreHelper.toJson(lec);
                 long finish = System.currentTimeMillis();
                 long timeElapsed = finish - start;
@@ -163,7 +161,7 @@ public class LexiconData extends Service {
             value = "/{id}/form",
             produces = "application/json; charset=UTF-8")
     @ApiOperation(value = "Form",
-            notes = "This method returns the core data related to given form")
+            notes = "This method returns the core data related to a given form")
     public Response form(
             @ApiParam(
                     name = "key",
@@ -193,7 +191,13 @@ public class LexiconData extends Service {
 //                        new LexicalEntryElementItem("Multimedia", new ArrayList()),
 //                        new LexicalEntryElementItem("Attestation", new ArrayList()),
 //                        new LexicalEntryElementItem("Other", new ArrayList()));
-                String json = formCoreHelper.toJson(lexiconManager.getMorphologyInheritance(fc));
+                FormCore _fc = lexiconManager.getMorphologyInheritance(fc);
+                
+                TupleQueryResult lexicalEntityLinks = lexiconManager.getLexicalEntityLinks(id);
+                LexicalEntityLinksItem links = lexicalEntityLinksItemHelper.newData(lexicalEntityLinks);
+                lexiconManager.addLexicalEntityLink(_fc, links);
+                
+                String json = formCoreHelper.toJson(_fc);
                 return Response.ok(json)
                         .type(MediaType.TEXT_PLAIN)
                         .header("Access-Control-Allow-Headers", "content-type")

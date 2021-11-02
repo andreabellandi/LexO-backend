@@ -8,6 +8,7 @@ package it.cnr.ilc.lexo.service.data.lexicon.output;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import it.cnr.ilc.lexo.service.data.Data;
+import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntityLinksItem.Link;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,8 +31,8 @@ public class FormCore implements Data {
     private ArrayList<Morphology> morphology;
     @ApiModelProperty(value = "morphological traits inherited by the lexical entry")
     private ArrayList<Morphology> inheritedMorphology;
-    @ApiModelProperty(value = "the counting of the links of a form and their type: Reference (see Also, same As, bilbiography, ...), Multimedia, Attestation, Other)")
-    private ArrayList<LexicalEntryElementItem> links;
+    @ApiModelProperty(value = "the counting of the links of a lexical entry and their type: Reference (see Also, same As) Bilbiography, Multimedia, Attestation, Other)")
+    private ArrayList<Link> links;
     @ApiModelProperty(value = "form creator (who creates the entry) ", example = "user3")
     private String creator;
     @ApiModelProperty(value = "form note", example = "some note ...")
@@ -89,11 +90,11 @@ public class FormCore implements Data {
         this.inheritedMorphology = inheritedMorphology;
     }
 
-    public ArrayList<LexicalEntryElementItem> getLinks() {
+    public ArrayList<Link> getLinks() {
         return links;
     }
 
-    public void setLinks(ArrayList<LexicalEntryElementItem> links) {
+    public void setLinks(ArrayList<Link> links) {
         this.links = links;
     }
 
