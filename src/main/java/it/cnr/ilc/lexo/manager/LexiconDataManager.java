@@ -13,6 +13,8 @@ import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalSenseFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Counting;
 import it.cnr.ilc.lexo.service.data.lexicon.output.FormCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.FormItem;
+import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntityLinksItem;
+import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntityLinksItem.Link;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryElementItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Morphology;
@@ -315,21 +317,34 @@ public class LexiconDataManager implements Manager, Cached {
         String query = SparqlSelectData.DATA_LEXICAL_ENTRY_REFERENCE_LINKS.replace("[IRI]", "\\\"" + namespace + lexicalEntryID + "\\\"");
         return RDFQueryUtil.evaluateTQuery(query);
     }
-
-    public void addLexicalEntryLinks(LexicalEntryCore lec, LexicalEntryElementItem... links) {
-        if (lec.getLinks() != null) {
-            addLinks(lec.getLinks(), links);
-        } else {
-            ArrayList<LexicalEntryElementItem> otherLinksList = new ArrayList<>();
-            lec.setLinks(otherLinksList);
-            addLinks(lec.getLinks(), links);
-        }
+    
+    public TupleQueryResult getLexicalEntityLinks(String lexicalEntryID) {
+        String query = SparqlSelectData.DATA_LEXICAL_ENTITY_LINKS.replace("[IRI]", "\\\"" + namespace + lexicalEntryID + "\\\"");
+        return RDFQueryUtil.evaluateTQuery(query);
     }
 
-    private void addLinks(ArrayList<LexicalEntryElementItem> leec, LexicalEntryElementItem... links) {
-        for (LexicalEntryElementItem link : links) {
-            leec.add(link);
+//    public void addLexicalEntryLinks(LexicalEntryCore lec, LexicalEntryElementItem... links) {
+//        if (lec.getLinks() != null) {
+//            addLinks(lec.getLinks(), links);
+//        } else {
+//            ArrayList<LexicalEntryElementItem> otherLinksList = new ArrayList<>();
+//            lec.setLinks(otherLinksList);
+//            addLinks(lec.getLinks(), links);
+//        }
+//    }
+//
+//    private void addLinks(ArrayList<LexicalEntryElementItem> leec, LexicalEntryElementItem... links) {
+//        for (LexicalEntryElementItem link : links) {
+//            leec.add(link);
+//        }
+//    }
+    
+    public void addLexicalEntityLink(LexicalEntryCore lec, LexicalEntityLinksItem links) {
+        ArrayList<Link> _links = new ArrayList();
+        for(Link link : links.getLinks()) {
+            _links.add(link);
         }
+        lec.setLinks(_links);
     }
 
     public TupleQueryResult getForm(String formID, String aspect) throws ManagerException {

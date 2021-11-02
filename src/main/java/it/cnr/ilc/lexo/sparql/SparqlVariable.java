@@ -106,7 +106,7 @@ public class SparqlVariable {
     
     public static final String GRAPH = "graph";
     
-    public static final String BIBLIOGRAPHY = "bib";
+    public static final String BIBLIOGRAPHY = "references";
     public static final String BIBLIOGRAPHY_CREATOR = "bibCreator";
     public static final String BIBLIOGRAPHY_ID = "bibId";
     public static final String BIBLIOGRAPHY_TITLE = "bibTitle";

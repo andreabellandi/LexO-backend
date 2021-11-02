@@ -644,6 +644,29 @@ public class SparqlSelectData {
             + " UNION \n"
             + "    { ?" + SparqlVariable.LEXICAL_ENTRY + " owl:sameAs ?" + SparqlVariable.SAMEAS + " . }\n"
             + "}";
+    
+    public static final String DATA_LEXICAL_ENTITY_LINKS
+            = SparqlPrefix.LUC.getSparqlPrefix() + "\n"
+            + SparqlPrefix.INST.getSparqlPrefix() + "\n"
+            + SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.OWL.getSparqlPrefix() + "\n"
+            + "\n"
+            + "SELECT (count(?" + SparqlVariable.SEEALSO + ") as ?" + SparqlVariable.SEEALSO + "Count) "
+            // owl:sameAs reasoning disabled -- it must be disabled from the GraphDB repo configuration
+            //            + "((count(?" + SparqlVariable.SAMEAS + ") - 1) as ?" + SparqlVariable.SAMEAS + "Count)\n"
+            + "(count(?" + SparqlVariable.SAMEAS + ") as ?" + SparqlVariable.SAMEAS + "Count) "
+            + "(count(?" + SparqlVariable.BIBLIOGRAPHY + ") as ?" + SparqlVariable.BIBLIOGRAPHY + "Count)\n"
+            + "WHERE {\n"
+            + "  ?search a inst:" + SparqlVariable.LEXICAL_ENTRY_INDEX + " ;\n"
+            + "      luc:query \"lexicalEntryIRI:[IRI]\" ;\n"
+            + "      luc:entities ?" + SparqlVariable.LEXICAL_ENTRY + " .\n"
+            + "    { ?" + SparqlVariable.LEXICAL_ENTRY + " rdfs:seeAlso ?" + SparqlVariable.SEEALSO + " . }\n"
+            + " UNION \n"
+            + "    { ?" + SparqlVariable.LEXICAL_ENTRY + " owl:sameAs ?" + SparqlVariable.SAMEAS + " . }\n"
+            + " UNION \n"
+            + "    { ?" + SparqlVariable.LEXICAL_ENTRY + " dct:references ?" + SparqlVariable.BIBLIOGRAPHY + " . }\n"
+            + "}";
 
     public static final String DATA_LINGUISTIC_RELATION
             = SparqlPrefix.LEX.getSparqlPrefix() + "\n"

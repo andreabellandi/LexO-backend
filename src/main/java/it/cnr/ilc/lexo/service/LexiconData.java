@@ -21,6 +21,7 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.BibliographicItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.FormCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.HitsDataList;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Language;
+import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntityLinksItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalSenseCore;
@@ -31,6 +32,7 @@ import it.cnr.ilc.lexo.service.helper.FormCoreHelper;
 import it.cnr.ilc.lexo.service.helper.FormItemsHelper;
 import it.cnr.ilc.lexo.service.helper.HelperException;
 import it.cnr.ilc.lexo.service.helper.LanguageHelper;
+import it.cnr.ilc.lexo.service.helper.LexicalEntityLinksItemHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalEntryCoreHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalEntryFilterHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalEntryElementHelper;
@@ -75,6 +77,7 @@ public class LexiconData extends Service {
     private final LexicalEntryElementHelper lexicalEntryElementHelper = new LexicalEntryElementHelper();
     private final LexicalEntryCoreHelper lexicalEntryCoreHelper = new LexicalEntryCoreHelper();
     private final LexicalEntryReferenceLinkHelper lexicalEntryReferenceLinkHelper = new LexicalEntryReferenceLinkHelper();
+    private final LexicalEntityLinksItemHelper lexicalEntityLinksItemHelper = new LexicalEntityLinksItemHelper();
     private final FormCoreHelper formCoreHelper = new FormCoreHelper();
     private final LexicalSenseCoreHelper lexicalSenseCoreHelper = new LexicalSenseCoreHelper();
     private final LinkedEntityHelper linkedEntityHelper = new LinkedEntityHelper();
@@ -115,12 +118,19 @@ public class LexiconData extends Service {
             TupleQueryResult lexicalEntry = lexiconManager.getLexicalEntry(id, aspect);
             if (aspect.equals(EnumUtil.LexicalAspects.Core.toString())) {
                 LexicalEntryCore lec = lexicalEntryCoreHelper.newData(lexicalEntry);
-                TupleQueryResult lexicalEntryReferenceLinks = lexiconManager.getLexicalEntryReferenceLinks(id);
-                LexicalEntryElementItem referenceLinks = lexicalEntryReferenceLinkHelper.newData(lexicalEntryReferenceLinks);
-                lexiconManager.addLexicalEntryLinks(lec, referenceLinks,
-                        new LexicalEntryElementItem("Multimedia", new ArrayList()),
-                        new LexicalEntryElementItem("Attestation", new ArrayList()),
-                        new LexicalEntryElementItem("Other", new ArrayList()));
+
+                TupleQueryResult lexicalEntityLinks = lexiconManager.getLexicalEntityLinks(id);
+                LexicalEntityLinksItem links = lexicalEntityLinksItemHelper.newData(lexicalEntityLinks);
+                lexiconManager.addLexicalEntityLink(lec, links);
+                
+//                TupleQueryResult lexicalEntryReferenceLinks = lexiconManager.getLexicalEntryReferenceLinks(id);
+//                LexicalEntryElementItem referenceLinks = lexicalEntryReferenceLinkHelper.newData(lexicalEntryReferenceLinks);
+//                lexiconManager.addLexicalEntryLinks(lec, referenceLinks,
+//                        new LexicalEntryElementItem("Multimedia", new ArrayList()),
+//                        new LexicalEntryElementItem("Attestation", new ArrayList()),
+//                        new LexicalEntryElementItem("Other", new ArrayList()));
+                
+
                 String json = lexicalEntryCoreHelper.toJson(lec);
                 long finish = System.currentTimeMillis();
                 long timeElapsed = finish - start;
@@ -576,7 +586,7 @@ public class LexiconData extends Service {
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }
     }
-    
+
     @GET
     @Path("{id}/bibliography")
     @Produces(MediaType.APPLICATION_JSON)

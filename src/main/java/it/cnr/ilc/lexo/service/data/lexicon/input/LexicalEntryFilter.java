@@ -20,7 +20,7 @@ public class LexicalEntryFilter implements Data {
     private String text;
     @ApiModelProperty(value = "search type to perform (it cannot be empty)", example = "startsWith", allowableValues = "equals, startsWith, contains, endsWith", allowEmptyValue = false)
     private String searchMode;
-    @ApiModelProperty(value = "lexcial entry types (empty means all)", example = "word", allowableValues = "word, multi-word expression, affix", allowEmptyValue = true)
+    @ApiModelProperty(value = "lexcial entry types (empty means all)", example = "word", allowableValues = "word, multi-word expression, affix, etymon", allowEmptyValue = true)
     private String type;
     @ApiModelProperty(value = "part of speech (empty means all)", example = "noun", allowEmptyValue = true)
     private String pos;
