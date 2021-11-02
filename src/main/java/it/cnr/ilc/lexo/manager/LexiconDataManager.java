@@ -224,6 +224,13 @@ public class LexiconDataManager implements Manager, Cached {
         return RDFQueryUtil.evaluateTQuery(query);
     }
     
+    public TupleQueryResult getEtymologies(String lexicalEntryID) {
+        String query = SparqlSelectData.DATA_ETYMOLOGIES.replace("[FILTER]", createFilter(lexicalEntryID))
+                .replace("[LIMIT]", String.valueOf(500))
+                .replace("[OFFSET]", String.valueOf(0));
+        return RDFQueryUtil.evaluateTQuery(query);
+    }
+    
     public TupleQueryResult getLexicalSensesByConcept(String conceptID) {
         String query = SparqlSelectData.DATA_SENSE_BY_CONCEPT.replace("_CONCEPT_", conceptID);
         return RDFQueryUtil.evaluateTQuery(query);
@@ -312,34 +319,11 @@ public class LexiconDataManager implements Manager, Cached {
         return RDFQueryUtil.evaluateTQuery(query);
     }
 
-    public TupleQueryResult getLexicalEntryReferenceLinks(String lexicalEntryID) {
-//        TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL,
-//                SparqlSelectData.DATA_LEXICAL_ENTRY_REFERENCE_LINKS.replace("[IRI]", "\\\"" + namespace + lexicalEntryID + "\\\""));
-//        return tupleQuery.evaluate();
-        String query = SparqlSelectData.DATA_LEXICAL_ENTRY_REFERENCE_LINKS.replace("[IRI]", "\\\"" + namespace + lexicalEntryID + "\\\"");
-        return RDFQueryUtil.evaluateTQuery(query);
-    }
     
     public TupleQueryResult getLexicalEntityLinks(String lexicalEntryID) {
         String query = SparqlSelectData.DATA_LEXICAL_ENTITY_LINKS.replace("[IRI]", "\\\"" + namespace + lexicalEntryID + "\\\"");
         return RDFQueryUtil.evaluateTQuery(query);
     }
-
-//    public void addLexicalEntryLinks(LexicalEntryCore lec, LexicalEntryElementItem... links) {
-//        if (lec.getLinks() != null) {
-//            addLinks(lec.getLinks(), links);
-//        } else {
-//            ArrayList<LexicalEntryElementItem> otherLinksList = new ArrayList<>();
-//            lec.setLinks(otherLinksList);
-//            addLinks(lec.getLinks(), links);
-//        }
-//    }
-//
-//    private void addLinks(ArrayList<LexicalEntryElementItem> leec, LexicalEntryElementItem... links) {
-//        for (LexicalEntryElementItem link : links) {
-//            leec.add(link);
-//        }
-//    }
     
     public void addLexicalEntityLink(LexicalEntryCore lec, LexicalEntityLinksItem links) {
         ArrayList<Link> _links = new ArrayList();

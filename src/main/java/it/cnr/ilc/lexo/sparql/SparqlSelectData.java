@@ -404,6 +404,51 @@ public class SparqlSelectData {
             + "} ORDER BY ?" + SparqlVariable.LEXICAL_ENTRY + "\n"
             + " ";
 
+    public static final String DATA_ETYMOLOGIES
+            = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+            + SparqlPrefix.INST.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.SKOS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LUC.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTO.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LOC.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTOLOGY.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDF.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ETY.getSparqlPrefix() + "\n"
+            + "SELECT"
+            + " ?" + SparqlVariable.LEXICAL_ENTRY
+            + " ?" + SparqlVariable.ETYMOLOGY_CREATION_AUTHOR
+            + " ?" + SparqlVariable.NOTE
+            + " ?" + SparqlVariable.LAST_UPDATE
+            + " ?" + SparqlVariable.CREATION_DATE
+            + " ?" + SparqlVariable.HYPOTHESIS_OF
+            + " ?" + SparqlVariable.CONFIDENCE
+            + " ?" + SparqlVariable.ETY_LINK_TYPE
+            + " ?" + SparqlVariable.ETYMOLOGY
+            + " ?" + SparqlVariable.LABEL + "\n"
+            + "WHERE {\n"
+            + "   ?search a inst:" + SparqlVariable.LEXICAL_ENTRY_INDEX + " ;\n"
+            + "      luc:query \"[FILTER]\" ;\n"
+            + "      luc:totalHits ?" + SparqlVariable.TOTAL_HITS + " ;\n"
+            + "      luc:offset \"[OFFSET]\" ;\n"
+            + "      luc:limit \"[LIMIT]\" ;\n"
+            + "      luc:entities ?" + SparqlVariable.LEXICAL_ENTRY + " .\n"
+            + "    ?" + SparqlVariable.LEXICAL_ENTRY + " ety:etymology ?" + SparqlVariable.ETYMOLOGY + " .\n"
+            + "    OPTIONAL { ?" + SparqlVariable.ETYMOLOGY + " skos:note ?" + SparqlVariable.NOTE + " . }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.ETYMOLOGY + " rdfs:label ?" + SparqlVariable.LABEL + " . }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.ETYMOLOGY + " rdfs:comment ?" + SparqlVariable.HYPOTHESIS_OF + " . } \n"
+            + "    OPTIONAL { ?" + SparqlVariable.ETYMOLOGY + " lexinfo:confidence ?" + SparqlVariable.CONFIDENCE + " . } \n"
+            + "    OPTIONAL { ?" + SparqlVariable.ETYMOLOGY + " dct:created ?" + SparqlVariable.CREATION_DATE + " . } \n"
+            + "    OPTIONAL { ?" + SparqlVariable.ETYMOLOGY + " dct:creator ?" + SparqlVariable.ETYMOLOGY_CREATION_AUTHOR + " . } \n"
+            + "    OPTIONAL { ?" + SparqlVariable.ETYMOLOGY + " dct:modified ?" + SparqlVariable.LAST_UPDATE + " . } \n"
+            + "    OPTIONAL { ?" + SparqlVariable.ETYMOLOGY + " ety:hasEtyLink ?" + SparqlVariable.ETY_LINK + " . } \n"
+            + "    OPTIONAL { ?" + SparqlVariable.ETY_LINK + " ety:etyLinkType ?" + SparqlVariable.ETY_LINK_TYPE + " . } \n"
+            + "} ORDER BY ?" + SparqlVariable.LEXICAL_ENTRY + "\n"
+            + " ";
+
     public static final String DATA_FRAMES
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
             + SparqlPrefix.INST.getSparqlPrefix() + "\n"

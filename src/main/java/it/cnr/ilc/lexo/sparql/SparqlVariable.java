@@ -75,6 +75,9 @@ public class SparqlVariable {
     public static final String CONFIDENCE = "confidence";
     public static final String HYPOTHESIS_OF = "hypothesisOf";
     
+    public static final String ETY_LINK = "etyLink";
+    public static final String ETY_LINK_TYPE = "etyLinkType";
+    
     public static final String FRAME = "frame";
     
     public static final String LEXICAL_FORM = "lexicalForm";
