@@ -42,15 +42,10 @@ public final class LexiconUpdateManager implements Manager, Cached {
 
     public final String URL_PATTERN = "https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)";
     public final Pattern pattern = Pattern.compile(URL_PATTERN);
-    private final String namespace = LexOProperties.getProperty("repository.lexicon.namespace");
     private final String lexvoPrefix = "https://id.loc.gov/vocabulary/";
     private final String libraryOfCongressPrefix = "http://id.loc.gov/vocabulary/";
     private final String lexinfoCatalog = "http://www.lexinfo.net/ontologies/3.0/lexinfo";
     private static final SimpleDateFormat timestampFormat = new SimpleDateFormat(LexOProperties.getProperty("manager.operationTimestampFormat"));
-
-    public String getNamespace() {
-        return namespace;
-    }
 
     @Override
     public void reloadCache() {
@@ -95,7 +90,7 @@ public final class LexiconUpdateManager implements Manager, Cached {
     public void validateEtyLink(String type) throws ManagerException {
         Manager.validateWithOntoLexEntity("type", OntoLexEntity.EtyLinkTypes.class, type);
     }
-    
+
     public boolean validateIRI(String id) throws ManagerException {
         UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
         if (!utilityManager.exists(id)) {
@@ -542,14 +537,21 @@ public final class LexiconUpdateManager implements Manager, Cached {
             // currently the property ranges over an external url only 
             validateURL(lru.getValue());
             validateConceptRef(lru.getRelation());
-            if (lru.getValue().contains(namespace)) {
+            if (lru.getValue().contains(SparqlPrefix.LEX.getUri())) {
                 throw new ManagerException("External links supported only");
             } else {
                 setPrefixes(lru, SparqlPrefix.ONTOLEX.getUri(), "", "");
             }
         } else if (lru.getType().equals(EnumUtil.LinguisticRelation.EtymologicalLink.toString())) {
             validateEtyLink(lru.getRelation());
-            setPrefixes(lru, SparqlPrefix.ETY.getUri(), SparqlPrefix.ETY.getUri(), SparqlPrefix.LEX.getUri());
+
+            if (validateIRI(lru.getValue())) {
+                setPrefixes(lru, SparqlPrefix.ETY.getUri(), SparqlPrefix.LEX.getUri(), SparqlPrefix.LEX.getUri());
+            } else {
+                validateURL(lru.getValue());
+                setPrefixes(lru, SparqlPrefix.ETY.getUri(), "", SparqlPrefix.LEX.getUri());
+            }
+
         } else {
             throw new ManagerException(lru.getType() + " is not a valid relation type");
         }
@@ -560,12 +562,16 @@ public final class LexiconUpdateManager implements Manager, Cached {
                 : createLinguisticRelation(id, lru.getRelation(), lru.getValue());
     }
 
-    private void setPrefixes(LinguisticRelationUpdater lru, String... prefix) {
+    private void setPrefixes(LinguisticRelationUpdater lru, String... prefix) throws ManagerException {
         lru.setRelation("<" + prefix[0] + lru.getRelation() + ">");
         lru.setValue("<" + prefix[1] + lru.getValue() + ">");
         if (lru.getCurrentValue() != null) {
             if (!lru.getCurrentValue().isEmpty()) {
-                lru.setCurrentValue("<" + prefix[2] + lru.getCurrentValue() + ">");
+                if (validateIRI(lru.getCurrentValue())) {
+                    lru.setCurrentValue("<" + prefix[2] + lru.getCurrentValue() + ">");
+                } else {
+                    lru.setCurrentValue("<" + lru.getCurrentValue() + ">");
+                }
             }
         }
     }
@@ -609,8 +615,8 @@ public final class LexiconUpdateManager implements Manager, Cached {
                 }
                 setPrefixes(gru, false,
                         gru.getRelation().equals(EnumUtil.GenericRelationReference.sameAs.toString()) ? SparqlPrefix.OWL.getUri() : SparqlPrefix.RDFS.getUri(),
-                        namespace,
-                        namespace);
+                        SparqlPrefix.LEX.getUri(),
+                        SparqlPrefix.LEX.getUri());
             } else {
                 validateURL(gru.getValue());
                 setPrefixes(gru, false, gru.getRelation().equals(EnumUtil.GenericRelationReference.sameAs.toString()) ? SparqlPrefix.OWL.getUri() : SparqlPrefix.RDFS.getUri(),
