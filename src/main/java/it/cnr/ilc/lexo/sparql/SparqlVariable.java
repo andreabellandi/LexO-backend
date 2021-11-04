@@ -77,6 +77,10 @@ public class SparqlVariable {
     
     public static final String ETY_LINK = "etyLink";
     public static final String ETY_LINK_TYPE = "etyLinkType";
+    public static final String ETY_SOURCE = "etySuorce";
+    public static final String ETY_SOURCE_LABEL = "etySourceLabel";
+    public static final String ETY_TARGET = "etyTarget";
+    public static final String ETY_TARGET_LABEL = "etyTargetLabel";
     
     public static final String FRAME = "frame";
     

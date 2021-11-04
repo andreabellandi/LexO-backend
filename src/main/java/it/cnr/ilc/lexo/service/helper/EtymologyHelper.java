@@ -26,6 +26,15 @@ public class EtymologyHelper extends TripleStoreDataHelper<Etymology> {
         data.setLabel(getStringValue(bs, SparqlVariable.LABEL));
         data.setLastUpdate(getStringValue(bs, SparqlVariable.LAST_UPDATE));
         data.setNote(getStringValue(bs, SparqlVariable.NOTE));
+        data.setEtyLink(getStringValue(bs, SparqlVariable.ETY_LINK));
+        data.setEtyLinkInstanceName(getLocalName(bs, SparqlVariable.ETY_LINK));
+        data.setEtyLinkType(getStringValue(bs, SparqlVariable.ETY_LINK_TYPE));
+        data.setEtySource(getStringValue(bs, SparqlVariable.ETY_SOURCE));
+        data.setEtySourceInstanceName(getLocalName(bs, SparqlVariable.ETY_SOURCE));
+        data.setEtySourceLabel(getStringValue(bs, SparqlVariable.ETY_SOURCE_LABEL));
+        data.setEtyTarget(getStringValue(bs, SparqlVariable.ETY_TARGET));
+        data.setEtyTargetInstanceName(getLocalName(bs, SparqlVariable.ETY_TARGET));
+        data.setEtyTargetLabel(getStringValue(bs, SparqlVariable.ETY_TARGET_LABEL));
     }
 
     @Override

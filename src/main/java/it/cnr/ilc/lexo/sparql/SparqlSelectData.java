@@ -690,6 +690,12 @@ public class SparqlSelectData {
             + " ?" + SparqlVariable.CONFIDENCE
             + " ?" + SparqlVariable.HYPOTHESIS_OF
             + " ?" + SparqlVariable.ETYMOLOGY_CREATION_AUTHOR
+            + " ?" + SparqlVariable.ETY_LINK
+            + " ?" + SparqlVariable.ETY_LINK_TYPE
+            + " ?" + SparqlVariable.ETY_TARGET
+            + " ?" + SparqlVariable.ETY_TARGET_LABEL
+            + " ?" + SparqlVariable.ETY_SOURCE
+            + " ?" + SparqlVariable.ETY_SOURCE_LABEL
             + "\n"
             + "WHERE {\n"
             + "  ?search a " + SparqlPrefix.INST.getPrefix() + SparqlVariable.ETYMOLOGY_INDEX + " ;\n"
@@ -700,8 +706,14 @@ public class SparqlSelectData {
             + "             dct:modified ?" + SparqlVariable.LAST_UPDATE + " ;\n"
             + "             dct:created ?" + SparqlVariable.CREATION_DATE + " ;\n"
             + "             lexinfo:confidence ?" + SparqlVariable.CONFIDENCE + " .\n"
-            + "    OPTIONAL { ?etymology rdfs:comment ?" + SparqlVariable.HYPOTHESIS_OF + " }\n"
-            + "    OPTIONAL { ?etymology skos:note ?" + SparqlVariable.NOTE + " }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.ETYMOLOGY + " rdfs:comment ?" + SparqlVariable.HYPOTHESIS_OF + " }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.ETYMOLOGY + " skos:note ?" + SparqlVariable.NOTE + " }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.ETYMOLOGY + " ety:hasEtyLink ?" + SparqlVariable.ETY_LINK + " }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.ETY_LINK + " ety:etyLinkType ?" + SparqlVariable.ETY_LINK_TYPE + " }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.ETY_LINK + " ety:etyTarget ?" + SparqlVariable.ETY_TARGET + " . ?"
+            + SparqlVariable.ETY_TARGET + " rdfs:label ?" + SparqlVariable.ETY_TARGET_LABEL + " . }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.ETY_LINK + " ety:etySource ?" + SparqlVariable.ETY_SOURCE + " . ?"
+            + SparqlVariable.ETY_SOURCE + " rdfs:label ?" + SparqlVariable.ETY_SOURCE_LABEL + " . }"
             + "}";
 
     public static final String DATA_LEXICAL_ENTRY_REFERENCE_LINKS
