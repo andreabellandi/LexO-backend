@@ -31,24 +31,24 @@ public class Etymology implements Data {
     private double confidence;
     @ApiModelProperty(value = "string representing the name of who made the hypothesis")
     private String hypothesisOf;
-    @ApiModelProperty(value = "etyLink IRI")
-    private String etyLink;
-    @ApiModelProperty(value = "etyLink short IRI")
-    private String etyLinkInstanceName;
-    @ApiModelProperty(value = "etyLink type", allowableValues = "inheritance, borrowing")
-    private String etyLinkType;
-    @ApiModelProperty(value = "etySource IRI")
-    private String etySource;
-    @ApiModelProperty(value = "etySource short IRI")
-    private String etyTarget;
-    @ApiModelProperty(value = "etyTarget IRI")
-    private String etySourceInstanceName;
-    @ApiModelProperty(value = "etyTarget short IRI")
-    private String etyTargetInstanceName;
-    @ApiModelProperty(value = "etySource label")
-    private String etySourceLabel;
-    @ApiModelProperty(value = "etyTarget label")
-    private String etyTargetLabel;
+//    @ApiModelProperty(value = "etyLink IRI")
+//    private String etyLink;
+//    @ApiModelProperty(value = "etyLink short IRI")
+//    private String etyLinkInstanceName;
+//    @ApiModelProperty(value = "etyLink type", allowableValues = "inheritance, borrowing")
+//    private String etyLinkType;
+//    @ApiModelProperty(value = "etySource IRI")
+//    private String etySource;
+//    @ApiModelProperty(value = "etySource short IRI")
+//    private String etyTarget;
+//    @ApiModelProperty(value = "etyTarget IRI")
+//    private String etySourceInstanceName;
+//    @ApiModelProperty(value = "etyTarget short IRI")
+//    private String etyTargetInstanceName;
+//    @ApiModelProperty(value = "etySource label")
+//    private String etySourceLabel;
+//    @ApiModelProperty(value = "etyTarget label")
+//    private String etyTargetLabel;
     @ApiModelProperty(value = "etymology creator", example = "user3")
     private String creator;
     @ApiModelProperty(value = "etymology note", example = "some note ...")
@@ -64,78 +64,6 @@ public class Etymology implements Data {
 
     public void setEtymology(String etymology) {
         this.etymology = etymology;
-    }
-
-    public String getEtyLink() {
-        return etyLink;
-    }
-
-    public void setEtyLink(String etyLink) {
-        this.etyLink = etyLink;
-    }
-
-    public String getEtyLinkInstanceName() {
-        return etyLinkInstanceName;
-    }
-
-    public void setEtyLinkInstanceName(String etyLinkInstanceName) {
-        this.etyLinkInstanceName = etyLinkInstanceName;
-    }
-
-    public String getEtyLinkType() {
-        return etyLinkType;
-    }
-
-    public void setEtyLinkType(String etyLinkType) {
-        this.etyLinkType = etyLinkType;
-    }
-
-    public String getEtySource() {
-        return etySource;
-    }
-
-    public void setEtySource(String etySource) {
-        this.etySource = etySource;
-    }
-
-    public String getEtyTarget() {
-        return etyTarget;
-    }
-
-    public void setEtyTarget(String etyTarget) {
-        this.etyTarget = etyTarget;
-    }
-
-    public String getEtySourceInstanceName() {
-        return etySourceInstanceName;
-    }
-
-    public void setEtySourceInstanceName(String etySourceInstanceName) {
-        this.etySourceInstanceName = etySourceInstanceName;
-    }
-
-    public String getEtyTargetInstanceName() {
-        return etyTargetInstanceName;
-    }
-
-    public void setEtyTargetInstanceName(String etyTargetInstanceName) {
-        this.etyTargetInstanceName = etyTargetInstanceName;
-    }
-
-    public String getEtySourceLabel() {
-        return etySourceLabel;
-    }
-
-    public void setEtySourceLabel(String etySourceLabel) {
-        this.etySourceLabel = etySourceLabel;
-    }
-
-    public String getEtyTargetLabel() {
-        return etyTargetLabel;
-    }
-
-    public void setEtyTargetLabel(String etyTargetLabel) {
-        this.etyTargetLabel = etyTargetLabel;
     }
 
     public String getEtymologyInstanceName() {

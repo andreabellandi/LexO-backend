@@ -18,8 +18,10 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryElementItem;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalEntryFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalSenseFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.output.BibliographicItem;
+import it.cnr.ilc.lexo.service.data.lexicon.output.EtymologicalLink;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Etymology;
 import it.cnr.ilc.lexo.service.data.lexicon.output.EtymologyItem;
+import it.cnr.ilc.lexo.service.data.lexicon.output.EtymologyTree;
 import it.cnr.ilc.lexo.service.data.lexicon.output.FormCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.HitsDataList;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Language;
@@ -30,8 +32,10 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalSenseCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalSenseItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LinkedEntity;
 import it.cnr.ilc.lexo.service.helper.BibliographyHelper;
+import it.cnr.ilc.lexo.service.helper.EtymologicalLinkHelper;
 import it.cnr.ilc.lexo.service.helper.EtymologyFilterHelper;
 import it.cnr.ilc.lexo.service.helper.EtymologyHelper;
+import it.cnr.ilc.lexo.service.helper.EtymologyTreeHelper;
 import it.cnr.ilc.lexo.service.helper.FormCoreHelper;
 import it.cnr.ilc.lexo.service.helper.FormItemsHelper;
 import it.cnr.ilc.lexo.service.helper.HelperException;
@@ -89,6 +93,8 @@ public class LexiconData extends Service {
     private final BibliographyManager bibliographyManager = ManagerFactory.getManager(BibliographyManager.class);
     private final EtymologyHelper etymologyHelper = new EtymologyHelper();
     private final EtymologyFilterHelper etymologyFilterHelper = new EtymologyFilterHelper();
+    private final EtymologyTreeHelper etymologyTreeHelper = new EtymologyTreeHelper();
+    private final EtymologicalLinkHelper etymologicalLinkHelper = new EtymologicalLinkHelper();
 
     @GET
     @Path("{id}/lexicalEntry")
@@ -273,11 +279,14 @@ public class LexiconData extends Service {
             @PathParam("id") String id) {
         try {
             TupleQueryResult etymology = lexiconManager.getEtymology(id);
+            TupleQueryResult etymologicalLinks = lexiconManager.getEtymologicalLinks(id);
             Etymology e = etymologyHelper.newData(etymology);
+            List<EtymologicalLink> etyLinks = etymologicalLinkHelper.newDataList(etymologicalLinks);
             TupleQueryResult lexicalEntityLinks = lexiconManager.getLexicalEntityLinks(id);
             LexicalEntityLinksItem links = lexicalEntityLinksItemHelper.newData(lexicalEntityLinks);
             lexiconManager.addLexicalEntityLink(e, links);
-            String json = etymologyHelper.toJson(e);
+            EtymologyTree et = lexiconManager.getEtymologyTree(e, etyLinks);
+            String json = etymologyTreeHelper.toJson(et);
             return Response.ok(json)
                     .type(MediaType.TEXT_PLAIN)
                     .header("Access-Control-Allow-Headers", "content-type")
@@ -461,7 +470,7 @@ public class LexiconData extends Service {
                 .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                 .build();
     }
-    
+
     @GET
     @Path("{id}/etymologies")
     @Produces(MediaType.APPLICATION_JSON)

@@ -92,7 +92,7 @@ public class SparqlSelectData {
             + "   OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " skos:note ?" + SparqlVariable.NOTE + "} .\n"
             + "   OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " loc:rev ?" + SparqlVariable.LEXICAL_ENTRY_REVISOR + "} .\n"
             + "   OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " vs:term_status ?" + SparqlVariable.LEXICAL_ENTRY_STATUS + "} .\n"
-            + "   OPTIONAL { ?" + SparqlVariable.LEXICAL_ENTRY + " ?morphoTrait ?morphoValue . \n"
+            + "   OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " ?morphoTrait ?morphoValue . \n"
             + "              BIND(strafter(str(?morphoTrait),str(lexinfo:)) as ?traitType)\n"
             + "              BIND(strafter(str(?morphoValue),str(lexinfo:)) as ?traitValue)\n"
             + "              FILTER(STRSTARTS(STR(?morphoTrait), str(lexinfo:)))\n"
@@ -690,12 +690,6 @@ public class SparqlSelectData {
             + " ?" + SparqlVariable.CONFIDENCE
             + " ?" + SparqlVariable.HYPOTHESIS_OF
             + " ?" + SparqlVariable.ETYMOLOGY_CREATION_AUTHOR
-            + " ?" + SparqlVariable.ETY_LINK
-            + " ?" + SparqlVariable.ETY_LINK_TYPE
-            + " ?" + SparqlVariable.ETY_TARGET
-            + " ?" + SparqlVariable.ETY_TARGET_LABEL
-            + " ?" + SparqlVariable.ETY_SOURCE
-            + " ?" + SparqlVariable.ETY_SOURCE_LABEL
             + "\n"
             + "WHERE {\n"
             + "  ?search a " + SparqlPrefix.INST.getPrefix() + SparqlVariable.ETYMOLOGY_INDEX + " ;\n"
@@ -708,7 +702,41 @@ public class SparqlSelectData {
             + "             lexinfo:confidence ?" + SparqlVariable.CONFIDENCE + " .\n"
             + "    OPTIONAL { ?" + SparqlVariable.ETYMOLOGY + " rdfs:comment ?" + SparqlVariable.HYPOTHESIS_OF + " }\n"
             + "    OPTIONAL { ?" + SparqlVariable.ETYMOLOGY + " skos:note ?" + SparqlVariable.NOTE + " }\n"
-            + "    OPTIONAL { ?" + SparqlVariable.ETYMOLOGY + " ety:hasEtyLink ?" + SparqlVariable.ETY_LINK + " }\n"
+            + "}";
+    
+    public static final String DATA_ETYMOLOGY_ETY_LINKS_LIST
+            = SparqlPrefix.LUC.getSparqlPrefix() + "\n"
+            + SparqlPrefix.INST.getSparqlPrefix() + "\n"
+            + SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.OWL.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ETY.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDF.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
+            + SparqlPrefix.SKOS.getSparqlPrefix() + "\n"
+            + "SELECT"
+            + " ?" + SparqlVariable.CREATION_DATE
+            + " ?" + SparqlVariable.LAST_UPDATE
+            + " ?" + SparqlVariable.NOTE
+            + " ?" + SparqlVariable.ETYMOLOGY_CREATION_AUTHOR
+            + " ?" + SparqlVariable.ETY_LINK
+            + " ?" + SparqlVariable.ETY_LINK_TYPE
+            + " ?" + SparqlVariable.ETY_TARGET
+            + " ?" + SparqlVariable.ETY_TARGET_LABEL
+            + " ?" + SparqlVariable.ETY_SOURCE
+            + " ?" + SparqlVariable.ETY_SOURCE_LABEL
+            + "\n"
+            + "WHERE {\n"
+            + "  ?search a " + SparqlPrefix.INST.getPrefix() + SparqlVariable.ETYMOLOGY_INDEX + " ;\n"
+            + "      " + SparqlPrefix.LUC.getPrefix() + "query \"etymologyIRI:[IRI]\" ;\n"
+            + "      " + SparqlPrefix.LUC.getPrefix() + "entities ?" + SparqlVariable.ETYMOLOGY + " .\n"
+            + "  ?" + SparqlVariable.ETYMOLOGY + " ety:hasEtyLink ?" + SparqlVariable.ETY_LINK + " .\n"
+            + "    OPTIONAL { ?" + SparqlVariable.ETY_LINK + " dct:modified ?" + SparqlVariable.LAST_UPDATE + " }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.ETY_LINK + " dct:created ?" + SparqlVariable.CREATION_DATE + " }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.ETY_LINK + " dct:creator ?" + SparqlVariable.ETYMOLOGY_CREATION_AUTHOR + " }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.ETY_LINK + " ety:etyLinkType ?" + SparqlVariable.ETY_LINK_TYPE + " }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.ETY_LINK + " skos:note ?" + SparqlVariable.NOTE + " }\n"
             + "    OPTIONAL { ?" + SparqlVariable.ETY_LINK + " ety:etyLinkType ?" + SparqlVariable.ETY_LINK_TYPE + " }\n"
             + "    OPTIONAL { ?" + SparqlVariable.ETY_LINK + " ety:etyTarget ?" + SparqlVariable.ETY_TARGET + " . ?"
             + SparqlVariable.ETY_TARGET + " rdfs:label ?" + SparqlVariable.ETY_TARGET_LABEL + " . }\n"

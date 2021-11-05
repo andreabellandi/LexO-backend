@@ -26,10 +26,14 @@ public class EtymologicalLink implements Data {
     private String etyLinkType;
     @ApiModelProperty(value = "the source of the etymology (etymon)")
     private String etySource;
-    @ApiModelProperty(value = "the source short IRI of the etymology (lexical entry)")
+    @ApiModelProperty(value = "the source short IRI of the etymology (etymon)")
     private String etySourceInstanceName;
+    @ApiModelProperty(value = "label of the source of the etymology (etymon)")
+    private String etySourceLabel;
     @ApiModelProperty(value = "the target IRI of the etymology (lexical entry)")
     private String etyTarget;
+    @ApiModelProperty(value = "label of the target of the etymology (lexical entry)")
+    private String etyTargetLabel;
     @ApiModelProperty(value = "the target short IRI of the etymology (lexical entry)")
     private String etyTargetInstanceName;
     @ApiModelProperty(value = "etymology creator")
@@ -127,6 +131,22 @@ public class EtymologicalLink implements Data {
 
     public void setLastUpdate(String lastUpdate) {
         this.lastUpdate = lastUpdate;
+    }
+
+    public String getEtySourceLabel() {
+        return etySourceLabel;
+    }
+
+    public void setEtySourceLabel(String etySourceLabel) {
+        this.etySourceLabel = etySourceLabel;
+    }
+
+    public String getEtyTargetLabel() {
+        return etyTargetLabel;
+    }
+
+    public void setEtyTargetLabel(String etyTargetLabel) {
+        this.etyTargetLabel = etyTargetLabel;
     }
 
 }

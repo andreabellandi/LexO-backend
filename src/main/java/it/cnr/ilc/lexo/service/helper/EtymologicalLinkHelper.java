@@ -6,6 +6,7 @@
 package it.cnr.ilc.lexo.service.helper;
 
 import it.cnr.ilc.lexo.service.data.lexicon.output.EtymologicalLink;
+import it.cnr.ilc.lexo.sparql.SparqlVariable;
 import org.eclipse.rdf4j.query.BindingSet;
 
 /**
@@ -16,6 +17,19 @@ public class EtymologicalLinkHelper extends TripleStoreDataHelper<EtymologicalLi
 
     @Override
     public void fillData(EtymologicalLink data, BindingSet bs) {
+        data.setCreationDate(getStringValue(bs, SparqlVariable.CREATION_DATE));
+        data.setCreator(getStringValue(bs, SparqlVariable.ETYMOLOGY_CREATION_AUTHOR));
+        data.setLastUpdate(getStringValue(bs, SparqlVariable.LAST_UPDATE));
+        data.setNote(getStringValue(bs, SparqlVariable.NOTE));
+        data.setEtymologicalLink(getStringValue(bs, SparqlVariable.ETY_LINK));
+        data.setEtymologicalLinkInstanceName(getLocalName(bs, SparqlVariable.ETY_LINK));
+        data.setEtyLinkType(getStringValue(bs, SparqlVariable.ETY_LINK_TYPE));
+        data.setEtySource(getStringValue(bs, SparqlVariable.ETY_SOURCE));
+        data.setEtySourceInstanceName(getLocalName(bs, SparqlVariable.ETY_SOURCE));
+        data.setEtySourceLabel(getStringValue(bs, SparqlVariable.ETY_SOURCE_LABEL));
+        data.setEtyTarget(getStringValue(bs, SparqlVariable.ETY_TARGET));
+        data.setEtyTargetInstanceName(getLocalName(bs, SparqlVariable.ETY_TARGET));
+        data.setEtyTargetLabel(getStringValue(bs, SparqlVariable.ETY_TARGET_LABEL));
     }
 
     @Override
