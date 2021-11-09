@@ -29,8 +29,6 @@ public class EtymologyFilterHelper extends TripleStoreDataHelper<EtymologyItem> 
         data.setNote(getStringValue(bs, SparqlVariable.NOTE));
         data.setConfidence(getDoubleNumber(bs, SparqlVariable.CONFIDENCE));
         data.setHypothesisOf(getStringValue(bs, SparqlVariable.HYPOTHESIS_OF));
-        // important note: type has sense only when etymology has one etyLink only !!! (so, the type is unique)
-        data.setType(getStringValue(bs, SparqlVariable.ETY_LINK_TYPE));
     }
 
     @Override

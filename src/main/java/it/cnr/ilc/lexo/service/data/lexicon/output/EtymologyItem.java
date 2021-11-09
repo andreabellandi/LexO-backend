@@ -16,8 +16,6 @@ import it.cnr.ilc.lexo.service.data.Data;
 @ApiModel(description = "Output model representing the main features of an etymology")
 public class EtymologyItem implements Data {
 
-    @ApiModelProperty(value = "etymology type", allowableValues = "Inheritance, Borrowing")
-    private String type;
     @ApiModelProperty(value = "etymology label")
     private String label;
     @ApiModelProperty(value = "etymology confidence")
@@ -42,14 +40,6 @@ public class EtymologyItem implements Data {
     private String lexicalEntryInstanceName;
 
     public EtymologyItem() {
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 
     public String getLabel() {
