@@ -219,6 +219,48 @@ public class LexiconDeletion extends Service {
     }
     
     @GET
+    @Path("{id}/etymologicalLink")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "etymologicalLink",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Etymological link deletion",
+            notes = "This method deletes an etymological Link")
+    public Response etymologicalLink(
+            @ApiParam(
+                    name = "key",
+                    value = "authentication token",
+                    example = "lexodemo",
+                    required = true)
+            @QueryParam("key") String key,
+            @ApiParam(
+                    name = "id",
+                    value = "etymologicalLink ID",
+                    required = true)
+            @PathParam("id") String id) {
+        if (key.equals("PRINitant19")) {
+            try {
+                UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+                if (!utilityManager.isEtymologicalLink(id)) {
+                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + id + " does not exist").build();
+                }
+                lexiconManager.deleteEtymologicalLink(id);
+                return Response.ok()
+                        .type(MediaType.TEXT_PLAIN)
+                        .header("Access-Control-Allow-Headers", "content-type")
+                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                        .build();
+            } catch (ManagerException ex) {
+                Logger.getLogger(LexiconDeletion.class.getName()).log(Level.SEVERE, null, ex);
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            }
+        } else {
+            return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Deletion denied, wrong key").build();
+        }
+    }
+    
+    @GET
     @Path("{id}/bibliography")
     @Produces(MediaType.APPLICATION_JSON)
     @RequestMapping(
