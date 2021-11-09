@@ -426,7 +426,7 @@ public class SparqlSelectData {
             + " ?" + SparqlVariable.CREATION_DATE
             + " ?" + SparqlVariable.HYPOTHESIS_OF
             + " ?" + SparqlVariable.CONFIDENCE
-//            + " ?" + SparqlVariable.ETY_LINK_TYPE
+            //            + " ?" + SparqlVariable.ETY_LINK_TYPE
             + " ?" + SparqlVariable.ETYMOLOGY
             + " ?" + SparqlVariable.LABEL + "\n"
             + "WHERE {\n"
@@ -444,8 +444,8 @@ public class SparqlSelectData {
             + "    OPTIONAL { ?" + SparqlVariable.ETYMOLOGY + " dct:created ?" + SparqlVariable.CREATION_DATE + " . } \n"
             + "    OPTIONAL { ?" + SparqlVariable.ETYMOLOGY + " dct:creator ?" + SparqlVariable.ETYMOLOGY_CREATION_AUTHOR + " . } \n"
             + "    OPTIONAL { ?" + SparqlVariable.ETYMOLOGY + " dct:modified ?" + SparqlVariable.LAST_UPDATE + " . } \n"
-//            + "    OPTIONAL { ?" + SparqlVariable.ETYMOLOGY + " ety:hasEtyLink ?" + SparqlVariable.ETY_LINK + " . } \n"
-//            + "    OPTIONAL { ?" + SparqlVariable.ETY_LINK + " ety:etyLinkType ?" + SparqlVariable.ETY_LINK_TYPE + " . } \n"
+            //            + "    OPTIONAL { ?" + SparqlVariable.ETYMOLOGY + " ety:hasEtyLink ?" + SparqlVariable.ETY_LINK + " . } \n"
+            //            + "    OPTIONAL { ?" + SparqlVariable.ETY_LINK + " ety:etyLinkType ?" + SparqlVariable.ETY_LINK_TYPE + " . } \n"
             + "} ORDER BY ?" + SparqlVariable.LEXICAL_ENTRY + "\n"
             + " ";
 
@@ -703,7 +703,7 @@ public class SparqlSelectData {
             + "    OPTIONAL { ?" + SparqlVariable.ETYMOLOGY + " rdfs:comment ?" + SparqlVariable.HYPOTHESIS_OF + " }\n"
             + "    OPTIONAL { ?" + SparqlVariable.ETYMOLOGY + " skos:note ?" + SparqlVariable.NOTE + " }\n"
             + "}";
-    
+
     public static final String DATA_ETYMOLOGY_ETY_LINKS_LIST
             = SparqlPrefix.LUC.getSparqlPrefix() + "\n"
             + SparqlPrefix.INST.getSparqlPrefix() + "\n"
@@ -721,6 +721,7 @@ public class SparqlSelectData {
             + " ?" + SparqlVariable.NOTE
             + " ?" + SparqlVariable.ETYMOLOGY_CREATION_AUTHOR
             + " ?" + SparqlVariable.ETY_LINK
+            + " ?" + SparqlVariable.ETY_LINK_LABEL
             + " ?" + SparqlVariable.ETY_LINK_TYPE
             + " ?" + SparqlVariable.ETY_TARGET
             + " ?" + SparqlVariable.ETY_TARGET_LABEL
@@ -737,6 +738,7 @@ public class SparqlSelectData {
             + "    OPTIONAL { ?" + SparqlVariable.ETY_LINK + " dct:creator ?" + SparqlVariable.ETYMOLOGY_CREATION_AUTHOR + " }\n"
             + "    OPTIONAL { ?" + SparqlVariable.ETY_LINK + " ety:etyLinkType ?" + SparqlVariable.ETY_LINK_TYPE + " }\n"
             + "    OPTIONAL { ?" + SparqlVariable.ETY_LINK + " skos:note ?" + SparqlVariable.NOTE + " }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.ETY_LINK + " rdfs:label ?" + SparqlVariable.ETY_LINK_LABEL + " }\n"
             + "    OPTIONAL { ?" + SparqlVariable.ETY_LINK + " ety:etyTarget ?" + SparqlVariable.ETY_TARGET + " . OPTIONAL { ?"
             + SparqlVariable.ETY_TARGET + " rdfs:label ?" + SparqlVariable.ETY_TARGET_LABEL + " } }\n"
             + "    OPTIONAL { ?" + SparqlVariable.ETY_LINK + " ety:etySource ?" + SparqlVariable.ETY_SOURCE + " . OPTIONAL { ?"

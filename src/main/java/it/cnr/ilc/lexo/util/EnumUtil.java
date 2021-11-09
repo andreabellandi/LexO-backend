@@ -306,8 +306,7 @@ public class EnumUtil {
     public static enum EtymologicalLinkAttributes {
         Type("etyLinkType"),
         Note("note"),
-        Source("etySource"),
-        Target("etyTarget");
+        Label("label");
 
         private final String etyLinkAttributes;
 

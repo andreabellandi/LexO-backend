@@ -34,6 +34,8 @@ public class EtymologicalLink implements Data {
     private String etyTarget;
     @ApiModelProperty(value = "label of the target of the etymology (lexical entry)")
     private String etyTargetLabel;
+    @ApiModelProperty(value = "etymological link label (the default value it should be equal to that of the etySourceLabel)")
+    private String label;
     @ApiModelProperty(value = "the target short IRI of the etymology (lexical entry)")
     private String etyTargetInstanceName;
     @ApiModelProperty(value = "etymology creator")
@@ -67,6 +69,14 @@ public class EtymologicalLink implements Data {
 
     public void setEtySourceInstanceName(String etySourceInstanceName) {
         this.etySourceInstanceName = etySourceInstanceName;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
     }
 
     public String getEtyLinkType() {

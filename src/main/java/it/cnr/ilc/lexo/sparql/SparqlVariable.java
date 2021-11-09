@@ -76,6 +76,7 @@ public class SparqlVariable {
     public static final String HYPOTHESIS_OF = "hypothesisOf";
     
     public static final String ETY_LINK = "etyLink";
+    public static final String ETY_LINK_LABEL = "etyLinkLabel";
     public static final String ETY_LINK_TYPE = "etyLinkType";
     public static final String ETY_SOURCE = "etySuorce";
     public static final String ETY_SOURCE_LABEL = "etySourceLabel";

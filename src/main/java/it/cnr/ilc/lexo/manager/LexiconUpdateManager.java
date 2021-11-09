@@ -498,6 +498,8 @@ public final class LexiconUpdateManager implements Manager, Cached {
             return updateEtymologicalLink(id, SparqlPrefix.SKOS.getPrefix() + elu.getRelation(), "\"" + elu.getValue() + "\"");
         } else if (elu.getRelation().equals(EnumUtil.EtymologicalLinkAttributes.Type.toString())) {
             return updateEtymologicalLink(id, SparqlPrefix.ETY.getPrefix() + elu.getRelation(), "\"" + elu.getValue() + "\"");
+        } else if (elu.getRelation().equals(EnumUtil.EtymologicalLinkAttributes.Label.toString())) {
+            return updateEtymologicalLink(id, SparqlPrefix.RDFS.getPrefix() + elu.getRelation(), "\"" + elu.getValue() + "\"");
         } else {
             return null;
         }
