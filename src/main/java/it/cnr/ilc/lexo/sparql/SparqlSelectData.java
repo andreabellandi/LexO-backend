@@ -737,11 +737,10 @@ public class SparqlSelectData {
             + "    OPTIONAL { ?" + SparqlVariable.ETY_LINK + " dct:creator ?" + SparqlVariable.ETYMOLOGY_CREATION_AUTHOR + " }\n"
             + "    OPTIONAL { ?" + SparqlVariable.ETY_LINK + " ety:etyLinkType ?" + SparqlVariable.ETY_LINK_TYPE + " }\n"
             + "    OPTIONAL { ?" + SparqlVariable.ETY_LINK + " skos:note ?" + SparqlVariable.NOTE + " }\n"
-            + "    OPTIONAL { ?" + SparqlVariable.ETY_LINK + " ety:etyLinkType ?" + SparqlVariable.ETY_LINK_TYPE + " }\n"
-            + "    OPTIONAL { ?" + SparqlVariable.ETY_LINK + " ety:etyTarget ?" + SparqlVariable.ETY_TARGET + " . ?"
-            + SparqlVariable.ETY_TARGET + " rdfs:label ?" + SparqlVariable.ETY_TARGET_LABEL + " . }\n"
-            + "    OPTIONAL { ?" + SparqlVariable.ETY_LINK + " ety:etySource ?" + SparqlVariable.ETY_SOURCE + " . ?"
-            + SparqlVariable.ETY_SOURCE + " rdfs:label ?" + SparqlVariable.ETY_SOURCE_LABEL + " . }"
+            + "    OPTIONAL { ?" + SparqlVariable.ETY_LINK + " ety:etyTarget ?" + SparqlVariable.ETY_TARGET + " . OPTIONAL { ?"
+            + SparqlVariable.ETY_TARGET + " rdfs:label ?" + SparqlVariable.ETY_TARGET_LABEL + " } }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.ETY_LINK + " ety:etySource ?" + SparqlVariable.ETY_SOURCE + " . OPTIONAL { ?"
+            + SparqlVariable.ETY_SOURCE + " rdfs:label ?" + SparqlVariable.ETY_SOURCE_LABEL + " } }"
             + "}";
 
     public static final String DATA_LEXICAL_ENTRY_REFERENCE_LINKS
