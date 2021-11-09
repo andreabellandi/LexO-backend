@@ -9,13 +9,16 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import it.cnr.ilc.lexo.manager.BibliographyManager;
+import it.cnr.ilc.lexo.manager.LexiconDataManager;
 import it.cnr.ilc.lexo.manager.LexiconDeletionManager;
 import it.cnr.ilc.lexo.manager.ManagerException;
 import it.cnr.ilc.lexo.manager.ManagerFactory;
 import it.cnr.ilc.lexo.manager.UtilityManager;
-import it.cnr.ilc.lexo.service.data.lexicon.input.LinguisticRelationUpdater;
 import it.cnr.ilc.lexo.service.data.lexicon.input.RelationDeleter;
+import it.cnr.ilc.lexo.service.data.lexicon.output.EtymologicalLink;
+import it.cnr.ilc.lexo.service.helper.EtymologicalLinkHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalEntryCoreHelper;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.GET;
@@ -26,6 +29,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.eclipse.rdf4j.query.TupleQueryResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -38,8 +42,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class LexiconDeletion extends Service {
 
     private final LexiconDeletionManager lexiconManager = ManagerFactory.getManager(LexiconDeletionManager.class);
-    private final LexicalEntryCoreHelper lexicalEntryCoreHelper = new LexicalEntryCoreHelper();
+    private final LexiconDataManager lexiconDataManager = ManagerFactory.getManager(LexiconDataManager.class);
     private final BibliographyManager bibliographyManager = ManagerFactory.getManager(BibliographyManager.class);
+    private final EtymologicalLinkHelper etymologicalLinkHelper = new EtymologicalLinkHelper();
 
     @GET
     @Path("{id}/language")
@@ -217,7 +222,7 @@ public class LexiconDeletion extends Service {
             return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Deletion denied, wrong key").build();
         }
     }
-    
+
     @GET
     @Path("{id}/etymologicalLink")
     @Produces(MediaType.APPLICATION_JSON)
@@ -259,7 +264,54 @@ public class LexiconDeletion extends Service {
             return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Deletion denied, wrong key").build();
         }
     }
-    
+
+    @GET
+    @Path("{id}/etymology")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "etymology",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Etymology deletion",
+            notes = "This method deletes an etymology")
+    public Response etymology(
+            @ApiParam(
+                    name = "key",
+                    value = "authentication token",
+                    example = "lexodemo",
+                    required = true)
+            @QueryParam("key") String key,
+            @ApiParam(
+                    name = "id",
+                    value = "etymology ID",
+                    required = true)
+            @PathParam("id") String id) {
+        if (key.equals("PRINitant19")) {
+            try {
+                UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+                if (!utilityManager.isEtymology(id)) {
+                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + id + " does not exist").build();
+                }
+                TupleQueryResult etymologicalLinks = lexiconDataManager.getEtymologicalLinks(id);
+                List<EtymologicalLink> etyLinks = etymologicalLinkHelper.newDataList(etymologicalLinks);
+                for (EtymologicalLink el : etyLinks) {
+                    lexiconManager.deleteEtymologicalLink(el.getEtymologicalLinkInstanceName());
+                }
+                lexiconManager.deleteEtymology(id);
+                return Response.ok()
+                        .type(MediaType.TEXT_PLAIN)
+                        .header("Access-Control-Allow-Headers", "content-type")
+                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                        .build();
+            } catch (ManagerException ex) {
+                Logger.getLogger(LexiconDeletion.class.getName()).log(Level.SEVERE, null, ex);
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            }
+        } else {
+            return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Deletion denied, wrong key").build();
+        }
+    }
+
     @GET
     @Path("{id}/bibliography")
     @Produces(MediaType.APPLICATION_JSON)

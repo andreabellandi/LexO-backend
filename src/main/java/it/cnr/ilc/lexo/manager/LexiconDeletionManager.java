@@ -62,7 +62,11 @@ public class LexiconDeletionManager implements Manager, Cached {
     }
 
     public void deleteEtymologicalLink(String id) throws ManagerException {
-        RDFQueryUtil.update(SparqlDeleteData.DELETE_LEXICAL_SENSE.replaceAll("_ID_", id));
+        RDFQueryUtil.update(SparqlDeleteData.DELETE_ETYMOLOGICAL_LINK.replaceAll("_ID_", id));
+    }
+
+    public void deleteEtymology(String id) throws ManagerException {
+        RDFQueryUtil.update(SparqlDeleteData.DELETE_ETYMOLOGY.replaceAll("_ID_", id));
     }
 
     public void deleteRelation(String id, RelationDeleter rd) throws ManagerException {

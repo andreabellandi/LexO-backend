@@ -43,6 +43,13 @@ public class SparqlDeleteData {
             + "         ?subject ?_predicate lex:_ID_ . }\n"
             + "WHERE { lex:_ID_ ?predicate ?object . \n"
             + "         OPTIONAL { ?subject ?_predicate lex:_ID_ . } }";
+     
+     public static final String DELETE_ETYMOLOGY
+            = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
+            + "DELETE { lex:_ID_ ?predicate ?object . \n"
+            + "         ?subject ?_predicate lex:_ID_ . }\n"
+            + "WHERE { lex:_ID_ ?predicate ?object . \n"
+            + "         OPTIONAL { ?subject ?_predicate lex:_ID_ . } }";
 
     public static final String DELETE_BIBLIOGRAPHY
             = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
