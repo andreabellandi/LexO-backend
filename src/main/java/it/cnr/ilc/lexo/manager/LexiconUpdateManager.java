@@ -534,7 +534,7 @@ public final class LexiconUpdateManager implements Manager, Cached {
     public String updateLinguisticRelation(String id, LinguisticRelationUpdater lru) throws ManagerException {
         if (lru.getType().equals(EnumUtil.LinguisticRelation.Morphology.toString())) {
             validateMorphology(lru.getRelation(), lru.getValue());
-            setPrefixes(lru, SparqlPrefix.LEXINFO.getUri(), SparqlPrefix.LEXINFO.getUri(), SparqlPrefix.LEXINFO.getUri());
+            setMorphologyPrefixes(lru, SparqlPrefix.LEXINFO.getUri(), SparqlPrefix.LEXINFO.getUri(), SparqlPrefix.LEXINFO.getUri());
         } else if (lru.getType().equals(EnumUtil.LinguisticRelation.ConceptRef.toString())) {
             // currently the property ranges over an external url only 
             validateURL(lru.getValue());
@@ -574,6 +574,16 @@ public final class LexiconUpdateManager implements Manager, Cached {
                 } else {
                     lru.setCurrentValue("<" + lru.getCurrentValue() + ">");
                 }
+            }
+        }
+    }
+
+    private void setMorphologyPrefixes(LinguisticRelationUpdater lru, String... prefix) throws ManagerException {
+        lru.setRelation("<" + prefix[0] + lru.getRelation() + ">");
+        lru.setValue("<" + prefix[1] + lru.getValue() + ">");
+        if (lru.getCurrentValue() != null) {
+            if (!lru.getCurrentValue().isEmpty()) {
+                lru.setCurrentValue("<" + prefix[2] + lru.getCurrentValue() + ">");
             }
         }
     }
