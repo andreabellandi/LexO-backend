@@ -22,6 +22,8 @@ public class EtymologicalLink implements Data {
     private String etymologicalLink;
     @ApiModelProperty(value = "etymological link short IRI")
     private String etymologicalLinkInstanceName;
+    @ApiModelProperty(value = "if the IRI is external", allowableValues = "true, false")
+    private boolean externalIRI;
     @ApiModelProperty(value = "type of the etymological link")
     private String etyLinkType;
     @ApiModelProperty(value = "the source of the etymology (etymon)")
@@ -46,6 +48,14 @@ public class EtymologicalLink implements Data {
     private String creationDate;
     @ApiModelProperty(value = "etymology last update")
     private String lastUpdate;
+
+    public boolean isExternalIRI() {
+        return externalIRI;
+    }
+
+    public void setExternalIRI(boolean externalIRI) {
+        this.externalIRI = externalIRI;
+    }
 
     public String getEtymologicalLink() {
         return etymologicalLink;
