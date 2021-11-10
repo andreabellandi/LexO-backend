@@ -7,6 +7,7 @@ package it.cnr.ilc.lexo.service;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import it.cnr.ilc.lexo.manager.LexiconDeletionManager;
 import it.cnr.ilc.lexo.manager.LexiconUpdateManager;
 import it.cnr.ilc.lexo.manager.ManagerException;
 import it.cnr.ilc.lexo.manager.ManagerFactory;
@@ -19,6 +20,7 @@ import it.cnr.ilc.lexo.service.data.lexicon.input.LanguageUpdater;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalEntryUpdater;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalSenseUpdater;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LinguisticRelationUpdater;
+import it.cnr.ilc.lexo.service.data.lexicon.input.RelationDeleter;
 import it.cnr.ilc.lexo.util.EnumUtil;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -42,6 +44,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class LexiconUpdate extends Service {
 
     private final LexiconUpdateManager lexiconManager = ManagerFactory.getManager(LexiconUpdateManager.class);
+    private final LexiconDeletionManager lexiconDeletionManager = ManagerFactory.getManager(LexiconDeletionManager.class);
 
     @POST
     @Path("{id}/language")
@@ -241,11 +244,24 @@ public class LexiconUpdate extends Service {
     public Response linguisticRelation(@QueryParam("key") String key, @PathParam("id") String id, LinguisticRelationUpdater lru) {
         if (key.equals("PRINitant19")) {
             try {
-                return Response.ok(lexiconManager.updateLinguisticRelation(id, lru))
+                if (!lru.getValue().isEmpty()) {
+                String json = lexiconManager.updateLinguisticRelation(id, lru);
+                return Response.ok(json)
                         .type(MediaType.TEXT_PLAIN)
                         .header("Access-Control-Allow-Headers", "content-type")
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
+                } else {
+                    RelationDeleter rd = new RelationDeleter();
+                    rd.setRelation(lru.getRelation());
+                    rd.setValue(lru.getCurrentValue());
+                    lexiconDeletionManager.deleteRelation(id, rd);
+                    return Response.ok()
+                        .type(MediaType.TEXT_PLAIN)
+                        .header("Access-Control-Allow-Headers", "content-type")
+                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                        .build();
+                }
             } catch (ManagerException | UpdateExecutionException ex) {
                 Logger.getLogger(LexiconUpdate.class.getName()).log(Level.SEVERE, null, ex);
                 return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
