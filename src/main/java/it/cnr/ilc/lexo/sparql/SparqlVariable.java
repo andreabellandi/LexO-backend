@@ -130,5 +130,11 @@ public class SparqlVariable {
     public static final String BIBLIOGRAPHY_NOTE = "bibNote";
     public static final String BIBLIOGRAPHY_SEE_ALSO_LINK = "bibSeeAlsoLink";
     public static final String BIBLIOGRAPHY_TEXTUAL_REF = "bibTextRef";
+    
+    public static final String HYPERNYM = "hypernym";
+    public static final String HYPONYM = "hyponym";
+    public static final String MERONYM = "meronym";
+    public static final String HOLONYM = "holonym";
+    public static final String SYNONYM = "synonym";
 
 }
