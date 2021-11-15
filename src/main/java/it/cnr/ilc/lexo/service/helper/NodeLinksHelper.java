@@ -22,10 +22,11 @@ public class NodeLinksHelper extends TripleStoreDataHelper<NodeLinks> {
 
     @Override
     public void fillData(NodeLinks data, BindingSet bs) {
-        data.setHolonymNr(getIntegerNumber(bs, SparqlVariable.HOLONYM));
-        data.setHypernymNr(getIntegerNumber(bs, SparqlVariable.HYPERNYM));
+        data.setHolonymNr(getIntegerNumber(bs, SparqlVariable.HOLONYM + "Count"));
+        data.setHypernymNr(getIntegerNumber(bs, SparqlVariable.HYPERNYM + "Count"));
+        data.setHyponymNr(getIntegerNumber(bs, SparqlVariable.HYPONYM + "Count"));
         data.setIncomingSynonymNr(getIntegerNumber(bs, "in" + SparqlVariable.SYNONYM + "Count"));
-        data.setMeronymNr(getIntegerNumber(bs, SparqlVariable.MERONYM));
+        data.setMeronymNr(getIntegerNumber(bs, SparqlVariable.MERONYM + "Count"));
         data.setOutcomingSynonymNr(getIntegerNumber(bs, "out" + SparqlVariable.SYNONYM + "Count"));
     }
     

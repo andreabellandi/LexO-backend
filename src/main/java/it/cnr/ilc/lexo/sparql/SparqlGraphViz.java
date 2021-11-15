@@ -58,7 +58,7 @@ public class SparqlGraphViz {
             + " UNION \n"
             + "    { ?" + SparqlVariable.SENSE + " lexinfo:holonym ?" + SparqlVariable.HOLONYM + " . }\n"
             + " UNION \n"
-            + "    { ?" + SparqlVariable.SENSE + " lexinfo:meronymTerm ?" + SparqlVariable.MERONYM + " . }\n"
+            + "    { ?" + SparqlVariable.SENSE + " lexinfo:meronymTerm|lexinfo:partMeronym ?" + SparqlVariable.MERONYM + " . }\n"
             + " UNION \n"
             + "    { ?" + SparqlVariable.SENSE + " lexinfo:synonym ?out" + SparqlVariable.SYNONYM + " . }\n"
             + " UNION \n"
