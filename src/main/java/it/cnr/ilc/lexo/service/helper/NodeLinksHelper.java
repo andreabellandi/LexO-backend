@@ -5,7 +5,7 @@
  */
 package it.cnr.ilc.lexo.service.helper;
 
-import it.cnr.ilc.lexo.service.data.lexicon.output.graphviz.NodeLinks;
+import it.cnr.ilc.lexo.service.data.lexicon.output.pippo.NodeLinks;
 import it.cnr.ilc.lexo.sparql.SparqlVariable;
 import org.eclipse.rdf4j.query.BindingSet;
 
@@ -22,12 +22,17 @@ public class NodeLinksHelper extends TripleStoreDataHelper<NodeLinks> {
 
     @Override
     public void fillData(NodeLinks data, BindingSet bs) {
-        data.setHolonymNr(getIntegerNumber(bs, SparqlVariable.HOLONYM + "Count"));
-        data.setHypernymNr(getIntegerNumber(bs, SparqlVariable.HYPERNYM + "Count"));
-        data.setHyponymNr(getIntegerNumber(bs, SparqlVariable.HYPONYM + "Count"));
-        data.setIncomingSynonymNr(getIntegerNumber(bs, "in" + SparqlVariable.SYNONYM + "Count"));
-        data.setMeronymNr(getIntegerNumber(bs, SparqlVariable.MERONYM + "Count"));
-        data.setOutcomingSynonymNr(getIntegerNumber(bs, "out" + SparqlVariable.SYNONYM + "Count"));
+        data.setInferred(isInferred(bs, SparqlVariable.GRAPH));
+        data.setInHypernym(getIntegerNumber(bs, "in" + SparqlVariable.HYPERNYM + "Count"));
+        data.setInHyponym(getIntegerNumber(bs, "in" + SparqlVariable.HYPONYM + "Count"));
+        data.setInPartMeronym(getIntegerNumber(bs, "in" + SparqlVariable.PART_MERONYM + "Count"));
+        data.setInSynonym(getIntegerNumber(bs, "in" + SparqlVariable.SYNONYM + "Count"));
+        data.setInMeronymTerm(getIntegerNumber(bs, "in" + SparqlVariable.MERONYM_TERM + "Count"));
+        data.setOutHypernym(getIntegerNumber(bs, "out" + SparqlVariable.HYPERNYM + "Count"));
+        data.setOutHyponym(getIntegerNumber(bs, "out" + SparqlVariable.HYPONYM + "Count"));
+        data.setOutMeronymTerm(getIntegerNumber(bs, "out" + SparqlVariable.MERONYM_TERM + "Count"));
+        data.setOutPartMeronym(getIntegerNumber(bs, "out" + SparqlVariable.PART_MERONYM + "Count"));
+        data.setOutSynonym(getIntegerNumber(bs, "out" + SparqlVariable.SYNONYM + "Count"));
     }
     
     

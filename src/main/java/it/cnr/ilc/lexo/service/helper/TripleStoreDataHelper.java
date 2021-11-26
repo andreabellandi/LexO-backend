@@ -85,6 +85,10 @@ public abstract class TripleStoreDataHelper<D extends Data> extends Helper<D> {
     public double getDoubleNumber(BindingSet bs, String variable) {
         return (bs.getBinding(variable) != null) ? Double.parseDouble(bs.getBinding(variable).getValue().stringValue()) : 0;
     }
+    
+    public boolean isInferred(BindingSet bs, String variable) {
+        return (bs.getBinding(variable) != null) ? bs.getBinding(variable).getValue().stringValue().contains("implicit") : false ;
+    }
 
     public ArrayList<Morphology> getMorphology(BindingSet bs, String morpho) {
         ArrayList<Morphology> morphos = new ArrayList();

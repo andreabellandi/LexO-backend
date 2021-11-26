@@ -21,6 +21,9 @@ public class SparqlVariable {
     // varibale names
     public static final String TOTAL_HITS = "totalHits";
     
+    // graph
+    public static final String GRAPH = "graph";
+    
     public static final String LEXICON = "lexicon";
     public static final String LEXICON_LANGUAGE = "language";
     public static final String LEXICON_LANGUAGE_INSTANCE_NAME = "languageInstanceName";
@@ -106,6 +109,8 @@ public class SparqlVariable {
     public static final String SEEALSO = "seeAlso";
     public static final String SAMEAS = "sameAs";
     
+    public static final String SOURCE = "source";
+    
     public static final String TARGET = "target";
     public static final String IRI = "IRI";
     public static final String LENGHT = "lenght";
@@ -117,8 +122,6 @@ public class SparqlVariable {
     public static final String STATEMENTS_NUMBER = "statements";
     public static final String TYPE = "type";
     public static final String VALUE = "value";
-    
-    public static final String GRAPH = "graph";
     
     public static final String BIBLIOGRAPHY = "references";
     public static final String BIBLIOGRAPHY_CREATOR = "bibCreator";
@@ -133,8 +136,8 @@ public class SparqlVariable {
     
     public static final String HYPERNYM = "hypernym";
     public static final String HYPONYM = "hyponym";
-    public static final String MERONYM = "meronym";
-    public static final String HOLONYM = "holonym";
+    public static final String PART_MERONYM = "partMeronym";
+    public static final String MERONYM_TERM = "meronymTerm";
     public static final String SYNONYM = "synonym";
 
 }

@@ -5,6 +5,8 @@
  */
 package it.cnr.ilc.lexo.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -21,6 +23,7 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryElementItem;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalEntryFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalEntryList;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalSenseFilter;
+import it.cnr.ilc.lexo.service.data.lexicon.input.graphViz.NodeGraphFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Counting;
 import it.cnr.ilc.lexo.service.data.lexicon.output.FormByLexicalEntry;
 import it.cnr.ilc.lexo.service.data.lexicon.output.FormCore;
@@ -34,8 +37,9 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalSenseItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LinkedEntity;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ReferencedLinguisticObject;
 import it.cnr.ilc.lexo.service.data.lexicon.output.RelationPath;
-import it.cnr.ilc.lexo.service.data.lexicon.output.graphviz.NodeLinks;
-import it.cnr.ilc.lexo.service.data.lexicon.output.graphviz.SenseNodeSummary;
+import it.cnr.ilc.lexo.service.data.lexicon.output.pippo.NodeLinks;
+import it.cnr.ilc.lexo.service.data.lexicon.output.pippo.SenseNodeSummary;
+import it.cnr.ilc.lexo.service.data.lexicon.output.pippo.Cytoscape;
 import it.cnr.ilc.lexo.service.data.lexicon.output.queryExpansion.Form;
 import it.cnr.ilc.lexo.service.helper.CountingHelper;
 import it.cnr.ilc.lexo.service.helper.FormByLexicalEntryHelper;
@@ -61,6 +65,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -115,7 +120,7 @@ public class GraphVizualization extends Service {
             @PathParam("id") String id) {
         TupleQueryResult node = graphVizManager.getNode(id);
         TupleQueryResult links = graphVizManager.getLinks(id);
-        NodeLinks _links = nodeLinksHelperHelper.newData(links);
+        List<NodeLinks> _links = nodeLinksHelperHelper.newDataList(links);
         SenseNodeSummary sns = senseNodeSummaryHelper.newData(node);
         graphVizManager.createNodeSummary(_links, sns);
         String json = senseNodeSummaryHelper.toJson(sns);
@@ -125,4 +130,45 @@ public class GraphVizualization extends Service {
                 .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                 .build();
     }
+
+    @POST
+    @Path("{id}/nodeGraph")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.POST,
+            value = "/{id}/nodeGraph",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Graph of a node",
+            notes = "This method returns the incoming and outcoming edges of a node")
+    public Response nodeGraph(@ApiParam(
+            name = "key",
+            value = "authentication token",
+            example = "lexodemo",
+            required = true)
+            @QueryParam("key") String key,
+            @ApiParam(
+                    name = "id",
+                    value = "lexical sense ID",
+                    example = "USemD2698conciso",
+                    required = true)
+            @PathParam("id") String id,
+            NodeGraphFilter ngf) throws HelperException {
+
+        try {
+            TupleQueryResult incoming = graphVizManager.getNodeGraph(id, ngf, true);
+            TupleQueryResult outcoming = graphVizManager.getNodeGraph(id, ngf, false);
+            Cytoscape ng = graphVizManager.getNodeGraph(incoming, outcoming, ngf.getRelation());
+            ObjectMapper mapper = new ObjectMapper();
+            String json = mapper.writeValueAsString(ng);
+            return Response.ok(json)
+                    .type(MediaType.TEXT_PLAIN)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
+        } catch (JsonProcessingException ex) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        }
+    }
+
 }
