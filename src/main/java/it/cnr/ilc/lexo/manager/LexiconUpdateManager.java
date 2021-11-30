@@ -42,7 +42,9 @@ public final class LexiconUpdateManager implements Manager, Cached {
 
     public final String URL_PATTERN = "https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)";
     public final Pattern pattern = Pattern.compile(URL_PATTERN);
-    private final String lexvoPrefix = "https://id.loc.gov/vocabulary/";
+    private final String lexvoPrefixWWW = "http://www.lexvo.org/";
+    private final String libraryOfCongressPrefixWWW = "http://www.id.loc.gov/vocabulary/";
+    private final String lexvoPrefix = "http://lexvo.org/";
     private final String libraryOfCongressPrefix = "http://id.loc.gov/vocabulary/";
     private final String lexinfoCatalog = "http://www.lexinfo.net/ontologies/3.0/lexinfo";
     private static final SimpleDateFormat timestampFormat = new SimpleDateFormat(LexOProperties.getProperty("manager.operationTimestampFormat"));
@@ -140,7 +142,7 @@ public final class LexiconUpdateManager implements Manager, Cached {
     public String updateLexiconLanguage(String id, LanguageUpdater lu, String user) throws ManagerException {
         validateLexiconLanguageAttribute(lu.getRelation());
         if (lu.getRelation().equals(EnumUtil.LanguageAttributes.Lexvo.toString())) {
-            validateURL(lu.getValue(), lexvoPrefix, libraryOfCongressPrefix);
+            validateURL(lu.getValue(), lexvoPrefix, libraryOfCongressPrefix, lexvoPrefixWWW, libraryOfCongressPrefixWWW);
             return updateLexiconLanguage(id, SparqlPrefix.DCT.getPrefix() + "language", "<" + lu.getValue() + ">");
         } else if (lu.getRelation().equals(EnumUtil.LanguageAttributes.Description.toString())) {
             return updateLexiconLanguage(id, SparqlPrefix.DCT.getPrefix() + lu.getRelation(), "\"" + lu.getValue() + "\"");
