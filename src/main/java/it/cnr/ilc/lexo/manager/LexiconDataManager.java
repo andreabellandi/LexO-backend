@@ -89,6 +89,7 @@ public class LexiconDataManager implements Manager, Cached {
 //            GraphDbUtil.releaseConnection(conn);
 //        }
         String query = SparqlSelectData.DATA_LEXICAL_ENTRIES.replace("[FILTER]", filter)
+                .replace("_TYPE_", lef.getType())
                 .replace("[LIMIT]", String.valueOf(limit))
                 .replace("[OFFSET]", String.valueOf(offset));
 
@@ -104,7 +105,7 @@ public class LexiconDataManager implements Manager, Cached {
         filter = filter + (!lef.getLang().isEmpty() ? " AND writtenFormLanguage:" + lef.getLang() : "");
         filter = filter + (!lef.getAuthor().isEmpty() ? " AND author:" + lef.getAuthor() : "");
         filter = filter + (!lef.getPos().isEmpty() ? " AND pos:" + "\\\"" + lef.getPos() + "\\\"" : "");
-        filter = filter + (!lef.getType().isEmpty() ? " AND type:" + lef.getType() : "");
+        filter = filter + (!lef.getType().isEmpty() ? " AND type:" + "\\\"" + lef.getType() + "\\\"" : "");
         filter = filter + (!lef.getStatus().isEmpty() ? " AND status:" + lef.getStatus() : "");
         return filter;
     }
@@ -136,7 +137,7 @@ public class LexiconDataManager implements Manager, Cached {
         filter = filter + (!lsf.getStatus().isEmpty() ? " AND status:" + lsf.getStatus() : "");
         return filter;
     }
-    
+
     private String createFilter(FormFilter ff) {
         String text = ff.getText().isEmpty() ? "*" : ff.getText();
         String filter = "(" + (ff.getSearchMode().equals(EnumUtil.SearchModes.Equals.toString()) ? getSearchFormField(ff.getRepresentationType(), text)
@@ -157,10 +158,10 @@ public class LexiconDataManager implements Manager, Cached {
                 : (formType.equals(EnumUtil.FormTypes.Entry.toString()) ? "lexicalEntryLabel:" + textSearch
                 : (formType.equals(EnumUtil.FormTypes.Flexed.toString()) ? "writtenCanonicalForm:" + textSearch + " OR writtenOtherForm:" + textSearch : ""));
     }
-    
+
     private String getSearchLexicalSenseField(String lsField, String textSearch) {
         return lsField.isEmpty() ? "definition:" + textSearch + " OR description:" + textSearch + " OR etymology:" + textSearch
-                 + " OR explanation:" + textSearch + " OR gloss:" + textSearch + " OR senseExample:" + textSearch + " OR senseTranslation:" + textSearch
+                + " OR explanation:" + textSearch + " OR gloss:" + textSearch + " OR senseExample:" + textSearch + " OR senseTranslation:" + textSearch
                 : (lsField.equals(EnumUtil.LexicalSenseSearchFilter.Definition.toString()) ? "definition:" + textSearch
                 : (lsField.equals(EnumUtil.LexicalSenseSearchFilter.Description.toString()) ? "description:" + textSearch
                 : (lsField.equals(EnumUtil.LexicalSenseSearchFilter.Explanation.toString()) ? "explanation:" + textSearch
@@ -168,10 +169,10 @@ public class LexiconDataManager implements Manager, Cached {
                 : (lsField.equals(EnumUtil.LexicalSenseSearchFilter.SenseExample.toString()) ? "definition:" + textSearch
                 : (lsField.equals(EnumUtil.LexicalSenseSearchFilter.SenseTranslation.toString()) ? "definition:" + textSearch : ""))))));
     }
-    
+
     private String getSearchFormField(String formField, String textSearch) {
         return formField.isEmpty() ? "writtenRep:" + textSearch + " OR phoneticRep:" + textSearch + " OR transliteration:" + textSearch
-                 + " OR segmentation:" + textSearch + " OR romanization:" + textSearch + " OR pronunciation:" + textSearch
+                + " OR segmentation:" + textSearch + " OR romanization:" + textSearch + " OR pronunciation:" + textSearch
                 : (formField.equals(EnumUtil.FormRepresentationType.PhoneticRepresentation.toString()) ? "phoneticRep:" + textSearch
                 : (formField.equals(EnumUtil.FormRepresentationType.Pronunciation.toString()) ? "pronunciation:" + textSearch
                 : (formField.equals(EnumUtil.FormRepresentationType.Romanization.toString()) ? "romanization:" + textSearch
@@ -189,10 +190,6 @@ public class LexiconDataManager implements Manager, Cached {
         return RDFQueryUtil.evaluateTQuery(query);
     }
 
- 
-
-    
-
     public TupleQueryResult getFilterdForms(FormFilter ff) throws ManagerException {
         Manager.validateWithEnum("formRepresentationType", EnumUtil.FormRepresentationType.class, ff.getRepresentationType());
         String filter = createFilter(ff);
@@ -203,10 +200,6 @@ public class LexiconDataManager implements Manager, Cached {
                 .replace("[OFFSET]", String.valueOf(offset));
         return RDFQueryUtil.evaluateTQuery(query);
     }
-    
-    
-
-    
 
     public TupleQueryResult getForms(String lexicalEntryID) {
         String query = SparqlSelectData.DATA_FORMS_BY_LEXICAL_ENTRY.replace("[IRI]", "\\\"" + namespace + lexicalEntryID + "\\\"")
@@ -225,19 +218,18 @@ public class LexiconDataManager implements Manager, Cached {
                 .replace("[OFFSET]", String.valueOf(0));
         return RDFQueryUtil.evaluateTQuery(query);
     }
-    
+
     public TupleQueryResult getEtymologies(String lexicalEntryID) {
         String query = SparqlSelectData.DATA_ETYMOLOGIES.replace("[FILTER]", createFilter(lexicalEntryID))
                 .replace("[LIMIT]", String.valueOf(500))
                 .replace("[OFFSET]", String.valueOf(0));
         return RDFQueryUtil.evaluateTQuery(query);
     }
-    
+
     public TupleQueryResult getLexicalSensesByConcept(String conceptID) {
         String query = SparqlSelectData.DATA_SENSE_BY_CONCEPT.replace("_CONCEPT_", conceptID);
         return RDFQueryUtil.evaluateTQuery(query);
     }
-
 
     public TupleQueryResult getFormsBySenseRelation(FormBySenseFilter ff, String sense, int distance) throws ManagerException {
         String relationDistancePath = "";
@@ -321,39 +313,49 @@ public class LexiconDataManager implements Manager, Cached {
         return RDFQueryUtil.evaluateTQuery(query);
     }
 
-    
     public TupleQueryResult getLexicalEntityLinks(String lexicalEntryID) {
         String query = SparqlSelectData.DATA_LEXICAL_ENTITY_LINKS.replace("[IRI]", "\\\"" + namespace + lexicalEntryID + "\\\"");
         return RDFQueryUtil.evaluateTQuery(query);
     }
-    
+
+    public LexicalEntryCore getLexicalEntityTypes(List<LexicalEntryCore> lecs) {
+        if (lecs.size() > 1) {
+            ArrayList<String> types = new ArrayList();
+            for (LexicalEntryCore lec : lecs) {
+                types.add(lec.getType().get(0));
+            }
+            lecs.get(0).setType(types);
+        }
+        return lecs.get(0);
+    }
+
     public void addLexicalEntityLink(LexicalEntryCore lec, LexicalEntityLinksItem links) {
         ArrayList<Link> _links = new ArrayList();
-        for(Link link : links.getLinks()) {
+        for (Link link : links.getLinks()) {
             _links.add(link);
         }
         lec.setLinks(_links);
     }
-    
+
     public void addLexicalEntityLink(FormCore fc, LexicalEntityLinksItem links) {
         ArrayList<Link> _links = new ArrayList();
-        for(Link link : links.getLinks()) {
+        for (Link link : links.getLinks()) {
             _links.add(link);
         }
         fc.setLinks(_links);
     }
-    
+
     public void addLexicalEntityLink(LexicalSenseCore lsc, LexicalEntityLinksItem links) {
         ArrayList<Link> _links = new ArrayList();
-        for(Link link : links.getLinks()) {
+        for (Link link : links.getLinks()) {
             _links.add(link);
         }
         lsc.setLinks(_links);
     }
-    
+
     public void addLexicalEntityLink(Etymology e, LexicalEntityLinksItem links) {
         ArrayList<Link> _links = new ArrayList();
-        for(Link link : links.getLinks()) {
+        for (Link link : links.getLinks()) {
             _links.add(link);
         }
         e.setLinks(_links);
@@ -365,7 +367,7 @@ public class LexiconDataManager implements Manager, Cached {
         et.setEtyLinks(etyLinks);
         return et;
     }
-    
+
     public TupleQueryResult getForm(String formID, String aspect) throws ManagerException {
         if (!aspect.equals(EnumUtil.LexicalAspects.Core.toString()) && !aspect.equals(EnumUtil.LexicalAspects.VarTrans.toString())) {
             throw new ManagerException(aspect + " does not allowed for lexical forms");
@@ -400,12 +402,12 @@ public class LexiconDataManager implements Manager, Cached {
         String query = SparqlSelectData.DATA_LEXICAL_SENSE_CORE.replace("[IRI]", "\\\"" + namespace + senseID + "\\\"");
         return RDFQueryUtil.evaluateTQuery(query);
     }
-    
+
     public TupleQueryResult getEtymology(String etymologyID) throws ManagerException {
         String query = SparqlSelectData.DATA_ETYMOLOGY.replace("[IRI]", "\\\"" + namespace + etymologyID + "\\\"");
         return RDFQueryUtil.evaluateTQuery(query);
     }
-    
+
     public TupleQueryResult getEtymologicalLinks(String etymologyID) throws ManagerException {
         String query = SparqlSelectData.DATA_ETYMOLOGY_ETY_LINKS_LIST.replace("[IRI]", "\\\"" + namespace + etymologyID + "\\\"");
         return RDFQueryUtil.evaluateTQuery(query);

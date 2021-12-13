@@ -129,7 +129,8 @@ public class LexiconData extends Service {
             long start = System.currentTimeMillis();
             TupleQueryResult lexicalEntry = lexiconManager.getLexicalEntry(id, aspect);
             if (aspect.equals(EnumUtil.LexicalAspects.Core.toString())) {
-                LexicalEntryCore lec = lexicalEntryCoreHelper.newData(lexicalEntry);
+                List<LexicalEntryCore> _lec = lexicalEntryCoreHelper.newDataList(lexicalEntry);
+                LexicalEntryCore lec = lexiconManager.getLexicalEntityTypes(_lec);
                 TupleQueryResult lexicalEntityLinks = lexiconManager.getLexicalEntityLinks(id);
                 LexicalEntityLinksItem links = lexicalEntityLinksItemHelper.newData(lexicalEntityLinks);
                 lexiconManager.addLexicalEntityLink(lec, links);

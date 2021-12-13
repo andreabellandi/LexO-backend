@@ -91,6 +91,7 @@ public class EnumUtil {
         All(""),
         Word("word"),
         Etymon("etymon"),
+        Cognate("cognate"),
         Multiword("multi-word expression"),
         Affix("affix");
 

@@ -627,15 +627,17 @@ public final class LexiconUpdateManager implements Manager, Cached {
                 if (gru.getRelation().equals(EnumUtil.GenericRelationReference.sameAs.toString())) {
                     throw new ManagerException(gru.getRelation() + " links to external links only");
                 }
+                String pf = (validateIRI(gru.getCurrentValue()) ? SparqlPrefix.LEX.getUri() : "");
                 setPrefixes(gru, false,
                         gru.getRelation().equals(EnumUtil.GenericRelationReference.sameAs.toString()) ? SparqlPrefix.OWL.getUri() : SparqlPrefix.RDFS.getUri(),
                         SparqlPrefix.LEX.getUri(),
-                        SparqlPrefix.LEX.getUri());
+                        pf);
             } else {
                 validateURL(gru.getValue());
+                String pf = (validateIRI(gru.getCurrentValue()) ? SparqlPrefix.LEX.getUri() : "");
                 setPrefixes(gru, false, gru.getRelation().equals(EnumUtil.GenericRelationReference.sameAs.toString()) ? SparqlPrefix.OWL.getUri() : SparqlPrefix.RDFS.getUri(),
                         "",
-                        "");
+                        pf);
             }
             _id = SparqlPrefix.LEX.getUri() + id;
         } else if (gru.getType().equals(EnumUtil.GenericRelation.Bibliography.toString())) {

@@ -94,10 +94,12 @@ public class LexiconCreationManager implements Manager, Cached {
     }
 
     private LexicalEntryCore setLexicalEntry(String id, String created, String author) {
+        ArrayList<String> types = new ArrayList<>();
+        types.add("LexicalEntry");
         LexicalEntryCore lec = new LexicalEntryCore();
         lec.setAuthor(author);
         lec.setLabel(id);
-        lec.setType("LexicalEntry");
+        lec.setType(types);
         lec.setLexicalEntryInstanceName(id);
         lec.setLexicalEntry(getNamespace() + id);
         lec.setStatus("working");

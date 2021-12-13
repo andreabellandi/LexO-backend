@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiModelProperty;
 import it.cnr.ilc.lexo.service.data.Data;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntityLinksItem.Link;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -24,8 +25,8 @@ public class LexicalEntryCore implements Data {
     private String lexicalEntryInstanceName;
     @ApiModelProperty(value = "lexical entry label", example = "label for accedere")
     private String label;
-    @ApiModelProperty(value = "lexical entry types", example = "word", allowableValues = "word, multi-word expression, affix")
-    private String type;
+    @ApiModelProperty(value = "lexical entry types", example = "word", allowableValues = "word, multi-word expression, affix, etymon, cognate")
+    private List<String> type;
     @ApiModelProperty(value = "part of speech", reference = "https://www.lexinfo.net/", example = "verb")
     private String pos;
     @ApiModelProperty(value = "language", example = "it", reference = "https://www.loc.gov/standards/iso639-2/php/code_list.php")
@@ -91,11 +92,11 @@ public class LexicalEntryCore implements Data {
         this.label = label;
     }
 
-    public String getType() {
+    public List<String> getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(List<String> type) {
         this.type = type;
     }
 
@@ -209,4 +210,5 @@ public class LexicalEntryCore implements Data {
     public void setRevisionDate(String revisionDate) {
         this.revisionDate = revisionDate;
     }
+    
 }
