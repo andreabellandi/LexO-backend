@@ -137,4 +137,9 @@ public class SparqlInsertData {
             + "        dct:modified \"_MODIFIED_\" . \n"
             + "    lex:_LEID_ dct:references lexbib:_ID_ .\n"
             + "}";
+    
+     public static final String CREATE_COGNATE_TYPE
+            = SparqlPrefix.ETY.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDF.getSparqlPrefix() + "\n" 
+            + "INSERTA DATA {  <_ID_> a ety:Cognate . }";
 }

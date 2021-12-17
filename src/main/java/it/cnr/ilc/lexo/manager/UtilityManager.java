@@ -199,5 +199,10 @@ public final class UtilityManager implements Manager, Cached {
         String query = SparqlQueryUtil.IS_ETYMOLOGICAL_LINK_ID.replaceAll("_ID_", id);
         return RDFQueryUtil.evaluateBQuery(query);
     }
+    
+    public boolean isCognate(String id, int n) {
+        String query = SparqlQueryUtil.IS_COGNATE.replaceAll("_ID_", id).replace("_COG_NUMBER_", String.valueOf(n));
+        return RDFQueryUtil.evaluateBQuery(query);
+    }
 
 }

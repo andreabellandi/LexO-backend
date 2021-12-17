@@ -1030,4 +1030,5 @@ public class SparqlSelectData {
             + "   OPTIONAL { ?" + SparqlVariable.BIBLIOGRAPHY + " dct:creator ?" + SparqlVariable.BIBLIOGRAPHY_CREATOR + " } . \n"
             + "   OPTIONAL { ?" + SparqlVariable.BIBLIOGRAPHY + " dct:modified ?" + SparqlVariable.LAST_UPDATE + " } . \n"
             + "}";
+    
 }

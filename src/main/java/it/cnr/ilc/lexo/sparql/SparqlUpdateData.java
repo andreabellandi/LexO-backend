@@ -108,7 +108,7 @@ public class SparqlUpdateData {
             + "                  dct:modified _LAST_UPDATE_ . }\n"
             + "WHERE {  OPTIONAL { lex:_ID_ dct:modified ?modified . }\n"
             + "         OPTIONAL { lex:_ID_ _RELATION_ _VALUE_TO_DELETE_ . } }";
-    
+
     public static final String UPDATE_ETYMOLOGY
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
             + SparqlPrefix.LEX.getSparqlPrefix() + "\n"
@@ -122,7 +122,7 @@ public class SparqlUpdateData {
             + "                  dct:modified _LAST_UPDATE_ . }\n"
             + "WHERE {  OPTIONAL { lex:_ID_ dct:modified ?modified . }\n"
             + "         OPTIONAL { lex:_ID_ _RELATION_ _VALUE_TO_DELETE_ . } }";
-    
+
     public static final String UPDATE_ETYMOLOGICAL_LINK
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
             + SparqlPrefix.LEX.getSparqlPrefix() + "\n"
@@ -189,5 +189,6 @@ public class SparqlUpdateData {
             + "                  dct:modified _LAST_UPDATE_ . }\n"
             + "WHERE {  OPTIONAL { <_ID_> dct:modified ?modified . }\n"
             + "         OPTIONAL { <_ID_> _RELATION_ _VALUE_TO_DELETE_ . } }";
+
 
 }

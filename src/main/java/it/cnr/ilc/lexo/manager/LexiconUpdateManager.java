@@ -14,6 +14,8 @@ import it.cnr.ilc.lexo.service.data.lexicon.input.LanguageUpdater;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalEntryUpdater;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalSenseUpdater;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LinguisticRelationUpdater;
+import it.cnr.ilc.lexo.sparql.Namespace;
+import it.cnr.ilc.lexo.sparql.SparqlDeleteData;
 import it.cnr.ilc.lexo.sparql.SparqlInsertData;
 import it.cnr.ilc.lexo.sparql.SparqlPrefix;
 import it.cnr.ilc.lexo.sparql.SparqlSelectData;
@@ -71,6 +73,10 @@ public final class LexiconUpdateManager implements Manager, Cached {
 
     public void validateConceptRef(String type) throws ManagerException {
         Manager.validateWithOntoLexEntity("type", OntoLexEntity.ReferenceTypes.class, type);
+    }
+
+    public void validateLexicalRel(String rel) throws ManagerException {
+        Manager.validateWithEnum("rel", EnumUtil.LexicalRel.class, rel);
     }
 
     public void validateLexicalEntryStatus(String status) throws ManagerException {
@@ -548,14 +554,23 @@ public final class LexiconUpdateManager implements Manager, Cached {
             }
         } else if (lru.getType().equals(EnumUtil.LinguisticRelation.EtymologicalLink.toString())) {
             validateEtyLink(lru.getRelation());
-
             if (validateIRI(lru.getValue())) {
                 setPrefixes(lru, SparqlPrefix.ETY.getUri(), SparqlPrefix.LEX.getUri(), SparqlPrefix.LEX.getUri());
             } else {
                 validateURL(lru.getValue());
                 setPrefixes(lru, SparqlPrefix.ETY.getUri(), "", SparqlPrefix.LEX.getUri());
             }
-
+        } else if (lru.getType().equals(EnumUtil.LinguisticRelation.LexicalRel.toString())) {
+            // currently only cognate
+            validateLexicalRel(lru.getRelation());
+            if (validateIRI(lru.getValue())) {
+                setPrefixes(lru, SparqlPrefix.ETY.getUri(), SparqlPrefix.LEX.getUri(),
+                        SparqlPrefix.LEX.getUri());
+            } else {
+                validateURL(lru.getValue());
+                setPrefixes(lru, SparqlPrefix.ETY.getUri(), "",
+                        SparqlPrefix.LEX.getUri());
+            }
         } else {
             throw new ManagerException(lru.getType() + " is not a valid relation type");
         }
@@ -591,18 +606,46 @@ public final class LexiconUpdateManager implements Manager, Cached {
     }
 
     public String createLinguisticRelation(String id, String relation, String valueToInsert) throws ManagerException, UpdateExecutionException {
-        // TODO: it should be verified if the relation can be applied to the id type (for example, denotes requires the id type to be LexicalEntry)
+        // TODO: it should be verified if the relation can be applied to the id type (for example, denotes requires the id type to be LexicalEntry
+        if (relation.equals(EnumUtil.LexicalRel.Cognate.toString())) {
+            createCognate(valueToInsert);
+        }
         return updateLinguisticRelation(SparqlInsertData.CREATE_LINGUISTIC_RELATION, id, relation,
                 valueToInsert, "?" + SparqlVariable.TARGET);
     }
 
+    private void createCognate(String valueToInsert) throws ManagerException {
+        if (validateIRI(valueToInsert)) {
+            RDFQueryUtil.update(SparqlInsertData.CREATE_COGNATE_TYPE.replace("_ID_", valueToInsert));
+        }
+    }
+
     public String updateLinguisticRelation(String id, String relation, String valueToInsert, String currentValue) throws ManagerException, UpdateExecutionException {
+        if (relation.equals(EnumUtil.LexicalRel.Cognate.toString())) {
+            updateCognate(valueToInsert, currentValue);
+        }
         if (ManagerFactory.getManager(UtilityManager.class).existsLinguisticRelation(id, relation, currentValue)) {
             return updateLinguisticRelation(SparqlUpdateData.UPDATE_LINGUISTIC_RELATION, id, relation,
                     valueToInsert, currentValue);
         } else {
             throw new ManagerException("IRI " + id + " does not exist or <" + id + ", " + relation + ", " + currentValue + "> does not exist");
         }
+    }
+    
+    private void updateCognate(String valueToInsert, String currentValue) throws ManagerException {
+        if (validateIRI(currentValue)) {
+                if (!ManagerFactory.getManager(UtilityManager.class).isCognate(currentValue, 1)) {
+                    // currentValue is involved in this cognate relation only, so its Cognate type is removed
+                    RDFQueryUtil.update(SparqlDeleteData.DELETE_COGNATE_TYPE.replaceAll("_ID_", currentValue));
+                } 
+                if (validateIRI(valueToInsert)) {
+                    createCognate(valueToInsert);
+                }
+            } else {
+                if (validateIRI(valueToInsert)) {
+                    createCognate(valueToInsert);
+                }
+            }
     }
 
     public String updateLinguisticRelation(String query, String id, String relation, String valueToInsert, String valueToDelete) throws ManagerException, UpdateExecutionException {

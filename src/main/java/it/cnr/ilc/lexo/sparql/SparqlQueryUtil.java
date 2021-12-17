@@ -28,7 +28,7 @@ public class SparqlQueryUtil {
     public static final String ASK_ENTITY_LINGUISTIC_RELATION
             = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
             + "ASK { lex:_ID_ _RELATION_ _VALUE_ }";
-    
+
     public static final String ASK_ENTITY_GENERIC_RELATION
             = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
             + "ASK { <_ID_> _RELATION_ _VALUE_ }";
@@ -42,12 +42,12 @@ public class SparqlQueryUtil {
             = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
             + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
             + "ASK { " + SparqlPrefix.LEX.getPrefix() + "_ID_ a " + SparqlPrefix.ONTOLEX.getPrefix() + "LexicalEntry }";
-    
+
     public static final String IS_ETYMON_ID
             = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
             + SparqlPrefix.ETY.getSparqlPrefix() + "\n"
             + "ASK { " + SparqlPrefix.LEX.getPrefix() + "_ID_ a " + SparqlPrefix.ETY.getPrefix() + "Etymon }";
-    
+
     public static final String HAS_LEXICALENTRY_CHILDREN
             = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
             + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
@@ -67,12 +67,12 @@ public class SparqlQueryUtil {
             = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
             + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
             + "ASK { " + SparqlPrefix.LEX.getPrefix() + "_ID_ a " + SparqlPrefix.ONTOLEX.getPrefix() + "Form }";
-    
+
     public static final String IS_ETYMOLOGY_ID
             = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
             + SparqlPrefix.ETY.getSparqlPrefix() + "\n"
             + "ASK { " + SparqlPrefix.LEX.getPrefix() + "_ID_ a " + SparqlPrefix.ETY.getPrefix() + "Etymology }";
-    
+
     public static final String IS_ETYMOLOGICAL_LINK_ID
             = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
             + SparqlPrefix.ETY.getSparqlPrefix() + "\n"
@@ -109,9 +109,22 @@ public class SparqlQueryUtil {
             + "SELECT (count(?count) as ?" + SparqlVariable.LABEL_COUNT + ") \n"
             + "WHERE { lex:_ID_ " + SparqlPrefix.LIME.getPrefix() + "entry ?count }";
 
-     public static final String LEXICAL_ENTRY_LABEL
+    public static final String LEXICAL_ENTRY_LABEL
             = SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
             + SparqlPrefix.LEX.getSparqlPrefix() + "\n"
             + "SELECT ?" + SparqlVariable.LABEL + " \n"
             + "WHERE { lex:_ID_ " + SparqlPrefix.RDFS.getPrefix() + "label ?" + SparqlVariable.LABEL + " }";
+
+    public static final String IS_COGNATE
+            = SparqlPrefix.ETY.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEX.getSparqlPrefix() + "\n"
+            + "ASK WHERE { \n"
+            + "  {\n"
+            + "     SELECT (count(?" + SparqlVariable.LEXICAL_ENTRY + ") as ?" + SparqlVariable.LABEL_COUNT + ")\n"
+            + "     WHERE {\n"
+            + "        ?" + SparqlVariable.LEXICAL_ENTRY + " ety:cognate <_ID_> \n"
+            + "     }\n"
+            + "  }\n"
+            + "  FILTER( ?" + SparqlVariable.LABEL_COUNT + " > _COG_NUMBER_ )\n"
+            + "}";
 }

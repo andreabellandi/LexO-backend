@@ -177,6 +177,23 @@ public class EnumUtil {
         
     }
     
+    
+    public static enum LexicalRel {
+        Cognate("cognate");
+
+        private final String lexicalRel;
+
+        private LexicalRel(String lexicalRel) {
+            this.lexicalRel = lexicalRel;
+        }
+
+        @Override
+        public String toString() {
+            return this.lexicalRel;
+        }
+        
+    }
+    
     public static enum LanguageAttributes {
         Description("description"),
         Language("language"),
