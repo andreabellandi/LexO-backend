@@ -9,6 +9,8 @@ import it.cnr.ilc.lexo.LexOProperties;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LinguisticRelationUpdater;
 import it.cnr.ilc.lexo.service.data.lexicon.input.RelationDeleter;
 import it.cnr.ilc.lexo.sparql.SparqlDeleteData;
+import it.cnr.ilc.lexo.sparql.SparqlPrefix;
+import it.cnr.ilc.lexo.util.EnumUtil;
 import it.cnr.ilc.lexo.util.RDFQueryUtil;
 
 /**
@@ -69,20 +71,29 @@ public class LexiconDeletionManager implements Manager, Cached {
         RDFQueryUtil.update(SparqlDeleteData.DELETE_ETYMOLOGY.replaceAll("_ID_", id));
     }
 
+    public boolean validateIRI(String id) throws ManagerException {
+        UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+        if (!utilityManager.exists(id)) {
+            return false;
+        }
+        return true;
+    }
+
     public void deleteRelation(String id, RelationDeleter rd) throws ManagerException {
         if (rd.getRelation() != null && rd.getValue() != null) {
             if (!rd.getRelation().isEmpty() && !rd.getValue().isEmpty()) {
-//                Update updateOperation = GraphDbUtil.getConnection().prepareUpdate(QueryLanguage.SPARQL,
-//                        SparqlDeleteData.DELETE_LINGUISTIC_RELATION
-//                                .replaceAll("_ID_", id)
-//                                .replaceAll("_ID_TARGET_", lru.getCurrentValue())
-//                                .replaceAll("_RELATION_", lru.getRelation()));
-//                updateOperation.execute();
                 RDFQueryUtil.update(SparqlDeleteData.DELETE_RELATION
                         .replaceAll("_ID_", id)
                         .replaceAll("_TARGET_", rd.getValue())
                         .replaceAll("_RELATION_", rd.getRelation()));
-
+                if (rd.getRelation().equals(EnumUtil.LexicalRel.Cognate.toString())) {
+                    if (validateIRI(rd.getValue())) {
+                        if (!ManagerFactory.getManager(UtilityManager.class).isCognate(rd.getValue(), 1)) {
+                            // currentValue is involved in this cognate relation only, so its Cognate type is removed
+                            RDFQueryUtil.update(SparqlDeleteData.DELETE_COGNATE_TYPE.replaceAll("_ID_", "<" + SparqlPrefix.LEX.getUri() + rd.getValue() + ">"));
+                        }
+                    }
+                }
             } else {
                 throw new ManagerException("Relation and current value cannot be empty");
             }
