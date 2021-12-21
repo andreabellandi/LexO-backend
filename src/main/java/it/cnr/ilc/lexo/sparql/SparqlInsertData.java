@@ -141,5 +141,5 @@ public class SparqlInsertData {
      public static final String CREATE_COGNATE_TYPE
             = SparqlPrefix.ETY.getSparqlPrefix() + "\n"
             + SparqlPrefix.RDF.getSparqlPrefix() + "\n" 
-            + "INSERTA DATA {  <_ID_> a ety:Cognate . }";
+            + "INSERT DATA {  _ID_ a ety:Cognate . }";
 }

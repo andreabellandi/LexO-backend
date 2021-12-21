@@ -200,7 +200,7 @@ public class LexiconUpdate extends Service {
             return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Insertion denied, wrong key").build();
         }
     }
-    
+
     @POST
     @Path("{id}/etymologicalLink")
     @Produces(MediaType.APPLICATION_JSON)
@@ -231,7 +231,7 @@ public class LexiconUpdate extends Service {
             return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Insertion denied, wrong key").build();
         }
     }
-    
+
     @POST
     @Path("{id}/linguisticRelation")
     @Produces(MediaType.APPLICATION_JSON)
@@ -244,24 +244,13 @@ public class LexiconUpdate extends Service {
     public Response linguisticRelation(@QueryParam("key") String key, @PathParam("id") String id, LinguisticRelationUpdater lru) {
         if (key.equals("PRINitant19")) {
             try {
-                if (!lru.getValue().isEmpty()) {
                 String json = lexiconManager.updateLinguisticRelation(id, lru);
                 return Response.ok(json)
                         .type(MediaType.TEXT_PLAIN)
                         .header("Access-Control-Allow-Headers", "content-type")
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
-                } else {
-                    RelationDeleter rd = new RelationDeleter();
-                    rd.setRelation(lru.getRelation());
-                    rd.setValue(lru.getCurrentValue());
-                    lexiconDeletionManager.deleteRelation(id, rd);
-                    return Response.ok()
-                        .type(MediaType.TEXT_PLAIN)
-                        .header("Access-Control-Allow-Headers", "content-type")
-                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                        .build();
-                }
+
             } catch (ManagerException | UpdateExecutionException ex) {
                 Logger.getLogger(LexiconUpdate.class.getName()).log(Level.SEVERE, null, ex);
                 return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
@@ -296,6 +285,5 @@ public class LexiconUpdate extends Service {
             return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Insertion denied, wrong key").build();
         }
     }
-    
 
 }

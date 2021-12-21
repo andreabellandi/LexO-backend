@@ -607,7 +607,7 @@ public final class LexiconUpdateManager implements Manager, Cached {
 
     public String createLinguisticRelation(String id, String relation, String valueToInsert) throws ManagerException, UpdateExecutionException {
         // TODO: it should be verified if the relation can be applied to the id type (for example, denotes requires the id type to be LexicalEntry
-        if (relation.equals(EnumUtil.LexicalRel.Cognate.toString())) {
+        if (relation.contains(SparqlPrefix.ETY.getUri() + EnumUtil.LexicalRel.Cognate.toString())) {
             createCognate(valueToInsert);
         }
         return updateLinguisticRelation(SparqlInsertData.CREATE_LINGUISTIC_RELATION, id, relation,
@@ -615,13 +615,13 @@ public final class LexiconUpdateManager implements Manager, Cached {
     }
 
     private void createCognate(String valueToInsert) throws ManagerException {
-        if (validateIRI(valueToInsert)) {
+        if (valueToInsert.contains(SparqlPrefix.LEX.getUri())) {
             RDFQueryUtil.update(SparqlInsertData.CREATE_COGNATE_TYPE.replace("_ID_", valueToInsert));
         }
     }
 
     public String updateLinguisticRelation(String id, String relation, String valueToInsert, String currentValue) throws ManagerException, UpdateExecutionException {
-        if (relation.equals(EnumUtil.LexicalRel.Cognate.toString())) {
+        if (relation.contains(SparqlPrefix.ETY.getUri() + EnumUtil.LexicalRel.Cognate.toString())) {
             updateCognate(valueToInsert, currentValue);
         }
         if (ManagerFactory.getManager(UtilityManager.class).existsLinguisticRelation(id, relation, currentValue)) {
@@ -633,16 +633,17 @@ public final class LexiconUpdateManager implements Manager, Cached {
     }
     
     private void updateCognate(String valueToInsert, String currentValue) throws ManagerException {
-        if (validateIRI(currentValue)) {
+        //String iri = currentValue.replace("<", "").replace(">", "");
+        if (currentValue.contains(SparqlPrefix.LEX.getUri())) {
                 if (!ManagerFactory.getManager(UtilityManager.class).isCognate(currentValue, 1)) {
                     // currentValue is involved in this cognate relation only, so its Cognate type is removed
                     RDFQueryUtil.update(SparqlDeleteData.DELETE_COGNATE_TYPE.replaceAll("_ID_", currentValue));
                 } 
-                if (validateIRI(valueToInsert)) {
+                if (valueToInsert.contains(SparqlPrefix.LEX.getUri())) {
                     createCognate(valueToInsert);
                 }
             } else {
-                if (validateIRI(valueToInsert)) {
+                if (valueToInsert.contains(SparqlPrefix.LEX.getUri())) {
                     createCognate(valueToInsert);
                 }
             }
@@ -670,7 +671,10 @@ public final class LexiconUpdateManager implements Manager, Cached {
                 if (gru.getRelation().equals(EnumUtil.GenericRelationReference.sameAs.toString())) {
                     throw new ManagerException(gru.getRelation() + " links to external links only");
                 }
-                String pf = (validateIRI(gru.getCurrentValue()) ? SparqlPrefix.LEX.getUri() : "");
+                String pf = "";
+                if (gru.getCurrentValue() != null) {
+                    pf = validateIRI(gru.getCurrentValue()) ? SparqlPrefix.LEX.getUri() : "";
+                }
                 setPrefixes(gru, false,
                         gru.getRelation().equals(EnumUtil.GenericRelationReference.sameAs.toString()) ? SparqlPrefix.OWL.getUri() : SparqlPrefix.RDFS.getUri(),
                         SparqlPrefix.LEX.getUri(),

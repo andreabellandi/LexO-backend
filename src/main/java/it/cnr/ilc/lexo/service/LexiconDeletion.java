@@ -359,7 +359,7 @@ public class LexiconDeletion extends Service {
             produces = "application/json; charset=UTF-8")
     @ApiOperation(value = "Relation deletion",
             notes = "This method deletes a relation")
-    public Response linguisticRelation(
+    public Response relation(
             @ApiParam(
                     name = "key",
                     value = "authentication token",

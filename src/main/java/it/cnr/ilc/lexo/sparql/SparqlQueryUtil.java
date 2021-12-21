@@ -122,7 +122,7 @@ public class SparqlQueryUtil {
             + "  {\n"
             + "     SELECT (count(?" + SparqlVariable.LEXICAL_ENTRY + ") as ?" + SparqlVariable.LABEL_COUNT + ")\n"
             + "     WHERE {\n"
-            + "        ?" + SparqlVariable.LEXICAL_ENTRY + " ety:cognate <_ID_> \n"
+            + "        ?" + SparqlVariable.LEXICAL_ENTRY + " ety:cognate _ID_ \n"
             + "     }\n"
             + "  }\n"
             + "  FILTER( ?" + SparqlVariable.LABEL_COUNT + " > _COG_NUMBER_ )\n"

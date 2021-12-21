@@ -77,5 +77,5 @@ public class SparqlDeleteData {
     public static final String DELETE_COGNATE_TYPE
             = SparqlPrefix.ETY.getSparqlPrefix() + "\n"
             + SparqlPrefix.RDF.getSparqlPrefix() + "\n" 
-            + "DELETE DATA {  <_ID_> a ety:Cognate . }";
+            + "DELETE DATA {  _ID_ a ety:Cognate . }";
 }
