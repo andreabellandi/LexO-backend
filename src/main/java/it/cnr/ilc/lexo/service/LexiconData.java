@@ -366,6 +366,9 @@ public class LexiconData extends Service {
         try {
             TupleQueryResult lexicalEnties = lexiconManager.getFilterdLexicalEntries(lef);
             List<LexicalEntryItem> entries = lexicalEntryFilterHelper.newDataList(lexicalEnties);
+            
+            
+            
             HitsDataList hdl = new HitsDataList(lexicalEntryFilterHelper.getTotalHits(), entries);
             String json = lexicalEntryFilterHelper.toJson(hdl);
             return Response.ok(json)

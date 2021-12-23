@@ -16,7 +16,7 @@ public class LexicalEntryItem implements Data {
 
     private String status;
     private String revisor;
-    private String type;
+    private ArrayList<String> type;
     private String pos;
     private String label;
     private String language;
@@ -59,11 +59,11 @@ public class LexicalEntryItem implements Data {
         this.language = language;
     }
 
-    public String getType() {
+    public ArrayList<String> getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(ArrayList<String> type) {
         this.type = type;
     }
 

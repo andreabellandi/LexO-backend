@@ -20,6 +20,7 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntityLinksItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntityLinksItem.Link;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryElementItem;
+import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalSenseCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Morphology;
 import it.cnr.ilc.lexo.sparql.SparqlSelectData;
@@ -419,4 +420,18 @@ public class LexiconDataManager implements Manager, Cached {
         String query = SparqlSelectData.DATA_LEXICON_LANGUAGES;
         return RDFQueryUtil.evaluateTQuery(query);
     }
+    
+//    public List<LexicalEntryItem> getGroupedByType(List<LexicalEntryItem> entries) {
+//        ArrayList<LexicalEntryItem> _entries = new ArrayList();
+//        LexicalEntryItem previousLei = new LexicalEntryItem();
+//        for (LexicalEntryItem lei : entries) {
+//            if (lei.getLexicalEntry().equals(previousLei.getLexicalEntry())) {
+//                lei.getType().add(namespace)
+//            } else {
+//                LexicalEntryItem _lei = new LexicalEntryItem();
+//                copyItem(_lei, _entries);
+//                previousLei = _lei;
+//            }
+//        }
+//    }
 }

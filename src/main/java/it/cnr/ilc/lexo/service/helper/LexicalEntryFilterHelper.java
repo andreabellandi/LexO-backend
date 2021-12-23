@@ -9,6 +9,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalEntryFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryItem;
 import it.cnr.ilc.lexo.sparql.SparqlVariable;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.eclipse.rdf4j.query.BindingSet;
@@ -24,7 +25,7 @@ public class LexicalEntryFilterHelper extends TripleStoreDataHelper<LexicalEntry
         setTotalHits(getIntegerNumber(bs, SparqlVariable.TOTAL_HITS));
         data.setLexicalEntry(getStringValue(bs, SparqlVariable.LEXICAL_ENTRY));
         data.setLexicalEntryInstanceName(getStringValue(bs, SparqlVariable.LEXICAL_ENTRY_INSTANCE_NAME));
-        data.setType(getLocalName(bs, SparqlVariable.LEXICAL_ENTRY_TYPE));
+        data.setType(getTypes(bs, getStringValue(bs, SparqlVariable.LEXICAL_ENTRY_TYPE)));
         data.setPos(getLocalName(bs, SparqlVariable.LEXICAL_ENTRY_POS));
         data.setLabel(getLiteralLabel(bs, SparqlVariable.LABEL));
         try {

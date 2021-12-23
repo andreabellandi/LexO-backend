@@ -28,7 +28,10 @@ import org.eclipse.rdf4j.query.TupleQueryResult;
 public abstract class TripleStoreDataHelper<D extends Data> extends Helper<D> {
 
     private final String MORPHOLOGY_PATTERN = "(([a-zA-Z-]+):(([a-zA-Z-]+\\s?)+));?";
-    private final Pattern pattern = Pattern.compile(MORPHOLOGY_PATTERN);
+    private final Pattern morphoPattern = Pattern.compile(MORPHOLOGY_PATTERN);
+    
+    private final String TYPE_PATTERN = "#([\\w\\-]+)";
+    private final Pattern typePattern = Pattern.compile(TYPE_PATTERN);
     
     private final String namespace = LexOProperties.getProperty("repository.lexicon.namespace");
 
@@ -90,10 +93,24 @@ public abstract class TripleStoreDataHelper<D extends Data> extends Helper<D> {
         return (bs.getBinding(variable) != null) ? bs.getBinding(variable).getValue().stringValue().contains("implicit") : false ;
     }
 
+    public ArrayList<String> getTypes(BindingSet bs, String _types) {
+        ArrayList<String> types = new ArrayList();
+        if (!_types.isEmpty()) {
+//            Matcher matcher = typePattern.matcher(_types);
+//            while (matcher.find()) {
+//                types.add(matcher.group(1));
+//            }
+            for(String t : _types.split(";")) {
+                types.add(t.split("#")[1].trim());
+            }
+        }
+        return types;
+    }
+    
     public ArrayList<Morphology> getMorphology(BindingSet bs, String morpho) {
         ArrayList<Morphology> morphos = new ArrayList();
         if (!morpho.isEmpty()) {
-            Matcher matcher = pattern.matcher(morpho);
+            Matcher matcher = morphoPattern.matcher(morpho);
             while (matcher.find()) {
                 morphos.add(new Morphology(matcher.group(2), matcher.group(3)));
             }
@@ -107,7 +124,7 @@ public abstract class TripleStoreDataHelper<D extends Data> extends Helper<D> {
             morphos.add(new Morphology("partOfSpeech", pos));
         }
         if (!morpho.isEmpty()) {
-            Matcher matcher = pattern.matcher(morpho);
+            Matcher matcher = morphoPattern.matcher(morpho);
             while (matcher.find()) {
                 morphos.add(new Morphology(matcher.group(2), matcher.group(3)));
             }

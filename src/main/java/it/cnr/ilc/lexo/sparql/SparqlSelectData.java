@@ -60,7 +60,6 @@ public class SparqlSelectData {
             + " ?" + SparqlVariable.LEXICAL_ENTRY_INSTANCE_NAME
             + " ?" + SparqlVariable.LEXICAL_ENTRY_STATUS
             + " ?" + SparqlVariable.LEXICAL_ENTRY_REVISOR
-            + " ?" + SparqlVariable.LEXICAL_ENTRY_TYPE
             + " ?" + SparqlVariable.LEXICAL_ENTRY_POS
             + " ?" + SparqlVariable.LABEL
             + " ?" + SparqlVariable.LEXICAL_ENTRY_CREATION_AUTHOR
@@ -71,7 +70,8 @@ public class SparqlSelectData {
             + " ?" + SparqlVariable.REVISION_DATE
             + " ?" + SparqlVariable.COMPLETION_DATE
             + "\n"
-            + "(GROUP_CONCAT(concat(str(?traitType),\":\",str(?traitValue));SEPARATOR=\";\") AS ?" + SparqlVariable.MORPHOLOGY + ")\n"
+            + "(GROUP_CONCAT(distinct concat(str(?traitType),\":\",str(?traitValue));SEPARATOR=\";\") AS ?" + SparqlVariable.MORPHOLOGY + ")\n"
+            + "(GROUP_CONCAT(distinct str(?tmp_type);SEPARATOR=\";\") AS ?type)\n"
             + "FROM onto:explicit WHERE {\n"
             + "  ?search a inst:" + SparqlVariable.LEXICAL_ENTRY_INDEX + " ;\n"
             + "      luc:query \"[FILTER]\" ;\n"
@@ -80,9 +80,9 @@ public class SparqlSelectData {
             + "      luc:offset \"[OFFSET]\" ;\n"
             + "      luc:limit \"[LIMIT]\" ;\n"
             + "      luc:entities ?" + SparqlVariable.LEXICAL_ENTRY + " .\n"
-            + "  ?" + SparqlVariable.LEXICAL_ENTRY + " rdf:type ?" + SparqlVariable.LEXICAL_ENTRY_TYPE + " ;\n"
+            + "  ?" + SparqlVariable.LEXICAL_ENTRY + " rdf:type ?tmp_type ;\n"
             + "          rdfs:label ?" + SparqlVariable.LABEL + " .\n"
-            + "   ?" + SparqlVariable.LEXICAL_ENTRY_TYPE + " rdfs:label ?_type .\n"
+            + "   ?tmp_type rdfs:label ?_type .\n"
             + "   OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " lexinfo:partOfSpeech ?" + SparqlVariable.LEXICAL_ENTRY_POS + "} .\n"
             + "   OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " dct:creator ?" + SparqlVariable.LEXICAL_ENTRY_CREATION_AUTHOR + "} .\n"
             + "   OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " dct:created ?" + SparqlVariable.CREATION_DATE + "} .\n"
@@ -99,11 +99,10 @@ public class SparqlSelectData {
             + "              FILTER(STRSTARTS(STR(?morphoTrait), str(lexinfo:)))\n"
             + "              FILTER(STRSTARTS(STR(?morphoValue), str(lexinfo:))) } \n"
             + "   BIND(strafter(str(?" + SparqlVariable.LEXICAL_ENTRY + "),str(lex:)) as ?" + SparqlVariable.LEXICAL_ENTRY_INSTANCE_NAME + ") \n"
-            + "   FILTER(!STRSTARTS(STR(?" + SparqlVariable.LEXICAL_ENTRY_TYPE + "), str(owl:)))\n"
+            + "   FILTER(!STRSTARTS(STR(?tmp_type), str(owl:)))\n"
             + "   FILTER(regex(str(?_type), \"_TYPE_\"))"
             + "} GROUP BY ?"
             + SparqlVariable.LEXICAL_ENTRY + " ?"
-            + SparqlVariable.LEXICAL_ENTRY_TYPE + " ?"
             + SparqlVariable.LABEL + " ?"
             + SparqlVariable.LEXICAL_ENTRY_REVISOR + " ?"
             + SparqlVariable.LEXICAL_ENTRY_POS + " ?"
