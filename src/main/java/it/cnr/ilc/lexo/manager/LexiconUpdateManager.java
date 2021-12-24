@@ -631,22 +631,22 @@ public final class LexiconUpdateManager implements Manager, Cached {
             throw new ManagerException("IRI " + id + " does not exist or <" + id + ", " + relation + ", " + currentValue + "> does not exist");
         }
     }
-    
+
     private void updateCognate(String valueToInsert, String currentValue) throws ManagerException {
         //String iri = currentValue.replace("<", "").replace(">", "");
         if (currentValue.contains(SparqlPrefix.LEX.getUri())) {
-                if (!ManagerFactory.getManager(UtilityManager.class).isCognate(currentValue, 1)) {
-                    // currentValue is involved in this cognate relation only, so its Cognate type is removed
-                    RDFQueryUtil.update(SparqlDeleteData.DELETE_COGNATE_TYPE.replaceAll("_ID_", currentValue));
-                } 
-                if (valueToInsert.contains(SparqlPrefix.LEX.getUri())) {
-                    createCognate(valueToInsert);
-                }
-            } else {
-                if (valueToInsert.contains(SparqlPrefix.LEX.getUri())) {
-                    createCognate(valueToInsert);
-                }
+            if (!ManagerFactory.getManager(UtilityManager.class).isCognate(currentValue, 1)) {
+                // currentValue is involved in this cognate relation only, so its Cognate type is removed
+                RDFQueryUtil.update(SparqlDeleteData.DELETE_COGNATE_TYPE.replaceAll("_ID_", currentValue));
             }
+            if (valueToInsert.contains(SparqlPrefix.LEX.getUri())) {
+                createCognate(valueToInsert);
+            }
+        } else {
+            if (valueToInsert.contains(SparqlPrefix.LEX.getUri())) {
+                createCognate(valueToInsert);
+            }
+        }
     }
 
     public String updateLinguisticRelation(String query, String id, String relation, String valueToInsert, String valueToDelete) throws ManagerException, UpdateExecutionException {
@@ -681,7 +681,10 @@ public final class LexiconUpdateManager implements Manager, Cached {
                         pf);
             } else {
                 validateURL(gru.getValue());
-                String pf = (validateIRI(gru.getCurrentValue()) ? SparqlPrefix.LEX.getUri() : "");
+                String pf = "";
+                if (gru.getCurrentValue() != null) {
+                    pf = (validateIRI(gru.getCurrentValue()) ? SparqlPrefix.LEX.getUri() : "");
+                }
                 setPrefixes(gru, false, gru.getRelation().equals(EnumUtil.GenericRelationReference.sameAs.toString()) ? SparqlPrefix.OWL.getUri() : SparqlPrefix.RDFS.getUri(),
                         "",
                         pf);
