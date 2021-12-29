@@ -5,7 +5,6 @@
  */
 package it.cnr.ilc.lexo.service.helper;
 
-import it.cnr.ilc.lexo.service.data.lexicon.output.LinkedEntity;
 import it.cnr.ilc.lexo.service.data.lexicon.output.graphViz.SenseNodeSummary;
 import it.cnr.ilc.lexo.sparql.SparqlVariable;
 import org.eclipse.rdf4j.query.BindingSet;

@@ -8,6 +8,7 @@ package it.cnr.ilc.lexo.service.data.lexicon.output;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import it.cnr.ilc.lexo.service.data.Data;
+import java.util.List;
 
 /**
  *
@@ -23,7 +24,7 @@ public class LinkedEntity implements Data {
     @ApiModelProperty(value = "lexical entity label")
     private String label;
     @ApiModelProperty(value = "lexical entity type")
-    private String lexicalType;
+    private List<String> lexicalType;
     @ApiModelProperty(value = "explicit or implicit link")
     private boolean inferred;
     @ApiModelProperty(value = "the type of linked the lexical entity", allowableValues = "internal, external")
@@ -53,11 +54,11 @@ public class LinkedEntity implements Data {
         this.label = label;
     }
 
-    public String getLexicalType() {
+    public List<String> getLexicalType() {
         return lexicalType;
     }
 
-    public void setLexicalType(String lexicalType) {
+    public void setLexicalType(List<String> lexicalType) {
         this.lexicalType = lexicalType;
     }
 
