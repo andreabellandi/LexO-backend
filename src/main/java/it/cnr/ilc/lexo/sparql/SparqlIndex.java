@@ -96,6 +96,8 @@ public class SparqlIndex {
             + "          ]\n"
             + "     }\n"
             + "   ]\n"
+            + ",\n"
+            + "    \"entityFilter\": \"bound(?lexicalEntryLabel)\"\n"
             + " }\n"
             + " ''' .\n"
             + " }";
