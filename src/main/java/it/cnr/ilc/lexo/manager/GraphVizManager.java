@@ -10,6 +10,7 @@ import it.cnr.ilc.lexo.LexOProperties;
 import it.cnr.ilc.lexo.service.data.lexicon.input.ConceptList;
 import it.cnr.ilc.lexo.service.data.lexicon.input.FormBySenseFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalEntryList;
+import it.cnr.ilc.lexo.service.data.lexicon.input.graphViz.EdgeGraphFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.input.graphViz.NodeGraphFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Counting;
 import it.cnr.ilc.lexo.service.data.lexicon.output.FormItem;
@@ -75,6 +76,13 @@ public class GraphVizManager implements Manager, Cached {
     public TupleQueryResult getNodeGraph(String id, NodeGraphFilter ngf, boolean in) {
         String query = SparqlGraphViz.GRAPH_VIZ_NODE_GRAPH.replaceAll("_NODE_ID_", id).replace("_RELATION_", ngf.getRelation().trim())
                 .replace("_NODE_VARIABLE_", (in ? "?" + SparqlVariable.TARGET : "?" + SparqlVariable.SOURCE));
+        return RDFQueryUtil.evaluateTQuery(query);
+    }
+    
+    public TupleQueryResult getEdgeGraph(EdgeGraphFilter egf) {
+        String query = SparqlGraphViz.GRAPH_VIZ_EDGE_GRAPH.replaceAll("_RELATION_", egf.getRelation())
+                .replace("_SOURCE_", egf.getSource().trim())
+                .replace("_TARGET_", egf.getTarget().trim());
         return RDFQueryUtil.evaluateTQuery(query);
     }
     

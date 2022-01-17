@@ -122,6 +122,9 @@ public class SparqlVariable {
     public static final String STATEMENTS_NUMBER = "statements";
     public static final String TYPE = "type";
     public static final String VALUE = "value";
+    public static final String RELATION = "relation";
+    public static final String SOURCE_LABEL = "sourceLabel";
+    public static final String TARGET_LABEL = "targetLabel";
     
     public static final String BIBLIOGRAPHY = "references";
     public static final String BIBLIOGRAPHY_CREATOR = "bibCreator";

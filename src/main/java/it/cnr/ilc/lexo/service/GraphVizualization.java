@@ -12,12 +12,15 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import it.cnr.ilc.lexo.manager.GraphVizManager;
 import it.cnr.ilc.lexo.manager.ManagerFactory;
+import it.cnr.ilc.lexo.service.data.lexicon.input.graphViz.EdgeGraphFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.input.graphViz.NodeGraphFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.output.graphViz.NodeLinks;
 import it.cnr.ilc.lexo.service.data.lexicon.output.graphViz.SenseNodeSummary;
 import it.cnr.ilc.lexo.service.data.lexicon.output.graphViz.Cytoscape;
+import it.cnr.ilc.lexo.service.data.lexicon.output.graphViz.SenseEdgeSummary;
 import it.cnr.ilc.lexo.service.helper.HelperException;
 import it.cnr.ilc.lexo.service.helper.NodeLinksHelper;
+import it.cnr.ilc.lexo.service.helper.SenseEdgeSummaryHelper;
 import it.cnr.ilc.lexo.service.helper.SenseNodeSummaryHelper;
 import java.util.List;
 import javax.ws.rs.Consumes;
@@ -49,6 +52,7 @@ public class GraphVizualization extends Service {
     private final GraphVizManager graphVizManager = ManagerFactory.getManager(GraphVizManager.class);
     private final NodeLinksHelper nodeLinksHelperHelper = new NodeLinksHelper();
     private final SenseNodeSummaryHelper senseNodeSummaryHelper = new SenseNodeSummaryHelper();
+    private final SenseEdgeSummaryHelper senseEdgeSummaryHelper = new SenseEdgeSummaryHelper();
 
     @GET
     @Path("{id}/nodeSummary")
@@ -123,6 +127,33 @@ public class GraphVizualization extends Service {
         } catch (JsonProcessingException ex) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }
+    }
+    
+    @POST
+    @Path("{id}/edgeGraph")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.POST,
+            value = "/{id}/edgeGraph",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Edge details",
+            notes = "This method returns the details of an eadge")
+    public Response edgeGraph(@ApiParam(
+            name = "key",
+            value = "authentication token",
+            example = "lexodemo",
+            required = true)
+            @QueryParam("key") String key,
+            EdgeGraphFilter egf) throws HelperException {
+        TupleQueryResult edge = graphVizManager.getEdgeGraph(egf);
+        SenseEdgeSummary ses = senseEdgeSummaryHelper.newData(edge);
+        String json = senseEdgeSummaryHelper.toJson(ses);
+        return Response.ok(json)
+                .type(MediaType.TEXT_PLAIN)
+                .header("Access-Control-Allow-Headers", "content-type")
+                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                .build();
     }
 
 }

@@ -103,4 +103,23 @@ public class SparqlGraphViz {
             + "FILTER(regex(str(_NODE_VARIABLE_), \"http://lexica/mylexicon#_NODE_ID_\"))\n"
             + "}";
 
+    public static final String GRAPH_VIZ_EDGE_GRAPH
+            = SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTO.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
+            + "SELECT ?graph ?source ?target ?sourceLabel ?targetLabel ?relation\n"
+            + "FROM NAMED onto:implicit\n"
+            + "FROM NAMED onto:explicit\n"
+            + "WHERE {\n"
+            + "    GRAPH ?graph { ?source ?relation ?target .\n"
+            + "        VALUES ?source { lex:_SOURCE_ } .\n"
+            + "        VALUES ?target { lex:_TARGET_ } .\n"
+            + "        VALUES ?relation { lexinfo:_RELATION_ } .\n"
+            + "    }\n"
+            + "    ?source ontolex:isSenseOf [ rdfs:label ?sourceLabel ] .\n"
+            + "    ?target ontolex:isSenseOf [ rdfs:label ?targetLabel ] .\n"
+            + "}";
+
 }
