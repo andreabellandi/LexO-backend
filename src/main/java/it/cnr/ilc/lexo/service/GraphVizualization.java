@@ -130,12 +130,12 @@ public class GraphVizualization extends Service {
     }
     
     @POST
-    @Path("{id}/edgeGraph")
+    @Path("edgeGraph")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @RequestMapping(
             method = RequestMethod.POST,
-            value = "/{id}/edgeGraph",
+            value = "/edgeGraph",
             produces = "application/json; charset=UTF-8")
     @ApiOperation(value = "Edge details",
             notes = "This method returns the details of an eadge")
