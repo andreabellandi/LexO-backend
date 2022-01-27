@@ -216,7 +216,7 @@
                 <db.user>lexo</db.user>
                 <db.password>LexOServer12</db.password>
                 <graphdb.url>https://lari2.ilc.cnr.it/graphdb</graphdb.url>
-                <graphdb.repository>ItAnt</graphdb.repository>
+                <graphdb.repository>ExportedItAnt</graphdb.repository>
                 <graphdb.poolSize>2</graphdb.poolSize>
             </properties>
         </profile>
