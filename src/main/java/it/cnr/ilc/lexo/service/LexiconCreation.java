@@ -310,7 +310,7 @@ public class LexiconCreation extends Service {
             return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Insertion denied, wrong key").build();
         }
     }
-    
+
     @GET
     @Path("etymologicalLink")
     @Produces(MediaType.APPLICATION_JSON)
@@ -405,11 +405,8 @@ public class LexiconCreation extends Service {
             Bibliography bibliography) {
         if (key.equals("PRINitant19")) {
             try {
-                if ((bibliography.getId() == null || bibliography.getId().isEmpty())
-                        || (bibliography.getAuthor() == null || bibliography.getAuthor().isEmpty())
-                        || (bibliography.getTitle() == null || bibliography.getTitle().isEmpty())
-                        || (bibliography.getDate() == null || bibliography.getDate().isEmpty())) {
-                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("id, title, author, and date fileds of bibliography must be defined").build();
+                if ((bibliography.getId() == null || bibliography.getId().isEmpty())) {
+                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("id of bibliography must be defined").build();
                 }
                 BibliographicItem bi = bibliographyManager.createBibliographyReference(lexicalEntityID, author, bibliography);
                 String json = bibliographyHelper.toJson(bi);

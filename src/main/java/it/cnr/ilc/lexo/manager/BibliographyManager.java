@@ -31,6 +31,7 @@ public class BibliographyManager implements Manager, Cached {
     }
 
     public BibliographicItem createBibliographyReference(String leID, String author, Bibliography bibliography) throws ManagerException {
+        setBibliography(bibliography);
         Timestamp tm = new Timestamp(System.currentTimeMillis());
         String idBib = idInstancePrefix + tm.toString();
         String created = timestampFormat.format(tm);
@@ -56,6 +57,18 @@ public class BibliographyManager implements Manager, Cached {
         return setBibliographicItem(_idBib, created, author, bibliography);
     }
 
+    private void setBibliography(Bibliography bibliography) {
+        if (bibliography.getAuthor() == null || bibliography.getAuthor().isEmpty()) {
+            bibliography.setAuthor("Not available");
+        }
+        if (bibliography.getTitle() == null || bibliography.getTitle().isEmpty()) {
+            bibliography.setTitle("Not available");
+        }
+        if (bibliography.getDate() == null || bibliography.getDate().isEmpty()) {
+            bibliography.setDate("Not available");
+        }
+    }
+
     private BibliographicItem setBibliographicItem(String id, String created, String author, Bibliography bibliography) {
         BibliographicItem b = new BibliographicItem();
         b.setAuthor(bibliography.getAuthor());
@@ -73,13 +86,13 @@ public class BibliographyManager implements Manager, Cached {
         b.setNote("");
         return b;
     }
-    
+
     public TupleQueryResult getBibliography(String id) {
         String query = SparqlSelectData.LEXICAL_ENTITY_BIBLIOGRAPHY.replaceAll("_ID_", id);
         return RDFQueryUtil.evaluateTQuery(query);
     }
-    
-     public void deleteBibliography(String id) throws ManagerException {
+
+    public void deleteBibliography(String id) throws ManagerException {
         RDFQueryUtil.update(SparqlDeleteData.DELETE_BIBLIOGRAPHY.replaceAll("_ID_", id));
 
     }
