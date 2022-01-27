@@ -33,6 +33,15 @@ public class SparqlQueryUtil {
             = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
             + "ASK { <_ID_> _RELATION_ _VALUE_ }";
 
+    public static final String BIBLIOGRAFY_BY_ITEMKEY
+            = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDF.getSparqlPrefix() + "\n"
+            + SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+            + "SELECT ?" + SparqlVariable.BIBLIOGRAPHY_ID + "\n"
+            + "WHERE { \n"
+            + "       lex:_ID_ dct:references ?" + SparqlVariable.BIBLIOGRAPHY_ID + " .\n"
+            + "       ?" + SparqlVariable.BIBLIOGRAPHY_ID + " dct:publisher \"_ITEMKEY_\" }";
+
     public static final String IS_LEXICON_LANGUAGE
             = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
             + SparqlPrefix.LIME.getSparqlPrefix() + "\n"

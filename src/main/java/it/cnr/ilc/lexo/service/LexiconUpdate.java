@@ -7,11 +7,14 @@ package it.cnr.ilc.lexo.service;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import it.cnr.ilc.lexo.manager.BibliographyManager;
 import it.cnr.ilc.lexo.manager.LexiconDeletionManager;
 import it.cnr.ilc.lexo.manager.LexiconUpdateManager;
 import it.cnr.ilc.lexo.manager.ManagerException;
 import it.cnr.ilc.lexo.manager.ManagerFactory;
 import it.cnr.ilc.lexo.manager.UtilityManager;
+import it.cnr.ilc.lexo.service.data.lexicon.input.Bibliography;
 import it.cnr.ilc.lexo.service.data.lexicon.input.EtymologicalLinkUpdater;
 import it.cnr.ilc.lexo.service.data.lexicon.input.EtymologyUpdater;
 import it.cnr.ilc.lexo.service.data.lexicon.input.FormUpdater;
@@ -21,9 +24,12 @@ import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalEntryUpdater;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalSenseUpdater;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LinguisticRelationUpdater;
 import it.cnr.ilc.lexo.service.data.lexicon.input.RelationDeleter;
+import it.cnr.ilc.lexo.service.data.lexicon.output.BibliographicItem;
+import it.cnr.ilc.lexo.service.zotero.ZoteroClient;
 import it.cnr.ilc.lexo.util.EnumUtil;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -45,6 +51,7 @@ public class LexiconUpdate extends Service {
 
     private final LexiconUpdateManager lexiconManager = ManagerFactory.getManager(LexiconUpdateManager.class);
     private final LexiconDeletionManager lexiconDeletionManager = ManagerFactory.getManager(LexiconDeletionManager.class);
+    private final BibliographyManager bibliographyManager = ManagerFactory.getManager(BibliographyManager.class);
 
     @POST
     @Path("{id}/language")
@@ -281,6 +288,66 @@ public class LexiconUpdate extends Service {
                 Logger.getLogger(LexiconUpdate.class.getName()).log(Level.SEVERE, null, ex);
                 return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
             }
+        } else {
+            return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Insertion denied, wrong key").build();
+        }
+    }
+
+    @POST
+    @Path("synchronizeBibliography")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.POST,
+            value = "synchronizeBibliography",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Bibliography synchronization with Zotero",
+            notes = "This method synchronized author, date, and title fields of the local repository with the corresponding Zotero values")
+    public Response synchronizeBibliography(
+            @ApiParam(
+                    name = "lexicalEntityID",
+                    value = "the lexical entity id, the bibliography refers to",
+                    example = "MUStestNOUN",
+                    required = true)
+            @QueryParam("lexicalEntityID") String lexicalEntityID,
+            @ApiParam(
+                    name = "key",
+                    value = "authentication token",
+                    example = "lexodemo",
+                    required = true)
+            @QueryParam("key") String key,
+            @ApiParam(
+                    name = "author",
+                    value = "the account is being creating the bibliographic link",
+                    example = "user7",
+                    required = true)
+            @QueryParam("author") String author,
+            @ApiParam(
+                    name = "itemKey",
+                    value = "Zotero item key",
+                    example = "AXZSXE45",
+                    required = true)
+            @QueryParam("itemKey") String itemKey) {
+        if (key.equals("PRINitant19")) {
+            String lastUpdate = "";
+            if ((itemKey == null || itemKey.isEmpty())) {
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("item Key must be defined").build();
+            }
+            String bibID = bibliographyManager.getBibliographyID(lexicalEntityID, itemKey);
+            if (bibID == null) {
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("item Key is not valid the this lexical entity").build();
+            } else {
+                try {
+                    lastUpdate = bibliographyManager.synchronizeBibliography(bibID, itemKey);
+                } catch (RuntimeException e) {
+                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("Zotero: " + e.getMessage()).build();
+                }
+            }
+            return Response.ok(lastUpdate)
+                    .type(MediaType.TEXT_PLAIN)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
         } else {
             return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Insertion denied, wrong key").build();
         }

@@ -190,5 +190,24 @@ public class SparqlUpdateData {
             + "WHERE {  OPTIONAL { <_ID_> dct:modified ?modified . }\n"
             + "         OPTIONAL { <_ID_> _RELATION_ _VALUE_TO_DELETE_ . } }";
 
+    public static final String SYNC_BIBLIOGRAPHY
+            = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXBIB.getSparqlPrefix() + "\n"
+            + "DELETE {\n"
+            + "    lexbib:_IDBIB_ dct:title ?title ;\n"
+            + "         dct:date ?date ;\n"
+            + "         dct:contributor ?contributor ;\n"
+            + "         dct:modified ?modified . }\n"
+            + "INSERT {\n"
+            + "    lexbib:_IDBIB_ dct:title \"_TITLE_\" ;\n"
+            + "         dct:date \"_DATE_\" ;\n"
+            + "         dct:contributor \"_CONTRIBUTOR_\" ;\n"
+            + "         dct:modified \"_LAST_UPDATE_\" . }\n"
+            + "WHERE {\n"
+            + "    lexbib:_IDBIB_ dct:title ?title ;\n"
+            + "         dct:date ?date ;\n"
+            + "         dct:contributor ?contributor ;\n"
+            + "         dct:modified ?modified .\n"
+            + "}";
 
 }

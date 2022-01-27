@@ -122,11 +122,21 @@ public final class UtilityManager implements Manager, Cached {
         }
         return null;
     }
+    
+    public String bibliographyById(String id, String itemKey) throws QueryEvaluationException {
+        String query = SparqlQueryUtil.BIBLIOGRAFY_BY_ITEMKEY.replaceAll("_ID_", id).replaceAll("_ITEMKEY_", itemKey);
+        try (TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {
+            while (result.hasNext()) {
+                BindingSet bs = result.next();
+                return (bs.getBinding(SparqlVariable.BIBLIOGRAPHY_ID) != null)
+                        ? ((IRI) bs.getBinding(SparqlVariable.BIBLIOGRAPHY_ID).getValue()).getLocalName() : null;
+            }
+        } catch (QueryEvaluationException qee) {
+        }
+        return null;
+    }
 
     public int lexicalEntriesNumberByLanguage(String id) throws QueryEvaluationException {
-//        TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL,
-//                SparqlQueryUtil.LEXICAL_ENTRY_NUMBER_BY_LANGUAGE.replaceAll("_ID_", id));
-//        try (TupleQueryResult result = tupleQuery.evaluate()) {
         String query = SparqlQueryUtil.LEXICAL_ENTRY_NUMBER_BY_LANGUAGE.replaceAll("_ID_", id);
         try (TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {
             while (result.hasNext()) {

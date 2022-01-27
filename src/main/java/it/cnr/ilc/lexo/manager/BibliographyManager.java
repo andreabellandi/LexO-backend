@@ -5,16 +5,23 @@
  */
 package it.cnr.ilc.lexo.manager;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import it.cnr.ilc.lexo.LexOProperties;
 import it.cnr.ilc.lexo.service.data.lexicon.input.Bibliography;
 import it.cnr.ilc.lexo.service.data.lexicon.output.BibliographicItem;
+import it.cnr.ilc.lexo.service.zotero.ZoteroClient;
 import it.cnr.ilc.lexo.sparql.SparqlDeleteData;
 import it.cnr.ilc.lexo.sparql.SparqlInsertData;
 import it.cnr.ilc.lexo.sparql.SparqlPrefix;
+import it.cnr.ilc.lexo.sparql.SparqlQueryUtil;
 import it.cnr.ilc.lexo.sparql.SparqlSelectData;
+import it.cnr.ilc.lexo.sparql.SparqlUpdateData;
 import it.cnr.ilc.lexo.util.RDFQueryUtil;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.Iterator;
+import java.util.Map;
 import org.eclipse.rdf4j.query.TupleQueryResult;
 
 /**
@@ -25,6 +32,7 @@ public class BibliographyManager implements Manager, Cached {
 
     private final String idInstancePrefix = LexOProperties.getProperty("repository.instance.id");
     private static final SimpleDateFormat timestampFormat = new SimpleDateFormat(LexOProperties.getProperty("manager.operationTimestampFormat"));
+    private final ZoteroClient zoteroClient = ManagerFactory.getManager(ZoteroClient.class);
 
     @Override
     public void reloadCache() {
@@ -95,6 +103,73 @@ public class BibliographyManager implements Manager, Cached {
     public void deleteBibliography(String id) throws ManagerException {
         RDFQueryUtil.update(SparqlDeleteData.DELETE_BIBLIOGRAPHY.replaceAll("_ID_", id));
 
+    }
+
+    public String getBibliographyID(String leID, String itemKey) {
+        UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+        return utilityManager.bibliographyById(leID, itemKey);
+    }
+
+    public String synchronizeBibliography(String bibID, String itemKey) throws RuntimeException {
+        String lastUpdate = "";
+        zoteroClient.setUrl(itemKey);
+        zoteroClient.setConn();
+        try {
+            JsonNode bib = zoteroClient.getItem();
+            lastUpdate = updateBibliography(bibID, bib);
+            zoteroClient.disconnect();
+        } catch (RuntimeException e) {
+            throw e;
+        }
+        return lastUpdate;
+    }
+
+    private String updateBibliography(String bibID, JsonNode bib) {
+        String title = (bib.get("data") != null) ? (bib.get("data").get("title") != null
+                ? (!bib.get("data").get("title").textValue().isEmpty() ? bib.get("data").get("title").textValue() : "Not available") : "Not available") : "Not available";
+        String date = (bib.get("data") != null) ? (bib.get("data").get("date") != null
+                ? (!bib.get("data").get("date").textValue().isEmpty() ? bib.get("data").get("date").textValue() : "Not available") : "Not available") : "Not available";
+        String author = getContributor(bib.get("data") != null ? bib.get("data") : null);
+        String lastupdate = timestampFormat.format(new Timestamp(System.currentTimeMillis()));
+        RDFQueryUtil.update(SparqlUpdateData.SYNC_BIBLIOGRAPHY.replaceAll("_IDBIB_", bibID)
+                .replaceAll("_TITLE_", title)
+                .replaceAll("_DATE_", date)
+                .replaceAll("_CONTRIBUTOR_", author)
+                .replaceAll("_LAST_UPDATE_", "\"" + lastupdate + "\""));
+        return lastupdate;
+    }
+
+    private static String getContributor(JsonNode contributors) {
+        String contributor = "";
+        if (contributors.get("creators") != null) {
+            if (contributors.isArray()) {
+                ArrayNode arrayNode = (ArrayNode) contributors;
+                for (int i = 0; i < arrayNode.size(); i++) {
+                    JsonNode arrayElement = arrayNode.get(i);
+                    Iterator<Map.Entry<String, JsonNode>> iter = arrayElement.fields();
+                    boolean author = false;
+                    while (iter.hasNext()) {
+                        Map.Entry<String, JsonNode> entry = iter.next();
+                        if (entry.getKey().equals("creatorType")) {
+                            if (entry.getValue().textValue().equals("author")) {
+                                author = true;
+                            } else {
+                                author = false;
+                            }
+                        } else {
+                            if (author) {
+                                if (entry.getKey().equals("lastName")) {
+                                    if (!entry.getValue().textValue().isEmpty()) {
+                                        contributor = contributor.isEmpty() ? contributor + entry.getValue().textValue() : contributor + ", " + entry.getValue().textValue();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return contributor.isEmpty() ? "Not available" : contributor;
     }
 
 }
