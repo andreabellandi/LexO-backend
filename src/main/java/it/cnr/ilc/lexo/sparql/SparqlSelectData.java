@@ -204,7 +204,7 @@ public class SparqlSelectData {
             + "   OPTIONAL { ?" + SparqlVariable.FORM + " skos:note ?" + SparqlVariable.NOTE + " . }\n"
             + "   OPTIONAL { ?" + SparqlVariable.FORM + " ?" + SparqlVariable.MORPHOLOGY_TRAIT_NAME + " ?" + SparqlVariable.MORPHOLOGY_TRAIT_VALUE + " .\n"
             + "              FILTER(STRSTARTS(STR(?" + SparqlVariable.MORPHOLOGY_TRAIT_NAME + "), str(lexinfo:))) }\n"
-            + "   ?" + SparqlVariable.FORM_TYPE + " rdfs:subPropertyOf ontolex:lexicalForm .\n"
+            + "   VALUES (?formType) { (ontolex:lexicalForm) (ontolex:canonicalForm) (ontolex:otherForm) } .\n"
             + "   BIND(strafter(str(?" + SparqlVariable.FORM + "), str(lex:)) as ?" + SparqlVariable.FORM_INSTANCE_NAME + ")\n"
             + "   BIND(strafter(str(?posTag), str(lexinfo:)) as ?" + SparqlVariable.LEXICAL_ENTRY_POS + ")\n"
             + "   BIND(strafter(str(?" + SparqlVariable.MORPHOLOGY_TRAIT_NAME + "),str(lexinfo:)) as ?tn)\n"
