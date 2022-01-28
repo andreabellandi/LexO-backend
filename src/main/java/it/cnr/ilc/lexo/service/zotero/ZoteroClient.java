@@ -26,7 +26,10 @@ import java.util.stream.Collectors;
  */
 public class ZoteroClient implements Manager, Cached {
 
-    private final String zoteroUrl = LexOProperties.getProperty("bibliography.service.url");
+    private final String baseUrl = LexOProperties.getProperty("zotero.service.url");
+    private final String libray = LexOProperties.getProperty("zotero.service.library");
+    private final String prefix = LexOProperties.getProperty("zotero.service.requestPrefix");
+    private final String version = LexOProperties.getProperty("zotero.service.version");
 
     private URL url;
     private HttpURLConnection conn;
@@ -37,7 +40,7 @@ public class ZoteroClient implements Manager, Cached {
 
     public void setUrl(String itemKey) {
         try {
-            this.url = new URL(zoteroUrl.replace("ITEM_KEY", itemKey));
+            this.url = new URL(baseUrl + "/" + prefix + "/" + libray + "/items/" + itemKey + "?v=" + version);
         } catch (MalformedURLException ex) {
             Logger.getLogger(ZoteroClient.class.getName()).log(Level.SEVERE, null, ex);
         }

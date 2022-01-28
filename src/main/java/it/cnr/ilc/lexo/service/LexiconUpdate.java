@@ -340,7 +340,11 @@ public class LexiconUpdate extends Service {
                 try {
                     lastUpdate = bibliographyManager.synchronizeBibliography(bibID, itemKey);
                 } catch (RuntimeException e) {
-                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("Zotero: " + e.getMessage()).build();
+                    if (e.getMessage().contains("404")) {
+                        return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("Zotero: Key " + itemKey + " not found").build();
+                    } else {
+                        return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("Zotero: " + e.getMessage()).build();
+                    }
                 }
             }
             return Response.ok(lastUpdate)

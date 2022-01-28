@@ -32,7 +32,7 @@ public class BibliographyManager implements Manager, Cached {
 
     private final String idInstancePrefix = LexOProperties.getProperty("repository.instance.id");
     private static final SimpleDateFormat timestampFormat = new SimpleDateFormat(LexOProperties.getProperty("manager.operationTimestampFormat"));
-    private final ZoteroClient zoteroClient = ManagerFactory.getManager(ZoteroClient.class);
+//    private final ZoteroClient zoteroClient = ManagerFactory.getManager(ZoteroClient.class);
 
     @Override
     public void reloadCache() {
@@ -112,12 +112,13 @@ public class BibliographyManager implements Manager, Cached {
 
     public String synchronizeBibliography(String bibID, String itemKey) throws RuntimeException {
         String lastUpdate = "";
-        zoteroClient.setUrl(itemKey);
-        zoteroClient.setConn();
+        ZoteroClient zc = new ZoteroClient();
+        zc.setUrl(itemKey);
+        zc.setConn();
         try {
-            JsonNode bib = zoteroClient.getItem();
+            JsonNode bib = zc.getItem();
             lastUpdate = updateBibliography(bibID, bib);
-            zoteroClient.disconnect();
+            zc.disconnect();
         } catch (RuntimeException e) {
             throw e;
         }

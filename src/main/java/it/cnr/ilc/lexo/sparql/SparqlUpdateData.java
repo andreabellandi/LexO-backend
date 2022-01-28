@@ -202,7 +202,7 @@ public class SparqlUpdateData {
             + "    lexbib:_IDBIB_ dct:title \"_TITLE_\" ;\n"
             + "         dct:date \"_DATE_\" ;\n"
             + "         dct:contributor \"_CONTRIBUTOR_\" ;\n"
-            + "         dct:modified \"_LAST_UPDATE_\" . }\n"
+            + "         dct:modified _LAST_UPDATE_ . }\n"
             + "WHERE {\n"
             + "    lexbib:_IDBIB_ dct:title ?title ;\n"
             + "         dct:date ?date ;\n"
