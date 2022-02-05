@@ -69,7 +69,7 @@ public class SparqlInsertData {
             + "                   dct:modified \"_MODIFIED_\" . \n"
             + "    lex:_LEID_ ety:etymology lex:_ID_ .\n"
             + "}";
-    
+
     public static final String CREATE_ETYMOLOGICAL_LINK
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
             + SparqlPrefix.LEX.getSparqlPrefix() + "\n"
@@ -97,7 +97,7 @@ public class SparqlInsertData {
             + "                   dct:modified \"_MODIFIED_\" . \n"
             + "    lex:_LEID_ ontolex:sense lex:_ID_ .\n"
             + "}";
-    
+
     public static final String CREATE_COMPONENT
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
             + SparqlPrefix.LEX.getSparqlPrefix() + "\n"
@@ -109,6 +109,7 @@ public class SparqlInsertData {
             + "                   dct:creator \"_AUTHOR_\" ;\n"
             + "                   dct:created \"_CREATED_\" ;\n"
             + "                   dct:modified \"_MODIFIED_\" . \n"
+            + "    lex:_LEID_ decomp:constituent lex:_ID_ .\n"
             + "}";
 
     public static final String CREATE_LINGUISTIC_RELATION
@@ -150,9 +151,9 @@ public class SparqlInsertData {
             + "        dct:modified \"_MODIFIED_\" . \n"
             + "    lex:_LEID_ dct:references lexbib:_ID_ .\n"
             + "}";
-    
-     public static final String CREATE_COGNATE_TYPE
+
+    public static final String CREATE_COGNATE_TYPE
             = SparqlPrefix.ETY.getSparqlPrefix() + "\n"
-            + SparqlPrefix.RDF.getSparqlPrefix() + "\n" 
+            + SparqlPrefix.RDF.getSparqlPrefix() + "\n"
             + "INSERT DATA {  _ID_ a ety:Cognate . }";
 }

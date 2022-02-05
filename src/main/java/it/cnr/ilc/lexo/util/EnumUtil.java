@@ -194,6 +194,25 @@ public class EnumUtil {
         
     }
     
+    public static enum Decomp {
+        SubTerm("subTerm"),
+        Consituent("constituent"),
+        CorrespondsTo("correspondsTo"),
+        Position("position");
+
+        private final String decomp;
+
+        private Decomp(String decomp) {
+            this.decomp = decomp;
+        }
+
+        @Override
+        public String toString() {
+            return this.decomp;
+        }
+        
+    }
+    
     public static enum LanguageAttributes {
         Description("description"),
         Language("language"),
@@ -366,7 +385,8 @@ public class EnumUtil {
         SenseRel("senseRel"),
         ConceptRef("conceptRef"),
         EtymologicalLink("etyLink"),
-        Cognate("cognate"),
+        Decomp("decomp"),
+//        Cognate("cognate"),
         ConceptRel("conceptRel");
 
         private final String linguisticRelation;

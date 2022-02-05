@@ -200,6 +200,7 @@ public class LexiconCreationManager implements Manager, Cached {
         RDFQueryUtil.update(SparqlInsertData.CREATE_COMPONENT.replaceAll("_ID_", _id)
                 .replace("_AUTHOR_", author)
                 .replace("_CREATED_", created)
+                .replace("_LEID_", leID)
                 .replace("_MODIFIED_", created));
         return setComponent(_id, created, author);
     }
