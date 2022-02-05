@@ -97,6 +97,19 @@ public class SparqlInsertData {
             + "                   dct:modified \"_MODIFIED_\" . \n"
             + "    lex:_LEID_ ontolex:sense lex:_ID_ .\n"
             + "}";
+    
+    public static final String CREATE_COMPONENT
+            = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.VS.getSparqlPrefix() + "\n"
+            + "INSERT DATA {\n"
+            + "    lex:_ID_ a decomp:Composition ;\n"
+            + "                   dct:creator \"_AUTHOR_\" ;\n"
+            + "                   dct:created \"_CREATED_\" ;\n"
+            + "                   dct:modified \"_MODIFIED_\" . \n"
+            + "}";
 
     public static final String CREATE_LINGUISTIC_RELATION
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"

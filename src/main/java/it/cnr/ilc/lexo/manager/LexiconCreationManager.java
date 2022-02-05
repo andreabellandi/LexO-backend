@@ -6,6 +6,7 @@
 package it.cnr.ilc.lexo.manager;
 
 import it.cnr.ilc.lexo.LexOProperties;
+import it.cnr.ilc.lexo.service.data.lexicon.output.Component;
 import it.cnr.ilc.lexo.service.data.lexicon.output.EtymologicalLink;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Etymology;
 import it.cnr.ilc.lexo.service.data.lexicon.output.FormCore;
@@ -45,13 +46,6 @@ public class LexiconCreationManager implements Manager, Cached {
         String id = idInstancePrefix + tm.toString();
         String created = timestampFormat.format(tm);
         String _id = id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
-//        Update updateOperation = GraphDbUtil.getConnection().prepareUpdate(QueryLanguage.SPARQL,
-//                SparqlInsertData.CREATE_LEXICON_LANGUAGE.replace("_ID_", _id)
-//                        .replace("_LANG_", lang)
-//                        .replace("_AUTHOR_", author)
-//                        .replace("_CREATED_", created)
-//                        .replace("_MODIFIED_", created));
-//        updateOperation.execute();
         RDFQueryUtil.update(SparqlInsertData.CREATE_LEXICON_LANGUAGE.replace("_ID_", _id)
                 .replace("_LANG_", lang)
                 .replace("_AUTHOR_", author)
@@ -78,13 +72,6 @@ public class LexiconCreationManager implements Manager, Cached {
         String id = idInstancePrefix + tm.toString();
         String created = timestampFormat.format(tm);
         String _id = id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
-//        Update updateOperation = GraphDbUtil.getConnection().prepareUpdate(QueryLanguage.SPARQL,
-//                SparqlInsertData.CREATE_LEXICAL_ENTRY.replace("[ID]", _id)
-//                        .replace("[LABEL]", _id)
-//                        .replace("[AUTHOR]", author)
-//                        .replace("[CREATED]", created)
-//                        .replace("[MODIFIED]", created));
-//        updateOperation.execute();
         RDFQueryUtil.update(SparqlInsertData.CREATE_LEXICAL_ENTRY.replace("[ID]", _id)
                 .replace("[LABEL]", _id)
                 .replace("[AUTHOR]", author)
@@ -113,15 +100,6 @@ public class LexiconCreationManager implements Manager, Cached {
         String id = idInstancePrefix + tm.toString();
         String created = timestampFormat.format(tm);
         String _id = id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
-//        Update updateOperation = GraphDbUtil.getConnection().prepareUpdate(QueryLanguage.SPARQL,
-//                SparqlInsertData.CREATE_FORM.replaceAll("_ID_", _id)
-//                        .replace("_LABEL_", _id)
-//                        .replace("_LANG_", lang)
-//                        .replace("_AUTHOR_", author)
-//                        .replace("_CREATED_", created)
-//                        .replace("_MODIFIED_", created)
-//                        .replaceAll("_LEID_", leID));
-//        updateOperation.execute();
         RDFQueryUtil.update(SparqlInsertData.CREATE_FORM.replaceAll("_ID_", _id)
                 .replace("_LABEL_", _id)
                 .replace("_LANG_", lang)
@@ -205,14 +183,6 @@ public class LexiconCreationManager implements Manager, Cached {
         String id = idInstancePrefix + tm.toString();
         String created = timestampFormat.format(tm);
         String _id = id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
-//        Update updateOperation = GraphDbUtil.getConnection().prepareUpdate(QueryLanguage.SPARQL,
-//                SparqlInsertData.CREATE_LEXICAL_SENSE.replaceAll("_ID_", _id)
-//                        .replace("_LABEL_", _id)
-//                        .replace("_AUTHOR_", author)
-//                        .replace("_CREATED_", created)
-//                        .replace("_MODIFIED_", created)
-//                        .replaceAll("_LEID_", leID));
-//        updateOperation.execute();
         RDFQueryUtil.update(SparqlInsertData.CREATE_LEXICAL_SENSE.replaceAll("_ID_", _id)
                 .replace("_LABEL_", _id)
                 .replace("_AUTHOR_", author)
@@ -221,12 +191,34 @@ public class LexiconCreationManager implements Manager, Cached {
                 .replaceAll("_LEID_", leID));
         return setSense(_id, created, author);
     }
+    
+     public Component createComponent(String leID, String author) throws ManagerException {
+        Timestamp tm = new Timestamp(System.currentTimeMillis());
+        String id = idInstancePrefix + tm.toString();
+        String created = timestampFormat.format(tm);
+        String _id = id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
+        RDFQueryUtil.update(SparqlInsertData.CREATE_COMPONENT.replaceAll("_ID_", _id)
+                .replace("_AUTHOR_", author)
+                .replace("_CREATED_", created)
+                .replace("_MODIFIED_", created));
+        return setComponent(_id, created, author);
+    }
 
     private LexicalSenseCore setSense(String id, String created, String author) {
         LexicalSenseCore sc = new LexicalSenseCore();
         sc.setCreator(author);
         sc.setSenseInstanceName(id);
         sc.setSense(getNamespace() + id);
+        sc.setLastUpdate(created);
+        sc.setCreationDate(created);
+        return sc;
+    }
+    
+    private Component setComponent(String id, String created, String author) {
+        Component sc = new Component();
+        sc.setCreator(author);
+        sc.setComponentInstanceName(id);
+        sc.setComponent(getNamespace() + id);
         sc.setLastUpdate(created);
         sc.setCreationDate(created);
         return sc;
