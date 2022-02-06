@@ -174,9 +174,12 @@ public final class UtilityManager implements Manager, Cached {
     }
     
     public boolean exists(String id) throws QueryEvaluationException {
-//        BooleanQuery ask = GraphDbUtil.getConnection().prepareBooleanQuery(QueryLanguage.SPARQL,
-//                SparqlQueryUtil.EXISTS_ID.replaceAll("_ID_", id));
         String query = SparqlQueryUtil.EXISTS_ID.replaceAll("_ID_", id);
+        return RDFQueryUtil.evaluateBQuery(query);
+    }
+    
+    public boolean existsTyped(String id, String type) throws QueryEvaluationException {
+        String query = SparqlQueryUtil.EXISTS_TYPE_ID.replaceAll("_ID_", id);
         return RDFQueryUtil.evaluateBQuery(query);
     }
 

@@ -73,6 +73,10 @@ public class SparqlQueryUtil {
     public static final String EXISTS_ID
             = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
             + "ASK { " + SparqlPrefix.LEX.getPrefix() + "_ID_ a ?type }";
+    
+    public static final String EXISTS_TYPE_ID
+            = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
+            + "ASK { " + SparqlPrefix.LEX.getPrefix() + "_ID_ a <_TYPE_> }";
 
     public static final String EXISTS_LANGUAGE
             = SparqlPrefix.LEX.getSparqlPrefix() + "\n"

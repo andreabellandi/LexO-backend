@@ -156,4 +156,10 @@ public class SparqlInsertData {
             = SparqlPrefix.ETY.getSparqlPrefix() + "\n"
             + SparqlPrefix.RDF.getSparqlPrefix() + "\n"
             + "INSERT DATA {  _ID_ a ety:Cognate . }";
+    
+    public static final String CREATE_CORRESPONDANT_POSITION
+            = SparqlPrefix.DECOMP.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDF.getSparqlPrefix() + "\n"
+            + SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+            + "INSERT DATA {  _ID_ a ety:Cognate . }";
 }

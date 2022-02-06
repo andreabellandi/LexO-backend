@@ -196,7 +196,7 @@ public class EnumUtil {
     
     public static enum Decomp {
         SubTerm("subTerm"),
-        Consituent("constituent"),
+        Constituent("constituent"),
         CorrespondsTo("correspondsTo"),
         Position("position");
 

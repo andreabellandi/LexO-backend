@@ -20,7 +20,7 @@ public class GenericRelationUpdater {
     private String type;
     @ApiModelProperty(value = "realtion name", example = "seeAlso", allowEmptyValue = false)
     private String relation;
-    @ApiModelProperty(value = "realtion value (empty, when deletion is performed)", example = "noun", allowEmptyValue = true)
+    @ApiModelProperty(value = "realtion value", example = "noun", allowEmptyValue = true)
     private String value;
     @ApiModelProperty(value = "previous realtion/attribute value or value to delete (leave empty, if a new relation value is needed)", example = "oldValue", allowEmptyValue = true)
     private String currentValue;
