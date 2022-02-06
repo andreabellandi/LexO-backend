@@ -48,10 +48,6 @@ public final class UtilityManager implements Manager, Cached {
     }
 
     public boolean existsLinguisticRelation(String id, String relation, String value) throws QueryEvaluationException {
-//        BooleanQuery b = GraphDbUtil.getConnection().prepareBooleanQuery(QueryLanguage.SPARQL,
-//                SparqlQueryUtil.ASK_ENTITY_RELATION.replaceAll("_ID_", id)
-//                        .replaceAll("_RELATION_", relation)
-//                        .replaceAll("_VALUE_", value));
         String query = SparqlQueryUtil.ASK_ENTITY_LINGUISTIC_RELATION.replaceAll("_ID_", id)
                 .replaceAll("_RELATION_", relation)
                 .replaceAll("_VALUE_", value);
@@ -170,6 +166,11 @@ public final class UtilityManager implements Manager, Cached {
     
     public boolean isLexicalEntryOrComponent(String id) throws QueryEvaluationException {
         String query = SparqlQueryUtil.IS_LEXICALENTRY_ID_OR_COMPONENT_ID.replaceAll("_ID_", id);
+        return RDFQueryUtil.evaluateBQuery(query);
+    }
+    
+    public boolean isComponent(String id) throws QueryEvaluationException {
+        String query = SparqlQueryUtil.IS_COMPONENT_ID.replaceAll("_ID_", id);
         return RDFQueryUtil.evaluateBQuery(query);
     }
     

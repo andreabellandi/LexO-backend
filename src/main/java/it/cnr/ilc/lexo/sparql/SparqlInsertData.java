@@ -157,9 +157,9 @@ public class SparqlInsertData {
             + SparqlPrefix.RDF.getSparqlPrefix() + "\n"
             + "INSERT DATA {  _ID_ a ety:Cognate . }";
     
-    public static final String CREATE_CORRESPONDANT_POSITION
-            = SparqlPrefix.DECOMP.getSparqlPrefix() + "\n"
-            + SparqlPrefix.RDF.getSparqlPrefix() + "\n"
+    public static final String CREATE_COMPONENT_POSITION
+            = SparqlPrefix.RDF.getSparqlPrefix() + "\n"
             + SparqlPrefix.DCT.getSparqlPrefix() + "\n"
-            + "INSERT DATA {  _ID_ a ety:Cognate . }";
+            + SparqlPrefix.LEX.getSparqlPrefix() + "\n"
+            + "INSERT DATA {  lex:_IDLE_ rdf:_POSITION lex:_IDCOMPONENT_. }";
 }

@@ -438,6 +438,22 @@ public class EnumUtil {
         
     }
     
+    public static enum PositionRelation {
+        rdfListPosition("rdf:_n");
+
+        private final String positionRelation;
+
+        private PositionRelation(String positionRelation) {
+            this.positionRelation = positionRelation;
+        }        
+
+        @Override
+        public String toString() {
+            return this.positionRelation;
+        }
+        
+    }
+    
     public static enum GenericRelationBibliography {
         textualReference("label"),
         note("note");

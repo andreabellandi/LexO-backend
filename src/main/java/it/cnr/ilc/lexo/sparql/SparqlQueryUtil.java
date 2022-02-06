@@ -52,6 +52,11 @@ public class SparqlQueryUtil {
             + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
             + "ASK { " + SparqlPrefix.LEX.getPrefix() + "_ID_ a " + SparqlPrefix.ONTOLEX.getPrefix() + "LexicalEntry }";
     
+    public static final String IS_COMPONENT_ID
+            = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.DECOMP.getSparqlPrefix() + "\n"
+            + "ASK { " + SparqlPrefix.LEX.getPrefix() + "_ID_ a " + SparqlPrefix.DECOMP.getPrefix() + "Component }";
+    
     public static final String IS_LEXICALENTRY_ID_OR_COMPONENT_ID
             = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
             + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"

@@ -15,6 +15,7 @@ import it.cnr.ilc.lexo.manager.ManagerException;
 import it.cnr.ilc.lexo.manager.ManagerFactory;
 import it.cnr.ilc.lexo.manager.UtilityManager;
 import it.cnr.ilc.lexo.service.data.lexicon.input.Bibliography;
+import it.cnr.ilc.lexo.service.data.lexicon.input.ComponentPositionUpdater;
 import it.cnr.ilc.lexo.service.data.lexicon.input.EtymologicalLinkUpdater;
 import it.cnr.ilc.lexo.service.data.lexicon.input.EtymologyUpdater;
 import it.cnr.ilc.lexo.service.data.lexicon.input.FormUpdater;
@@ -280,6 +281,32 @@ public class LexiconUpdate extends Service {
         if (key.equals("PRINitant19")) {
             try {
                 return Response.ok(lexiconManager.updateGenericRelation(id, gru))
+                        .type(MediaType.TEXT_PLAIN)
+                        .header("Access-Control-Allow-Headers", "content-type")
+                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                        .build();
+            } catch (ManagerException | UpdateExecutionException ex) {
+                Logger.getLogger(LexiconUpdate.class.getName()).log(Level.SEVERE, null, ex);
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            }
+        } else {
+            return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Insertion denied, wrong key").build();
+        }
+    }
+
+    @POST
+    @Path("{id}/componentPosition")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.POST,
+            value = "/{id}/componentPosition",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Component position update",
+            notes = "This method updates the position of a multiword component according to the input updater")
+    public Response componentPosition(@QueryParam("key") String key, @PathParam("id") String lexicalEntryID, ComponentPositionUpdater cpu) {
+        if (key.equals("PRINitant19")) {
+            try {
+                return Response.ok(lexiconManager.updateComponentPosition(lexicalEntryID, cpu))
                         .type(MediaType.TEXT_PLAIN)
                         .header("Access-Control-Allow-Headers", "content-type")
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")

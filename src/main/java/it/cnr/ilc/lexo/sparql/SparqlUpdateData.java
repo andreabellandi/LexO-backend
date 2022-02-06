@@ -209,5 +209,19 @@ public class SparqlUpdateData {
             + "         dct:contributor ?contributor ;\n"
             + "         dct:modified ?modified .\n"
             + "}";
+    
+    public static final String UPDATE_COMPONENT_POSITION
+            = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.SKOS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
+            + "DELETE { lex:_ID_ rdf:_CURR_POSITION lex:_IDCOMPONENT_ ;\n "
+            + "                  dct:modified ?modified . } \n"
+            + "INSERT { lex:_ID_ rdf:_POSITION lex:_IDCOMPONENT_ ;\n"
+            + "                  dct:modified _LAST_UPDATE_ . }\n"
+            + "WHERE {  OPTIONAL { lex:_ID_ dct:modified ?modified . }\n"
+            + "         OPTIONAL { lex:_ID_ rdf:_CURR_POSITION lex:_IDCOMPONENT_ . } }";
 
 }
