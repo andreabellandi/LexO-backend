@@ -48,44 +48,55 @@ import org.slf4j.LoggerFactory;
  * @author andreabellandi
  */
 public class GraphVizManager implements Manager, Cached {
-    
+
     static final Logger logger = LoggerFactory.getLogger(GraphVizManager.class.getName());
-    
+
     private final String namespace = LexOProperties.getProperty("repository.lexicon.namespace");
     private final String ontologyNamespace = LexOProperties.getProperty("repository.ontology.namespace");
-    
+
     public String getNamespace() {
         return namespace;
     }
-    
+
     @Override
     public void reloadCache() {
-        
+
     }
-    
+
     public TupleQueryResult getNode(String id) {
         String query = SparqlGraphViz.GRAPH_VIZ_SENSE_SUMMARY.replace("[IRI]", "\\\"" + namespace + id + "\\\"");
         return RDFQueryUtil.evaluateTQuery(query);
     }
-    
+
     public TupleQueryResult getLinks(String id) {
         String query = SparqlGraphViz.GRAPH_VIZ_SENSE_LINKS.replace("[IRI]", "\\\"" + namespace + id + "\\\"");
         return RDFQueryUtil.evaluateTQuery(query);
     }
-    
+
     public TupleQueryResult getNodeGraph(String id, NodeGraphFilter ngf, boolean in) {
+        String graph = "";
+        if (ngf.getGraph() != null) {
+            if (!ngf.getGraph().isEmpty()) {
+                if (ngf.getGraph().equals("implicit")) {
+                    graph = "FILTER(regex(str(?graph), \"http://www.ontotext.com/implicit\"))\n";
+                } else {
+                    graph = "FILTER(regex(str(?graph), \"http://www.ontotext.com/explicit\"))\n";
+                }
+            }
+        }
         String query = SparqlGraphViz.GRAPH_VIZ_NODE_GRAPH.replaceAll("_NODE_ID_", id).replace("_RELATION_", ngf.getRelation().trim())
-                .replace("_NODE_VARIABLE_", (in ? "?" + SparqlVariable.TARGET : "?" + SparqlVariable.SOURCE));
+                .replace("_NODE_VARIABLE_", (in ? "?" + SparqlVariable.TARGET : "?" + SparqlVariable.SOURCE))
+                .replace("_GRAPH_", graph);
         return RDFQueryUtil.evaluateTQuery(query);
     }
-    
+
     public TupleQueryResult getEdgeGraph(EdgeGraphFilter egf) {
         String query = SparqlGraphViz.GRAPH_VIZ_EDGE_GRAPH.replaceAll("_RELATION_", egf.getRelation())
                 .replace("_SOURCE_", egf.getSource().trim())
                 .replace("_TARGET_", egf.getTarget().trim());
         return RDFQueryUtil.evaluateTQuery(query);
     }
-    
+
     public Cytoscape getNodeGraph(TupleQueryResult in, TupleQueryResult out, String relation) {
         HashMap<String, String> usem = new HashMap<>();
         Cytoscape cytoscape = new Cytoscape();
@@ -95,7 +106,7 @@ public class GraphVizManager implements Manager, Cached {
         addElementToGraph(out, cytoscape, usem, relation);
         return cytoscape;
     }
-    
+
     private void addElementToGraph(TupleQueryResult tqr, Cytoscape cytoscape, HashMap<String, String> usem, String relation) {
         while (tqr.hasNext()) {
             BindingSet bindingSet = tqr.next();
@@ -134,7 +145,7 @@ public class GraphVizManager implements Manager, Cached {
             cytoscape.getEdges().add(edge);
         }
     }
-    
+
     public void createNodeSummary(List<NodeLinks> _links, SenseNodeSummary sns) {
         sns.setLinks(_links);
     }

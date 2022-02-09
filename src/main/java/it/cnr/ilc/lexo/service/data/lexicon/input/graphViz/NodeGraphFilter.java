@@ -18,6 +18,8 @@ public class NodeGraphFilter {
 
     @ApiModelProperty(value = "realtion name", example = "hyponym", allowEmptyValue = false, allowableValues = "synonym, hyponym, meronym")
     private String relation;
+    @ApiModelProperty(value = "type of the named graph", example = "explicit", allowEmptyValue = true, allowableValues = "explicit, implicit, (empty for both explicit and implicit)")
+    private String graph;
 
     public String getRelation() {
         return relation;
@@ -25,6 +27,14 @@ public class NodeGraphFilter {
 
     public void setRelation(String relation) {
         this.relation = relation;
+    }
+
+    public String getGraph() {
+        return graph;
+    }
+
+    public void setGraph(String graph) {
+        this.graph = graph;
     }
 
     

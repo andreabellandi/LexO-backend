@@ -101,6 +101,7 @@ public class SparqlGraphViz {
             + "           lexinfo:partOfSpeech ?posTarget ;\n"
             + "           rdfs:label ?labelTarget .\n"
             + "FILTER(regex(str(_NODE_VARIABLE_), \"http://lexica/mylexicon#_NODE_ID_\"))\n"
+            + "_GRAPH_"
             + "}";
 
     public static final String GRAPH_VIZ_EDGE_GRAPH
