@@ -7,6 +7,8 @@ package it.cnr.ilc.lexo.service.helper;
 
 import it.cnr.ilc.lexo.service.data.lexicon.output.graphViz.NodeLinks;
 import it.cnr.ilc.lexo.sparql.SparqlVariable;
+import java.util.ArrayList;
+import java.util.Arrays;
 import org.eclipse.rdf4j.query.BindingSet;
 
 /**
@@ -23,17 +25,35 @@ public class NodeLinksHelper extends TripleStoreDataHelper<NodeLinks> {
     @Override
     public void fillData(NodeLinks data, BindingSet bs) {
         data.setInferred(isInferred(bs, SparqlVariable.GRAPH));
-        data.setInHypernym(getIntegerNumber(bs, "in" + SparqlVariable.HYPERNYM + "Count"));
-        data.setInHyponym(getIntegerNumber(bs, "in" + SparqlVariable.HYPONYM + "Count"));
-        data.setInPartMeronym(getIntegerNumber(bs, "in" + SparqlVariable.PART_MERONYM + "Count"));
-        data.setInSynonym(getIntegerNumber(bs, "in" + SparqlVariable.SYNONYM + "Count"));
-        data.setInMeronymTerm(getIntegerNumber(bs, "in" + SparqlVariable.MERONYM_TERM + "Count"));
-        data.setOutHypernym(getIntegerNumber(bs, "out" + SparqlVariable.HYPERNYM + "Count"));
-        data.setOutHyponym(getIntegerNumber(bs, "out" + SparqlVariable.HYPONYM + "Count"));
-        data.setOutMeronymTerm(getIntegerNumber(bs, "out" + SparqlVariable.MERONYM_TERM + "Count"));
-        data.setOutPartMeronym(getIntegerNumber(bs, "out" + SparqlVariable.PART_MERONYM + "Count"));
-        data.setOutSynonym(getIntegerNumber(bs, "out" + SparqlVariable.SYNONYM + "Count"));
+
+        for (String link : new ArrayList<>(Arrays.asList(
+                SparqlVariable.HYPERNYM,
+                SparqlVariable.HYPONYM,
+                SparqlVariable.SYNONYM,
+                SparqlVariable.MERONYM,
+                SparqlVariable.MERONYM_TERM))) {
+            NodeLinks._Links _links = new NodeLinks._Links();
+            _links.setLinkType("incoming");
+            _links.setLinkName(link);
+            _links.setTargets(getLinkTargets(getStringValue(bs, "in" + link + "Grouped")));
+            _links.setLinkCount(_links.getTargets().get(0).isEmpty() ? 0 : _links.getTargets().size());
+            data.getNodeLinks().add(_links);
+        }
+        
+        for (String link : new ArrayList<>(Arrays.asList(
+                SparqlVariable.HYPERNYM,
+                SparqlVariable.HYPONYM,
+                SparqlVariable.SYNONYM,
+                SparqlVariable.MERONYM,
+                SparqlVariable.MERONYM_TERM))) {
+            NodeLinks._Links _links = new NodeLinks._Links();
+            _links.setLinkType("outcoming");
+            _links.setLinkName(link);
+            _links.setTargets(getLinkTargets(getStringValue(bs, "out" + link + "Grouped")));
+            _links.setLinkCount(_links.getTargets().get(0).isEmpty() ? 0 : _links.getTargets().size());
+            data.getNodeLinks().add(_links);
+        }
+
     }
-    
-    
+
 }

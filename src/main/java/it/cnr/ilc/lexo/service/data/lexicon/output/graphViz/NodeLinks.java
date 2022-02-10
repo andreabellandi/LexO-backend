@@ -6,6 +6,7 @@
 package it.cnr.ilc.lexo.service.data.lexicon.output.graphViz;
 
 import it.cnr.ilc.lexo.service.data.Data;
+import java.util.ArrayList;
 
 /**
  *
@@ -14,16 +15,15 @@ import it.cnr.ilc.lexo.service.data.Data;
 public class NodeLinks implements Data {
 
     private boolean inferred;
-    private int inHyponym;
-    private int outHyponym;
-    private int inHypernym;
-    private int outHypernym;
-    private int inSynonym;
-    private int outSynonym;
-    private int inMeronymTerm;
-    private int outMeronymTerm;
-    private int inPartMeronym;
-    private int outPartMeronym;
+    private ArrayList<_Links> nodeLinks = new ArrayList();
+
+    public ArrayList<_Links> getNodeLinks() {
+        return nodeLinks;
+    }
+
+    public void setNodeLinks(ArrayList<_Links> nodeLinks) {
+        this.nodeLinks = nodeLinks;
+    }
 
     public boolean isInferred() {
         return inferred;
@@ -33,84 +33,45 @@ public class NodeLinks implements Data {
         this.inferred = inferred;
     }
 
-    public int getInHyponym() {
-        return inHyponym;
-    }
+    public static class _Links {
 
-    public void setInHyponym(int inHyponym) {
-        this.inHyponym = inHyponym;
-    }
+        private String linkType;
+        private String linkName;
+        private int linkCount;
+        private ArrayList<String> targets = new ArrayList();
 
-    public int getOutHyponym() {
-        return outHyponym;
-    }
+        public String getLinkType() {
+            return linkType;
+        }
 
-    public void setOutHyponym(int outHyponym) {
-        this.outHyponym = outHyponym;
-    }
+        public void setLinkType(String linkType) {
+            this.linkType = linkType;
+        }
 
-    public int getInHypernym() {
-        return inHypernym;
-    }
+        public String getLinkName() {
+            return linkName;
+        }
 
-    public void setInHypernym(int inHypernym) {
-        this.inHypernym = inHypernym;
-    }
+        public void setLinkName(String linkName) {
+            this.linkName = linkName;
+        }
 
-    public int getOutHypernym() {
-        return outHypernym;
-    }
+        public ArrayList<String> getTargets() {
+            return targets;
+        }
 
-    public void setOutHypernym(int outHypernym) {
-        this.outHypernym = outHypernym;
-    }
+        public void setTargets(ArrayList<String> targets) {
+            this.targets = targets;
+        }
 
-    public int getInSynonym() {
-        return inSynonym;
-    }
+        public int getLinkCount() {
+            return linkCount;
+        }
 
-    public void setInSynonym(int inSynonym) {
-        this.inSynonym = inSynonym;
-    }
+        public void setLinkCount(int linkCount) {
+            this.linkCount = linkCount;
+        }
 
-    public int getOutSynonym() {
-        return outSynonym;
-    }
-
-    public void setOutSynonym(int outSynonym) {
-        this.outSynonym = outSynonym;
-    }
-
-    public int getInMeronymTerm() {
-        return inMeronymTerm;
-    }
-
-    public void setInMeronymTerm(int inMeronymTerm) {
-        this.inMeronymTerm = inMeronymTerm;
-    }
-
-    public int getOutMeronymTerm() {
-        return outMeronymTerm;
-    }
-
-    public void setOutMeronymTerm(int outMeronymTerm) {
-        this.outMeronymTerm = outMeronymTerm;
-    }
-
-    public int getInPartMeronym() {
-        return inPartMeronym;
-    }
-
-    public void setInPartMeronym(int inPartMeronym) {
-        this.inPartMeronym = inPartMeronym;
-    }
-
-    public int getOutPartMeronym() {
-        return outPartMeronym;
-    }
-
-    public void setOutPartMeronym(int outPartMeronym) {
-        this.outPartMeronym = outPartMeronym;
     }
 
 }

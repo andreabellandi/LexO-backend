@@ -141,6 +141,7 @@ public class SparqlVariable {
     public static final String HYPONYM = "hyponym";
     public static final String PART_MERONYM = "partMeronym";
     public static final String MERONYM_TERM = "meronymTerm";
+    public static final String MERONYM = "meronym";
     public static final String SYNONYM = "synonym";
 
 }
