@@ -366,9 +366,6 @@ public class LexiconData extends Service {
         try {
             TupleQueryResult lexicalEnties = lexiconManager.getFilterdLexicalEntries(lef);
             List<LexicalEntryItem> entries = lexicalEntryFilterHelper.newDataList(lexicalEnties);
-            
-            
-            
             HitsDataList hdl = new HitsDataList(lexicalEntryFilterHelper.getTotalHits(), entries);
             String json = lexicalEntryFilterHelper.toJson(hdl);
             return Response.ok(json)
@@ -686,6 +683,38 @@ public class LexiconData extends Service {
         TupleQueryResult bib = bibliographyManager.getBibliography(id);
         List<BibliographicItem> bibs = bibliographyHelper.newDataList(bib);
         String json = bibliographyHelper.toJson(bibs);
+        return Response.ok(json)
+                .type(MediaType.TEXT_PLAIN)
+                .header("Access-Control-Allow-Headers", "content-type")
+                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                .build();
+    }
+
+    @GET
+    @Path("{id}/subTerms")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "/{id}/subTerms",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Sub term of a lexical entry",
+            notes = "This method returns all the sub terms of a lexical entry")
+    public Response subTerms(
+            @ApiParam(
+                    name = "key",
+                    value = "authentication token",
+                    example = "lexodemo",
+                    required = true)
+            @QueryParam("key") String key,
+            @ApiParam(
+                    name = "id",
+                    value = "lexical entry ID",
+                    required = true)
+            @PathParam("id") String id) {
+        TupleQueryResult lexicalEnties = lexiconManager.getSubTerms(id);
+        List<LexicalEntryItem> entries = lexicalEntryFilterHelper.newDataList(lexicalEnties);
+        HitsDataList hdl = new HitsDataList(lexicalEntryFilterHelper.getTotalHits(), entries);
+        String json = lexicalEntryFilterHelper.toJson(hdl);
         return Response.ok(json)
                 .type(MediaType.TEXT_PLAIN)
                 .header("Access-Control-Allow-Headers", "content-type")
