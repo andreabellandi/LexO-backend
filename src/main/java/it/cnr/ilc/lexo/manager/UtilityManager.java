@@ -180,7 +180,7 @@ public final class UtilityManager implements Manager, Cached {
     }
     
     public boolean existsTyped(String id, String type) throws QueryEvaluationException {
-        String query = SparqlQueryUtil.EXISTS_TYPE_ID.replaceAll("_ID_", id);
+        String query = SparqlQueryUtil.EXISTS_TYPE_ID.replaceAll("_ID_", id).replace("_TYPE_", type);
         return RDFQueryUtil.evaluateBQuery(query);
     }
 

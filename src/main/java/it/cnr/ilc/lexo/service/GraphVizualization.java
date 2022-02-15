@@ -98,7 +98,7 @@ public class GraphVizualization extends Service {
             value = "/{id}/nodeGraph",
             produces = "application/json; charset=UTF-8")
     @ApiOperation(value = "Graph of a node",
-            notes = "This method returns the incoming and outcoming edges of a node")
+            notes = "This method returns the incoming and outgoing edges of a node")
     public Response nodeGraph(@ApiParam(
             name = "key",
             value = "authentication token",
@@ -115,8 +115,8 @@ public class GraphVizualization extends Service {
 
         try {
             TupleQueryResult incoming = graphVizManager.getNodeGraph(id, ngf, true);
-            TupleQueryResult outcoming = graphVizManager.getNodeGraph(id, ngf, false);
-            Cytoscape ng = graphVizManager.getNodeGraph(incoming, outcoming, ngf.getRelation());
+            TupleQueryResult outgoing = graphVizManager.getNodeGraph(id, ngf, false);
+            Cytoscape ng = graphVizManager.getNodeGraph(incoming, outgoing, ngf.getRelation());
             ObjectMapper mapper = new ObjectMapper();
             String json = mapper.writeValueAsString(ng);
             return Response.ok(json)

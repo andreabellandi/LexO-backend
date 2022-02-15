@@ -47,7 +47,7 @@ public class NodeLinksHelper extends TripleStoreDataHelper<NodeLinks> {
                 SparqlVariable.MERONYM,
                 SparqlVariable.MERONYM_TERM))) {
             NodeLinks._Links _links = new NodeLinks._Links();
-            _links.setLinkType("outcoming");
+            _links.setLinkType("outgoing");
             _links.setLinkName(link);
             _links.setTargets(getLinkTargets(getStringValue(bs, "out" + link + "Grouped")));
             _links.setLinkCount(_links.getTargets().get(0).isEmpty() ? 0 : _links.getTargets().size());

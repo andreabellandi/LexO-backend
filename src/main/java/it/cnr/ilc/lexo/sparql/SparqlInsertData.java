@@ -104,6 +104,7 @@ public class SparqlInsertData {
             + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
             + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
             + SparqlPrefix.VS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.DECOMP.getSparqlPrefix() + "\n"
             + "INSERT DATA {\n"
             + "    lex:_ID_ a decomp:Composition ;\n"
             + "                   dct:creator \"_AUTHOR_\" ;\n"

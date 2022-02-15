@@ -6,6 +6,7 @@
 package it.cnr.ilc.lexo.manager;
 
 import it.cnr.ilc.lexo.LexOProperties;
+import it.cnr.ilc.lexo.service.data.lexicon.input.ComponentPositionUpdater;
 import it.cnr.ilc.lexo.service.data.lexicon.input.EtymologicalLinkUpdater;
 import it.cnr.ilc.lexo.service.data.lexicon.input.EtymologyUpdater;
 import it.cnr.ilc.lexo.service.data.lexicon.input.FormUpdater;
@@ -79,6 +80,10 @@ public final class LexiconUpdateManager implements Manager, Cached {
         Manager.validateWithEnum("rel", EnumUtil.LexicalRel.class, rel);
     }
 
+    public void validateDecomp(String rel) throws ManagerException {
+        Manager.validateWithEnum("rel", EnumUtil.Decomp.class, rel);
+    }
+
     public void validateLexicalEntryStatus(String status) throws ManagerException {
         Manager.validateWithEnum("status", EnumUtil.LexicalEntryStatus.class, status);
     }
@@ -91,8 +96,16 @@ public final class LexiconUpdateManager implements Manager, Cached {
         Manager.validateWithEnum("relation", EnumUtil.GenericRelationReference.class, relation);
     }
 
+    public void validatePositionRelation(String relation) throws ManagerException {
+        Manager.validateWithEnum("relation", EnumUtil.PositionRelation.class, relation);
+    }
+
     public void validateGenericBibliographyRelation(String relation) throws ManagerException {
         Manager.validateWithEnum("relation", EnumUtil.GenericRelationBibliography.class, relation);
+    }
+    
+    public void validateGenericDecompRelation(String relation) throws ManagerException {
+        Manager.validateWithEnum("relation", EnumUtil.GenericRelationDecomp.class, relation);
     }
 
     public void validateEtyLink(String type) throws ManagerException {
@@ -102,6 +115,14 @@ public final class LexiconUpdateManager implements Manager, Cached {
     public boolean validateIRI(String id) throws ManagerException {
         UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
         if (!utilityManager.exists(id)) {
+            return false;
+        }
+        return true;
+    }
+
+    public boolean validateTypedIRI(String id, String type) throws ManagerException {
+        UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+        if (!utilityManager.existsTyped(id, type)) {
             return false;
         }
         return true;
@@ -571,6 +592,34 @@ public final class LexiconUpdateManager implements Manager, Cached {
                 setPrefixes(lru, SparqlPrefix.ETY.getUri(), "",
                         SparqlPrefix.LEX.getUri());
             }
+        } else if (lru.getType().equals(EnumUtil.LinguisticRelation.Decomp.toString())) {
+            validateDecomp(lru.getRelation());
+            // currently external IRIs are not considered
+            if (lru.getRelation().equals(EnumUtil.Decomp.SubTerm.toString())) {
+                if (validateIRI(lru.getValue())) {
+                    setPrefixes(lru, SparqlPrefix.DECOMP.getUri(), SparqlPrefix.LEX.getUri(),
+                            SparqlPrefix.LEX.getUri());
+                } else {
+                    throw new ManagerException(lru.getValue() + " is not a valid Lexical Entry");
+                }
+            } else if (lru.getRelation().equals(EnumUtil.Decomp.Constituent.toString())) {
+                if (lru.getCurrentValue() != null) {
+                    if (!lru.getCurrentValue().isEmpty()) {
+                        setPrefixes(lru, SparqlPrefix.DECOMP.getUri(), SparqlPrefix.LEX.getUri(),
+                                SparqlPrefix.LEX.getUri());
+                    } else {
+                        throw new ManagerException("Current value unspecified: you must specify the current id where constituent ranges over");
+                    }
+                }
+            } else if (lru.getRelation().equals(EnumUtil.Decomp.CorrespondsTo.toString())) {
+                if (validateTypedIRI(lru.getValue(), SparqlPrefix.ONTOLEX.getUri() + OntoLexEntity.LexicalEntryTypes.LexicalEntry.toString())) {
+                    setPrefixes(lru, SparqlPrefix.DECOMP.getUri(), SparqlPrefix.LEX.getUri(),
+                            SparqlPrefix.LEX.getUri());
+                } else {
+                    throw new ManagerException(lru.getValue() + " is not a valid Lexical Entry");
+                }
+            }
+
         } else {
             throw new ManagerException(lru.getType() + " is not a valid relation type");
         }
@@ -697,6 +746,13 @@ public final class LexiconUpdateManager implements Manager, Cached {
                     "",
                     "");
             _id = SparqlPrefix.LEXBIB.getUri() + id;
+        } else if (gru.getType().equals(EnumUtil.GenericRelation.Decomp.toString())) {
+            validateGenericDecompRelation(gru.getRelation());
+            setPrefixes(gru, true,
+                    gru.getRelation().equals(EnumUtil.GenericRelationDecomp.label.toString()) ? SparqlPrefix.RDFS.getUri() : SparqlPrefix.SKOS.getUri(),
+                    "",
+                    "");
+            _id = SparqlPrefix.LEX.getUri() + id;
         } else {
             throw new ManagerException(gru.getType() + " is not a valid relation type");
         }
@@ -744,4 +800,58 @@ public final class LexiconUpdateManager implements Manager, Cached {
                 .replaceAll("_LAST_UPDATE_", "\"" + lastupdate + "\""));
         return lastupdate;
     }
+
+    public String updateComponentPosition(String lexicalEntryID, ComponentPositionUpdater cpu) throws ManagerException {
+        if (cpu.getType().equals(EnumUtil.LinguisticRelation.Decomp.toString())) {
+            validatePositionRelation(cpu.getRelation());
+            UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+            if (cpu.getComponent() != null) {
+                if (!cpu.getComponent().isEmpty()) {
+                    if (!utilityManager.existsLinguisticRelation(lexicalEntryID, cpu.getRelation(), SparqlPrefix.LEX.getUri() + cpu.getComponent())) {
+                        throw new ManagerException("The statement to update <" + lexicalEntryID + ", " + cpu.getRelation() + ", " + cpu.getComponent() + "> does not exist");
+                    }
+                }
+            } else {
+                throw new ManagerException("The component field can not be null or empty");
+            }
+            if (cpu.getPosition() != 0) {
+                if (cpu.getPosition() != (int) cpu.getPosition()) {
+                    throw new ManagerException(cpu.getPosition() + " must be an integer number");
+                } else {
+                    if (cpu.getCurrentPosition() != 0) {
+                        if (cpu.getCurrentPosition() != (int) cpu.getCurrentPosition()) {
+                            throw new ManagerException(cpu.getCurrentPosition() + " must be an integer number");
+                        } else {
+                            return updateComponentPosition(lexicalEntryID, cpu.getComponent(), cpu.getPosition(), cpu.getCurrentPosition());
+                        }
+                    } else {
+                        return createComponentPosition(lexicalEntryID, cpu.getComponent(), cpu.getPosition());
+                    }
+                }
+            } else {
+                throw new ManagerException("position can not be 0");
+            }
+        } else {
+            throw new ManagerException(cpu.getType() + " is not a valid relation type");
+        }
+    }
+
+    public String createComponentPosition(String lexicalEntryID, String component, int position) throws ManagerException, UpdateExecutionException {
+        String lastupdate = timestampFormat.format(new Timestamp(System.currentTimeMillis()));
+        RDFQueryUtil.update(SparqlInsertData.CREATE_COMPONENT_POSITION.replaceAll("_IDLE_", lexicalEntryID)
+                .replaceAll("POSITION", String.valueOf(position))
+                .replaceAll("_IDCOMPONENT_", component));
+        return lastupdate;
+    }
+
+    public String updateComponentPosition(String lexicalEntryID, String component, int position, int currentPosition) throws ManagerException, UpdateExecutionException {
+        String lastupdate = timestampFormat.format(new Timestamp(System.currentTimeMillis()));
+        RDFQueryUtil.update(SparqlUpdateData.UPDATE_COMPONENT_POSITION.replaceAll("_ID_", lexicalEntryID)
+                .replaceAll("POSITION", String.valueOf(position))
+                .replaceAll("CURR_POSITION", String.valueOf(currentPosition))
+                .replaceAll("_IDCOMPONENT_", component)
+                .replaceAll("_LAST_UPDATE_", "\"" + lastupdate + "\""));
+        return lastupdate;
+    }
+
 }
