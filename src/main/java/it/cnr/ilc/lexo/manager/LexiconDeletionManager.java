@@ -31,17 +31,11 @@ public class LexiconDeletionManager implements Manager, Cached {
     }
 
     public void deleteLexiconLanguage(String id) throws ManagerException {
-//        Update updateOperation = GraphDbUtil.getConnection().prepareUpdate(QueryLanguage.SPARQL,
-//                SparqlDeleteData.DELETE_LEXICON_LANGUAGE.replaceAll("_ID_", id));
-//        updateOperation.execute();
         RDFQueryUtil.update(SparqlDeleteData.DELETE_LEXICON_LANGUAGE.replaceAll("_ID_", id));
     }
 
     public void deleteLexicalEntry(String id) throws ManagerException {
         if (!ManagerFactory.getManager(UtilityManager.class).hasLexicalEntryChildren(id)) {
-//            Update updateOperation = GraphDbUtil.getConnection().prepareUpdate(QueryLanguage.SPARQL,
-//                    SparqlDeleteData.DELETE_LEXICAL_ENTRY.replaceAll("_ID_", id));
-//            updateOperation.execute();
             RDFQueryUtil.update(SparqlDeleteData.DELETE_LEXICAL_ENTRY.replaceAll("_ID_", id));
         } else {
             throw new ManagerException("The lexical entry cannot be deleted. Remove its forms and/or senses first.");
@@ -50,17 +44,15 @@ public class LexiconDeletionManager implements Manager, Cached {
     }
 
     public void deleteForm(String id) throws ManagerException {
-//        Update updateOperation = GraphDbUtil.getConnection().prepareUpdate(QueryLanguage.SPARQL,
-//                SparqlDeleteData.DELETE_FORM.replaceAll("_ID_", id));
-//        updateOperation.execute();
         RDFQueryUtil.update(SparqlDeleteData.DELETE_FORM.replaceAll("_ID_", id));
     }
 
     public void deleteLexicalSense(String id) throws ManagerException {
-//        Update updateOperation = GraphDbUtil.getConnection().prepareUpdate(QueryLanguage.SPARQL,
-//                SparqlDeleteData.DELETE_LEXICAL_SENSE.replaceAll("_ID_", id));
-//        updateOperation.execute();
         RDFQueryUtil.update(SparqlDeleteData.DELETE_LEXICAL_SENSE.replaceAll("_ID_", id));
+    }
+    
+     public void deleteComponent(String id) throws ManagerException {
+        RDFQueryUtil.update(SparqlDeleteData.DELETE_COMPONENT.replaceAll("_ID_", id));
     }
 
     public void deleteEtymologicalLink(String id) throws ManagerException {
