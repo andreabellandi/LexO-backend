@@ -725,15 +725,15 @@ public class LexiconData extends Service {
     }
 
     @GET
-    @Path("{id}/components")
+    @Path("{id}/constituents")
     @Produces(MediaType.APPLICATION_JSON)
     @RequestMapping(
             method = RequestMethod.GET,
-            value = "/{id}/components",
+            value = "/{id}/constituents",
             produces = "application/json; charset=UTF-8")
     @ApiOperation(value = "Components of a lexical entry or a component",
             notes = "This method returns all the components of a lexical entry or a component")
-    public Response components(
+    public Response constituents(
             @ApiParam(
                     name = "key",
                     value = "authentication token",
