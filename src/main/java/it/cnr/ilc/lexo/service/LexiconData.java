@@ -12,12 +12,14 @@ import it.cnr.ilc.lexo.manager.BibliographyManager;
 import it.cnr.ilc.lexo.manager.LexiconDataManager;
 import it.cnr.ilc.lexo.manager.ManagerException;
 import it.cnr.ilc.lexo.manager.ManagerFactory;
+import it.cnr.ilc.lexo.manager.UtilityManager;
 import it.cnr.ilc.lexo.service.data.lexicon.input.FormFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.output.FormItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryElementItem;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalEntryFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalSenseFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.output.BibliographicItem;
+import it.cnr.ilc.lexo.service.data.lexicon.output.ComponentItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.EtymologicalLink;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Etymology;
 import it.cnr.ilc.lexo.service.data.lexicon.output.EtymologyItem;
@@ -32,6 +34,7 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalSenseCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalSenseItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LinkedEntity;
 import it.cnr.ilc.lexo.service.helper.BibliographyHelper;
+import it.cnr.ilc.lexo.service.helper.ComponentFilterHelper;
 import it.cnr.ilc.lexo.service.helper.EtymologicalLinkHelper;
 import it.cnr.ilc.lexo.service.helper.EtymologyFilterHelper;
 import it.cnr.ilc.lexo.service.helper.EtymologyHelper;
@@ -44,14 +47,12 @@ import it.cnr.ilc.lexo.service.helper.LexicalEntityLinksItemHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalEntryCoreHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalEntryFilterHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalEntryElementHelper;
-import it.cnr.ilc.lexo.service.helper.LexicalEntryReferenceLinkHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalSenseCoreHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalSenseFilterHelper;
 import it.cnr.ilc.lexo.service.helper.LinkedEntityHelper;
+import it.cnr.ilc.lexo.sparql.SparqlIndex;
 import it.cnr.ilc.lexo.util.EnumUtil;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -95,6 +96,7 @@ public class LexiconData extends Service {
     private final EtymologyFilterHelper etymologyFilterHelper = new EtymologyFilterHelper();
     private final EtymologyTreeHelper etymologyTreeHelper = new EtymologyTreeHelper();
     private final EtymologicalLinkHelper etymologicalLinkHelper = new EtymologicalLinkHelper();
+    private final ComponentFilterHelper componentFilterHelper = new ComponentFilterHelper();
 
     @GET
     @Path("{id}/lexicalEntry")
@@ -715,6 +717,46 @@ public class LexiconData extends Service {
         List<LexicalEntryItem> entries = lexicalEntryFilterHelper.newDataList(lexicalEnties);
         HitsDataList hdl = new HitsDataList(lexicalEntryFilterHelper.getTotalHits(), entries);
         String json = lexicalEntryFilterHelper.toJson(hdl);
+        return Response.ok(json)
+                .type(MediaType.TEXT_PLAIN)
+                .header("Access-Control-Allow-Headers", "content-type")
+                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                .build();
+    }
+
+    @GET
+    @Path("{id}/components")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "/{id}/components",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Components of a lexical entry or a component",
+            notes = "This method returns all the components of a lexical entry or a component")
+    public Response components(
+            @ApiParam(
+                    name = "key",
+                    value = "authentication token",
+                    example = "lexodemo",
+                    required = true)
+            @QueryParam("key") String key,
+            @ApiParam(
+                    name = "id",
+                    value = "lexical entry or component ID",
+                    required = true)
+            @PathParam("id") String id) {
+        TupleQueryResult _comps = null;
+        UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+        if (utilityManager.isLexicalEntry(id)) {
+            _comps = lexiconManager.getComponents(id, SparqlIndex.LEXICAL_ENTRY_INDEX, "lexicalEntryLabel");
+        } else if (utilityManager.isLexicalEntry(id)) {
+            _comps = lexiconManager.getComponents(id, SparqlIndex.COMPONENT_INDEX, "componentLabel");
+        } else {
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + id + " is not neither a lexical entry or a component").build();
+        }
+        List<ComponentItem> comps = componentFilterHelper.newDataList(_comps);
+        HitsDataList hdl = new HitsDataList(componentFilterHelper.getTotalHits(), comps);
+        String json = componentFilterHelper.toJson(hdl);
         return Response.ok(json)
                 .type(MediaType.TEXT_PLAIN)
                 .header("Access-Control-Allow-Headers", "content-type")

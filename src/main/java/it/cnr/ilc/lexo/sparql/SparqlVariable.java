@@ -17,6 +17,7 @@ public class SparqlVariable {
     public static final String LEXICAL_SENSE_INDEX = "lexicalSenseIndex";
     public static final String ETYMOLOGY_INDEX = "etymologyIndex";
     public static final String CONCEPT_REFERENCE_INDEX = "conceptReferenceIndex";
+    public static final String COMPONENT_INDEX = "componentIndex";
     
     // varibale names
     public static final String TOTAL_HITS = "totalHits";
@@ -85,6 +86,10 @@ public class SparqlVariable {
     public static final String ETY_SOURCE_LABEL = "etySourceLabel";
     public static final String ETY_TARGET = "etyTarget";
     public static final String ETY_TARGET_LABEL = "etyTargetLabel";
+    
+    public static final String COMPONENT = "component";
+    public static final String COMPONENT_CREATION_AUTHOR = "creator";
+    public static final String COMPONENT_POSITION = "position";
     
     public static final String FRAME = "frame";
     

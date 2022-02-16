@@ -226,10 +226,19 @@ public class LexiconDataManager implements Manager, Cached {
                 .replace("[OFFSET]", String.valueOf(0));
         return RDFQueryUtil.evaluateTQuery(query);
     }
-    
+
     public TupleQueryResult getSubTerms(String lexicalEntryID) {
-       String query = SparqlSelectData.DATA_SUBTERMS.replace("[FILTER]", createFilter(lexicalEntryID))
+        String query = SparqlSelectData.DATA_SUBTERMS.replace("[FILTER]", createFilter(lexicalEntryID))
                 .replace("_TYPE_", "")
+                .replace("[LIMIT]", "1")
+                .replace("[OFFSET]", "0");
+        return RDFQueryUtil.evaluateTQuery(query);
+    }
+
+    public TupleQueryResult getComponents(String id, String index, String order) {
+        String query = SparqlSelectData.DATA_COMPONENTS.replace("[FILTER]", createFilter(id))
+                .replace("[ORDER]", order)
+                .replace("[INDEX_NAME]", index)
                 .replace("[LIMIT]", "1")
                 .replace("[OFFSET]", "0");
         return RDFQueryUtil.evaluateTQuery(query);
@@ -428,7 +437,7 @@ public class LexiconDataManager implements Manager, Cached {
         String query = SparqlSelectData.DATA_LEXICON_LANGUAGES;
         return RDFQueryUtil.evaluateTQuery(query);
     }
-    
+
 //    public List<LexicalEntryItem> getGroupedByType(List<LexicalEntryItem> entries) {
 //        ArrayList<LexicalEntryItem> _entries = new ArrayList();
 //        LexicalEntryItem previousLei = new LexicalEntryItem();

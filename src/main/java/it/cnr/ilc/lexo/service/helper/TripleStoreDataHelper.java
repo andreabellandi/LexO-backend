@@ -149,4 +149,18 @@ public abstract class TripleStoreDataHelper<D extends Data> extends Helper<D> {
         return false;
     }
 
+    // Returning values:
+    //  0: no position was specified   
+    // -1: something gone wrong in writing rdf:_n property
+    //  n > 0: the position
+    public int getComponentPosition(String position) {
+        if (position.isEmpty()) {
+            return 0;
+        } else if (position.contains("_") && position.length() > 1) {
+            return Integer.parseInt(position.split("_")[1]);
+        } else {
+            return -1;
+        }
+    }
+
 }

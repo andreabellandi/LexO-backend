@@ -1110,4 +1110,55 @@ public class SparqlSelectData {
             + SparqlVariable.REVISION_DATE + " ?"
             + SparqlVariable.COMPLETION_DATE + " ?"
             + SparqlVariable.LEXICAL_ENTRY_INSTANCE_NAME;
+
+    public static final String DATA_COMPONENTS
+            = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+            + SparqlPrefix.INST.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LOC.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTO.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDF.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.SESAME.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LUC.getSparqlPrefix() + "\n"
+            + SparqlPrefix.VS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.SKOS.getSparqlPrefix() + "\n"
+            + "SELECT ?" + SparqlVariable.TOTAL_HITS
+            + " ?" + SparqlVariable.COMPONENT
+            + " ?" + SparqlVariable.LABEL
+            + " ?" + SparqlVariable.COMPONENT_CREATION_AUTHOR
+            + " ?" + SparqlVariable.NOTE
+            + " ?" + SparqlVariable.COMPONENT_POSITION
+            + " ?" + SparqlVariable.MORPHOLOGY
+            + "\n"
+            + "(GROUP_CONCAT(distinct concat(str(?traitType),\":\",str(?traitValue));SEPARATOR=\";\") AS ?" + SparqlVariable.MORPHOLOGY + ")\n"
+            + "(GROUP_CONCAT(distinct str(?tmp_type);SEPARATOR=\";\") AS ?type)\n"
+            + "FROM onto:explicit WHERE {\n"
+            + "  ?search a inst:[INDEX_NAME] ;\n"
+            + "      luc:query \"[FILTER]\" ;\n"
+            + "      luc:totalHits ?totalHits ;\n"
+            + "      luc:orderBy \"[ORDER]\" ;\n"
+            + "      luc:offset \"[OFFSET]\" ;\n"
+            + "      luc:limit \"[LIMIT]\" ;\n"
+            + "      luc:entities ?entity .\n"
+            + "  ?entity decomp:constituent ?" + SparqlVariable.COMPONENT + " .\n"
+            + "   OPTIONAL {?" + SparqlVariable.COMPONENT + " rdfs:label ?" + SparqlVariable.LABEL + "} .\n"
+            + "   OPTIONAL {?" + SparqlVariable.COMPONENT + " dct:creator ?" + SparqlVariable.COMPONENT_CREATION_AUTHOR + "} .\n"
+            + "   OPTIONAL {?" + SparqlVariable.COMPONENT + " skos:note ?" + SparqlVariable.NOTE + "} .\n"
+            + "   OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " ?_position ?" + SparqlVariable.COMPONENT + " .\n"
+            + "              BIND(strafter(str(?_position), str(rdf:)) as ?" + SparqlVariable.COMPONENT_POSITION + ")\n"
+            + "              FILTER(STRSTARTS(STR(?_position), str(rdf:))) }\n"
+            + "   OPTIONAL {?" + SparqlVariable.COMPONENT + " ?morphoTrait ?morphoValue . \n"
+            + "              BIND(strafter(str(?morphoTrait),str(lexinfo:)) as ?traitType)\n"
+            + "              BIND(strafter(str(?morphoValue),str(lexinfo:)) as ?traitValue)\n"
+            + "              FILTER(STRSTARTS(STR(?morphoTrait), str(lexinfo:)))\n"
+            + "              FILTER(STRSTARTS(STR(?morphoValue), str(lexinfo:))) } \n"
+            + "} GROUP BY ?"
+            + SparqlVariable.COMPONENT + " ?"
+            + SparqlVariable.LABEL + " ?"
+            + SparqlVariable.COMPONENT_CREATION_AUTHOR + " ?"
+            + SparqlVariable.NOTE + " ?"
+            + SparqlVariable.TOTAL_HITS;
 }

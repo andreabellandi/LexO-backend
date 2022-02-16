@@ -14,8 +14,8 @@ import java.util.ArrayList;
  *
  * @author andreabellandi
  */
-@ApiModel(description = "Output model representing a component of a multiword")
-public class Component implements Data {
+@ApiModel(description = "Output model representing the main features of a multiword component")
+public class ComponentItem implements Data {
 
     @ApiModelProperty(value = "component IRI")
     private String component;
@@ -31,10 +31,6 @@ public class Component implements Data {
     private String creator;
     @ApiModelProperty(value = "component note", example = "some note ...")
     private String note;
-    @ApiModelProperty(value = "component creation date")
-    private String creationDate;
-    @ApiModelProperty(value = "component last update")
-    private String lastUpdate;
 
     public String getComponent() {
         return component;
@@ -74,22 +70,6 @@ public class Component implements Data {
 
     public void setNote(String note) {
         this.note = note;
-    }
-
-    public String getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(String creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    public String getLastUpdate() {
-        return lastUpdate;
-    }
-
-    public void setLastUpdate(String lastUpdate) {
-        this.lastUpdate = lastUpdate;
     }
 
     public ArrayList<Morphology> getMorphology() {
