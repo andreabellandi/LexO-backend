@@ -234,6 +234,14 @@ public class LexiconDataManager implements Manager, Cached {
                 .replace("[OFFSET]", "0");
         return RDFQueryUtil.evaluateTQuery(query);
     }
+    
+    public TupleQueryResult getCorrespondsTo(String compID) {
+        String query = SparqlSelectData.DATA_CORRESPONDS_TO.replace("[FILTER]", createFilter(compID))
+                .replace("_TYPE_", "")
+                .replace("[LIMIT]", "1")
+                .replace("[OFFSET]", "0");
+        return RDFQueryUtil.evaluateTQuery(query);
+    }
 
     public TupleQueryResult getComponents(String id, String index, String order) {
         String query = SparqlSelectData.DATA_COMPONENTS.replace("[FILTER]", createFilter(id))

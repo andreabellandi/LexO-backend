@@ -732,7 +732,7 @@ public class LexiconData extends Service {
     }
 
     @GET
-    @Path("{id}/subTerms")
+    @Path("{id}/subTerms") 
     @Produces(MediaType.APPLICATION_JSON)
     @RequestMapping(
             method = RequestMethod.GET,
@@ -756,6 +756,37 @@ public class LexiconData extends Service {
         List<LexicalEntryItem> entries = lexicalEntryFilterHelper.newDataList(lexicalEnties);
         HitsDataList hdl = new HitsDataList(lexicalEntryFilterHelper.getTotalHits(), entries);
         String json = lexicalEntryFilterHelper.toJson(hdl);
+        return Response.ok(json)
+                .type(MediaType.TEXT_PLAIN)
+                .header("Access-Control-Allow-Headers", "content-type")
+                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                .build();
+    }
+    
+    @GET
+    @Path("{id}/correspondsTo") 
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "/{id}/correspondsTo",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Lexical entry corresponding to a component",
+            notes = "This method returns the lexical entry corresponding to a multiword component")
+    public Response correspondsTo(
+            @ApiParam(
+                    name = "key",
+                    value = "authentication token",
+                    example = "lexodemo",
+                    required = true)
+            @QueryParam("key") String key,
+            @ApiParam(
+                    name = "id",
+                    value = "component ID",
+                    required = true)
+            @PathParam("id") String id) {
+        TupleQueryResult lexicalEntry = lexiconManager.getCorrespondsTo(id);
+        LexicalEntryItem entry = lexicalEntryFilterHelper.newData(lexicalEntry);
+        String json = lexicalEntryFilterHelper.toJson(entry);
         return Response.ok(json)
                 .type(MediaType.TEXT_PLAIN)
                 .header("Access-Control-Allow-Headers", "content-type")

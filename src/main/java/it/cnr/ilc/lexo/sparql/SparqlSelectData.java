@@ -1160,6 +1160,84 @@ public class SparqlSelectData {
             + SparqlVariable.COMPLETION_DATE + " ?"
             + SparqlVariable.LEXICAL_ENTRY_INSTANCE_NAME;
 
+    public static final String DATA_CORRESPONDS_TO
+            = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+            + SparqlPrefix.INST.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LOC.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTO.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDF.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.SESAME.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LUC.getSparqlPrefix() + "\n"
+            + SparqlPrefix.VS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.SKOS.getSparqlPrefix() + "\n"
+            + "SELECT ?" + SparqlVariable.TOTAL_HITS
+            + " ?" + SparqlVariable.LEXICAL_ENTRY
+            + " ?" + SparqlVariable.LEXICAL_ENTRY_INSTANCE_NAME
+            + " ?" + SparqlVariable.LEXICAL_ENTRY_STATUS
+            + " ?" + SparqlVariable.LEXICAL_ENTRY_REVISOR
+            + " ?" + SparqlVariable.LEXICAL_ENTRY_POS
+            + " ?" + SparqlVariable.LABEL
+            + " ?" + SparqlVariable.LEXICAL_ENTRY_CREATION_AUTHOR
+            + " ?" + SparqlVariable.NOTE
+            + " ?" + SparqlVariable.CREATION_DATE
+            + " ?" + SparqlVariable.LAST_UPDATE
+            + " ?" + SparqlVariable.LEXICAL_ENTRY_COMPLETING_AUTHOR
+            + " ?" + SparqlVariable.REVISION_DATE
+            + " ?" + SparqlVariable.COMPLETION_DATE
+            + "\n"
+            + "(GROUP_CONCAT(distinct concat(str(?traitType),\":\",str(?traitValue));SEPARATOR=\";\") AS ?" + SparqlVariable.MORPHOLOGY + ")\n"
+            + "(GROUP_CONCAT(distinct str(?tmp_type);SEPARATOR=\";\") AS ?type)\n"
+            + "FROM onto:explicit WHERE {\n"
+            + "  ?search a inst:" + SparqlVariable.LEXICAL_ENTRY_INDEX + " ;\n"
+            + "      luc:query \"[FILTER]\" ;\n"
+            + "      luc:totalHits ?totalHits ;\n"
+            + "      luc:orderBy \"lexicalEntryLabel\" ;\n"
+            + "      luc:offset \"[OFFSET]\" ;\n"
+            + "      luc:limit \"[LIMIT]\" ;\n"
+            + "      luc:entities ?_le .\n"
+            + "  ?_le decomp:correspondsTo ?" + SparqlVariable.LEXICAL_ENTRY + " ;\n"
+            + "  ?" + SparqlVariable.LEXICAL_ENTRY + " rdf:type ?tmp_type ;\n"
+            + "          rdfs:label ?" + SparqlVariable.LABEL + " .\n"
+            + "   ?tmp_type rdfs:label ?_type .\n"
+            + "   OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " lexinfo:partOfSpeech ?" + SparqlVariable.LEXICAL_ENTRY_POS + "} .\n"
+            + "   OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " dct:creator ?" + SparqlVariable.LEXICAL_ENTRY_CREATION_AUTHOR + "} .\n"
+            + "   OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " dct:created ?" + SparqlVariable.CREATION_DATE + "} .\n"
+            + "   OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " dct:modified ?" + SparqlVariable.LAST_UPDATE + "} .\n"
+            + "   OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " dct:author ?" + SparqlVariable.LEXICAL_ENTRY_COMPLETING_AUTHOR + "} .\n"
+            + "   OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " dct:dateAccepted ?" + SparqlVariable.REVISION_DATE + "} .\n"
+            + "   OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " dct:dateSubmitted ?" + SparqlVariable.COMPLETION_DATE + "} .\n"
+            + "   OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " skos:note ?" + SparqlVariable.NOTE + "} .\n"
+            + "   OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " loc:rev ?" + SparqlVariable.LEXICAL_ENTRY_REVISOR + "} .\n"
+            + "   OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " vs:term_status ?" + SparqlVariable.LEXICAL_ENTRY_STATUS + "} .\n"
+            + "   OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " ?morphoTrait ?morphoValue . \n"
+            + "              BIND(strafter(str(?morphoTrait),str(lexinfo:)) as ?traitType)\n"
+            + "              BIND(strafter(str(?morphoValue),str(lexinfo:)) as ?traitValue)\n"
+            + "              FILTER(STRSTARTS(STR(?morphoTrait), str(lexinfo:)))\n"
+            + "              FILTER(STRSTARTS(STR(?morphoValue), str(lexinfo:))) } \n"
+            + "   BIND(strafter(str(?" + SparqlVariable.LEXICAL_ENTRY + "),str(lex:)) as ?" + SparqlVariable.LEXICAL_ENTRY_INSTANCE_NAME + ") \n"
+            + "   FILTER(!STRSTARTS(STR(?tmp_type), str(owl:)))\n"
+            + "   FILTER(regex(str(?_type), \"_TYPE_\"))"
+            + "} GROUP BY ?"
+            + SparqlVariable.LEXICAL_ENTRY + " ?"
+            + SparqlVariable.LABEL + " ?"
+            + SparqlVariable.LEXICAL_ENTRY_REVISOR + " ?"
+            + SparqlVariable.LEXICAL_ENTRY_POS + " ?"
+            + SparqlVariable.LEXICAL_ENTRY_STATUS + " ?"
+            + SparqlVariable.LEXICAL_ENTRY_CREATION_AUTHOR + " ?"
+            + SparqlVariable.LABEL + " ?"
+            + SparqlVariable.NOTE + " ?"
+            + SparqlVariable.TOTAL_HITS + " ?"
+            + SparqlVariable.CREATION_DATE + " ?"
+            + SparqlVariable.LAST_UPDATE + " ?"
+            + SparqlVariable.LEXICAL_ENTRY_COMPLETING_AUTHOR + " ?"
+            + SparqlVariable.REVISION_DATE + " ?"
+            + SparqlVariable.COMPLETION_DATE + " ?"
+            + SparqlVariable.LEXICAL_ENTRY_INSTANCE_NAME;
+    
     public static final String DATA_COMPONENTS
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
             + SparqlPrefix.INST.getSparqlPrefix() + "\n"
