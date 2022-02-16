@@ -19,6 +19,7 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryElementItem;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalEntryFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalSenseFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.output.BibliographicItem;
+import it.cnr.ilc.lexo.service.data.lexicon.output.Component;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ComponentItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.EtymologicalLink;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Etymology;
@@ -35,6 +36,7 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalSenseItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LinkedEntity;
 import it.cnr.ilc.lexo.service.helper.BibliographyHelper;
 import it.cnr.ilc.lexo.service.helper.ComponentFilterHelper;
+import it.cnr.ilc.lexo.service.helper.ComponentHelper;
 import it.cnr.ilc.lexo.service.helper.EtymologicalLinkHelper;
 import it.cnr.ilc.lexo.service.helper.EtymologyFilterHelper;
 import it.cnr.ilc.lexo.service.helper.EtymologyHelper;
@@ -97,6 +99,7 @@ public class LexiconData extends Service {
     private final EtymologyTreeHelper etymologyTreeHelper = new EtymologyTreeHelper();
     private final EtymologicalLinkHelper etymologicalLinkHelper = new EtymologicalLinkHelper();
     private final ComponentFilterHelper componentFilterHelper = new ComponentFilterHelper();
+    private final ComponentHelper componentHelper = new ComponentHelper();
 
     @GET
     @Path("{id}/lexicalEntry")
@@ -150,13 +153,13 @@ public class LexiconData extends Service {
             long finish = System.currentTimeMillis();
             long timeElapsed = finish - start;
             logger.info("lexicalEntry response: lexical aspect not available {}ms", timeElapsed);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity("lexical aspect not available").build();
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("lexical aspect not available").build();
         } catch (ManagerException ex) {
             logger.error(ex.getMessage(), ex);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         } catch (Exception ex2) {
             logger.error(ex2.getMessage(), ex2);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex2.getMessage()).build();
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex2.getMessage()).build();
         }
     }
 
@@ -290,6 +293,42 @@ public class LexiconData extends Service {
             lexiconManager.addLexicalEntityLink(e, links);
             EtymologyTree et = lexiconManager.getEtymologyTree(e, etyLinks);
             String json = etymologyTreeHelper.toJson(et);
+            return Response.ok(json)
+                    .type(MediaType.TEXT_PLAIN)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
+        } catch (ManagerException ex) {
+            logger.error(ex.getMessage(), ex);
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        }
+    }
+
+    @GET
+    @Path("{id}/component")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "/{id}/component",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Component",
+            notes = "This method returns the data of a miltiword Component")
+    public Response component(
+            @ApiParam(
+                    name = "key",
+                    value = "authentication token",
+                    example = "lexodemo",
+                    required = true)
+            @QueryParam("key") String key,
+            @ApiParam(
+                    name = "id",
+                    value = "component ID",
+                    required = true)
+            @PathParam("id") String id) {
+        try {
+            TupleQueryResult _comp = lexiconManager.getComponent(id);
+            Component comp = componentHelper.newData(_comp);
+            String json = componentHelper.toJson(comp);
             return Response.ok(json)
                     .type(MediaType.TEXT_PLAIN)
                     .header("Access-Control-Allow-Headers", "content-type")

@@ -310,10 +310,12 @@ public class LexiconDataManager implements Manager, Cached {
 
     public TupleQueryResult getLexicalEntry(String lexicalEntryID, String aspect) throws ManagerException {
         Manager.validateWithEnum("aspect", EnumUtil.LexicalAspects.class, aspect);
-//        TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL,
-//                SparqlSelectData.DATA_LEXICAL_ENTRY_CORE.replace("[IRI]", "\\\"" + namespace + lexicalEntryID + "\\\""));
-//        return tupleQuery.evaluate();
         String query = SparqlSelectData.DATA_LEXICAL_ENTRY_CORE.replace("[IRI]", "\\\"" + namespace + lexicalEntryID + "\\\"");
+        return RDFQueryUtil.evaluateTQuery(query);
+    }
+    
+    public TupleQueryResult getComponent(String componentID) throws ManagerException {
+        String query = SparqlSelectData.DATA_COMPONENT.replace("[IRI]", "\\\"" + namespace + componentID + "\\\"");
         return RDFQueryUtil.evaluateTQuery(query);
     }
 

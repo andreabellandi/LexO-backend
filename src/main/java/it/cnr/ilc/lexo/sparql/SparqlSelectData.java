@@ -787,6 +787,55 @@ public class SparqlSelectData {
             + "    { ?" + SparqlVariable.LEXICAL_ENTRY + " dct:references ?" + SparqlVariable.BIBLIOGRAPHY + " . }\n"
             + "}";
 
+    public static final String DATA_COMPONENT = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+            + SparqlPrefix.INST.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LOC.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTO.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.SKOS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LUC.getSparqlPrefix() + "\n"
+            + SparqlPrefix.SESAME.getSparqlPrefix() + "\n"
+            + SparqlPrefix.VS.getSparqlPrefix() + "\n"
+            + "SELECT ?" + SparqlVariable.COMPONENT
+            + " ?" + SparqlVariable.LABEL
+            + " ?" + SparqlVariable.CREATION_DATE
+            + " ?" + SparqlVariable.LAST_UPDATE
+            + " ?" + SparqlVariable.NOTE
+            + " ?" + SparqlVariable.COMPONENT_CREATION_AUTHOR
+            + " ?" + SparqlVariable.COMPONENT_POSITION
+            + "\n"
+            + "(GROUP_CONCAT(concat(str(?traitType),\":\",str(?traitValue));SEPARATOR=\";\") AS ?" + SparqlVariable.MORPHOLOGY + ")\n"
+            + "FROM onto:explicit\n"
+            + "WHERE {\n"
+            + "  ?search a inst:" + SparqlVariable.COMPONENT_INDEX + " ;\n"
+            + "      luc:query \"ComponentIRI:[IRI]\" ;\n"
+            + "      luc:entities ?" + SparqlVariable.COMPONENT + " .\n"
+            + "    OPTIONAL {?" + SparqlVariable.COMPONENT + " rdfs:label ?" + SparqlVariable.LABEL + "} .\n"
+            + "    OPTIONAL {?" + SparqlVariable.COMPONENT + " dct:created ?" + SparqlVariable.CREATION_DATE + "} .\n"
+            + "    OPTIONAL {?" + SparqlVariable.COMPONENT + " dct:modified ?" + SparqlVariable.LAST_UPDATE + "} .\n"
+            + "    OPTIONAL { ?" + SparqlVariable.COMPONENT + " skos:note ?" + SparqlVariable.NOTE + " . }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.COMPONENT + " dct:creator ?" + SparqlVariable.COMPONENT_CREATION_AUTHOR + " . }\n"
+            + "   OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " ?_position ?" + SparqlVariable.COMPONENT + " .\n"
+            + "              BIND(strafter(str(?_position), str(rdf:)) as ?" + SparqlVariable.COMPONENT_POSITION + ")\n"
+            + "              FILTER(STRSTARTS(STR(?_position), str(rdf:))) }\n"
+            + "   OPTIONAL {?" + SparqlVariable.COMPONENT + " ?morphoTrait ?morphoValue . \n"
+            + "              BIND(strafter(str(?morphoTrait),str(lexinfo:)) as ?traitType)\n"
+            + "              BIND(strafter(str(?morphoValue),str(lexinfo:)) as ?traitValue)\n"
+            + "              FILTER(STRSTARTS(STR(?morphoTrait), str(lexinfo:)))\n"
+            + "              FILTER(STRSTARTS(STR(?morphoValue), str(lexinfo:))) } \n"
+            + "} GROUP BY ?"
+            + SparqlVariable.COMPONENT + " ?"
+            + SparqlVariable.LABEL + " ?"
+            + SparqlVariable.CREATION_DATE + " ?"
+            + SparqlVariable.LAST_UPDATE + " ?"
+            + SparqlVariable.COMPONENT_CREATION_AUTHOR + " ?"
+            + SparqlVariable.COMPONENT_POSITION + " ?"
+            + SparqlVariable.LABEL + " ?"
+            + SparqlVariable.NOTE;
+
     public static final String DATA_LINGUISTIC_RELATION
             = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
             + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
