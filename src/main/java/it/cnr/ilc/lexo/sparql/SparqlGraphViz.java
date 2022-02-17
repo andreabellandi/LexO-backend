@@ -100,7 +100,8 @@ public class SparqlGraphViz {
             + "    ?leTarget ontolex:sense ?target ;\n"
             + "           lexinfo:partOfSpeech ?posTarget ;\n"
             + "           rdfs:label ?labelTarget .\n"
-            + "FILTER(regex(str(_NODE_VARIABLE_), \"http://lexica/mylexicon#_NODE_ID_\"))\n"
+            + "     VALUES (_NODE_VARIABLE_) { (<http://lexica/mylexicon#_NODE_ID_>) }"
+           // + "FILTER(regex(str(_NODE_VARIABLE_), \"http://lexica/mylexicon#_NODE_ID_\"))\n"
             + "_GRAPH_"
             + "}";
 
