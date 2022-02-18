@@ -11,6 +11,7 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.EtymologicalLink;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Etymology;
 import it.cnr.ilc.lexo.service.data.lexicon.output.FormCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Language;
+import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalConcept;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Property;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalSenseCore;
@@ -204,6 +205,18 @@ public class LexiconCreationManager implements Manager, Cached {
                 .replace("_MODIFIED_", created));
         return setComponent(_id, created, author);
     }
+     
+    public LexicalConcept createLexicalConcept(String author) throws ManagerException {
+        Timestamp tm = new Timestamp(System.currentTimeMillis());
+        String id = idInstancePrefix + tm.toString();
+        String created = timestampFormat.format(tm);
+        String _id = id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
+        RDFQueryUtil.update(SparqlInsertData.CREATE_LEXICAL_CONCEPT.replaceAll("_ID_", _id)
+                .replace("_AUTHOR_", author)
+                .replace("_CREATED_", created)
+                .replace("_MODIFIED_", created));
+        return setLexicalConcept(_id, created, author);
+    }
 
     private LexicalSenseCore setSense(String id, String created, String author) {
         LexicalSenseCore sc = new LexicalSenseCore();
@@ -223,6 +236,16 @@ public class LexiconCreationManager implements Manager, Cached {
         sc.setLastUpdate(created);
         sc.setCreationDate(created);
         return sc;
+    }
+    
+    private LexicalConcept setLexicalConcept(String id, String created, String author) {
+        LexicalConcept lc = new LexicalConcept();
+        lc.setCreator(author);
+        lc.setLexicalConceptInstanceName(id);
+        lc.setLexicalConcept(getNamespace() + id);
+        lc.setLastUpdate(created);
+        lc.setCreationDate(created);
+        return lc;
     }
 
 }

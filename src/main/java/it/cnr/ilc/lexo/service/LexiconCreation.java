@@ -20,6 +20,7 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.EtymologicalLink;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Etymology;
 import it.cnr.ilc.lexo.service.data.lexicon.output.FormCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Language;
+import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalConcept;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalSenseCore;
 import it.cnr.ilc.lexo.service.helper.BibliographyHelper;
@@ -29,6 +30,7 @@ import it.cnr.ilc.lexo.service.helper.EtymologicalLinkHelper;
 import it.cnr.ilc.lexo.service.helper.EtymologyHelper;
 import it.cnr.ilc.lexo.service.helper.FormCoreHelper;
 import it.cnr.ilc.lexo.service.helper.LanguageHelper;
+import it.cnr.ilc.lexo.service.helper.LexicalConceptHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalEntryCoreHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalSenseCoreHelper;
 import java.util.logging.Level;
@@ -62,6 +64,7 @@ public class LexiconCreation extends Service {
     private final BibliographyHelper bibliographyHelper = new BibliographyHelper();
     private final LexicalSenseCoreHelper lexicalSenseCoreHelper = new LexicalSenseCoreHelper();
     private final ComponentHelper componentHelper = new ComponentHelper();
+    private final LexicalConceptHelper lexicalConceptHelper = new LexicalConceptHelper();
 
     @GET
     @Path("language")
@@ -463,6 +466,46 @@ public class LexiconCreation extends Service {
                 }
                 BibliographicItem bi = bibliographyManager.createBibliographyReference(lexicalEntityID, author, bibliography);
                 String json = bibliographyHelper.toJson(bi);
+                return Response.ok(json)
+                        .type(MediaType.TEXT_PLAIN)
+                        .header("Access-Control-Allow-Headers", "content-type")
+                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                        .build();
+            } catch (ManagerException ex) {
+                Logger.getLogger(LexiconCreation.class.getName()).log(Level.SEVERE, null, ex);
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            }
+        } else {
+            return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Insertion denied, wrong key").build();
+        }
+    }
+    
+    @GET
+    @Path("lexicalConcept")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "lexicalConcept",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "lLexical Concept creation",
+            notes = "This method creates a new lexical concept and returns its id and some metadata")
+    public Response lexicalConcept(
+            @ApiParam(
+                    name = "key",
+                    value = "authentication token",
+                    example = "lexodemo",
+                    required = true)
+            @QueryParam("key") String key,
+            @ApiParam(
+                    name = "author",
+                    value = "the account is being creating the lexical concept",
+                    example = "user7",
+                    required = true)
+            @QueryParam("author") String author) {
+        if (key.equals("PRINitant19")) {
+            try {
+                LexicalConcept lc = lexiconManager.createLexicalConcept(author);
+                String json = lexicalConceptHelper.toJson(lc);
                 return Response.ok(json)
                         .type(MediaType.TEXT_PLAIN)
                         .header("Access-Control-Allow-Headers", "content-type")
