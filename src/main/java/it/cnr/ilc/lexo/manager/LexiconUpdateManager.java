@@ -103,9 +103,13 @@ public final class LexiconUpdateManager implements Manager, Cached {
     public void validateGenericBibliographyRelation(String relation) throws ManagerException {
         Manager.validateWithEnum("relation", EnumUtil.GenericRelationBibliography.class, relation);
     }
-    
+
     public void validateGenericDecompRelation(String relation) throws ManagerException {
         Manager.validateWithEnum("relation", EnumUtil.GenericRelationDecomp.class, relation);
+    }
+    
+    public void validateGenericConceptRelRelation(String relation) throws ManagerException {
+        Manager.validateWithEnum("relation", EnumUtil.GenericRelationConceptRel.class, relation);
     }
 
     public void validateEtyLink(String type) throws ManagerException {
@@ -750,6 +754,13 @@ public final class LexiconUpdateManager implements Manager, Cached {
             validateGenericDecompRelation(gru.getRelation());
             setPrefixes(gru, true,
                     gru.getRelation().equals(EnumUtil.GenericRelationDecomp.label.toString()) ? SparqlPrefix.RDFS.getUri() : SparqlPrefix.SKOS.getUri(),
+                    "",
+                    "");
+            _id = SparqlPrefix.LEX.getUri() + id;
+        } else if (gru.getType().equals(EnumUtil.GenericRelation.Decomp.toString())) {
+            validateGenericConceptRelRelation(gru.getRelation());
+            setPrefixes(gru, true,
+                    gru.getRelation().equals(EnumUtil.GenericRelationConceptRel.label.toString()) ? SparqlPrefix.RDFS.getUri() : SparqlPrefix.SKOS.getUri(),
                     "",
                     "");
             _id = SparqlPrefix.LEX.getUri() + id;

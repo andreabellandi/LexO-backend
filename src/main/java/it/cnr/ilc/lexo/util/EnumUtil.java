@@ -407,6 +407,7 @@ public class EnumUtil {
         Bibliography("bibliography"),
         Multimedia("multimedia"),
         Attestation("attestation"),
+        ConceptRel("conceptRel"),
         Decomp("decomp");
 
         private final String genericRelation;
@@ -485,6 +486,24 @@ public class EnumUtil {
         @Override
         public String toString() {
             return this.genericRelationDecomp;
+        }
+        
+    }
+    
+    public static enum GenericRelationConceptRel {
+        label("label"),
+        definition("definition"),
+        note("note");
+
+        private final String genericRelationConceptRel;
+
+        private GenericRelationConceptRel(String genericRelationConceptRel) {
+            this.genericRelationConceptRel = genericRelationConceptRel;
+        }        
+
+        @Override
+        public String toString() {
+            return this.genericRelationConceptRel;
         }
         
     }
