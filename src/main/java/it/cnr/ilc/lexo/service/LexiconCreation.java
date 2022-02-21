@@ -519,5 +519,45 @@ public class LexiconCreation extends Service {
             return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Insertion denied, wrong key").build();
         }
     }
+    
+    @GET
+    @Path("conceptSet")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "conceptSet",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Concept Set creation",
+            notes = "This method creates a new concept set and returns its id and some metadata")
+    public Response conceptSet(
+            @ApiParam(
+                    name = "key",
+                    value = "authentication token",
+                    example = "lexodemo",
+                    required = true)
+            @QueryParam("key") String key,
+            @ApiParam(
+                    name = "author",
+                    value = "the account is being creating the concept set",
+                    example = "user7",
+                    required = true)
+            @QueryParam("author") String author) {
+        if (key.equals("PRINitant19")) {
+            try {
+                LexicalConcept lc = lexiconManager.createLexicalConcept(author);
+                String json = lexicalConceptHelper.toJson(lc);
+                return Response.ok(json)
+                        .type(MediaType.TEXT_PLAIN)
+                        .header("Access-Control-Allow-Headers", "content-type")
+                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                        .build();
+            } catch (ManagerException ex) {
+                Logger.getLogger(LexiconCreation.class.getName()).log(Level.SEVERE, null, ex);
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            }
+        } else {
+            return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Insertion denied, wrong key").build();
+        }
+    }
 
 }

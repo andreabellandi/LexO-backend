@@ -124,6 +124,18 @@ public class SparqlInsertData {
             + "                   dct:created \"[CREATED]\" ;\n"
             + "                   dct:modified \"[MODIFIED]\" . \n"
             + "}";
+    
+    public static final String CREATE_CONCEPT_SET
+            = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
+            + "INSERT DATA {\n"
+            + "    lex:[ID] a ontolex:ConceptSet ;\n"
+            + "                   dct:creator \"[AUTHOR]\" ;\n"
+            + "                   dct:created \"[CREATED]\" ;\n"
+            + "                   dct:modified \"[MODIFIED]\" . \n"
+            + "}";
 
     public static final String CREATE_LINGUISTIC_RELATION
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
