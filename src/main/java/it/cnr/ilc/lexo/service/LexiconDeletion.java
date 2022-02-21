@@ -17,7 +17,6 @@ import it.cnr.ilc.lexo.manager.UtilityManager;
 import it.cnr.ilc.lexo.service.data.lexicon.input.RelationDeleter;
 import it.cnr.ilc.lexo.service.data.lexicon.output.EtymologicalLink;
 import it.cnr.ilc.lexo.service.helper.EtymologicalLinkHelper;
-import it.cnr.ilc.lexo.service.helper.LexicalEntryCoreHelper;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -355,7 +354,7 @@ public class LexiconDeletion extends Service {
     @Produces(MediaType.APPLICATION_JSON)
     @RequestMapping(
             method = RequestMethod.GET,
-            value = "linguisticRelation",
+            value = "relation",
             produces = "application/json; charset=UTF-8")
     @ApiOperation(value = "Relation deletion",
             notes = "This method deletes a relation")
@@ -368,8 +367,7 @@ public class LexiconDeletion extends Service {
             @QueryParam("key") String key,
             @ApiParam(
                     name = "id",
-                    value = "lexical entry ID",
-                    example = "MUSaccedereVERB",
+                    value = "lexical entity ID",
                     required = true)
             @PathParam("id") String id, RelationDeleter rd) {
         if (key.equals("PRINitant19")) {
@@ -417,6 +415,90 @@ public class LexiconDeletion extends Service {
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + id + " does not exist or it is not a Component").build();
                 }
                 lexiconManager.deleteComponent(id);
+                return Response.ok()
+                        .type(MediaType.TEXT_PLAIN)
+                        .header("Access-Control-Allow-Headers", "content-type")
+                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                        .build();
+            } catch (ManagerException ex) {
+                Logger.getLogger(LexiconDeletion.class.getName()).log(Level.SEVERE, null, ex);
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            }
+        } else {
+            return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Deletion denied, wrong key").build();
+        }
+    }
+    
+    @GET
+    @Path("{id}/lexicalConcept")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "lexicalConcept",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Lexical Concept deletion",
+            notes = "This method deletes a lexical concept")
+    public Response lexicalConcept(
+            @ApiParam(
+                    name = "key",
+                    value = "authentication token",
+                    example = "lexodemo",
+                    required = true)
+            @QueryParam("key") String key,
+            @ApiParam(
+                    name = "id",
+                    value = "lexical concept ID",
+                    required = true)
+            @PathParam("id") String id) {
+        if (key.equals("PRINitant19")) {
+            try {
+                UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+                if (!utilityManager.isLexicalConcept(id)) {
+                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + id + " does not exist or it is not a Lexical Concept").build();
+                }
+                lexiconManager.deleteLexicalConcept(id);
+                return Response.ok()
+                        .type(MediaType.TEXT_PLAIN)
+                        .header("Access-Control-Allow-Headers", "content-type")
+                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                        .build();
+            } catch (ManagerException ex) {
+                Logger.getLogger(LexiconDeletion.class.getName()).log(Level.SEVERE, null, ex);
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            }
+        } else {
+            return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Deletion denied, wrong key").build();
+        }
+    }
+    
+    @GET
+    @Path("{id}/conceptSet")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "conceptSet",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Concept Set deletion",
+            notes = "This method deletes a concept set")
+    public Response conceptSet(
+            @ApiParam(
+                    name = "key",
+                    value = "authentication token",
+                    example = "lexodemo",
+                    required = true)
+            @QueryParam("key") String key,
+            @ApiParam(
+                    name = "id",
+                    value = "concept set ID",
+                    required = true)
+            @PathParam("id") String id) {
+        if (key.equals("PRINitant19")) {
+            try {
+                UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+                if (!utilityManager.isConceptSet(id)) {
+                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + id + " does not exist or it is not a Concept Set").build();
+                }
+                lexiconManager.deleteConceptSet(id);
                 return Response.ok()
                         .type(MediaType.TEXT_PLAIN)
                         .header("Access-Control-Allow-Headers", "content-type")

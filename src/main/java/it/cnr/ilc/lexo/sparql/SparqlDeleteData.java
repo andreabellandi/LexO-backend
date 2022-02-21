@@ -44,6 +44,20 @@ public class SparqlDeleteData {
             + "WHERE { lex:_ID_ ?predicate ?object . \n"
             + "         OPTIONAL { ?subject ?_predicate lex:_ID_ . } }";
     
+    public static final String DELETE_LEXICAL_CONCEPT
+            = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
+            + "DELETE { lex:_ID_ ?predicate ?object . \n"
+            + "         ?subject ?_predicate lex:_ID_ . }\n"
+            + "WHERE { lex:_ID_ ?predicate ?object . \n"
+            + "         OPTIONAL { ?subject ?_predicate lex:_ID_ . } }";
+    
+    public static final String DELETE_CONCEPT_SET
+            = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
+            + "DELETE { lex:_ID_ ?predicate ?object . \n"
+            + "         ?subject ?_predicate lex:_ID_ . }\n"
+            + "WHERE { lex:_ID_ ?predicate ?object . \n"
+            + "         OPTIONAL { ?subject ?_predicate lex:_ID_ . } }";
+    
      public static final String DELETE_ETYMOLOGICAL_LINK
             = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
             + "DELETE { lex:_ID_ ?predicate ?object . \n"

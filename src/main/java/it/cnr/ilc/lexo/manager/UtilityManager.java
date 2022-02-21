@@ -36,7 +36,7 @@ public final class UtilityManager implements Manager, Cached {
 //        try (TupleQueryResult result = tupleQuery.evaluate()) {
         String query = SparqlQueryUtil.ENTITY_RELATION.replaceAll("_ID_", id)
                 .replaceAll("_RELATION_", relation);
-        try (TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {
+        try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {
             while (result.hasNext()) {
                 BindingSet bs = result.next();
                 return (bs.getBinding(SparqlVariable.TYPE) != null)
@@ -53,7 +53,7 @@ public final class UtilityManager implements Manager, Cached {
                 .replaceAll("_VALUE_", value);
         return RDFQueryUtil.evaluateBQuery(query);
     }
-    
+
     public boolean existsGenericRelation(String id, String relation, String value) throws QueryEvaluationException {
         String query = SparqlQueryUtil.ASK_ENTITY_GENERIC_RELATION.replaceAll("_ID_", id)
                 .replaceAll("_RELATION_", relation)
@@ -66,7 +66,7 @@ public final class UtilityManager implements Manager, Cached {
 //                SparqlQueryUtil.NUMBER_OF_STATEMENTS.replaceAll("_ID_", id));
 //        try (TupleQueryResult result = tupleQuery.evaluate()) {
         String query = SparqlQueryUtil.NUMBER_OF_STATEMENTS.replaceAll("_ID_", id);
-        try (TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {
+        try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {
             while (result.hasNext()) {
                 BindingSet bs = result.next();
                 return (bs.getBinding(SparqlVariable.STATEMENTS_NUMBER) != null) ? ((Literal) bs.getBinding(SparqlVariable.LABEL).getValue()).intValue() : null;
@@ -81,7 +81,7 @@ public final class UtilityManager implements Manager, Cached {
 //                SparqlQueryUtil.LANGUAGE.replaceAll("_ID_", id));
 //        try (TupleQueryResult result = tupleQuery.evaluate()) {
         String query = SparqlQueryUtil.LANGUAGE.replaceAll("_ID_", id);
-        try (TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {
+        try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {
             while (result.hasNext()) {
                 BindingSet bs = result.next();
                 return (bs.getBinding(SparqlVariable.LEXICON_LANGUAGE) != null) ? bs.getBinding(SparqlVariable.LEXICON_LANGUAGE).getValue().stringValue() : null;
@@ -90,10 +90,10 @@ public final class UtilityManager implements Manager, Cached {
         }
         return null;
     }
-    
+
     public String getLabel(String id) throws QueryEvaluationException {
         String query = SparqlQueryUtil.LEXICAL_ENTRY_LABEL.replaceAll("_ID_", id);
-        try (TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {
+        try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {
             while (result.hasNext()) {
                 BindingSet bs = result.next();
                 return (bs.getBinding(SparqlVariable.LABEL) != null) ? ((Literal) bs.getBinding(SparqlVariable.LABEL).getValue()).getLabel() : null;
@@ -108,7 +108,7 @@ public final class UtilityManager implements Manager, Cached {
 //                SparqlQueryUtil.LEXICAL_ENTRY_BY_FORM.replaceAll("_ID_", id));
 //        try (TupleQueryResult result = tupleQuery.evaluate()) {
         String query = SparqlQueryUtil.LEXICAL_ENTRY_BY_FORM.replaceAll("_ID_", id);
-        try (TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {
+        try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {
             while (result.hasNext()) {
                 BindingSet bs = result.next();
                 return (bs.getBinding(SparqlVariable.LEXICAL_ENTRY_INSTANCE_NAME) != null)
@@ -118,10 +118,10 @@ public final class UtilityManager implements Manager, Cached {
         }
         return null;
     }
-    
+
     public String bibliographyById(String id, String itemKey) throws QueryEvaluationException {
         String query = SparqlQueryUtil.BIBLIOGRAFY_BY_ITEMKEY.replaceAll("_ID_", id).replaceAll("_ITEMKEY_", itemKey);
-        try (TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {
+        try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {
             while (result.hasNext()) {
                 BindingSet bs = result.next();
                 return (bs.getBinding(SparqlVariable.BIBLIOGRAPHY_ID) != null)
@@ -134,7 +134,7 @@ public final class UtilityManager implements Manager, Cached {
 
     public int lexicalEntriesNumberByLanguage(String id) throws QueryEvaluationException {
         String query = SparqlQueryUtil.LEXICAL_ENTRY_NUMBER_BY_LANGUAGE.replaceAll("_ID_", id);
-        try (TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {
+        try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {
             while (result.hasNext()) {
                 BindingSet bs = result.next();
                 return (bs.getBinding(SparqlVariable.LABEL_COUNT) != null)
@@ -163,22 +163,32 @@ public final class UtilityManager implements Manager, Cached {
         String query = SparqlQueryUtil.IS_LEXICALENTRY_ID.replaceAll("_ID_", id);
         return RDFQueryUtil.evaluateBQuery(query);
     }
-    
+
     public boolean isLexicalEntryOrComponent(String id) throws QueryEvaluationException {
         String query = SparqlQueryUtil.IS_LEXICALENTRY_ID_OR_COMPONENT_ID.replaceAll("_ID_", id);
         return RDFQueryUtil.evaluateBQuery(query);
     }
-    
+
     public boolean isComponent(String id) throws QueryEvaluationException {
         String query = SparqlQueryUtil.IS_COMPONENT_ID.replaceAll("_ID_", id);
         return RDFQueryUtil.evaluateBQuery(query);
     }
-    
+
+    public boolean isLexicalConcept(String id) throws QueryEvaluationException {
+        String query = SparqlQueryUtil.IS_LEXICAL_CONCEPT_ID.replaceAll("_ID_", id);
+        return RDFQueryUtil.evaluateBQuery(query);
+    }
+
+    public boolean isConceptSet(String id) throws QueryEvaluationException {
+        String query = SparqlQueryUtil.IS_CONCEPT_SET_ID.replaceAll("_ID_", id);
+        return RDFQueryUtil.evaluateBQuery(query);
+    }
+
     public boolean exists(String id) throws QueryEvaluationException {
         String query = SparqlQueryUtil.EXISTS_ID.replaceAll("_ID_", id);
         return RDFQueryUtil.evaluateBQuery(query);
     }
-    
+
     public boolean existsTyped(String id, String type) throws QueryEvaluationException {
         String query = SparqlQueryUtil.EXISTS_TYPE_ID.replaceAll("_ID_", id).replace("_TYPE_", type);
         return RDFQueryUtil.evaluateBQuery(query);
@@ -204,19 +214,19 @@ public final class UtilityManager implements Manager, Cached {
         String query = SparqlQueryUtil.IS_LEXICALSENSE_ID.replaceAll("_ID_", id);
         return RDFQueryUtil.evaluateBQuery(query);
     }
-    
+
     public boolean isEtymology(String id) throws QueryEvaluationException {
 //        BooleanQuery ask = GraphDbUtil.getConnection().prepareBooleanQuery(QueryLanguage.SPARQL,
 //                SparqlQueryUtil.IS_FORM_ID.replaceAll("_ID_", id));
         String query = SparqlQueryUtil.IS_ETYMOLOGY_ID.replaceAll("_ID_", id);
         return RDFQueryUtil.evaluateBQuery(query);
     }
-    
+
     public boolean isEtymologicalLink(String id) throws QueryEvaluationException {
         String query = SparqlQueryUtil.IS_ETYMOLOGICAL_LINK_ID.replaceAll("_ID_", id);
         return RDFQueryUtil.evaluateBQuery(query);
     }
-    
+
     public boolean isCognate(String id, int n) {
         String query = SparqlQueryUtil.IS_COGNATE.replaceAll("_ID_", id).replace("_COG_NUMBER_", String.valueOf(n));
         return RDFQueryUtil.evaluateBQuery(query);
