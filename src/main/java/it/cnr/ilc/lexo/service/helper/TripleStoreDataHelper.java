@@ -8,6 +8,7 @@ package it.cnr.ilc.lexo.service.helper;
 import it.cnr.ilc.lexo.LexOProperties;
 import it.cnr.ilc.lexo.service.data.Data;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Morphology;
+import it.cnr.ilc.lexo.service.data.lexicon.output.graphViz.NodeLinks;
 import it.cnr.ilc.lexo.util.StringUtil;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -118,12 +119,17 @@ public abstract class TripleStoreDataHelper<D extends Data> extends Helper<D> {
         return morphos;
     }
 
-    public ArrayList<String> getLinkTargets(String t) {
-        ArrayList<String> targets = new ArrayList();
+    public ArrayList<NodeLinks._Target> getLinkTargets(String t) {
+        ArrayList<NodeLinks._Target> target = new ArrayList();
         for (String _t : t.split(";")) {
-            targets.add(_t);
+            if (_t.contains(":")) {
+                NodeLinks._Target nlt = new NodeLinks._Target();
+                nlt.setId(_t.split(":")[0]);
+                nlt.setLabel(_t.split(":")[1]);
+                target.add(nlt);
+            }
         }
-        return targets;
+        return target;
     }
 
     public ArrayList<Morphology> getMorphologyWithPoS(BindingSet bs, String morpho, String pos) {

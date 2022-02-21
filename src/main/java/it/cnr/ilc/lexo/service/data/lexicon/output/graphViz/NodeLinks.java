@@ -38,7 +38,7 @@ public class NodeLinks implements Data {
         private String linkType;
         private String linkName;
         private int linkCount;
-        private ArrayList<String> targets = new ArrayList();
+        private ArrayList<_Target> targets = new ArrayList();
 
         public String getLinkType() {
             return linkType;
@@ -56,11 +56,11 @@ public class NodeLinks implements Data {
             this.linkName = linkName;
         }
 
-        public ArrayList<String> getTargets() {
+        public ArrayList<_Target> getTargets() {
             return targets;
         }
 
-        public void setTargets(ArrayList<String> targets) {
+        public void setTargets(ArrayList<_Target> targets) {
             this.targets = targets;
         }
 
@@ -70,6 +70,29 @@ public class NodeLinks implements Data {
 
         public void setLinkCount(int linkCount) {
             this.linkCount = linkCount;
+        }
+
+    }
+
+    public static class _Target {
+
+        private String id;
+        private String label;
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public String getLabel() {
+            return label;
+        }
+
+        public void setLabel(String label) {
+            this.label = label;
         }
 
     }

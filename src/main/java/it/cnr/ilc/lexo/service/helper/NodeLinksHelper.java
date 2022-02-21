@@ -36,7 +36,7 @@ public class NodeLinksHelper extends TripleStoreDataHelper<NodeLinks> {
             _links.setLinkType("incoming");
             _links.setLinkName(link);
             _links.setTargets(getLinkTargets(getStringValue(bs, "in" + link + "Grouped")));
-            _links.setLinkCount(_links.getTargets().get(0).isEmpty() ? 0 : _links.getTargets().size());
+            _links.setLinkCount(_links.getTargets().size());
             data.getNodeLinks().add(_links);
         }
         
@@ -50,7 +50,7 @@ public class NodeLinksHelper extends TripleStoreDataHelper<NodeLinks> {
             _links.setLinkType("outgoing");
             _links.setLinkName(link);
             _links.setTargets(getLinkTargets(getStringValue(bs, "out" + link + "Grouped")));
-            _links.setLinkCount(_links.getTargets().get(0).isEmpty() ? 0 : _links.getTargets().size());
+            _links.setLinkCount(_links.getTargets().size());
             data.getNodeLinks().add(_links);
         }
 
