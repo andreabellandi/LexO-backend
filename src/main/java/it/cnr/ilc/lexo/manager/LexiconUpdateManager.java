@@ -84,6 +84,10 @@ public final class LexiconUpdateManager implements Manager, Cached {
         Manager.validateWithEnum("rel", EnumUtil.Decomp.class, rel);
     }
 
+    public void validateConceptRelRelation(String relation) throws ManagerException {
+        Manager.validateWithEnum("relation", EnumUtil.LinguisticRelationConceptRel.class, relation);
+    }
+
     public void validateLexicalEntryStatus(String status) throws ManagerException {
         Manager.validateWithEnum("status", EnumUtil.LexicalEntryStatus.class, status);
     }
@@ -107,7 +111,7 @@ public final class LexiconUpdateManager implements Manager, Cached {
     public void validateGenericDecompRelation(String relation) throws ManagerException {
         Manager.validateWithEnum("relation", EnumUtil.GenericRelationDecomp.class, relation);
     }
-    
+
     public void validateGenericConceptRelRelation(String relation) throws ManagerException {
         Manager.validateWithEnum("relation", EnumUtil.GenericRelationConceptRel.class, relation);
     }
@@ -624,6 +628,47 @@ public final class LexiconUpdateManager implements Manager, Cached {
                 }
             }
 
+        } else if (lru.getType().equals(EnumUtil.LinguisticRelation.ConceptRel.toString())) {
+            validateConceptRelRelation(lru.getRelation());
+            if (lru.getRelation().equals(EnumUtil.LinguisticRelationConceptRel.evokes.toString())) {
+                if (validateTypedIRI(lru.getValue(), SparqlPrefix.ONTOLEX.getUri() + OntoLexEntity.LexicalConcepts.LexicalConcept.toString())) {
+                    setPrefixes(lru, SparqlPrefix.ONTOLEX.getUri(), SparqlPrefix.LEX.getUri(),
+                            SparqlPrefix.LEX.getUri());
+                } else {
+                    throw new ManagerException(lru.getValue() + " is not a valid Lexical Concept");
+                }
+            } else if (lru.getRelation().equals(EnumUtil.LinguisticRelationConceptRel.isEvokedBy.toString())) {
+                if (validateTypedIRI(lru.getValue(), SparqlPrefix.ONTOLEX.getUri() + OntoLexEntity.LexicalEntryTypes.LexicalEntry.toString())) {
+                    setPrefixes(lru, SparqlPrefix.ONTOLEX.getUri(), SparqlPrefix.LEX.getUri(),
+                            SparqlPrefix.LEX.getUri());
+                } else {
+                    throw new ManagerException(lru.getValue() + " is not a valid Lexical entry");
+                }
+            } else if (lru.getRelation().equals(EnumUtil.LinguisticRelationConceptRel.lexicalizedSense.toString())) {
+                if (validateTypedIRI(lru.getValue(), SparqlPrefix.ONTOLEX.getUri() + OntoLexEntity.CoreClasses.LexicalSense.toString())) {
+                    setPrefixes(lru, SparqlPrefix.ONTOLEX.getUri(), SparqlPrefix.LEX.getUri(),
+                            SparqlPrefix.LEX.getUri());
+                } else {
+                    throw new ManagerException(lru.getValue() + " is not a valid Lexical sense");
+                }
+            } else if (lru.getRelation().equals(EnumUtil.LinguisticRelationConceptRel.isLexicalizedSenseOf.toString())) {
+                if (validateTypedIRI(lru.getValue(), SparqlPrefix.ONTOLEX.getUri() + OntoLexEntity.LexicalConcepts.LexicalConcept.toString())) {
+                    setPrefixes(lru, SparqlPrefix.ONTOLEX.getUri(), SparqlPrefix.LEX.getUri(),
+                            SparqlPrefix.LEX.getUri());
+                } else {
+                    throw new ManagerException(lru.getValue() + " is not a valid Lexical concept");
+                }
+            } else if (lru.getRelation().equals(EnumUtil.LinguisticRelationConceptRel.concept.toString())) {
+                // currently the property ranges over an external url only 
+                validateURL(lru.getValue());
+                if (lru.getValue().contains(SparqlPrefix.LEX.getUri())) {
+                    throw new ManagerException("External links supported only");
+                } else {
+                    setPrefixes(lru, SparqlPrefix.ONTOLEX.getUri(), "", "");
+                }
+            } else if (lru.getRelation().equals(EnumUtil.LinguisticRelationConceptRel.isConceptOf.toString())) {
+                 throw new ManagerException("still to implement");
+            }
         } else {
             throw new ManagerException(lru.getType() + " is not a valid relation type");
         }

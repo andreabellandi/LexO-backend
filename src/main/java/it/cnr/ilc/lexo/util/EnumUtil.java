@@ -51,7 +51,7 @@ public class EnumUtil {
             return this.searchMode;
         }
     }
-    
+
     public static enum FormTypes {
         All(""),
         Flexed("flexed"),
@@ -68,7 +68,7 @@ public class EnumUtil {
             return this.formType;
         }
     }
-    
+
     public static enum LexicalEntryStatus {
         All(""),
         Reviewed("reviewed"),
@@ -86,7 +86,7 @@ public class EnumUtil {
             return this.status;
         }
     }
-    
+
     public static enum LexicalEntryTypes {
         All(""),
         Word("word"),
@@ -106,7 +106,7 @@ public class EnumUtil {
             return this.type;
         }
     }
-    
+
     public static enum LexicalEntryPropertyLinks {
         Denotes("denotes"),
         Evokes("evokes");
@@ -122,7 +122,7 @@ public class EnumUtil {
             return this.property;
         }
     }
-    
+
     public static enum LexicalAspects {
         Core("core"),
         Decomp("decomposition"),
@@ -140,9 +140,9 @@ public class EnumUtil {
         public String toString() {
             return this.aspect;
         }
-        
+
     }
-    
+
     public static enum LinkedEntityType {
         Internal("internal"),
         External("external");
@@ -157,9 +157,9 @@ public class EnumUtil {
         public String toString() {
             return this.linkedEntityType;
         }
-        
+
     }
-    
+
     public static enum SearchFormTypes {
         Keyword("keyword"),
         Lemma("lemma");
@@ -174,10 +174,9 @@ public class EnumUtil {
         public String toString() {
             return this.searchFormTypes;
         }
-        
+
     }
-    
-    
+
     public static enum LexicalRel {
         Cognate("cognate");
 
@@ -191,9 +190,9 @@ public class EnumUtil {
         public String toString() {
             return this.lexicalRel;
         }
-        
+
     }
-    
+
     public static enum Decomp {
         SubTerm("subTerm"),
         Constituent("constituent"),
@@ -210,9 +209,9 @@ public class EnumUtil {
         public String toString() {
             return this.decomp;
         }
-        
+
     }
-    
+
     public static enum LanguageAttributes {
         Description("description"),
         Language("language"),
@@ -228,9 +227,9 @@ public class EnumUtil {
         public String toString() {
             return this.languageAttributes;
         }
-        
+
     }
-    
+
     public static enum FormRepresentationType {
         WrittenRepresentation("writtenRep"),
         PhoneticRepresentation("phoneticRep"),
@@ -249,9 +248,9 @@ public class EnumUtil {
         public String toString() {
             return this.formRepresentationType;
         }
-        
+
     }
-    
+
     public static enum LexicalEntryAttributes {
         Label("label"),
         Type("type"),
@@ -270,9 +269,9 @@ public class EnumUtil {
         public String toString() {
             return this.lexicalEntryAttributes;
         }
-        
+
     }
-    
+
     public static enum FormAttributes {
         Note("note"),
         Type("type"),
@@ -293,9 +292,9 @@ public class EnumUtil {
         public String toString() {
             return this.formAttributes;
         }
-        
+
     }
-    
+
     public static enum LexicalSenseAttributes {
         Note("note"),
         Usage("usage"),
@@ -318,9 +317,9 @@ public class EnumUtil {
         public String toString() {
             return this.senseAttributes;
         }
-        
+
     }
-    
+
     public static enum EtymologyAttributes {
         Note("note"),
         Confidence("confidence"),
@@ -337,9 +336,9 @@ public class EnumUtil {
         public String toString() {
             return this.etymologyAttributes;
         }
-        
+
     }
-    
+
     public static enum EtymologicalLinkAttributes {
         Type("etyLinkType"),
         Note("note"),
@@ -355,9 +354,9 @@ public class EnumUtil {
         public String toString() {
             return this.etyLinkAttributes;
         }
-        
+
     }
-    
+
     public static enum LexicalSenseSearchFilter {
         Definition("definition"),
         Description("description"),
@@ -376,9 +375,9 @@ public class EnumUtil {
         public String toString() {
             return this.lexicalSenseSearchFilter;
         }
-        
+
     }
-    
+
     public static enum LinguisticRelation {
         Morphology("morphology"),
         LexicalRel("lexicalRel"),
@@ -386,22 +385,22 @@ public class EnumUtil {
         ConceptRef("conceptRef"),
         EtymologicalLink("etyLink"),
         Decomp("decomp"),
-//        Cognate("cognate"),
+        //        Cognate("cognate"),
         ConceptRel("conceptRel");
 
         private final String linguisticRelation;
 
         private LinguisticRelation(String linguisticRelation) {
             this.linguisticRelation = linguisticRelation;
-        }        
+        }
 
         @Override
         public String toString() {
             return this.linguisticRelation;
         }
-        
+
     }
-    
+
     public static enum GenericRelation {
         Reference("reference"),
         Bibliography("bibliography"),
@@ -414,15 +413,15 @@ public class EnumUtil {
 
         private GenericRelation(String genericRelation) {
             this.genericRelation = genericRelation;
-        }        
+        }
 
         @Override
         public String toString() {
             return this.genericRelation;
         }
-        
+
     }
-    
+
     public static enum GenericRelationReference {
         seeAlso("seeAlso"),
         sameAs("sameAs");
@@ -431,15 +430,15 @@ public class EnumUtil {
 
         private GenericRelationReference(String genericRelationReference) {
             this.genericRelationReference = genericRelationReference;
-        }        
+        }
 
         @Override
         public String toString() {
             return this.genericRelationReference;
         }
-        
+
     }
-    
+
     public static enum PositionRelation {
         rdfListPosition("rdf:_n");
 
@@ -447,15 +446,15 @@ public class EnumUtil {
 
         private PositionRelation(String positionRelation) {
             this.positionRelation = positionRelation;
-        }        
+        }
 
         @Override
         public String toString() {
             return this.positionRelation;
         }
-        
+
     }
-    
+
     public static enum GenericRelationBibliography {
         textualReference("label"),
         note("note");
@@ -464,15 +463,15 @@ public class EnumUtil {
 
         private GenericRelationBibliography(String genericRelationBibliography) {
             this.genericRelationBibliography = genericRelationBibliography;
-        }        
+        }
 
         @Override
         public String toString() {
             return this.genericRelationBibliography;
         }
-        
+
     }
-    
+
     public static enum GenericRelationDecomp {
         label("label"),
         note("note");
@@ -481,15 +480,15 @@ public class EnumUtil {
 
         private GenericRelationDecomp(String genericRelationDecomp) {
             this.genericRelationDecomp = genericRelationDecomp;
-        }        
+        }
 
         @Override
         public String toString() {
             return this.genericRelationDecomp;
         }
-        
+
     }
-    
+
     public static enum GenericRelationConceptRel {
         label("label"),
         definition("definition"),
@@ -499,15 +498,36 @@ public class EnumUtil {
 
         private GenericRelationConceptRel(String genericRelationConceptRel) {
             this.genericRelationConceptRel = genericRelationConceptRel;
-        }        
+        }
 
         @Override
         public String toString() {
             return this.genericRelationConceptRel;
         }
-        
+
     }
-    
+
+    public static enum LinguisticRelationConceptRel {
+        evokes("evokes"),
+        isEvokedBy("isEvokedBy"),
+        lexicalizedSense("lexicalizedSense"),
+        isLexicalizedSenseOf("isLexicalizedSenseOf"),
+        concept("concept"),
+        isConceptOf("isConceptOf");
+
+        private final String linguisticRelationConceptRel;
+
+        private LinguisticRelationConceptRel(String linguisticRelationConceptRel) {
+            this.linguisticRelationConceptRel = linguisticRelationConceptRel;
+        }
+
+        @Override
+        public String toString() {
+            return this.linguisticRelationConceptRel;
+        }
+
+    }
+
     public static enum AcceptedSearchFormExtendTo {
         None(""),
         Hypernym("hypernym"),
@@ -524,9 +544,9 @@ public class EnumUtil {
         public String toString() {
             return this.acceptedSearchFormExtendTo;
         }
-        
+
     }
-    
+
     public static enum AcceptedSearchFormExtensionDegree {
         One("1"),
         Two("2"),
@@ -542,6 +562,6 @@ public class EnumUtil {
         public String toString() {
             return this.acceptedSearchFormExtensionDegree;
         }
-        
+
     }
 }

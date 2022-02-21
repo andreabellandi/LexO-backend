@@ -53,6 +53,45 @@ public class OntoLexEntity {
         }
     }
     
+    public static enum CoreClasses {
+        LexicalEntry("LexicalEntry"),
+        LexicalSense("LexicalSense"),
+        Form("Form");
+
+        private final String type;
+
+        private CoreClasses(String type) {
+            this.type = type;
+        }
+
+        @Override
+        public String toString() {
+            return this.type;
+        }
+    }
+    
+    public static enum LexicalConcepts {
+        LexicalConcept("LexicalConcept"),
+        ConceptSet("ConceptSet"),
+        evokes("evokes"),
+        isEvokedBy("isEvokedBy"),
+        isConceptOf("isConceptOf"),
+        lexicalizedSense("lexicalizedSense"),
+        isLexicalizedSenseOf("isLexicalizedSenseOf"),
+        concept("concept");
+
+        private final String type;
+
+        private LexicalConcepts(String type) {
+            this.type = type;
+        }
+
+        @Override
+        public String toString() {
+            return this.type;
+        }
+    }
+    
     public static enum FormTypes {
         LexicalForm("lexicalForm"),
         CanonicalForm("canonicalForm"),
