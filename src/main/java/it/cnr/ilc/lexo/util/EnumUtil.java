@@ -107,22 +107,6 @@ public class EnumUtil {
         }
     }
 
-    public static enum LexicalEntryPropertyLinks {
-        Denotes("denotes"),
-        Evokes("evokes");
-
-        private final String property;
-
-        private LexicalEntryPropertyLinks(String property) {
-            this.property = property;
-        }
-
-        @Override
-        public String toString() {
-            return this.property;
-        }
-    }
-
     public static enum LexicalAspects {
         Core("core"),
         Decomp("decomposition"),

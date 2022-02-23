@@ -7,12 +7,10 @@ package it.cnr.ilc.lexo.manager;
 
 import it.cnr.ilc.lexo.LexOProperties;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Component;
-import it.cnr.ilc.lexo.service.data.lexicon.output.ConceptSet;
 import it.cnr.ilc.lexo.service.data.lexicon.output.EtymologicalLink;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Etymology;
 import it.cnr.ilc.lexo.service.data.lexicon.output.FormCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Language;
-import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalConcept;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Property;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalSenseCore;
@@ -207,30 +205,6 @@ public class LexiconCreationManager implements Manager, Cached {
         return setComponent(_id, created, author);
     }
      
-    public LexicalConcept createLexicalConcept(String author) throws ManagerException {
-        Timestamp tm = new Timestamp(System.currentTimeMillis());
-        String id = idInstancePrefix + tm.toString();
-        String created = timestampFormat.format(tm);
-        String _id = id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
-        RDFQueryUtil.update(SparqlInsertData.CREATE_LEXICAL_CONCEPT.replaceAll("_ID_", _id)
-                .replace("_AUTHOR_", author)
-                .replace("_CREATED_", created)
-                .replace("_MODIFIED_", created));
-        return setLexicalConcept(_id, created, author);
-    }
-    
-    public ConceptSet createConceptSet(String author) throws ManagerException {
-        Timestamp tm = new Timestamp(System.currentTimeMillis());
-        String id = idInstancePrefix + tm.toString();
-        String created = timestampFormat.format(tm);
-        String _id = id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
-        RDFQueryUtil.update(SparqlInsertData.CREATE_CONCEPT_SET.replaceAll("_ID_", _id)
-                .replace("_AUTHOR_", author)
-                .replace("_CREATED_", created)
-                .replace("_MODIFIED_", created));
-        return setConceptSet(_id, created, author);
-    }
-
     private LexicalSenseCore setSense(String id, String created, String author) {
         LexicalSenseCore sc = new LexicalSenseCore();
         sc.setCreator(author);
@@ -251,24 +225,5 @@ public class LexiconCreationManager implements Manager, Cached {
         return sc;
     }
     
-    private LexicalConcept setLexicalConcept(String id, String created, String author) {
-        LexicalConcept lc = new LexicalConcept();
-        lc.setCreator(author);
-        lc.setLexicalConceptInstanceName(id);
-        lc.setLexicalConcept(getNamespace() + id);
-        lc.setLastUpdate(created);
-        lc.setCreationDate(created);
-        return lc;
-    }
-    
-    private ConceptSet setConceptSet(String id, String created, String author) {
-        ConceptSet cs = new ConceptSet();
-        cs.setCreator(author);
-        cs.setConceptSetInstanceName(id);
-        cs.setConceptSet(getNamespace() + id);
-        cs.setLastUpdate(created);
-        cs.setCreationDate(created);
-        return cs;
-    }
 
 }

@@ -12,6 +12,7 @@ import it.cnr.ilc.lexo.manager.BibliographyManager;
 import it.cnr.ilc.lexo.manager.LexiconCreationManager;
 import it.cnr.ilc.lexo.manager.ManagerException;
 import it.cnr.ilc.lexo.manager.ManagerFactory;
+import it.cnr.ilc.lexo.manager.SKOSManager;
 import it.cnr.ilc.lexo.manager.UtilityManager;
 import it.cnr.ilc.lexo.service.data.lexicon.input.Bibliography;
 import it.cnr.ilc.lexo.service.data.lexicon.output.BibliographicItem;
@@ -56,6 +57,7 @@ public class LexiconCreation extends Service {
 
     private final LexiconCreationManager lexiconManager = ManagerFactory.getManager(LexiconCreationManager.class);
     private final BibliographyManager bibliographyManager = ManagerFactory.getManager(BibliographyManager.class);
+    private final SKOSManager skosManager = ManagerFactory.getManager(SKOSManager.class);
     private final LexicalEntryCoreHelper lexicalEntryCoreHelper = new LexicalEntryCoreHelper();
     private final LanguageHelper languageHelper = new LanguageHelper();
     private final FormCoreHelper formCoreHelper = new FormCoreHelper();
@@ -504,7 +506,7 @@ public class LexiconCreation extends Service {
             @QueryParam("author") String author) {
         if (key.equals("PRINitant19")) {
             try {
-                LexicalConcept lc = lexiconManager.createLexicalConcept(author);
+                LexicalConcept lc = skosManager.createLexicalConcept(author);
                 String json = lexicalConceptHelper.toJson(lc);
                 return Response.ok(json)
                         .type(MediaType.TEXT_PLAIN)
@@ -544,7 +546,7 @@ public class LexiconCreation extends Service {
             @QueryParam("author") String author) {
         if (key.equals("PRINitant19")) {
             try {
-                LexicalConcept lc = lexiconManager.createLexicalConcept(author);
+                LexicalConcept lc = skosManager.createLexicalConcept(author);
                 String json = lexicalConceptHelper.toJson(lc);
                 return Response.ok(json)
                         .type(MediaType.TEXT_PLAIN)

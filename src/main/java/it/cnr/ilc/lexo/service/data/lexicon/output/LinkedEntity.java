@@ -29,6 +29,8 @@ public class LinkedEntity implements Data {
     private boolean inferred;
     @ApiModelProperty(value = "the type of linked the lexical entity", allowableValues = "internal, external")
     private String linkType;
+    @ApiModelProperty(value = "the name of the link")
+    private String link;
 
     public String getLexicalEntity() {
         return lexicalEntity;
@@ -76,6 +78,14 @@ public class LinkedEntity implements Data {
 
     public void setInferred(boolean inferred) {
         this.inferred = inferred;
+    }
+
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
     }
 
 }
