@@ -8,8 +8,12 @@ package it.cnr.ilc.lexo.service;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import it.cnr.ilc.lexo.manager.ManagerException;
+import it.cnr.ilc.lexo.manager.ManagerFactory;
+import it.cnr.ilc.lexo.manager.SKOSManager;
 import it.cnr.ilc.lexo.service.data.lexicon.input.skos.SKOSDeleter;
 import it.cnr.ilc.lexo.service.data.lexicon.input.skos.SKOSUpdater;
+import java.util.logging.Level;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -17,6 +21,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.eclipse.rdf4j.query.UpdateExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,6 +37,8 @@ public class SKOSService extends Service {
 
     private static final Logger logger = LoggerFactory.getLogger(SKOSService.class);
     Logger statLog = LoggerFactory.getLogger("statistics");
+
+    private final SKOSManager skosManager = ManagerFactory.getManager(SKOSManager.class);
 
     @GET
     @Path("createConcept")
@@ -132,7 +139,7 @@ public class SKOSService extends Service {
             @QueryParam("key") String key, SKOSDeleter sd) {
         return Response.status(Response.Status.NOT_IMPLEMENTED).build();
     }
-    
+
     @POST
     @Path("updateSemanticRelation")
     @Produces(MediaType.APPLICATION_JSON)
@@ -149,9 +156,24 @@ public class SKOSService extends Service {
                     example = "lexodemo",
                     required = true)
             @QueryParam("key") String key, SKOSUpdater su) {
-        return Response.status(Response.Status.NOT_IMPLEMENTED).build();
+        if (key.equals("PRINitant19")) {
+            try {
+                String json = skosManager.updateSemanticRelation(su);
+                return Response.ok(json)
+                        .type(MediaType.TEXT_PLAIN)
+                        .header("Access-Control-Allow-Headers", "content-type")
+                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                        .build();
+
+            } catch (ManagerException | UpdateExecutionException ex) {
+                java.util.logging.Logger.getLogger(LexiconUpdate.class.getName()).log(Level.SEVERE, null, ex);
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            }
+        } else {
+            return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Insertion denied, wrong key").build();
+        }
     }
-    
+
     @POST
     @Path("updateLexicalLabel")
     @Produces(MediaType.APPLICATION_JSON)
@@ -168,9 +190,24 @@ public class SKOSService extends Service {
                     example = "lexodemo",
                     required = true)
             @QueryParam("key") String key, SKOSUpdater su) {
-        return Response.status(Response.Status.NOT_IMPLEMENTED).build();
+        if (key.equals("PRINitant19")) {
+            try {
+                String json = skosManager.updateLexicalProperty(su);
+                return Response.ok(json)
+                        .type(MediaType.TEXT_PLAIN)
+                        .header("Access-Control-Allow-Headers", "content-type")
+                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                        .build();
+
+            } catch (ManagerException | UpdateExecutionException ex) {
+                java.util.logging.Logger.getLogger(LexiconUpdate.class.getName()).log(Level.SEVERE, null, ex);
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            }
+        } else {
+            return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Insertion denied, wrong key").build();
+        }
     }
-    
+
     @POST
     @Path("updateNotation")
     @Produces(MediaType.APPLICATION_JSON)
@@ -187,9 +224,24 @@ public class SKOSService extends Service {
                     example = "lexodemo",
                     required = true)
             @QueryParam("key") String key, SKOSUpdater su) {
-        return Response.status(Response.Status.NOT_IMPLEMENTED).build();
+        if (key.equals("PRINitant19")) {
+            try {
+                String json = skosManager.updateNotation(su);
+                return Response.ok(json)
+                        .type(MediaType.TEXT_PLAIN)
+                        .header("Access-Control-Allow-Headers", "content-type")
+                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                        .build();
+
+            } catch (ManagerException | UpdateExecutionException ex) {
+                java.util.logging.Logger.getLogger(LexiconUpdate.class.getName()).log(Level.SEVERE, null, ex);
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            }
+        } else {
+            return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Insertion denied, wrong key").build();
+        }
     }
-    
+
     @POST
     @Path("updateSchemeProperty")
     @Produces(MediaType.APPLICATION_JSON)
@@ -206,9 +258,24 @@ public class SKOSService extends Service {
                     example = "lexodemo",
                     required = true)
             @QueryParam("key") String key, SKOSUpdater su) {
-        return Response.status(Response.Status.NOT_IMPLEMENTED).build();
+        if (key.equals("PRINitant19")) {
+            try {
+                String json = skosManager.updateSchemeProperty(su);
+                return Response.ok(json)
+                        .type(MediaType.TEXT_PLAIN)
+                        .header("Access-Control-Allow-Headers", "content-type")
+                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                        .build();
+
+            } catch (ManagerException | UpdateExecutionException ex) {
+                java.util.logging.Logger.getLogger(LexiconUpdate.class.getName()).log(Level.SEVERE, null, ex);
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            }
+        } else {
+            return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Insertion denied, wrong key").build();
+        }
     }
-    
+
     @POST
     @Path("updateNoteProperty")
     @Produces(MediaType.APPLICATION_JSON)
@@ -216,7 +283,7 @@ public class SKOSService extends Service {
             method = RequestMethod.POST,
             value = "updateNoteProperty",
             produces = "application/json; charset=UTF-8")
-   @ApiOperation(value = "Update skos note relation (see https://www.w3.org/TR/2009/REC-skos-reference-20090818/#notes)",
+    @ApiOperation(value = "Update skos note relation (see https://www.w3.org/TR/2009/REC-skos-reference-20090818/#notes)",
             notes = "This method update note relation according to the input")
     public Response updateNoteProperty(
             @ApiParam(
@@ -225,9 +292,24 @@ public class SKOSService extends Service {
                     example = "lexodemo",
                     required = true)
             @QueryParam("key") String key, SKOSUpdater su) {
-        return Response.status(Response.Status.NOT_IMPLEMENTED).build();
+        if (key.equals("PRINitant19")) {
+            try {
+                String json = skosManager.updateNoteProperty(su);
+                return Response.ok(json)
+                        .type(MediaType.TEXT_PLAIN)
+                        .header("Access-Control-Allow-Headers", "content-type")
+                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                        .build();
+
+            } catch (ManagerException | UpdateExecutionException ex) {
+                java.util.logging.Logger.getLogger(LexiconUpdate.class.getName()).log(Level.SEVERE, null, ex);
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            }
+        } else {
+            return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Insertion denied, wrong key").build();
+        }
     }
-    
+
     @POST
     @Path("updateMappingProperty")
     @Produces(MediaType.APPLICATION_JSON)
@@ -244,9 +326,24 @@ public class SKOSService extends Service {
                     example = "lexodemo",
                     required = true)
             @QueryParam("key") String key, SKOSUpdater su) {
-        return Response.status(Response.Status.NOT_IMPLEMENTED).build();
+        if (key.equals("PRINitant19")) {
+            try {
+                String json = skosManager.updateMappingProperty(su);
+                return Response.ok(json)
+                        .type(MediaType.TEXT_PLAIN)
+                        .header("Access-Control-Allow-Headers", "content-type")
+                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                        .build();
+
+            } catch (ManagerException | UpdateExecutionException ex) {
+                java.util.logging.Logger.getLogger(LexiconUpdate.class.getName()).log(Level.SEVERE, null, ex);
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            }
+        } else {
+            return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Insertion denied, wrong key").build();
+        }
     }
-    
+
     @POST
     @Path("updateCollection")
     @Produces(MediaType.APPLICATION_JSON)

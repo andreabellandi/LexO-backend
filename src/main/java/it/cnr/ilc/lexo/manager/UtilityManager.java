@@ -61,6 +61,13 @@ public final class UtilityManager implements Manager, Cached {
         return RDFQueryUtil.evaluateBQuery(query);
     }
 
+    public boolean existsSKOSRelation(String id, String relation, String value) throws QueryEvaluationException {
+        String query = SparqlQueryUtil.ASK_ENTITY_SKOS_RELATION.replaceAll("_ID_", id)
+                .replaceAll("_RELATION_", relation)
+                .replaceAll("_VALUE_", value);
+        return RDFQueryUtil.evaluateBQuery(query);
+    }
+
     public int getNumberOfStatements(String id) throws QueryEvaluationException {
 //        TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL,
 //                SparqlQueryUtil.NUMBER_OF_STATEMENTS.replaceAll("_ID_", id));

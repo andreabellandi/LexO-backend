@@ -473,24 +473,6 @@ public class EnumUtil {
 
     }
 
-    public static enum GenericRelationConceptRel {
-        label("label"),
-        definition("definition"),
-        note("note");
-
-        private final String genericRelationConceptRel;
-
-        private GenericRelationConceptRel(String genericRelationConceptRel) {
-            this.genericRelationConceptRel = genericRelationConceptRel;
-        }
-
-        @Override
-        public String toString() {
-            return this.genericRelationConceptRel;
-        }
-
-    }
-
     public static enum LinguisticRelationConceptRel {
         evokes("evokes"),
         isEvokedBy("isEvokedBy"),

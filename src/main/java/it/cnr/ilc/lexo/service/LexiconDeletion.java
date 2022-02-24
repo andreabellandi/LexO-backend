@@ -13,6 +13,7 @@ import it.cnr.ilc.lexo.manager.LexiconDataManager;
 import it.cnr.ilc.lexo.manager.LexiconDeletionManager;
 import it.cnr.ilc.lexo.manager.ManagerException;
 import it.cnr.ilc.lexo.manager.ManagerFactory;
+import it.cnr.ilc.lexo.manager.SKOSManager;
 import it.cnr.ilc.lexo.manager.UtilityManager;
 import it.cnr.ilc.lexo.service.data.lexicon.input.RelationDeleter;
 import it.cnr.ilc.lexo.service.data.lexicon.output.EtymologicalLink;
@@ -42,6 +43,7 @@ public class LexiconDeletion extends Service {
 
     private final LexiconDeletionManager lexiconManager = ManagerFactory.getManager(LexiconDeletionManager.class);
     private final LexiconDataManager lexiconDataManager = ManagerFactory.getManager(LexiconDataManager.class);
+    private final SKOSManager skosManager = ManagerFactory.getManager(SKOSManager.class);
     private final BibliographyManager bibliographyManager = ManagerFactory.getManager(BibliographyManager.class);
     private final EtymologicalLinkHelper etymologicalLinkHelper = new EtymologicalLinkHelper();
 
@@ -456,7 +458,7 @@ public class LexiconDeletion extends Service {
                 if (!utilityManager.isLexicalConcept(id)) {
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + id + " does not exist or it is not a Lexical Concept").build();
                 }
-                lexiconManager.deleteLexicalConcept(id);
+                skosManager.deleteLexicalConcept(id);
                 return Response.ok()
                         .type(MediaType.TEXT_PLAIN)
                         .header("Access-Control-Allow-Headers", "content-type")
@@ -498,7 +500,7 @@ public class LexiconDeletion extends Service {
                 if (!utilityManager.isConceptSet(id)) {
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + id + " does not exist or it is not a Concept Set").build();
                 }
-                lexiconManager.deleteConceptSet(id);
+                skosManager.deleteConceptSet(id);
                 return Response.ok()
                         .type(MediaType.TEXT_PLAIN)
                         .header("Access-Control-Allow-Headers", "content-type")

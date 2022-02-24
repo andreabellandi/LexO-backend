@@ -19,11 +19,11 @@ public interface Manager {
         }
     }
 
-    public static void validateWithOntoLexEntity(String parameterName, Class<? extends Enum> enumClass, String parameterValue) throws ManagerException {
-        if (!EnumUtil.containsString(enumClass, parameterValue)) {
-            throw new ManagerException(parameterName + " field must be one of " + Arrays.toString(EnumUtil.stringValues(enumClass)));
-        }
-    }
+//    public static void validateWithOntoLexEntity(String parameterName, Class<? extends Enum> enumClass, String parameterValue) throws ManagerException {
+//        if (!EnumUtil.containsString(enumClass, parameterValue)) {
+//            throw new ManagerException(parameterName + " field must be one of " + Arrays.toString(EnumUtil.stringValues(enumClass)));
+//        }
+//    }
 
 
     public static void validateMorphology(String trait, String value) throws ManagerException {

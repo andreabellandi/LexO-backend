@@ -65,15 +65,18 @@ public final class LexiconUpdateManager implements Manager, Cached {
     }
 
     public void validateLexicalEntryType(String type) throws ManagerException {
-        Manager.validateWithOntoLexEntity("type", OntoLexEntity.LexicalEntryTypes.class, type);
+//        Manager.validateWithOntoLexEntity("type", OntoLexEntity.LexicalEntryTypes.class, type);
+        Manager.validateWithEnum("type", OntoLexEntity.LexicalEntryTypes.class, type);
     }
 
     public void validateFormType(String type) throws ManagerException {
-        Manager.validateWithOntoLexEntity("type", OntoLexEntity.FormTypes.class, type);
+//        Manager.validateWithOntoLexEntity("type", OntoLexEntity.FormTypes.class, type);
+        Manager.validateWithEnum("type", OntoLexEntity.FormTypes.class, type);
     }
 
     public void validateConceptRef(String type) throws ManagerException {
-        Manager.validateWithOntoLexEntity("type", OntoLexEntity.ReferenceTypes.class, type);
+//        Manager.validateWithOntoLexEntity("type", OntoLexEntity.ReferenceTypes.class, type);
+        Manager.validateWithEnum("type", OntoLexEntity.ReferenceTypes.class, type);
     }
 
     public void validateLexicalRel(String rel) throws ManagerException {
@@ -112,12 +115,9 @@ public final class LexiconUpdateManager implements Manager, Cached {
         Manager.validateWithEnum("relation", EnumUtil.GenericRelationDecomp.class, relation);
     }
 
-    public void validateGenericConceptRelRelation(String relation) throws ManagerException {
-        Manager.validateWithEnum("relation", EnumUtil.GenericRelationConceptRel.class, relation);
-    }
-
     public void validateEtyLink(String type) throws ManagerException {
-        Manager.validateWithOntoLexEntity("type", OntoLexEntity.EtyLinkTypes.class, type);
+//        Manager.validateWithOntoLexEntity("type", OntoLexEntity.EtyLinkTypes.class, type);
+        Manager.validateWithEnum("type", OntoLexEntity.EtyLinkTypes.class, type);
     }
 
     public boolean validateIRI(String id) throws ManagerException {
@@ -799,13 +799,6 @@ public final class LexiconUpdateManager implements Manager, Cached {
             validateGenericDecompRelation(gru.getRelation());
             setPrefixes(gru, true,
                     gru.getRelation().equals(EnumUtil.GenericRelationDecomp.label.toString()) ? SparqlPrefix.RDFS.getUri() : SparqlPrefix.SKOS.getUri(),
-                    "",
-                    "");
-            _id = SparqlPrefix.LEX.getUri() + id;
-        } else if (gru.getType().equals(EnumUtil.GenericRelation.Decomp.toString())) {
-            validateGenericConceptRelRelation(gru.getRelation());
-            setPrefixes(gru, true,
-                    gru.getRelation().equals(EnumUtil.GenericRelationConceptRel.label.toString()) ? SparqlPrefix.RDFS.getUri() : SparqlPrefix.SKOS.getUri(),
                     "",
                     "");
             _id = SparqlPrefix.LEX.getUri() + id;

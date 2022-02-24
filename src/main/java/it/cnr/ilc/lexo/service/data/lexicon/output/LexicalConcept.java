@@ -9,7 +9,6 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import it.cnr.ilc.lexo.service.data.Data;
 import it.cnr.ilc.lexo.service.data.lexicon.output.skos.SKOSClass;
-import java.util.List;
 
 /**
  *

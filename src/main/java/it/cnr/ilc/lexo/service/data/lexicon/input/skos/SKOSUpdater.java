@@ -25,6 +25,8 @@ public class SKOSUpdater implements Data {
     private String target;
     @ApiModelProperty(value = "the old object IRI of the relation (empty in case of new relation)", example = "test", allowEmptyValue = true)
     private String oldTarget;
+    @ApiModelProperty(value = "the language of the target (if it is a literal, empty elsewhether) ", allowEmptyValue = true)
+    private String language;
 
     public String getRelation() {
         return relation;
@@ -56,6 +58,14 @@ public class SKOSUpdater implements Data {
 
     public void setOldTarget(String oldTarget) {
         this.oldTarget = oldTarget;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
     }
 
 }

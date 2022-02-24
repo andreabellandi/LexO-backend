@@ -32,6 +32,10 @@ public class SparqlQueryUtil {
     public static final String ASK_ENTITY_GENERIC_RELATION
             = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
             + "ASK { <_ID_> _RELATION_ _VALUE_ }";
+    
+    public static final String ASK_ENTITY_SKOS_RELATION
+            = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
+            + "ASK { <_ID_> <_RELATION_> _VALUE_ }";
 
     public static final String BIBLIOGRAFY_BY_ITEMKEY
             = SparqlPrefix.LEX.getSparqlPrefix() + "\n"

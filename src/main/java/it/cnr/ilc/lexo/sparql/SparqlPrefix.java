@@ -45,6 +45,7 @@ public class SparqlPrefix {
 
     // data
     public static Namespace LEX = new Namespace("lex:", LexOProperties.getProperty("repository.lexicon.namespace"));
+    public static Namespace LEXCONCEPT = new Namespace("lexconcept:", LexOProperties.getProperty("repository.lexicon.lexicalConcept.namespace"));
     public static Namespace LEXBIB = new Namespace("lexbib:", LexOProperties.getProperty("repository.lexicon.bibliography.namespace"));
     public static Namespace ONTOLOGY = new Namespace("ontology:", LexOProperties.getProperty("repository.ontology.namespace"));
 
