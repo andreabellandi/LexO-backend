@@ -115,7 +115,7 @@ public class SKOSManager implements Manager, Cached {
         String id = idInstancePrefix + tm.toString();
         String created = timestampFormat.format(tm);
         String _id = id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
-        RDFQueryUtil.update(SparqlInsertData.CREATE_LEXICAL_CONCEPT.replaceAll("_ID_", _id)
+        RDFQueryUtil.update(SparqlInsertData.CREATE_LEXICAL_CONCEPT.replaceAll("_ID_", "<" + lexicalConceptNs + _id + ">")
                 .replace("_AUTHOR_", author)
                 .replace("_CREATED_", created)
                 .replace("_MODIFIED_", created));
@@ -127,7 +127,7 @@ public class SKOSManager implements Manager, Cached {
         String id = idInstancePrefix + tm.toString();
         String created = timestampFormat.format(tm);
         String _id = id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
-        RDFQueryUtil.update(SparqlInsertData.CREATE_CONCEPT_SET.replaceAll("_ID_", _id)
+        RDFQueryUtil.update(SparqlInsertData.CREATE_CONCEPT_SET.replaceAll("_ID_", "<" + lexicalConceptNs + _id + ">")
                 .replace("_AUTHOR_", author)
                 .replace("_CREATED_", created)
                 .replace("_MODIFIED_", created));
@@ -138,7 +138,7 @@ public class SKOSManager implements Manager, Cached {
         LexicalConcept lc = new LexicalConcept();
         lc.setCreator(author);
         lc.setLexicalConceptInstanceName(id);
-        lc.setLexicalConcept(getNamespace() + id);
+        lc.setLexicalConcept(lexicalConceptNs + id);
         lc.setLastUpdate(created);
         lc.setCreationDate(created);
         return lc;
@@ -148,7 +148,7 @@ public class SKOSManager implements Manager, Cached {
         ConceptSet cs = new ConceptSet();
         cs.setCreator(author);
         cs.setConceptSetInstanceName(id);
-        cs.setConceptSet(getNamespace() + id);
+        cs.setConceptSet(lexicalConceptNs + id);
         cs.setLastUpdate(created);
         cs.setCreationDate(created);
         return cs;
@@ -169,7 +169,7 @@ public class SKOSManager implements Manager, Cached {
         }
         if (utilityManager.existsGenericRelation(su.getSource(), su.getRelation(), "<" + su.getTarget() + ">")) {
             // update
-            entityCheck(su.getOldTarget(), lexicalConceptNs + SKOSEntity.SKOSClass.Concept.toString());
+            entityCheck(su.getOldTarget(), SparqlPrefix.SKOS.getUri() + SKOSEntity.SKOSClass.Concept.toString());
             return update(su);
         } else {
             // new
@@ -177,8 +177,8 @@ public class SKOSManager implements Manager, Cached {
             IRI relation = skosFactory.createIRI(su.getRelation());
             validateScheme(relation.getNamespace(), null);
             validateSemanticRelation(relation.getLocalName());
-            entityCheck(su.getSource(), lexicalConceptNs + SKOSEntity.SKOSClass.Concept.toString());
-            entityCheck(su.getTarget(), lexicalConceptNs + SKOSEntity.SKOSClass.Concept.toString());
+            entityCheck(su.getSource(), SparqlPrefix.SKOS.getUri() + SKOSEntity.SKOSClass.Concept.toString());
+            entityCheck(su.getTarget(), SparqlPrefix.SKOS.getUri() + SKOSEntity.SKOSClass.Concept.toString());
             return create(su);
         }
     }
@@ -191,8 +191,8 @@ public class SKOSManager implements Manager, Cached {
         if (utilityManager.existsGenericRelation(su.getSource(), su.getRelation(), "<" + su.getTarget() + ">")) {
             // update
             entityCheck(su.getOldTarget(),
-                    su.getRelation().equals(SKOSEntity.SchemeProperty.hasTopConcept.toString())
-                    ? lexicalConceptNs + SKOSEntity.SKOSClass.Concept.toString() : lexicalConceptNs + SKOSEntity.SKOSClass.ConceptScheme.toString());
+                    su.getRelation().equals(SparqlPrefix.SKOS.getUri() + SKOSEntity.SchemeProperty.hasTopConcept.toString())
+                    ? SparqlPrefix.SKOS.getUri() + SKOSEntity.SKOSClass.Concept.toString() : SparqlPrefix.SKOS.getUri() + SKOSEntity.SKOSClass.ConceptScheme.toString());
             return update(su);
         } else {
             // new
@@ -200,10 +200,10 @@ public class SKOSManager implements Manager, Cached {
             IRI relation = skosFactory.createIRI(su.getRelation());
             validateScheme(relation.getNamespace(), null);
             validateSchemeRelation(relation.getLocalName());
-            entityCheck(su.getSource(), su.getRelation().equals(SKOSEntity.SchemeProperty.hasTopConcept.toString())
-                    ? lexicalConceptNs + SKOSEntity.SKOSClass.ConceptScheme.toString() : lexicalConceptNs + SKOSEntity.SKOSClass.Concept.toString());
-            entityCheck(su.getTarget(), su.getRelation().equals(SKOSEntity.SchemeProperty.hasTopConcept.toString())
-                    ? lexicalConceptNs + SKOSEntity.SKOSClass.Concept.toString() : lexicalConceptNs + SKOSEntity.SKOSClass.ConceptScheme.toString());
+            entityCheck(su.getSource(), su.getRelation().equals(SparqlPrefix.SKOS.getUri() + SKOSEntity.SchemeProperty.hasTopConcept.toString())
+                    ? SparqlPrefix.SKOS.getUri() + SKOSEntity.SKOSClass.ConceptScheme.toString() : SparqlPrefix.SKOS.getUri() + SKOSEntity.SKOSClass.Concept.toString());
+            entityCheck(su.getTarget(), su.getRelation().equals(SparqlPrefix.SKOS.getUri() + SKOSEntity.SchemeProperty.hasTopConcept.toString())
+                    ? SparqlPrefix.SKOS.getUri() + SKOSEntity.SKOSClass.Concept.toString() : SparqlPrefix.SKOS.getUri() + SKOSEntity.SKOSClass.ConceptScheme.toString());
             return create(su);
         }
     }
@@ -215,7 +215,7 @@ public class SKOSManager implements Manager, Cached {
         }
         if (utilityManager.existsGenericRelation(su.getSource(), su.getRelation(), "<" + su.getTarget() + ">")) {
             // update
-            entityCheck(su.getOldTarget(), lexicalConceptNs + SKOSEntity.SKOSClass.Concept.toString());
+            entityCheck(su.getOldTarget(), SparqlPrefix.SKOS.getUri() + SKOSEntity.SKOSClass.Concept.toString());
             return update(su);
         } else {
             // new
@@ -223,8 +223,8 @@ public class SKOSManager implements Manager, Cached {
             IRI relation = skosFactory.createIRI(su.getRelation());
             validateScheme(relation.getNamespace(), null);
             validateMappingRelation(relation.getLocalName());
-            entityCheck(su.getSource(), lexicalConceptNs + SKOSEntity.SKOSClass.Concept.toString());
-            entityCheck(su.getTarget(), lexicalConceptNs + SKOSEntity.SKOSClass.Concept.toString());
+            entityCheck(su.getSource(), SparqlPrefix.SKOS.getUri() + SKOSEntity.SKOSClass.Concept.toString());
+            entityCheck(su.getTarget(), SparqlPrefix.SKOS.getUri() + SKOSEntity.SKOSClass.Concept.toString());
             return create(su);
         }
     }
@@ -321,7 +321,7 @@ public class SKOSManager implements Manager, Cached {
 
     private String update(SKOSUpdater su) {
         String lastupdate = timestampFormat.format(new Timestamp(System.currentTimeMillis()));
-        RDFQueryUtil.update(SparqlSKOSUpdate.UPDATE_RELATION.replaceAll("_ID_", su.getSource())
+        RDFQueryUtil.update(SparqlSKOSUpdate.UPDATE_RELATION.replaceAll("_ID_", "<" + su.getSource() + ">")
                 .replaceAll("_RELATION_", "<" + su.getRelation() + ">")
                 .replaceAll("_VALUE_TO_INSERT_", "<" + su.getTarget() + ">")
                 .replaceAll("_VALUE_TO_DELETE_", "<" + su.getOldTarget() + ">")
@@ -331,7 +331,7 @@ public class SKOSManager implements Manager, Cached {
 
     private String updateLiteral(SKOSUpdater su) {
         String lastupdate = timestampFormat.format(new Timestamp(System.currentTimeMillis()));
-        RDFQueryUtil.update(SparqlSKOSUpdate.UPDATE_RELATION.replaceAll("_ID_", su.getSource())
+        RDFQueryUtil.update(SparqlSKOSUpdate.UPDATE_RELATION.replaceAll("_ID_", "<" + su.getSource() + ">")
                 .replaceAll("_RELATION_", "<" + su.getRelation() + ">")
                 .replaceAll("_VALUE_TO_INSERT_", "\"" + su.getTarget() + "\"@" + su.getLanguage())
                 .replaceAll("_VALUE_TO_DELETE_", "\"" + su.getOldTarget() + "\"@" + su.getLanguage())
@@ -341,7 +341,7 @@ public class SKOSManager implements Manager, Cached {
 
     private String create(SKOSUpdater su) {
         String lastupdate = timestampFormat.format(new Timestamp(System.currentTimeMillis()));
-        RDFQueryUtil.update(SparqlSKOSInsert.CREATE_RELATION.replaceAll("_ID_", su.getSource())
+        RDFQueryUtil.update(SparqlSKOSInsert.CREATE_RELATION.replaceAll("_ID_", "<" + su.getSource() + ">")
                 .replaceAll("_RELATION_", "<" + su.getRelation() + ">")
                 .replaceAll("_VALUE_TO_INSERT_", "<" + su.getTarget() + ">")
                 .replaceAll("_LAST_UPDATE_", "\"" + lastupdate + "\""));
@@ -350,7 +350,7 @@ public class SKOSManager implements Manager, Cached {
 
     private String createLiteral(SKOSUpdater su) {
         String lastupdate = timestampFormat.format(new Timestamp(System.currentTimeMillis()));
-        RDFQueryUtil.update(SparqlSKOSInsert.CREATE_RELATION.replaceAll("_ID_", su.getSource())
+        RDFQueryUtil.update(SparqlSKOSInsert.CREATE_RELATION.replaceAll("_ID_", "<" + su.getSource() + ">")
                 .replaceAll("_RELATION_", "<" + su.getRelation() + ">")
                 .replaceAll("_VALUE_TO_INSERT_", "\"" + su.getTarget() + "\"@" + su.getLanguage())
                 .replaceAll("_LAST_UPDATE_", "\"" + lastupdate + "\""));
@@ -391,7 +391,7 @@ public class SKOSManager implements Manager, Cached {
             throw new ManagerException("source or target fields cannot be empty");
         }
         if (!utilityManager.existsTyped(val, type)) {
-            throw new ManagerException(val + "does not exist or it has no " + type + " type");
+            throw new ManagerException(val + " does not exist or it has no " + type + " type");
         }
     }
 

@@ -119,10 +119,10 @@ public class SparqlInsertData {
             + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
             + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
             + "INSERT DATA {\n"
-            + "    lex:[ID] a ontolex:LexicalConcept ;\n"
-            + "                   dct:creator \"[AUTHOR]\" ;\n"
-            + "                   dct:created \"[CREATED]\" ;\n"
-            + "                   dct:modified \"[MODIFIED]\" . \n"
+            + "    _ID_ a ontolex:LexicalConcept ;\n"
+            + "                   dct:creator \"_AUTHOR_\" ;\n"
+            + "                   dct:created \"_CREATED_\" ;\n"
+            + "                   dct:modified \"_MODIFIED_\" . \n"
             + "}";
     
     public static final String CREATE_CONCEPT_SET
@@ -131,10 +131,10 @@ public class SparqlInsertData {
             + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
             + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
             + "INSERT DATA {\n"
-            + "    lex:[ID] a ontolex:ConceptSet ;\n"
-            + "                   dct:creator \"[AUTHOR]\" ;\n"
-            + "                   dct:created \"[CREATED]\" ;\n"
-            + "                   dct:modified \"[MODIFIED]\" . \n"
+            + "    _ID_ a ontolex:ConceptSet ;\n"
+            + "                   dct:creator \"_AUTHOR_\" ;\n"
+            + "                   dct:created \"_CREATED_\" ;\n"
+            + "                   dct:modified \"_MODIFIED_\" . \n"
             + "}";
 
     public static final String CREATE_LINGUISTIC_RELATION

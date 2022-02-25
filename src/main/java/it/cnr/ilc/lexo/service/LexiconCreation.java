@@ -17,6 +17,7 @@ import it.cnr.ilc.lexo.manager.UtilityManager;
 import it.cnr.ilc.lexo.service.data.lexicon.input.Bibliography;
 import it.cnr.ilc.lexo.service.data.lexicon.output.BibliographicItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Component;
+import it.cnr.ilc.lexo.service.data.lexicon.output.ConceptSet;
 import it.cnr.ilc.lexo.service.data.lexicon.output.EtymologicalLink;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Etymology;
 import it.cnr.ilc.lexo.service.data.lexicon.output.FormCore;
@@ -27,6 +28,7 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalSenseCore;
 import it.cnr.ilc.lexo.service.helper.BibliographyHelper;
 import it.cnr.ilc.lexo.service.helper.ComponentFilterHelper;
 import it.cnr.ilc.lexo.service.helper.ComponentHelper;
+import it.cnr.ilc.lexo.service.helper.ConceptSetHelper;
 import it.cnr.ilc.lexo.service.helper.EtymologicalLinkHelper;
 import it.cnr.ilc.lexo.service.helper.EtymologyHelper;
 import it.cnr.ilc.lexo.service.helper.FormCoreHelper;
@@ -67,6 +69,7 @@ public class LexiconCreation extends Service {
     private final LexicalSenseCoreHelper lexicalSenseCoreHelper = new LexicalSenseCoreHelper();
     private final ComponentHelper componentHelper = new ComponentHelper();
     private final LexicalConceptHelper lexicalConceptHelper = new LexicalConceptHelper();
+    private final ConceptSetHelper conceptSetHelper = new ConceptSetHelper();
 
     @GET
     @Path("language")
@@ -546,8 +549,8 @@ public class LexiconCreation extends Service {
             @QueryParam("author") String author) {
         if (key.equals("PRINitant19")) {
             try {
-                LexicalConcept lc = skosManager.createLexicalConcept(author);
-                String json = lexicalConceptHelper.toJson(lc);
+                ConceptSet cs = skosManager.createConceptSet(author);
+                String json = conceptSetHelper.toJson(cs);
                 return Response.ok(json)
                         .type(MediaType.TEXT_PLAIN)
                         .header("Access-Control-Allow-Headers", "content-type")

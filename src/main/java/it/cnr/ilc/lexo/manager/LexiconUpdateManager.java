@@ -51,6 +51,7 @@ public final class LexiconUpdateManager implements Manager, Cached {
     private final String libraryOfCongressPrefix = "http://id.loc.gov/vocabulary/";
     private final String lexinfoCatalog = "http://www.lexinfo.net/ontologies/3.0/lexinfo";
     private static final SimpleDateFormat timestampFormat = new SimpleDateFormat(LexOProperties.getProperty("manager.operationTimestampFormat"));
+    private final String namespace = LexOProperties.getProperty("repository.lexicon.namespace");
 
     @Override
     public void reloadCache() {
@@ -130,7 +131,7 @@ public final class LexiconUpdateManager implements Manager, Cached {
 
     public boolean validateTypedIRI(String id, String type) throws ManagerException {
         UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
-        if (!utilityManager.existsTyped(id, type)) {
+        if (!utilityManager.existsTyped(namespace + id, type)) {
             return false;
         }
         return true;
