@@ -412,7 +412,7 @@ public class SKOSService extends Service {
             produces = "application/json; charset=UTF-8")
     @ApiOperation(value = "SKOS entity deletion",
             notes = "This method deletes a SKOS entity (Concept, ConceptSchema or Collection)")
-    public Response lexicalConcept(
+    public Response entity(
             @ApiParam(
                     name = "key",
                     value = "authentication token",
