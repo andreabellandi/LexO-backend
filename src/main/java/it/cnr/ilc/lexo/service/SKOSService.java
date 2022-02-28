@@ -199,7 +199,7 @@ public class SKOSService extends Service {
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
 
-            } catch (ManagerException | UpdateExecutionException ex) {
+            } catch (ManagerException | UpdateExecutionException | IllegalArgumentException ex) {
                 java.util.logging.Logger.getLogger(LexiconUpdate.class.getName()).log(Level.SEVERE, null, ex);
                 return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
             }
