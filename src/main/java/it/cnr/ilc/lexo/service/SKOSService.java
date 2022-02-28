@@ -11,12 +11,14 @@ import io.swagger.annotations.ApiParam;
 import it.cnr.ilc.lexo.manager.ManagerException;
 import it.cnr.ilc.lexo.manager.ManagerFactory;
 import it.cnr.ilc.lexo.manager.SKOSManager;
+import it.cnr.ilc.lexo.manager.UtilityManager;
 import it.cnr.ilc.lexo.service.data.lexicon.input.skos.SKOSDeleter;
 import it.cnr.ilc.lexo.service.data.lexicon.input.skos.SKOSUpdater;
 import java.util.logging.Level;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -374,6 +376,54 @@ public class SKOSService extends Service {
                     example = "lexodemo",
                     required = true)
             @QueryParam("key") String key, SKOSUpdater su) {
+        return Response.status(Response.Status.NOT_IMPLEMENTED).build();
+    }
+    
+    @GET
+    @Path("{id}/concept")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "concept",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "SKOS Concept deletion",
+            notes = "This method deletes a SKOS concept")
+    public Response concept(
+            @ApiParam(
+                    name = "key",
+                    value = "authentication token",
+                    example = "lexodemo",
+                    required = true)
+            @QueryParam("key") String key,
+            @ApiParam(
+                    name = "id",
+                    value = "concept IRI",
+                    required = true)
+            @PathParam("id") String id) {
+        return Response.status(Response.Status.NOT_IMPLEMENTED).build();
+    }
+    
+    @GET
+    @Path("{id}/entity")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "entity",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "SKOS entity deletion",
+            notes = "This method deletes a SKOS entity (Concept, ConceptSchema or Collection)")
+    public Response lexicalConcept(
+            @ApiParam(
+                    name = "key",
+                    value = "authentication token",
+                    example = "lexodemo",
+                    required = true)
+            @QueryParam("key") String key,
+            @ApiParam(
+                    name = "id",
+                    value = "entity IRI",
+                    required = true)
+            @PathParam("id") String id) {
         return Response.status(Response.Status.NOT_IMPLEMENTED).build();
     }
 
