@@ -5,10 +5,23 @@
  */
 package it.cnr.ilc.lexo.sparql.skos;
 
+import it.cnr.ilc.lexo.sparql.SparqlPrefix;
+
 /**
  *
  * @author andreabellandi
  */
 public class SparqlSKOSDelete {
-    
+
+    // TODO: update lastupdate field
+    public static final String DELETE_RELATION
+            = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
+            + "DELETE {\n"
+            + "    <_ID_> <_RELATION_> _TARGET_\n"
+            + "} WHERE {\n"
+            + "    <_ID_> <_RELATION_> _TARGET_ .\n"
+            + "}";
+
 }

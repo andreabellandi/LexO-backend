@@ -6,12 +6,14 @@
 package it.cnr.ilc.lexo.manager;
 
 import it.cnr.ilc.lexo.LexOProperties;
+import it.cnr.ilc.lexo.service.data.lexicon.input.skos.SKOSDeleter;
 import it.cnr.ilc.lexo.service.data.lexicon.input.skos.SKOSUpdater;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ConceptSet;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalConcept;
 import it.cnr.ilc.lexo.sparql.SparqlDeleteData;
 import it.cnr.ilc.lexo.sparql.SparqlInsertData;
 import it.cnr.ilc.lexo.sparql.SparqlPrefix;
+import it.cnr.ilc.lexo.sparql.skos.SparqlSKOSDelete;
 import it.cnr.ilc.lexo.sparql.skos.SparqlSKOSInsert;
 import it.cnr.ilc.lexo.sparql.skos.SparqlSKOSUpdate;
 import it.cnr.ilc.lexo.util.RDFQueryUtil;
@@ -383,6 +385,14 @@ public class SKOSManager implements Manager, Cached {
         return false;
     }
 
+    private boolean inputCheck(SKOSDeleter sd) {
+        if (sd.getRelation() != null && sd.getSource() != null && sd.getTarget() != null) {
+            if (!sd.getRelation().isEmpty() && !sd.getSource().isEmpty() && !sd.getTarget().isEmpty()) {
+            }
+        }
+        return false;
+    }
+
     private void relationCheck(String rel) throws ManagerException {
         if (rel == null) {
             throw new ManagerException("relation field cannot be null");
@@ -402,6 +412,16 @@ public class SKOSManager implements Manager, Cached {
         if (!utilityManager.existsTyped(val, type)) {
             throw new ManagerException(val + " does not exist or it has no " + type + " type");
         }
+    }
+
+    public void deleteRelation(SKOSDeleter sd) throws ManagerException {
+        inputCheck(sd);
+        RDFQueryUtil.update(SparqlSKOSDelete.DELETE_RELATION
+                .replaceAll("_ID_", sd.getSource())
+                .replaceAll("_TARGET_", (sd.getLanguage() != null && !sd.getLanguage().isEmpty())
+                        ? "\"" + sd.getTarget() + "\"@" + sd.getLanguage()
+                        : "<" + sd.getTarget() + ">")
+                .replaceAll("_RELATION_", sd.getRelation()));
     }
 
 }

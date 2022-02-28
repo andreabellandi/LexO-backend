@@ -23,6 +23,8 @@ public class SKOSDeleter implements Data {
     private String source;
     @ApiModelProperty(value = "the object IRI of the relation", allowEmptyValue = false)
     private String target;
+    @ApiModelProperty(value = "the language, if target is literal", allowEmptyValue = true)
+    private String language;
 
     public String getRelation() {
         return relation;
@@ -46,6 +48,14 @@ public class SKOSDeleter implements Data {
 
     public void setTarget(String target) {
         this.target = target;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
     }
 
 }

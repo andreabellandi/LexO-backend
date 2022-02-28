@@ -137,7 +137,21 @@ public class SKOSService extends Service {
                     example = "lexodemo",
                     required = true)
             @QueryParam("key") String key, SKOSDeleter sd) {
-        return Response.status(Response.Status.NOT_IMPLEMENTED).build();
+        if (key.equals("PRINitant19")) {
+            try {
+                skosManager.deleteRelation(sd);
+                return Response.ok()
+                        .type(MediaType.TEXT_PLAIN)
+                        .header("Access-Control-Allow-Headers", "content-type")
+                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                        .build();
+            } catch (ManagerException ex) {
+                java.util.logging.Logger.getLogger(LexiconDeletion.class.getName()).log(Level.SEVERE, null, ex);
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            }
+        } else {
+            return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Deletion denied, wrong key").build();
+        }
     }
 
     @POST
