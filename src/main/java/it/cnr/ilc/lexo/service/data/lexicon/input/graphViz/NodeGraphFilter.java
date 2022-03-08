@@ -20,6 +20,8 @@ public class NodeGraphFilter {
     private String relation;
     @ApiModelProperty(value = "type of the named graph", example = "explicit", allowEmptyValue = true, allowableValues = "explicit, implicit, (empty for both explicit and implicit)")
     private String graph;
+    @ApiModelProperty(value = "the lenght of the relation path", example = "2", allowEmptyValue = true)
+    private int lenght;
 
     public String getRelation() {
         return relation;
@@ -37,5 +39,12 @@ public class NodeGraphFilter {
         this.graph = graph;
     }
 
-    
+    public int getLenght() {
+        return lenght;
+    }
+
+    public void setLenght(int lenght) {
+        this.lenght = lenght;
+    }
+
 }

@@ -123,10 +123,34 @@ public class SparqlGraphViz {
             + "    ?leTarget ontolex:sense ?target ;\n"
             + "           lexinfo:partOfSpeech ?posTarget ;\n"
             + "           rdfs:label ?labelTarget .\n"
-            + "     VALUES (_NODE_VARIABLE_) { (<http://lexica/mylexicon#_NODE_ID_>) }"
+            + "     VALUES (_NODE_VARIABLE_) { (<_NODE_ID_>) }"
             // + "FILTER(regex(str(_NODE_VARIABLE_), \"http://lexica/mylexicon#_NODE_ID_\"))\n"
             + "_GRAPH_"
             + "}";
+
+    public static final String GRAPH_VIZ_NODE_GRAPH_WITH_LENGHT
+            = SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTO.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.SKOS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
+            + "SELECT ?source ?label ?pos ?def ?labelTarget ?target ?posTarget ?defTarget (count(?mid) as ?lenght)\n"
+            + "            WHERE {\n"
+            + "               ?source lexinfo:hyponym* ?mid .\n"
+            + "                               ?mid lexinfo:hyponym ?target  .\n"
+            + "                ?source skos:definition ?def .\n"
+            + "               ?le ontolex:sense ?source ;\n"
+            + "                   lexinfo:partOfSpeech ?pos ;\n"
+            + "                    rdfs:label ?label .\n"
+            + "                ?target skos:definition ?defTarget .\n"
+            + "                ?leTarget ontolex:sense ?target ;\n"
+            + "                       lexinfo:partOfSpeech ?posTarget ;\n"
+            + "                       rdfs:label ?labelTarget .\n"
+            + "                 VALUES (?source) { (<_NODE_ID_>) }\n"
+            + "            }\n"
+            + "GROUP BY ?target ?source ?label ?pos ?def ?labelTarget ?target ?posTarget ?defTarget\n"
+            + "ORDER BY ?lenght";
 
     public static final String GRAPH_VIZ_EDGE_GRAPH
             = SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"

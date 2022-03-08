@@ -12,6 +12,7 @@ import it.cnr.ilc.lexo.service.data.Data;
  * @author andreabellandi
  */
 public class EdgeData implements Data {
+
     private String id;
     private String source;
     private String target;
@@ -19,6 +20,7 @@ public class EdgeData implements Data {
     private String labelSource;
     private String labelTarget;
     private boolean inferred;
+    private int lenght;
 
     public String getId() {
         return id;
@@ -79,12 +81,21 @@ public class EdgeData implements Data {
     public EdgeData() {
     }
 
-    public EdgeData(String id, String source, String target, String labelSource, String labelTarget, boolean inferred) {
+    public int getLenght() {
+        return lenght;
+    }
+
+    public void setLenght(int lenght) {
+        this.lenght = lenght;
+    }
+
+    public EdgeData(String id, String source, String target, String labelSource, String labelTarget, boolean inferred, int lenght) {
         this.id = id;
         this.source = source;
         this.target = target;
         this.labelSource = labelSource;
         this.labelTarget = labelTarget;
         this.inferred = inferred;
+        this.lenght = lenght;
     }
 }
