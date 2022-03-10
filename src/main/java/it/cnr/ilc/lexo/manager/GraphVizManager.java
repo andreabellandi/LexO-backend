@@ -74,7 +74,7 @@ public class GraphVizManager implements Manager, Cached {
                 }
             }
         } else {
-            query = SparqlGraphViz.GRAPH_VIZ_NODE_GRAPH_WITH_LENGHT.replaceAll("_NODE_ID_", namespace + id);
+            query = SparqlGraphViz.GRAPH_VIZ_NODE_GRAPH_WITH_LENGHT.replaceAll("_NODE_ID_", namespace + id).replaceAll("_RELATION_", ngf.getRelation().trim());
         }
         return RDFQueryUtil.evaluateTQuery(query);
     }
