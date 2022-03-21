@@ -31,7 +31,7 @@ public class NodeLinksHelper extends TripleStoreDataHelper<NodeLinks> {
                 SparqlVariable.HYPONYM,
                 SparqlVariable.SYNONYM,
                 SparqlVariable.MERONYM,
-                SparqlVariable.MERONYM_TERM))) {
+                SparqlVariable.HOLONYM))) {
             NodeLinks._Links _links = new NodeLinks._Links();
             _links.setLinkType("incoming");
             _links.setLinkName(link);
@@ -45,7 +45,7 @@ public class NodeLinksHelper extends TripleStoreDataHelper<NodeLinks> {
                 SparqlVariable.HYPONYM,
                 SparqlVariable.SYNONYM,
                 SparqlVariable.MERONYM,
-                SparqlVariable.MERONYM_TERM))) {
+                SparqlVariable.HOLONYM))) {
             NodeLinks._Links _links = new NodeLinks._Links();
             _links.setLinkType("outgoing");
             _links.setLinkName(link);
