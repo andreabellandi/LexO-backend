@@ -26,7 +26,7 @@ public class SwaggerServletConfiguration extends HttpServlet {
         BeanConfig beanConfig = new BeanConfig();
         beanConfig.setBasePath(config.getServletContext().getContextPath() + "/service");
         logger.info("init(): config.getServletContext().getContextPath(): [ " + config.getServletContext().getContextPath() + "/service ]");
-        beanConfig.setTitle("LexO backend API documentation");
+        beanConfig.setTitle("LexO-server API documentation");
         beanConfig.setResourcePackage("it.cnr.ilc.lexo");
         beanConfig.setPrettyPrint(true);
         beanConfig.setScan(true);

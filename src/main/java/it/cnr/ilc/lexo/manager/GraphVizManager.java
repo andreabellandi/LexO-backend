@@ -16,6 +16,7 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.graphViz.EdgeData;
 import it.cnr.ilc.lexo.service.data.lexicon.output.graphViz.Node;
 import it.cnr.ilc.lexo.service.data.lexicon.output.graphViz.NodeData;
 import it.cnr.ilc.lexo.sparql.SparqlGraphViz;
+import it.cnr.ilc.lexo.sparql.SparqlPrefix;
 import it.cnr.ilc.lexo.sparql.SparqlVariable;
 import it.cnr.ilc.lexo.util.RDFQueryUtil;
 import java.util.ArrayList;
@@ -74,7 +75,9 @@ public class GraphVizManager implements Manager, Cached {
                 }
             }
         } else {
-            query = SparqlGraphViz.GRAPH_VIZ_NODE_GRAPH_WITH_LENGHT.replaceAll("_NODE_ID_", namespace + id).replaceAll("_RELATION_", ngf.getRelation().trim());
+            query = SparqlGraphViz.GRAPH_VIZ_NODE_GRAPH_WITH_LENGHT.replaceAll("_NODE_ID_", namespace + id)
+                    .replaceAll("_PATH_LENGHT_", String.valueOf(ngf.getLenght()))
+                    .replaceAll("_RELATION_", SparqlPrefix.LEXINFO.getPrefix() + ngf.getRelation().trim());
         }
         return RDFQueryUtil.evaluateTQuery(query);
     }
@@ -101,88 +104,40 @@ public class GraphVizManager implements Manager, Cached {
             while (tqr.hasNext()) {
                 BindingSet bindingSet = tqr.next();
                 // add source node
-                if (lenght > 0) {
-                    if (Integer.parseInt(bindingSet.getBinding("lenght").getValue().stringValue()) <= lenght) {
-                        if (usem.get(((IRI) bindingSet.getBinding("source").getValue()).getLocalName()) == null) {
-                            NodeData ds = new NodeData(((IRI) bindingSet.getBinding("source").getValue()).getLocalName(),
-                                    ((Literal) bindingSet.getBinding("label").getValue()).getLabel(),
-                                    bindingSet.getBinding("def").getValue().stringValue(),
-                                    ((IRI) bindingSet.getBinding("source").getValue()).stringValue(),
-                                    ((IRI) bindingSet.getBinding("pos").getValue()).getLocalName());
-                            Node ns = new Node(((IRI) bindingSet.getBinding("source").getValue()).getLocalName(), ds);
-                            cytoscape.getNodes().add(ns);
-                            usem.put(((IRI) bindingSet.getBinding("source").getValue()).getLocalName(), ((IRI) bindingSet.getBinding("source").getValue()).getLocalName());
-                        }
-                    }
-                } else {
-                    if (usem.get(((IRI) bindingSet.getBinding("source").getValue()).getLocalName()) == null) {
-                        NodeData ds = new NodeData(((IRI) bindingSet.getBinding("source").getValue()).getLocalName(),
-                                ((Literal) bindingSet.getBinding("label").getValue()).getLabel(),
-                                bindingSet.getBinding("def").getValue().stringValue(),
-                                ((IRI) bindingSet.getBinding("source").getValue()).stringValue(),
-                                ((IRI) bindingSet.getBinding("pos").getValue()).getLocalName());
-                        Node ns = new Node(((IRI) bindingSet.getBinding("source").getValue()).getLocalName(), ds);
-                        cytoscape.getNodes().add(ns);
-                        usem.put(((IRI) bindingSet.getBinding("source").getValue()).getLocalName(), ((IRI) bindingSet.getBinding("source").getValue()).getLocalName());
-                    }
-                }
-                // add target node
-                if (lenght > 0) {
-                    if (Integer.parseInt(bindingSet.getBinding("lenght").getValue().stringValue()) <= lenght) {
-                        if (usem.get(((IRI) bindingSet.getBinding("target").getValue()).getLocalName()) == null) {
-                            NodeData dt = new NodeData(((IRI) bindingSet.getBinding("target").getValue()).getLocalName(),
-                                    ((Literal) bindingSet.getBinding("labelTarget").getValue()).getLabel(),
-                                    bindingSet.getBinding("defTarget").getValue().stringValue(),
-                                    ((IRI) bindingSet.getBinding("target").getValue()).stringValue(),
-                                    ((IRI) bindingSet.getBinding("posTarget").getValue()).getLocalName());
-                            Node nt = new Node(((IRI) bindingSet.getBinding("target").getValue()).getLocalName(), dt);
-                            cytoscape.getNodes().add(nt);
-                            usem.put(((IRI) bindingSet.getBinding("target").getValue()).getLocalName(), ((IRI) bindingSet.getBinding("target").getValue()).getLocalName());
-                        }
-                    }
-                } else {
-                    if (usem.get(((IRI) bindingSet.getBinding("target").getValue()).getLocalName()) == null) {
-                        NodeData dt = new NodeData(((IRI) bindingSet.getBinding("target").getValue()).getLocalName(),
-                                ((Literal) bindingSet.getBinding("labelTarget").getValue()).getLabel(),
-                                bindingSet.getBinding("defTarget").getValue().stringValue(),
-                                ((IRI) bindingSet.getBinding("target").getValue()).stringValue(),
-                                ((IRI) bindingSet.getBinding("posTarget").getValue()).getLocalName());
-                        Node nt = new Node(((IRI) bindingSet.getBinding("target").getValue()).getLocalName(), dt);
-                        cytoscape.getNodes().add(nt);
-                        usem.put(((IRI) bindingSet.getBinding("target").getValue()).getLocalName(), ((IRI) bindingSet.getBinding("target").getValue()).getLocalName());
-                    }
-                }
 
-                if (lenght > 0) {
-                    if (Integer.parseInt(bindingSet.getBinding("lenght").getValue().stringValue()) <= lenght) {
-                        EdgeData e = new EdgeData(((IRI) bindingSet.getBinding("source").getValue()).getLocalName()
-                                + " " + relation + " "
-                                + ((IRI) bindingSet.getBinding("target").getValue()).getLocalName(),
-                                ((IRI) bindingSet.getBinding("source").getValue()).getLocalName(),
-                                ((IRI) bindingSet.getBinding("target").getValue()).getLocalName(),
-                                ((Literal) bindingSet.getBinding("label").getValue()).getLabel(),
-                                ((Literal) bindingSet.getBinding("labelTarget").getValue()).getLabel(),
-                                Integer.parseInt(bindingSet.getBinding("lenght").getValue().stringValue()) != 1,
-                                Integer.parseInt(bindingSet.getBinding("lenght").getValue().stringValue()));
-                        e.setRelationType(relation);
-                        Edge edge = new Edge(e);
-                        cytoscape.getEdges().add(edge);
-                    }
-                } else {
-                    EdgeData e = new EdgeData(((IRI) bindingSet.getBinding("source").getValue()).getLocalName()
-                            + " " + relation + " "
-                            + ((IRI) bindingSet.getBinding("target").getValue()).getLocalName(),
-                            ((IRI) bindingSet.getBinding("source").getValue()).getLocalName(),
-                            ((IRI) bindingSet.getBinding("target").getValue()).getLocalName(),
+                if (usem.get(((IRI) bindingSet.getBinding("source").getValue()).getLocalName()) == null) {
+                    NodeData ds = new NodeData(((IRI) bindingSet.getBinding("source").getValue()).getLocalName(),
                             ((Literal) bindingSet.getBinding("label").getValue()).getLabel(),
-                            ((Literal) bindingSet.getBinding("labelTarget").getValue()).getLabel(),
-                            ((IRI) bindingSet.getBinding("graph").getValue()).getLocalName().contains("implicit"),
-                            0);
-                    e.setRelationType(relation);
-                    Edge edge = new Edge(e);
-                    cytoscape.getEdges().add(edge);
+                            bindingSet.getBinding("def").getValue().stringValue(),
+                            ((IRI) bindingSet.getBinding("source").getValue()).stringValue(),
+                            ((IRI) bindingSet.getBinding("pos").getValue()).getLocalName());
+                    Node ns = new Node(((IRI) bindingSet.getBinding("source").getValue()).getLocalName(), ds);
+                    cytoscape.getNodes().add(ns);
+                    usem.put(((IRI) bindingSet.getBinding("source").getValue()).getLocalName(), ((IRI) bindingSet.getBinding("source").getValue()).getLocalName());
                 }
 
+                // add target node
+                if (usem.get(((IRI) bindingSet.getBinding("target").getValue()).getLocalName()) == null) {
+                    NodeData dt = new NodeData(((IRI) bindingSet.getBinding("target").getValue()).getLocalName(),
+                            ((Literal) bindingSet.getBinding("labelTarget").getValue()).getLabel(),
+                            bindingSet.getBinding("defTarget").getValue().stringValue(),
+                            ((IRI) bindingSet.getBinding("target").getValue()).stringValue(),
+                            ((IRI) bindingSet.getBinding("posTarget").getValue()).getLocalName());
+                    Node nt = new Node(((IRI) bindingSet.getBinding("target").getValue()).getLocalName(), dt);
+                    cytoscape.getNodes().add(nt);
+                    usem.put(((IRI) bindingSet.getBinding("target").getValue()).getLocalName(), ((IRI) bindingSet.getBinding("target").getValue()).getLocalName());
+                }
+                EdgeData e = new EdgeData(((IRI) bindingSet.getBinding("source").getValue()).getLocalName()
+                        + " " + relation + " "
+                        + ((IRI) bindingSet.getBinding("target").getValue()).getLocalName(),
+                        ((IRI) bindingSet.getBinding("source").getValue()).getLocalName(),
+                        ((IRI) bindingSet.getBinding("target").getValue()).getLocalName(),
+                        ((Literal) bindingSet.getBinding("label").getValue()).getLabel(),
+                        ((Literal) bindingSet.getBinding("labelTarget").getValue()).getLabel(),
+                        (bindingSet.getBinding("graph") != null ? ((IRI) bindingSet.getBinding("graph").getValue()).getLocalName().contains("implicit") : null));
+                e.setRelationType(relation);
+                Edge edge = new Edge(e);
+                cytoscape.getEdges().add(edge);
             }
         }
     }

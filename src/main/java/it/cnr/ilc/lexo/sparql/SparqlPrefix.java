@@ -36,6 +36,7 @@ public class SparqlPrefix {
     public static Namespace ONTO = new Namespace("onto:", "http://www.ontotext.com/");
     public static Namespace SESAME = new Namespace("sesame:", "http://www.openrdf.org/schema/sesame#");
     public static Namespace INST = new Namespace("inst:", "http://www.ontotext.com/connectors/lucene/instance#");
+    public static Namespace PATH = new Namespace("path:", "http://www.ontotext.com/path#");
 
     // Ontologies
     public static Namespace RDFS = new Namespace("rdfs:", "http://www.w3.org/2000/01/rdf-schema#");

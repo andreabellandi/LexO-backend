@@ -19,8 +19,7 @@ public class EdgeData implements Data {
     private String relationType;
     private String labelSource;
     private String labelTarget;
-    private boolean inferred;
-    private int lenght;
+    private Boolean inferred;
 
     public String getId() {
         return id;
@@ -70,32 +69,24 @@ public class EdgeData implements Data {
         this.labelTarget = labelTarget;
     }
 
-    public boolean isInferred() {
+    public Boolean isInferred() {
         return inferred;
     }
 
-    public void setInferred(boolean inferred) {
+    public void setInferred(Boolean inferred) {
         this.inferred = inferred;
     }
 
     public EdgeData() {
     }
 
-    public int getLenght() {
-        return lenght;
-    }
 
-    public void setLenght(int lenght) {
-        this.lenght = lenght;
-    }
-
-    public EdgeData(String id, String source, String target, String labelSource, String labelTarget, boolean inferred, int lenght) {
+    public EdgeData(String id, String source, String target, String labelSource, String labelTarget, Boolean inferred) {
         this.id = id;
         this.source = source;
         this.target = target;
         this.labelSource = labelSource;
         this.labelTarget = labelTarget;
         this.inferred = inferred;
-        this.lenght = lenght;
     }
 }
