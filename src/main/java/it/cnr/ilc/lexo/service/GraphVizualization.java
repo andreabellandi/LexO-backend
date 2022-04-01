@@ -114,7 +114,6 @@ public class GraphVizualization extends Service {
             NodeGraphFilter ngf) throws HelperException {
 
         try {
-//            TupleQueryResult incoming = (ngf.getLenght() != null) ? null : graphVizManager.getNodeGraph(id, ngf, true);
             TupleQueryResult incoming = graphVizManager.getNodeGraph(id, ngf, true);
             TupleQueryResult outgoing = graphVizManager.getNodeGraph(id, ngf, false);
             Cytoscape ng = graphVizManager.getNodeGraph(incoming, outgoing, ngf.getRelation());

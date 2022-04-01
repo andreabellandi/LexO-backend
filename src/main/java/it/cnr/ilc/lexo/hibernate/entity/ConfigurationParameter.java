@@ -3,75 +3,41 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package it.cnr.ilc.lexo.service.data.lexicon.input;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import java.util.ArrayList;
+package it.cnr.ilc.lexo.hibernate.entity;
 
 /**
  *
  * @author andreabellandi
  */
-@ApiModel(description = "Input model representing the configuration parameters")
-public class Config {
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 
-    private ArrayList<_Config> configuration;
+@Entity
+public class ConfigurationParameter extends SuperEntity {
 
-    public ArrayList<_Config> getConfiguration() {
-        return configuration;
-    }
+    private String key;
+    private String value;
 
-    public void setConfiguration(ArrayList<_Config> configuration) {
-        this.configuration = configuration;
-    }
-
-    public class _Config {
-
-        private String key;
-        private String value;
-
-        public String getKey() {
-            return key;
-        }
-
-        public void setKey(String key) {
-            this.key = key;
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-        public void setValue(String value) {
-            this.value = value;
-        }
-
-    }
-
-//    @ApiModelProperty(value = "Zotero endpoint")
-//    private String zoteroEndpoint;
-//    @ApiModelProperty(value = "Zotero request prefix")
-//    private String zoteroRequestPrefix;
-//    @ApiModelProperty(value = "Zotero libray ID")
-//    private String zoteroLibrary;
-//    @ApiModelProperty(value = "Zotero API version")
-//    private int zoteroVersion;
+//    public enum LEXICALIZATION_TYPE {
+//        LABEL,
+//        SKOS,
+//        SKOS_XL
+//    }
 //
-//    @ApiModelProperty(value = "base namespace of the lexicon")
+//    private String zoteroEndpoint;
+//    private String zoteroRequestPrefix;
+//    private String zoteroLibrary;
+//    private final int zoteroVersion = 3;
+//
 //    private String lexiconNamespace;
-//    @ApiModelProperty(value = "namespace of lexical concepts")
 //    private String lexicalConceptNamespace;
-//    @ApiModelProperty(value = "namespace of the bibliography")
 //    private String bibliographyNamespace;
-//    @ApiModelProperty(value = "namespace of the ontology")
 //    private String ontologyNamespace;
 //
-//    @ApiModelProperty(value = "lexicalization model", allowableValues = "LABEL, SKOS, SKOS_XL")
+//    @Enumerated(EnumType.STRING)
 //    private String skosLexicalizationModel;
-//    @ApiModelProperty(value = "default language for SKOS elements visualization")
 //    private String skosDefaultLanguageLabel;
-//    @ApiModelProperty(value = "allowed languages for SKOS elements")
 //    private String skosLanguages;
 //
 //    public String getZoteroEndpoint() {
@@ -96,14 +62,6 @@ public class Config {
 //
 //    public void setZoteroLibrary(String zoteroLibrary) {
 //        this.zoteroLibrary = zoteroLibrary;
-//    }
-//
-//    public int getZoteroVersion() {
-//        return zoteroVersion;
-//    }
-//
-//    public void setZoteroVersion(int zoteroVersion) {
-//        this.zoteroVersion = zoteroVersion;
 //    }
 //
 //    public String getLexiconNamespace() {
@@ -161,4 +119,24 @@ public class Config {
 //    public void setSkosLanguages(String skosLanguages) {
 //        this.skosLanguages = skosLanguages;
 //    }
+//
+//    public int getZoteroVersion() {
+//        return zoteroVersion;
+//    }
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
 }
