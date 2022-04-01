@@ -8,8 +8,11 @@ package it.cnr.ilc.lexo.service;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import it.cnr.ilc.lexo.manager.DomainManager;
 import it.cnr.ilc.lexo.service.data.lexicon.input.Config;
+import it.cnr.ilc.lexo.service.data.lexicon.input.ConfigUpdater;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -78,11 +81,11 @@ public class Configuration extends Service {
         }
     }
 
-    @PUT
+    @POST
     @Path("parameter")
     @Produces(MediaType.APPLICATION_JSON)
     @RequestMapping(
-            method = RequestMethod.PUT,
+            method = RequestMethod.POST,
             value = "parameter",
             produces = "application/json; charset=UTF-8")
     @ApiOperation(value = "Configuration parameter",
@@ -94,28 +97,21 @@ public class Configuration extends Service {
                     example = "lexodemo",
                     required = true)
             @QueryParam("key") String key,
-            @ApiParam(
-                    name = "param",
-                    value = "parameter name",
-                    required = true)
-            @QueryParam("param") String param,
-            @ApiParam(
-                    name = "value",
-                    value = "parameter value",
-                    required = true)
-            @QueryParam("value") String value) {
+            ConfigUpdater cu) {
         if (key.equals("PRINitant19")) {
+            DomainManager domainManager = new DomainManager();
+            domainManager.update(account);
             return Response.status(Response.Status.NOT_IMPLEMENTED).type(MediaType.TEXT_PLAIN).entity("Not implemented yet").build();
         } else {
             return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Insertion denied, wrong key").build();
         }
     }
 
-    @PUT
+    @POST
     @Path("parameters")
     @Produces(MediaType.APPLICATION_JSON)
     @RequestMapping(
-            method = RequestMethod.PUT,
+            method = RequestMethod.POST,
             value = "parameters",
             produces = "application/json; charset=UTF-8")
     @ApiOperation(value = "Configuration parameters",

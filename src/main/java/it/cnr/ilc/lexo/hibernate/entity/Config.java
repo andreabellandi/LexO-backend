@@ -3,41 +3,38 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package it.cnr.ilc.lexo.service.data.lexicon.input;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+package it.cnr.ilc.lexo.hibernate.entity;
 
 /**
  *
  * @author andreabellandi
  */
-@ApiModel(description = "Input model representing the configuration parameters")
-public class Config {
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 
-    @ApiModelProperty(value = "Zotero endpoint")
+@Entity
+public class Config extends SuperEntity {
+
+    public enum LEXICALIZATION_TYPE {
+        LABEL,
+        SKOS,
+        SKOS_XL
+    }
+
     private String zoteroEndpoint;
-    @ApiModelProperty(value = "Zotero request prefix")
     private String zoteroRequestPrefix;
-    @ApiModelProperty(value = "Zotero libray ID")
     private String zoteroLibrary;
-    @ApiModelProperty(value = "Zotero API version")
-    private int zoteroVersion;
+    private final int zoteroVersion = 3;
 
-    @ApiModelProperty(value = "base namespace of the lexicon")
     private String lexiconNamespace;
-    @ApiModelProperty(value = "namespace of lexical concepts")
     private String lexicalConceptNamespace;
-    @ApiModelProperty(value = "namespace of the bibliography")
     private String bibliographyNamespace;
-    @ApiModelProperty(value = "namespace of the ontology")
     private String ontologyNamespace;
 
-    @ApiModelProperty(value = "lexicalization model", allowableValues = "LABEL, SKOS, SKOS_XL")
+    @Enumerated(EnumType.STRING)
     private String skosLexicalizationModel;
-    @ApiModelProperty(value = "default language for SKOS elements visualization")
     private String skosDefaultLanguageLabel;
-    @ApiModelProperty(value = "allowed languages for SKOS elements")
     private String skosLanguages;
 
     public String getZoteroEndpoint() {
@@ -62,14 +59,6 @@ public class Config {
 
     public void setZoteroLibrary(String zoteroLibrary) {
         this.zoteroLibrary = zoteroLibrary;
-    }
-
-    public int getZoteroVersion() {
-        return zoteroVersion;
-    }
-
-    public void setZoteroVersion(int zoteroVersion) {
-        this.zoteroVersion = zoteroVersion;
     }
 
     public String getLexiconNamespace() {
@@ -126,6 +115,10 @@ public class Config {
 
     public void setSkosLanguages(String skosLanguages) {
         this.skosLanguages = skosLanguages;
+    }
+
+    public int getZoteroVersion() {
+        return zoteroVersion;
     }
 
 }

@@ -114,9 +114,10 @@ public class GraphVizualization extends Service {
             NodeGraphFilter ngf) throws HelperException {
 
         try {
-            TupleQueryResult incoming = (ngf.getLenght() != 0) ? null : graphVizManager.getNodeGraph(id, ngf, true);
+//            TupleQueryResult incoming = (ngf.getLenght() != null) ? null : graphVizManager.getNodeGraph(id, ngf, true);
+            TupleQueryResult incoming = graphVizManager.getNodeGraph(id, ngf, true);
             TupleQueryResult outgoing = graphVizManager.getNodeGraph(id, ngf, false);
-            Cytoscape ng = graphVizManager.getNodeGraph(incoming, outgoing, ngf.getRelation(), ngf.getLenght());
+            Cytoscape ng = graphVizManager.getNodeGraph(incoming, outgoing, ngf.getRelation());
             ObjectMapper mapper = new ObjectMapper();
             String json = mapper.writeValueAsString(ng);
             return Response.ok(json)
@@ -147,8 +148,10 @@ public class GraphVizualization extends Service {
             @QueryParam("key") String key,
             EdgeGraphFilter egf) throws HelperException {
         TupleQueryResult edge = graphVizManager.getEdgeGraph(egf);
-        SenseEdgeSummary ses = senseEdgeSummaryHelper.newData(edge);
-        String json = senseEdgeSummaryHelper.toJson(ses);
+        String json = "";
+        if (edge.hasNext()) {
+            json = senseEdgeSummaryHelper.toJson(senseEdgeSummaryHelper.newData(edge));
+        }
         return Response.ok(json)
                 .type(MediaType.TEXT_PLAIN)
                 .header("Access-Control-Allow-Headers", "content-type")

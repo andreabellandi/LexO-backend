@@ -61,7 +61,7 @@ public class GraphVizManager implements Manager, Cached {
 
     public TupleQueryResult getNodeGraph(String id, NodeGraphFilter ngf, boolean in) {
         String graph = "", query = "";
-        if (ngf.getLenght() == 0) {
+        if (ngf.getLenght() == null) {
             if (ngf.getGraph() != null) {
                 if (!ngf.getGraph().isEmpty()) {
                     if (ngf.getGraph().equals("implicit")) {
@@ -69,15 +69,19 @@ public class GraphVizManager implements Manager, Cached {
                     } else {
                         graph = "FILTER(regex(str(?graph), \"http://www.ontotext.com/explicit\"))\n";
                     }
-                    query = SparqlGraphViz.GRAPH_VIZ_NODE_GRAPH.replaceAll("_NODE_ID_", namespace + id).replace("_RELATION_", ngf.getRelation().trim())
-                            .replace("_NODE_VARIABLE_", (in ? "?" + SparqlVariable.TARGET : "?" + SparqlVariable.SOURCE))
-                            .replace("_GRAPH_", graph);
                 }
             }
+            query = SparqlGraphViz.GRAPH_VIZ_NODE_GRAPH.replaceAll("_NODE_ID_", namespace + id).replace("_RELATION_", ngf.getRelation().trim())
+                    .replace("_NODE_VARIABLE_", (in ? "?" + SparqlVariable.TARGET : "?" + SparqlVariable.SOURCE))
+                    .replace("_GRAPH_", graph);
         } else {
-            query = SparqlGraphViz.GRAPH_VIZ_NODE_GRAPH_WITH_LENGHT.replaceAll("_NODE_ID_", namespace + id)
-                    .replaceAll("_PATH_LENGHT_", String.valueOf(ngf.getLenght()))
-                    .replaceAll("_RELATION_", SparqlPrefix.LEXINFO.getPrefix() + ngf.getRelation().trim());
+            if (ngf.getLenght() > 0) {
+                query = SparqlGraphViz.GRAPH_VIZ_NODE_GRAPH_WITH_LENGHT.replaceAll("_NODE_ID_", namespace + id)
+                        .replaceAll("_PATH_LENGHT_", String.valueOf(ngf.getLenght()))
+                        .replaceAll("_RELATION_", SparqlPrefix.LEXINFO.getPrefix() + ngf.getRelation().trim());
+            } else {
+                return null;
+            }
         }
         return RDFQueryUtil.evaluateTQuery(query);
     }
@@ -89,17 +93,17 @@ public class GraphVizManager implements Manager, Cached {
         return RDFQueryUtil.evaluateTQuery(query);
     }
 
-    public Cytoscape getNodeGraph(TupleQueryResult in, TupleQueryResult out, String relation, int lenght) {
+    public Cytoscape getNodeGraph(TupleQueryResult in, TupleQueryResult out, String relation) {
         HashMap<String, String> usem = new HashMap<>();
         Cytoscape cytoscape = new Cytoscape();
         cytoscape.setNodes(new ArrayList<>());
         cytoscape.setEdges(new ArrayList<>());
-        addElementToGraph(in, cytoscape, usem, relation, lenght);
-        addElementToGraph(out, cytoscape, usem, relation, lenght);
+        addElementToGraph(in, cytoscape, usem, relation);
+        addElementToGraph(out, cytoscape, usem, relation);
         return cytoscape;
     }
 
-    private void addElementToGraph(TupleQueryResult tqr, Cytoscape cytoscape, HashMap<String, String> usem, String relation, int lenght) {
+    private void addElementToGraph(TupleQueryResult tqr, Cytoscape cytoscape, HashMap<String, String> usem, String relation) {
         if (tqr != null) {
             while (tqr.hasNext()) {
                 BindingSet bindingSet = tqr.next();
