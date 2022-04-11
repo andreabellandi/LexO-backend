@@ -6,16 +6,13 @@
 package it.cnr.ilc.lexo.manager;
 
 import it.cnr.ilc.lexo.HibernateUtil;
-import it.cnr.ilc.lexo.LexOProperties;
 import it.cnr.ilc.lexo.hibernate.entity.ConfigurationParameter;
 import it.cnr.ilc.lexo.service.data.lexicon.input.Config;
 import it.cnr.ilc.lexo.service.data.lexicon.input.ConfigUpdater;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import org.hibernate.HibernateException;
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Restrictions;
 
 /**
  *
@@ -33,17 +30,28 @@ public class ConfigurationManager implements Manager, Cached {
     public List<ConfigurationParameter> loadConfigurations() {
         return HibernateUtil.getSession().createCriteria(ConfigurationParameter.class).list();
     }
-
+    
+    public ConfigurationParameter loadConfigParameter(String key) {
+        Criteria criteria = HibernateUtil.getSession().createCriteria(ConfigurationParameter.class);
+        criteria.add(Restrictions.eq("key", key));
+        List<ConfigurationParameter> list = criteria.list();
+        return list.isEmpty() ? null : list.get(0);
+    }
+    
     public Date updateConfiguration(ConfigUpdater cu) throws ManagerException {
-        ConfigurationParameter cp = new ConfigurationParameter();
-        cp.setKey(cu.getParam());
-        cp.setValue(cu.getValue());
-        try {
-            domainManager.update(cp);
-        } catch (HibernateException ex) {
-            throw new ManagerException("something was wrong: " + ex.getMessage());
+        ConfigurationParameter cp = loadConfigParameter(cu.getParam());
+        if (cp == null) {
+            throw new ManagerException(cu.getParam() + " is not a valid configuration parameter");
+        } else {
+            ConfigurationParameter _cp = new ConfigurationParameter(cu.getParam(), cu.getValue());
+            domainManager.update(_cp);
+            return _cp.getTime();
         }
-        return cp.getTime();
+    }
+    
+    public List<Config> getConfigurations() {
+        // TODO
+        return null;
     }
 
 }

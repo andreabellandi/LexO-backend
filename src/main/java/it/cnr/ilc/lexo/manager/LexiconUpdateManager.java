@@ -668,7 +668,7 @@ public final class LexiconUpdateManager implements Manager, Cached {
                     setPrefixes(lru, SparqlPrefix.ONTOLEX.getUri(), "", "");
                 }
             } else if (lru.getRelation().equals(EnumUtil.LinguisticRelationConceptRel.isConceptOf.toString())) {
-                 throw new ManagerException("still to implement");
+                throw new ManagerException("still to implement");
             }
         } else {
             throw new ManagerException(lru.getType() + " is not a valid relation type");
@@ -803,6 +803,17 @@ public final class LexiconUpdateManager implements Manager, Cached {
                     "",
                     "");
             _id = SparqlPrefix.LEX.getUri() + id;
+        } else if (gru.getType().equals(EnumUtil.LinguisticRelation.Extension.toString())) {
+            // TEMPORARY SOLUTION: extensions manager will be developed
+            if (gru.getRelation().equals("stemType")) {
+                setPrefixes(gru, true,
+                        SparqlPrefix.ITANT.getUri(),
+                        "",
+                        "");
+                _id = SparqlPrefix.LEX.getUri() + id;
+            } else {
+                throw new ManagerException("Extension not supported");
+            }
         } else {
             throw new ManagerException(gru.getType() + " is not a valid relation type");
         }

@@ -40,6 +40,7 @@ public class LexicalEntryCoreHelper extends TripleStoreDataHelper<LexicalEntryCo
         data.setCreationDate(getStringValue(bs, SparqlVariable.CREATION_DATE));
         data.setRevisionDate(getStringValue(bs, SparqlVariable.REVISION_DATE));
         data.setCompletionDate(getStringValue(bs, SparqlVariable.COMPLETION_DATE));
+        data.setStemType(getStringValue(bs, "stemType"));
     }
 
     @Override

@@ -369,6 +369,7 @@ public class EnumUtil {
         ConceptRef("conceptRef"),
         EtymologicalLink("etyLink"),
         Decomp("decomp"),
+        Extension("extension"),
         //        Cognate("cognate"),
         ConceptRel("conceptRel");
 
@@ -389,6 +390,7 @@ public class EnumUtil {
         Reference("reference"),
         Bibliography("bibliography"),
         Multimedia("multimedia"),
+        Confidence("confidence"),
         Attestation("attestation"),
         ConceptRel("conceptRel"),
         Decomp("decomp");
@@ -422,6 +424,22 @@ public class EnumUtil {
         }
 
     }
+    
+//    public static enum GenericRelationConfidence {
+//        confidence("confidence");
+//
+//        private final String genericRelationConfidence;
+//
+//        private GenericRelationConfidence(String genericRelationConfidence) {
+//            this.genericRelationConfidence = genericRelationConfidence;
+//        }
+//
+//        @Override
+//        public String toString() {
+//            return this.genericRelationConfidence;
+//        }
+//
+//    }
 
     public static enum PositionRelation {
         rdfListPosition("rdf:_n");

@@ -31,6 +31,9 @@ public class LexicalEntryCore implements Data {
     private String pos;
     @ApiModelProperty(value = "language", example = "it", reference = "https://www.loc.gov/standards/iso639-2/php/code_list.php")
     private String language;
+    // TEMPORARY SOLUTION: custom field
+    @ApiModelProperty(value = "stemType")
+    private String stemType;
     @ApiModelProperty(value = "common morphological traits of a lexical entry")
     private ArrayList<Morphology> morphology;
 //    @ApiModelProperty(value = "IRI of the concept denoted by", example = "namespace:conceptID")
@@ -209,6 +212,14 @@ public class LexicalEntryCore implements Data {
 
     public void setRevisionDate(String revisionDate) {
         this.revisionDate = revisionDate;
+    }
+
+    public String getStemType() {
+        return stemType;
+    }
+
+    public void setStemType(String stemType) {
+        this.stemType = stemType;
     }
     
 }

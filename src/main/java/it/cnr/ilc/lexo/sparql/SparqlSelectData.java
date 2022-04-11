@@ -484,12 +484,14 @@ public class SparqlSelectData {
             + SparqlPrefix.LUC.getSparqlPrefix() + "\n"
             + SparqlPrefix.SESAME.getSparqlPrefix() + "\n"
             + SparqlPrefix.VS.getSparqlPrefix() + "\n"
+             + SparqlPrefix.ITANT.getSparqlPrefix() + "\n"
             + "SELECT ?" + SparqlVariable.LEXICAL_ENTRY
             + " ?" + SparqlVariable.LEXICAL_ENTRY_TYPE
             + " ?" + SparqlVariable.LABEL
             + " ?" + SparqlVariable.LEXICAL_ENTRY_REVISOR
             + " ?" + SparqlVariable.LEXICAL_ENTRY_POS
             + " ?" + SparqlVariable.LEXICAL_ENTRY_STATUS
+            + " ?stemType" 
             //            + " ?" + SparqlVariable.CONCEPT
             + " ?" + SparqlVariable.LEXICAL_ENTRY_CREATION_AUTHOR
             + " ?" + SparqlVariable.LEXICAL_ENTRY_COMPLETING_AUTHOR
@@ -511,6 +513,7 @@ public class SparqlSelectData {
             + "                rdfs:label ?" + SparqlVariable.LABEL + ".\n"
             + "    FILTER(!STRSTARTS(STR(?" + SparqlVariable.LEXICAL_ENTRY_TYPE + "), str(owl:)))\n"
             + "    OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " dct:created ?" + SparqlVariable.CREATION_DATE + "} .\n"
+            + "    OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " itant:stemType ?stemType} .\n"
             + "    OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " dct:dateSubmitted ?" + SparqlVariable.COMPLETION_DATE + "} .\n"
             + "    OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " dct:dateAccepted ?" + SparqlVariable.REVISION_DATE + "} .\n"
             + "    OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " dct:modified ?" + SparqlVariable.LAST_UPDATE + "} .\n"
@@ -546,7 +549,8 @@ public class SparqlSelectData {
             + " ?" + SparqlVariable.COMPLETION_DATE
             + " ?" + SparqlVariable.CREATION_DATE
             + " ?" + SparqlVariable.REVISION_DATE
-            + " ?" + SparqlVariable.LAST_UPDATE;
+            + " ?" + SparqlVariable.LAST_UPDATE
+            + " ?stemType";
 
     public static final String DATA_FORM_CORE
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"

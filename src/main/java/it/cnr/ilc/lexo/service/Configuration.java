@@ -35,34 +35,6 @@ public class Configuration extends Service {
     private final ConfigurationManager configManager = ManagerFactory.getManager(ConfigurationManager.class);
 
     @GET
-    @Path("parameter")
-    @Produces(MediaType.APPLICATION_JSON)
-    @RequestMapping(
-            method = RequestMethod.GET,
-            value = "parameter",
-            produces = "application/json; charset=UTF-8")
-    @ApiOperation(value = "Configuration parameter",
-            notes = "This method returns a configuration parameter")
-    public Response parameter(
-            @ApiParam(
-                    name = "key",
-                    value = "authentication token",
-                    example = "lexodemo",
-                    required = true)
-            @QueryParam("key") String key,
-            @ApiParam(
-                    name = "param",
-                    value = "parameter name",
-                    required = true)
-            @QueryParam("param") String param) {
-        if (key.equals("PRINitant19")) {
-            return Response.status(Response.Status.NOT_IMPLEMENTED).type(MediaType.TEXT_PLAIN).entity("Not implemented yet").build();
-        } else {
-            return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Insertion denied, wrong key").build();
-        }
-    }
-
-    @GET
     @Path("parameters")
     @Produces(MediaType.APPLICATION_JSON)
     @RequestMapping(
@@ -114,27 +86,4 @@ public class Configuration extends Service {
         }
     }
 
-    @POST
-    @Path("parameters")
-    @Produces(MediaType.APPLICATION_JSON)
-    @RequestMapping(
-            method = RequestMethod.POST,
-            value = "parameters",
-            produces = "application/json; charset=UTF-8")
-    @ApiOperation(value = "Configuration parameters",
-            notes = "This method sets all the configuration parameters")
-    public Response parametersSetup(
-            @ApiParam(
-                    name = "key",
-                    value = "authentication token",
-                    example = "lexodemo",
-                    required = true)
-            @QueryParam("key") String key,
-            Config config) {
-        if (key.equals("PRINitant19")) {
-            return Response.status(Response.Status.NOT_IMPLEMENTED).type(MediaType.TEXT_PLAIN).entity("Not implemented yet").build();
-        } else {
-            return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Insertion denied, wrong key").build();
-        }
-    }
 }
