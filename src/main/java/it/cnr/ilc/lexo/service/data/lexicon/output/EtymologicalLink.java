@@ -49,6 +49,16 @@ public class EtymologicalLink implements Data {
     @ApiModelProperty(value = "etymology last update")
     private String lastUpdate;
 
+    private double confidence;
+
+    public double getConfidence() {
+        return confidence;
+    }
+
+    public void setConfidence(double confidence) {
+        this.confidence = confidence;
+    }
+
     public boolean isExternalIRI() {
         return externalIRI;
     }

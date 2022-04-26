@@ -33,6 +33,7 @@ public class FormItemsHelper extends TripleStoreDataHelper<FormItem> {
         data.setLexicalEntryInstanceName(getLocalName(bs, SparqlVariable.LEXICAL_ENTRY));
         data.setTargetSenseInstanceName(getLocalName(bs, SparqlVariable.TARGET));
         data.setTargetSense(getStringValue(bs, SparqlVariable.TARGET));
+        data.setConfidence(getDoubleNumber(bs, "confidence"));
     }
 
     @Override

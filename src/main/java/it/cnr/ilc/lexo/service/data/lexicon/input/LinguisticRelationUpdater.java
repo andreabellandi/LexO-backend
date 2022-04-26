@@ -16,7 +16,7 @@ import io.swagger.annotations.ApiModelProperty;
 public class LinguisticRelationUpdater {
 
     @ApiModelProperty(value = "the type of relation", example = "morphology", allowEmptyValue = false,
-            allowableValues = "morphology, conceptRef, lexicalRel, senseRel, conceptRel, etyLink")
+            allowableValues = "morphology, decomp, conceptRef, lexicalRel, senseRel, conceptRel, etyLink")
     private String type;
     @ApiModelProperty(value = "realtion name", example = "partOfSpeech", allowEmptyValue = false)
     private String relation;

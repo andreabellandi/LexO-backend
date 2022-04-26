@@ -306,7 +306,7 @@ public class EnumUtil {
 
     public static enum EtymologyAttributes {
         Note("note"),
-        Confidence("confidence"),
+//        Confidence("confidence"),
         HypothesisOf("hypothesisOf"),
         Label("label");
 
@@ -391,6 +391,7 @@ public class EnumUtil {
         Bibliography("bibliography"),
         Multimedia("multimedia"),
         Confidence("confidence"),
+        Extension("extension"),
         Attestation("attestation"),
         ConceptRel("conceptRel"),
         Decomp("decomp");
@@ -425,21 +426,22 @@ public class EnumUtil {
 
     }
     
-//    public static enum GenericRelationConfidence {
-//        confidence("confidence");
-//
-//        private final String genericRelationConfidence;
-//
-//        private GenericRelationConfidence(String genericRelationConfidence) {
-//            this.genericRelationConfidence = genericRelationConfidence;
-//        }
-//
-//        @Override
-//        public String toString() {
-//            return this.genericRelationConfidence;
-//        }
-//
-//    }
+    public static enum GenericRelationConfidence {
+        confidence("confidence"),
+        translationConfidence("translationConfidence");
+
+        private final String genericRelationConfidence;
+
+        private GenericRelationConfidence(String genericRelationConfidence) {
+            this.genericRelationConfidence = genericRelationConfidence;
+        }
+
+        @Override
+        public String toString() {
+            return this.genericRelationConfidence;
+        }
+
+    }
 
     public static enum PositionRelation {
         rdfListPosition("rdf:_n");

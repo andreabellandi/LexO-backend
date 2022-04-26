@@ -46,7 +46,18 @@ public class FormItem implements Data {
     private String targetSense;
     private String targetSenseInstanceName;
 
+    @ApiModelProperty(value = "if the form is certain")
+    private double confidence;
+
     public FormItem() {
+    }
+
+    public double getConfidence() {
+        return confidence;
+    }
+
+    public void setConfidence(double confidence) {
+        this.confidence = confidence;
     }
 
     public ArrayList<Morphology> getMorphology() {

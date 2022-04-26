@@ -28,6 +28,7 @@ public class FormHelper extends TripleStoreDataHelper<Form> {
         data.setLexicalEntryInstanceName(getLocalName(bs, SparqlVariable.LEXICAL_ENTRY));
         data.setTargetSenseInstanceName(getLocalName(bs, SparqlVariable.SENSE));
 //        data.setTargetSense(getStringValue(bs, SparqlVariable.SENSE));
+data.setConfidence(getDoubleNumber(bs, "confidence"));
         data.setFormType(getLocalName(bs, SparqlVariable.FORM_TYPE));
         if (getLocalName(bs, SparqlVariable.FORM_TYPE).equals("canonicalForm")) {
             data.setDefinition(getStringValue(bs, SparqlVariable.SENSE_DEFINITION));

@@ -31,6 +31,18 @@ public class FormByLexicalEntry implements Data {
     private String lexicalEntry;
     @ApiModelProperty(value = "lexical entry short IRI", example = "MUSaccedereVERB")
     private String lexicalEntryInstanceName;
+    
+    private double confidence;
+
+    public double getConfidence() {
+        return confidence;
+    }
+
+    public void setConfidence(double confidence) {
+        this.confidence = confidence;
+    }
+    
+    
 
     public FormByLexicalEntry() {
     }

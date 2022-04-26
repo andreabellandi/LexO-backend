@@ -83,11 +83,11 @@ public abstract class TripleStoreDataHelper<D extends Data> extends Helper<D> {
     }
 
     public int getIntegerNumber(BindingSet bs, String variable) {
-        return (bs.getBinding(variable) != null) ? Integer.parseInt(bs.getBinding(variable).getValue().stringValue()) : 0;
+        return (bs.getBinding(variable) != null) ? Integer.parseInt(bs.getBinding(variable).getValue().stringValue()) : -1;
     }
 
     public double getDoubleNumber(BindingSet bs, String variable) {
-        return (bs.getBinding(variable) != null) ? Double.parseDouble(bs.getBinding(variable).getValue().stringValue()) : 0;
+        return (bs.getBinding(variable) != null) ? Double.parseDouble(bs.getBinding(variable).getValue().stringValue()) : -1;
     }
 
     public boolean isInferred(BindingSet bs, String variable) {

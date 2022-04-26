@@ -17,7 +17,7 @@ import it.cnr.ilc.lexo.service.data.Data;
 public class EtymologyUpdater implements Data {
 
     @ApiModelProperty(value = "etymology relation/attribute", example = "label", allowEmptyValue = false,
-            allowableValues = "note, confidence, hypothesisOf, label")
+            allowableValues = "note, hypothesisOf, label")
     private String relation;
     @ApiModelProperty(value = "realtion/attribute value", example = "test", allowEmptyValue = false)
     private String value;

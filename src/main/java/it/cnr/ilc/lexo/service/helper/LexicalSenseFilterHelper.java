@@ -9,11 +9,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import it.cnr.ilc.lexo.Constant;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalEntryFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalSenseItem;
-import it.cnr.ilc.lexo.service.data.lexicon.output.Property;
 import it.cnr.ilc.lexo.sparql.SparqlVariable;
-import java.util.ArrayList;
-import java.util.List;
-import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Literal;
 import org.eclipse.rdf4j.query.BindingSet;
 
@@ -35,6 +31,7 @@ public class LexicalSenseFilterHelper extends TripleStoreDataHelper<LexicalSense
         data.setSenseInstanceName(getStringValue(bs, SparqlVariable.SENSE_INSTANCE_NAME));
         data.setCreator(((bs.getBinding(SparqlVariable.LEXICAL_ENTRY_CREATION_AUTHOR) != null) ? bs.getBinding(SparqlVariable.LEXICAL_ENTRY_CREATION_AUTHOR).getValue().stringValue() : ""));
         data.setDefinition(definition);
+        data.setConfidence(getDoubleNumber(bs, "confidence"));
         data.setLabel(!definition.isEmpty() ? name : Constant.NO_SENSE_DEFINITION);
         data.setNote(((bs.getBinding(SparqlVariable.NOTE) != null) ? bs.getBinding(SparqlVariable.NOTE).getValue().stringValue() : ""));
         data.setUsage(((bs.getBinding(SparqlVariable.SENSE_USAGE) != null) ? bs.getBinding(SparqlVariable.SENSE_USAGE).getValue().stringValue() : ""));

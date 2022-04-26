@@ -5,7 +5,6 @@
  */
 package it.cnr.ilc.lexo.service.helper;
 
-import it.cnr.ilc.lexo.service.data.lexicon.output.Component;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ComponentItem;
 import it.cnr.ilc.lexo.sparql.SparqlVariable;
 import org.eclipse.rdf4j.query.BindingSet;
@@ -26,6 +25,7 @@ public class ComponentFilterHelper extends TripleStoreDataHelper<ComponentItem> 
         data.setComponent(getStringValue(bs, SparqlVariable.COMPONENT));
         data.setComponentInstanceName(getLocalName(bs, SparqlVariable.COMPONENT));
         data.setPosition(getComponentPosition(getStringValue(bs, SparqlVariable.COMPONENT_POSITION)));
+        data.setConfidence(getDoubleNumber(bs, "confidence"));
     }
 
     @Override

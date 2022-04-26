@@ -518,9 +518,11 @@ public final class LexiconUpdateManager implements Manager, Cached {
         validateEtymologyAttribute(eu.getRelation());
         if (eu.getRelation().equals(EnumUtil.EtymologyAttributes.Note.toString())) {
             return updateEtymology(id, SparqlPrefix.SKOS.getPrefix() + eu.getRelation(), "\"" + eu.getValue() + "\"");
-        } else if (eu.getRelation().equals(EnumUtil.EtymologyAttributes.Confidence.toString())) {
-            return updateEtymology(id, SparqlPrefix.LEXINFO.getPrefix() + eu.getRelation(), Float.toString(Float.parseFloat(eu.getValue())));
-        } else if (eu.getRelation().equals(EnumUtil.EtymologyAttributes.Label.toString())) {
+        } 
+//        else if (eu.getRelation().equals(EnumUtil.EtymologyAttributes.Confidence.toString())) {
+//            return updateEtymology(id, SparqlPrefix.LEXINFO.getPrefix() + eu.getRelation(), Float.toString(Float.parseFloat(eu.getValue())));
+//        } 
+        else if (eu.getRelation().equals(EnumUtil.EtymologyAttributes.Label.toString())) {
             return updateEtymology(id, SparqlPrefix.RDFS.getPrefix() + eu.getRelation(), "\"" + eu.getValue() + "\"");
         } else if (eu.getRelation().equals(EnumUtil.EtymologyAttributes.HypothesisOf.toString())) {
             return updateEtymology(id, SparqlPrefix.RDFS.getPrefix() + "comment", //eu.getRelation(),
@@ -803,7 +805,7 @@ public final class LexiconUpdateManager implements Manager, Cached {
                     "",
                     "");
             _id = SparqlPrefix.LEX.getUri() + id;
-        } else if (gru.getType().equals(EnumUtil.LinguisticRelation.Extension.toString())) {
+        } else if (gru.getType().equals(EnumUtil.GenericRelation.Extension.toString())) {
             // TEMPORARY SOLUTION: extensions manager will be developed
             if (gru.getRelation().equals("stemType")) {
                 setPrefixes(gru, true,
@@ -813,6 +815,11 @@ public final class LexiconUpdateManager implements Manager, Cached {
                 _id = SparqlPrefix.LEX.getUri() + id;
             } else {
                 throw new ManagerException("Extension not supported");
+            }
+        } else if (gru.getType().equals(EnumUtil.GenericRelation.Confidence.toString())) {
+            if (gru.getRelation().equals(EnumUtil.GenericRelationConfidence.confidence.toString())) {
+            gru.setRelation("<" + SparqlPrefix.LEXINFO.getUri() + "confidence>");
+            _id = SparqlPrefix.LEX.getUri() + id;
             }
         } else {
             throw new ManagerException(gru.getType() + " is not a valid relation type");
@@ -836,14 +843,17 @@ public final class LexiconUpdateManager implements Manager, Cached {
 
     public String createGenericRelation(String id, String relation, String valueToInsert) throws ManagerException, UpdateExecutionException {
         // TODO: it should be verified if the relation can be applied to the id type (for example, sameAs must link same types)
-        return updateGenericRelation(SparqlInsertData.CREATE_GENERIC_RELATION, id, relation,
-                valueToInsert, "?" + SparqlVariable.TARGET);
+        return updateGenericRelation(SparqlInsertData.CREATE_GENERIC_RELATION, id, 
+                relation,
+                relation.equals(EnumUtil.GenericRelationConfidence.confidence.toString()) ? Float.toString(Float.parseFloat(valueToInsert)) : valueToInsert, "?" + SparqlVariable.TARGET);
     }
 
     public String updateGenericRelation(String id, String relation, String valueToInsert, String currentValue) throws ManagerException, UpdateExecutionException {
         if (ManagerFactory.getManager(UtilityManager.class).existsGenericRelation(id, relation, currentValue)) {
-            return updateGenericRelation(SparqlUpdateData.UPDATE_GENERIC_RELATION, id, relation,
-                    valueToInsert, currentValue);
+            return updateGenericRelation(SparqlUpdateData.UPDATE_GENERIC_RELATION, id, 
+                    relation,
+                    relation.equals(EnumUtil.GenericRelationConfidence.confidence.toString()) ? Float.toString(Float.parseFloat(valueToInsert)) : valueToInsert, 
+                    relation.equals(EnumUtil.GenericRelationConfidence.confidence.toString()) ? Float.toString(Float.parseFloat(currentValue)) : currentValue);
         } else {
             throw new ManagerException("IRI " + id + " does not exist or <" + id + ", " + relation + ", " + currentValue + "> does not exist");
         }

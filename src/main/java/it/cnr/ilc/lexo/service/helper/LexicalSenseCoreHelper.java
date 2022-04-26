@@ -5,8 +5,6 @@
  */
 package it.cnr.ilc.lexo.service.helper;
 
-import it.cnr.ilc.lexo.service.data.lexicon.output.FormCore;
-import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalSenseCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Morphology;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Property;
@@ -33,6 +31,7 @@ public class LexicalSenseCoreHelper extends TripleStoreDataHelper<LexicalSenseCo
         data.setSenseInstanceName(getLocalName(bs, SparqlVariable.SENSE));
         data.setUsage(getStringValue(bs, SparqlVariable.SENSE_USAGE));
         data.setTopic(getStringValue(bs, SparqlVariable.SENSE_TOPIC));
+        data.setConfidence(getDoubleNumber(bs, "confidence"));
         List<Property> properties = new ArrayList();
         properties.add(new Property(SparqlVariable.SENSE_DEFINITION, getStringValue(bs, SparqlVariable.SENSE_DEFINITION)));
         properties.add(new Property(SparqlVariable.SENSE_DESCRIPTION, getStringValue(bs, SparqlVariable.SENSE_DESCRIPTION)));

@@ -153,6 +153,10 @@ public class LexiconDataManager implements Manager, Cached {
     private String createFilter(String lexicalEntryID) {
         return "lexicalEntryIRI:" + "\\\"" + namespace + lexicalEntryID + "\\\"";
     }
+    
+    private String createComponentFilter(String compID) {
+        return "ComponentIRI:" + "\\\"" + namespace + compID + "\\\"";
+    }
 
     private String getSearchField(String formType, String textSearch) {
         return formType.isEmpty() ? "lexicalEntryLabel:" + textSearch + " OR writtenCanonicalForm:" + textSearch + " OR writtenOtherForm:" + textSearch
@@ -236,7 +240,7 @@ public class LexiconDataManager implements Manager, Cached {
     }
     
     public TupleQueryResult getCorrespondsTo(String compID) {
-        String query = SparqlSelectData.DATA_CORRESPONDS_TO.replace("[FILTER]", createFilter(compID))
+        String query = SparqlSelectData.DATA_CORRESPONDS_TO.replace("[FILTER]", createComponentFilter(compID))
                 .replace("_TYPE_", "")
                 .replace("[LIMIT]", "1")
                 .replace("[OFFSET]", "0");

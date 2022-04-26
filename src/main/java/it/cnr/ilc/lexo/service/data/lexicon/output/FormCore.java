@@ -41,6 +41,19 @@ public class FormCore implements Data {
     private String creationDate;
     @ApiModelProperty(value = "form last update")
     private String lastUpdate;
+    
+    @ApiModelProperty(value = "if the form is certain")
+    private double confidence;
+
+    public double getConfidence() {
+        return confidence;
+    }
+
+    public void setConfidence(double confidence) {
+        this.confidence = confidence;
+    }
+    
+    
 
     public String getForm() {
         return form;

@@ -36,6 +36,17 @@ public class Component implements Data {
     @ApiModelProperty(value = "component last update")
     private String lastUpdate;
 
+    @ApiModelProperty(value = "if the component is certain")
+    private double confidence;
+
+    public double getConfidence() {
+        return confidence;
+    }
+
+    public void setConfidence(double confidence) {
+        this.confidence = confidence;
+    }
+
     public String getComponent() {
         return component;
     }

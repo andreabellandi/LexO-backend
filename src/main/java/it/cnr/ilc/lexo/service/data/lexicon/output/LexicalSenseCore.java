@@ -44,6 +44,9 @@ public class LexicalSenseCore implements Data {
     @ApiModelProperty(value = "short IRI of the concept denoted by", example = "conceptID")
     private String conceptInstanceName;
 
+    @ApiModelProperty(value = "if the sense is certain")
+    private double confidence;
+
     private String description;
     private String explanation;
     private String gloss;
@@ -184,6 +187,14 @@ public class LexicalSenseCore implements Data {
 
     public void setSenseTranslation(String senseTranslation) {
         this.senseTranslation = senseTranslation;
+    }
+
+    public double getConfidence() {
+        return confidence;
+    }
+
+    public void setConfidence(double confidence) {
+        this.confidence = confidence;
     }
 
 }

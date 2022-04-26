@@ -34,6 +34,7 @@ public class EtymologicalLinkHelper extends TripleStoreDataHelper<EtymologicalLi
         data.setEtyTargetLabel(getStringValue(bs, SparqlVariable.ETY_TARGET_LABEL));
         data.setLabel(getStringValue(bs, SparqlVariable.ETY_LINK_LABEL));
         data.setExternalIRI(isExternalUri(getStringValue(bs, SparqlVariable.ETY_SOURCE)));
+        data.setConfidence(getDoubleNumber(bs, "confidence"));
     }
 
     @Override

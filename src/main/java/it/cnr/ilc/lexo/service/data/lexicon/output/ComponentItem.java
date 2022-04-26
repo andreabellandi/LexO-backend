@@ -32,6 +32,17 @@ public class ComponentItem implements Data {
     @ApiModelProperty(value = "component note", example = "some note ...")
     private String note;
 
+    @ApiModelProperty(value = "if the component is certain")
+    private double confidence;
+
+    public double getConfidence() {
+        return confidence;
+    }
+
+    public void setConfidence(double confidence) {
+        this.confidence = confidence;
+    }
+
     public String getComponent() {
         return component;
     }

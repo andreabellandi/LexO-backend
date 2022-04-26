@@ -32,6 +32,7 @@ public class LexicalEntryCoreHelper extends TripleStoreDataHelper<LexicalEntryCo
         data.setPos(getLocalName(bs, SparqlVariable.LEXICAL_ENTRY_POS));
         data.setRevisor(getStringValue(bs, SparqlVariable.LEXICAL_ENTRY_REVISOR));
         data.setStatus(getStringValue(bs, SparqlVariable.LEXICAL_ENTRY_STATUS));
+        data.setConfidence(getDoubleNumber(bs, "confidence"));
         ArrayList<String> types = new ArrayList();
         types.add(getLocalName(bs, SparqlVariable.LEXICAL_ENTRY_TYPE));
         data.setType(types);

@@ -24,6 +24,7 @@ public class FormByLexicalEntryHelper extends TripleStoreDataHelper<FormByLexica
                 getLocalName(bs, SparqlVariable.LEXICAL_ENTRY_POS)));
         data.setLexicalEntry(getStringValue(bs, SparqlVariable.LEXICAL_ENTRY));
         data.setLexicalEntryInstanceName(getLocalName(bs, SparqlVariable.LEXICAL_ENTRY));
+        data.setConfidence(getDoubleNumber(bs, "confidence"));
     }
 
     @Override

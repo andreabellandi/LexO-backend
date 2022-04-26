@@ -17,7 +17,7 @@ import java.util.Map;
  */
 public abstract class Helper<D extends Data> {
 
-    private int totalHits;
+    private int totalHits = 0;
 
     public int getTotalHits() {
         return totalHits;

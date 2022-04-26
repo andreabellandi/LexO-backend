@@ -5,6 +5,7 @@
  */
 package it.cnr.ilc.lexo.service.data.lexicon.output;
 
+import io.swagger.annotations.ApiModelProperty;
 import it.cnr.ilc.lexo.service.data.Data;
 import java.util.ArrayList;
 
@@ -31,8 +32,19 @@ public class LexicalEntryItem implements Data {
     private String lastUpdate;
     private String completionDate;
     private String revisionDate;
+    
+    @ApiModelProperty(value = "if the lexical entry is certain")
+    private double confidence;
 
     public LexicalEntryItem() {
+    }
+
+    public double getConfidence() {
+        return confidence;
+    }
+
+    public void setConfidence(double confidence) {
+        this.confidence = confidence;
     }
 
     public boolean isHasChildren() {

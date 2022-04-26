@@ -31,6 +31,18 @@ public class Form implements Data {
     private String lexicalEntryInstanceName;
     private String targetSenseInstanceName;
     private String definition;
+    
+    private double confidence;
+
+    public double getConfidence() {
+        return confidence;
+    }
+
+    public void setConfidence(double confidence) {
+        this.confidence = confidence;
+    }
+    
+    
 
     public Form() {
     }

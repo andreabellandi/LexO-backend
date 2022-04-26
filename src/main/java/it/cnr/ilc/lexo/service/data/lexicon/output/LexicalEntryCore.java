@@ -62,6 +62,17 @@ public class LexicalEntryCore implements Data {
     private String completionDate;
     @ApiModelProperty(value = "lexical entry reviewed status date")
     private String revisionDate;
+    
+    @ApiModelProperty(value = "if the lexical entry is certain")
+    private double confidence;
+
+    public double getConfidence() {
+        return confidence;
+    }
+
+    public void setConfidence(double confidence) {
+        this.confidence = confidence;
+    }
 
     public String getLexicalEntry() {
         return lexicalEntry;

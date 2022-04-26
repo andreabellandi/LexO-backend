@@ -33,7 +33,7 @@ public class LexicalSenseItem implements Data {
     private String gloss;
     private String senseExample;
     private String senseTranslation;
-    
+    private double confidence;
 
     public String getSense() {
         return sense;
@@ -193,6 +193,14 @@ public class LexicalSenseItem implements Data {
 
     public void setSenseTranslation(String senseTranslation) {
         this.senseTranslation = senseTranslation;
+    }
+
+    public double getConfidence() {
+        return confidence;
+    }
+
+    public void setConfidence(double confidence) {
+        this.confidence = confidence;
     }
 
 }
