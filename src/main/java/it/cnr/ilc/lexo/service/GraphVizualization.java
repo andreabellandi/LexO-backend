@@ -22,6 +22,7 @@ import it.cnr.ilc.lexo.service.helper.HelperException;
 import it.cnr.ilc.lexo.service.helper.NodeLinksHelper;
 import it.cnr.ilc.lexo.service.helper.SenseEdgeSummaryHelper;
 import it.cnr.ilc.lexo.service.helper.SenseNodeSummaryHelper;
+import it.cnr.ilc.lexo.util.EnumUtil;
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -114,21 +115,33 @@ public class GraphVizualization extends Service {
             NodeGraphFilter ngf) throws HelperException {
 
         try {
-            TupleQueryResult incoming = graphVizManager.getNodeGraph(id, ngf, true);
-            TupleQueryResult outgoing = graphVizManager.getNodeGraph(id, ngf, false);
-            Cytoscape ng = graphVizManager.getNodeGraph(incoming, outgoing, ngf.getRelation());
-            ObjectMapper mapper = new ObjectMapper();
-            String json = mapper.writeValueAsString(ng);
-            return Response.ok(json)
-                    .type(MediaType.TEXT_PLAIN)
-                    .header("Access-Control-Allow-Headers", "content-type")
-                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                    .build();
+            TupleQueryResult tqr = null;
+            if (ngf.getDirection() != null) {
+                if (ngf.getDirection().equals(EnumUtil.GraphRelationDirection.incoming.toString())) {
+                    tqr = graphVizManager.getNodeGraph(id, ngf, true);
+                } else {
+                    if (ngf.getDirection().equals(EnumUtil.GraphRelationDirection.outgoing.toString())) {
+                        tqr = graphVizManager.getNodeGraph(id, ngf, false);
+                    } else {
+                        return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("direction field can set to incoming or outgoing").build();
+                    }
+                }
+                Cytoscape ng = graphVizManager.getNodeGraph(tqr, ngf.getRelation());
+                ObjectMapper mapper = new ObjectMapper();
+                String json = mapper.writeValueAsString(ng);
+                return Response.ok(json)
+                        .type(MediaType.TEXT_PLAIN)
+                        .header("Access-Control-Allow-Headers", "content-type")
+                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                        .build();
+            } else {
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("direction field is mandatory").build();
+            }
         } catch (JsonProcessingException ex) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }
     }
-    
+
     @POST
     @Path("edgeGraph")
     @Produces(MediaType.APPLICATION_JSON)

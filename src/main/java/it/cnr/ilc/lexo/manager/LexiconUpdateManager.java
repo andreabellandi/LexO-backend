@@ -614,14 +614,20 @@ public final class LexiconUpdateManager implements Manager, Cached {
                     throw new ManagerException(lru.getValue() + " is not a valid Lexical Entry");
                 }
             } else if (lru.getRelation().equals(EnumUtil.Decomp.Constituent.toString())) {
-                if (lru.getCurrentValue() != null) {
-                    if (!lru.getCurrentValue().isEmpty()) {
-                        setPrefixes(lru, SparqlPrefix.DECOMP.getUri(), SparqlPrefix.LEX.getUri(),
-                                SparqlPrefix.LEX.getUri());
-                    } else {
-                        throw new ManagerException("Current value unspecified: you must specify the current id where constituent ranges over");
-                    }
+                if (validateIRI(lru.getValue())) {
+                    setPrefixes(lru, SparqlPrefix.DECOMP.getUri(), SparqlPrefix.LEX.getUri(),
+                            SparqlPrefix.LEX.getUri());
+                } else {
+                    throw new ManagerException(lru.getValue() + " is not a valid Lexical Entry");
                 }
+//                if (lru.getCurrentValue() != null) {
+//                    if (!lru.getCurrentValue().isEmpty()) {
+//                        setPrefixes(lru, SparqlPrefix.DECOMP.getUri(), SparqlPrefix.LEX.getUri(),
+//                                SparqlPrefix.LEX.getUri());
+//                    } else {
+//                        throw new ManagerException("Current value unspecified: you must specify the current id where constituent ranges over");
+//                    }
+//                }
             } else if (lru.getRelation().equals(EnumUtil.Decomp.CorrespondsTo.toString())) {
                 if (validateTypedIRI(lru.getValue(), SparqlPrefix.ONTOLEX.getUri() + OntoLexEntity.LexicalEntryTypes.LexicalEntry.toString())) {
                     setPrefixes(lru, SparqlPrefix.DECOMP.getUri(), SparqlPrefix.LEX.getUri(),

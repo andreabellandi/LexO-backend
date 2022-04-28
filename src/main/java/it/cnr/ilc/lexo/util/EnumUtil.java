@@ -178,7 +178,7 @@ public class EnumUtil {
     }
 
     public static enum Decomp {
-        SubTerm("subTerm"),
+        SubTerm("subterm"),
         Constituent("constituent"),
         CorrespondsTo("correspondsTo"),
         Position("position");
@@ -493,6 +493,23 @@ public class EnumUtil {
 
     }
 
+    public static enum GraphRelationDirection {
+        incoming("incoming"),
+        outgoing("outgoing");
+
+        private final String graphRelationDirection;
+
+        private GraphRelationDirection(String graphRelationDirection) {
+            this.graphRelationDirection = graphRelationDirection;
+        }
+
+        @Override
+        public String toString() {
+            return this.graphRelationDirection;
+        }
+
+    }
+    
     public static enum LinguisticRelationConceptRel {
         evokes("evokes"),
         isEvokedBy("isEvokedBy"),

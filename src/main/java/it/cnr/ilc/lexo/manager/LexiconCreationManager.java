@@ -86,6 +86,7 @@ public class LexiconCreationManager implements Manager, Cached {
         LexicalEntryCore lec = new LexicalEntryCore();
         lec.setAuthor(author);
         lec.setLabel(id);
+        lec.setConfidence(-1);
         lec.setType(types);
         lec.setLexicalEntryInstanceName(id);
         lec.setLexicalEntry(getNamespace() + id);
@@ -117,6 +118,7 @@ public class LexiconCreationManager implements Manager, Cached {
         FormCore fc = new FormCore();
         fc.setCreator(author);
         fc.setLabel(pl);
+        fc.setConfidence(-1);
         fc.setType("lexicalForm");
         fc.setFormInstanceName(id);
         fc.setForm(getNamespace() + id);
@@ -142,7 +144,7 @@ public class LexiconCreationManager implements Manager, Cached {
     private Etymology setEtymology(String id, String created, String author, String label) {
         Etymology e = new Etymology();
         e.setCreator(author);
-        e.setConfidence(1.0);
+        e.setConfidence(-1);
         e.setLabel("Etymology of " + label);
         e.setEtymologyInstanceName(id);
         e.setEtymology(getNamespace() + id);
@@ -169,6 +171,7 @@ public class LexiconCreationManager implements Manager, Cached {
         EtymologicalLink el = new EtymologicalLink();
         el.setEtyLinkType("inheritance");
         el.setEtyTargetInstanceName(leID);
+        el.setConfidence(-1);
         el.setEtyTarget(SparqlPrefix.LEX.getUri() + leID);
         el.setEtymologicalLink(SparqlPrefix.LEX.getUri() + id);
         el.setEtymologicalLinkInstanceName(id);
@@ -208,6 +211,7 @@ public class LexiconCreationManager implements Manager, Cached {
     private LexicalSenseCore setSense(String id, String created, String author) {
         LexicalSenseCore sc = new LexicalSenseCore();
         sc.setCreator(author);
+        sc.setConfidence(-1);
         sc.setSenseInstanceName(id);
         sc.setSense(getNamespace() + id);
         sc.setLastUpdate(created);
@@ -218,6 +222,8 @@ public class LexiconCreationManager implements Manager, Cached {
     private Component setComponent(String id, String created, String author) {
         Component sc = new Component();
         sc.setCreator(author);
+        sc.setConfidence(-1);
+        sc.setPosition(-1);
         sc.setComponentInstanceName(id);
         sc.setComponent(getNamespace() + id);
         sc.setLastUpdate(created);

@@ -76,9 +76,16 @@ public class GraphVizManager implements Manager, Cached {
                     .replace("_GRAPH_", graph);
         } else {
             if (ngf.getLenght() > 0) {
-                query = SparqlGraphViz.GRAPH_VIZ_NODE_GRAPH_WITH_LENGHT.replaceAll("_NODE_ID_", namespace + id)
+                if (in) {
+                    query = SparqlGraphViz.GRAPH_VIZ_NODE_GRAPH_WITH_LENGHT_INCOMING.replaceAll("_NODE_ID_", namespace + id)
                         .replaceAll("_PATH_LENGHT_", String.valueOf(ngf.getLenght()))
                         .replaceAll("_RELATION_", SparqlPrefix.LEXINFO.getPrefix() + ngf.getRelation().trim());
+                } else {
+                    query = SparqlGraphViz.GRAPH_VIZ_NODE_GRAPH_WITH_LENGHT_OUTGOING.replaceAll("_NODE_ID_", namespace + id)
+                        .replaceAll("_PATH_LENGHT_", String.valueOf(ngf.getLenght()))
+                        .replaceAll("_RELATION_", SparqlPrefix.LEXINFO.getPrefix() + ngf.getRelation().trim());
+                }
+                
             } else {
                 return null;
             }
@@ -93,13 +100,13 @@ public class GraphVizManager implements Manager, Cached {
         return RDFQueryUtil.evaluateTQuery(query);
     }
 
-    public Cytoscape getNodeGraph(TupleQueryResult in, TupleQueryResult out, String relation) {
+    public Cytoscape getNodeGraph(TupleQueryResult tqr, String relation) {
         HashMap<String, String> usem = new HashMap<>();
         Cytoscape cytoscape = new Cytoscape();
         cytoscape.setNodes(new ArrayList<>());
         cytoscape.setEdges(new ArrayList<>());
-        addElementToGraph(in, cytoscape, usem, relation);
-        addElementToGraph(out, cytoscape, usem, relation);
+        addElementToGraph(tqr, cytoscape, usem, relation);
+//        addElementToGraph(out, cytoscape, usem, relation);
         return cytoscape;
     }
 

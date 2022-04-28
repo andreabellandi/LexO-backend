@@ -5,7 +5,6 @@
  */
 package it.cnr.ilc.lexo.service.data.lexicon.input.graphViz;
 
-import it.cnr.ilc.lexo.service.data.lexicon.input.*;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -22,6 +21,8 @@ public class NodeGraphFilter {
     private String graph;
     @ApiModelProperty(value = "the lenght of the relation path", example = "2", allowEmptyValue = true)
     private Integer lenght;
+    @ApiModelProperty(value = "if the relation is incoming or outgoing w.r.t. the given node", example = "incoming", allowEmptyValue = false, allowableValues = "incoming, outgoing")
+    private String direction;
 
     public String getRelation() {
         return relation;
@@ -47,6 +48,12 @@ public class NodeGraphFilter {
         this.lenght = lenght;
     }
 
-    
+    public String getDirection() {
+        return direction;
+    }
+
+    public void setDirection(String direction) {
+        this.direction = direction;
+    }
 
 }

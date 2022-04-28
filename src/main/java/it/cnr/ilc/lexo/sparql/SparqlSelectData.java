@@ -151,7 +151,7 @@ public class SparqlSelectData {
             + " UNION \n"
             + "    { ?" + SparqlVariable.LEXICAL_ENTRY + " decomp:subterm ?" + SparqlVariable.LEXICAL_ENTRY_SUBTERM + " . }\n"
             + " UNION \n"
-            + "    { ?" + SparqlVariable.LEXICAL_ENTRY + " decomp:consituent ?" + SparqlVariable.LEXICAL_ENTRY_CONSTITUENT + " . }\n"
+            + "    { ?" + SparqlVariable.LEXICAL_ENTRY + " decomp:constituent ?" + SparqlVariable.LEXICAL_ENTRY_CONSTITUENT + " . }\n"
             + " UNION \n"
             + "    { ?" + SparqlVariable.LEXICAL_ENTRY + " ety:etymology ?" + SparqlVariable.LEXICAL_ENTRY_ETYMOLOGY + " . }\n"
             + "}";
@@ -1152,7 +1152,7 @@ public class SparqlSelectData {
             + "      luc:offset \"[OFFSET]\" ;\n"
             + "      luc:limit \"[LIMIT]\" ;\n"
             + "      luc:entities ?_le .\n"
-            + "  ?_le decomp:subTerm ?" + SparqlVariable.LEXICAL_ENTRY + " .\n"
+            + "  ?_le decomp:subterm ?" + SparqlVariable.LEXICAL_ENTRY + " .\n"
             + "  ?" + SparqlVariable.LEXICAL_ENTRY + " rdf:type ?tmp_type ;\n"
             + "          rdfs:label ?" + SparqlVariable.LABEL + " .\n"
             + "   ?tmp_type rdfs:label ?_type .\n"
