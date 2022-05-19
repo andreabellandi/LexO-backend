@@ -18,6 +18,8 @@ import java.util.List;
 @ApiModel(description = "Output model representing a SKOS class")
 public class SKOSClass implements Data {
 
+    @ApiModelProperty(value = "label class")
+    private String label;
     @ApiModelProperty(value = "the list of relations the skos class is involved in")
     private List<GroupedLinkedEntity> entities;
     @ApiModelProperty(value = "creator")
@@ -26,6 +28,17 @@ public class SKOSClass implements Data {
     private String creationDate;
     @ApiModelProperty(value = "llast update")
     private String lastUpdate;
+    
+    @ApiModelProperty(value = "if the class is certain")
+    private double confidence;
+
+    public double getConfidence() {
+        return confidence;
+    }
+
+    public void setConfidence(double confidence) {
+        this.confidence = confidence;
+    }
 
     public List<GroupedLinkedEntity> getEntities() {
         return entities;
@@ -57,6 +70,14 @@ public class SKOSClass implements Data {
 
     public void setLastUpdate(String lastUpdate) {
         this.lastUpdate = lastUpdate;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
     }
 
 }

@@ -12,6 +12,7 @@ import it.cnr.ilc.lexo.manager.BibliographyManager;
 import it.cnr.ilc.lexo.manager.LexiconDataManager;
 import it.cnr.ilc.lexo.manager.ManagerException;
 import it.cnr.ilc.lexo.manager.ManagerFactory;
+import it.cnr.ilc.lexo.manager.SKOSManager;
 import it.cnr.ilc.lexo.manager.UtilityManager;
 import it.cnr.ilc.lexo.service.data.lexicon.input.FormFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.output.FormItem;
@@ -21,6 +22,7 @@ import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalSenseFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.output.BibliographicItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Component;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ComponentItem;
+import it.cnr.ilc.lexo.service.data.lexicon.output.ConceptSet;
 import it.cnr.ilc.lexo.service.data.lexicon.output.EtymologicalLink;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Etymology;
 import it.cnr.ilc.lexo.service.data.lexicon.output.EtymologyItem;
@@ -37,6 +39,7 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.LinkedEntity;
 import it.cnr.ilc.lexo.service.helper.BibliographyHelper;
 import it.cnr.ilc.lexo.service.helper.ComponentFilterHelper;
 import it.cnr.ilc.lexo.service.helper.ComponentHelper;
+import it.cnr.ilc.lexo.service.helper.ConceptSetHelper;
 import it.cnr.ilc.lexo.service.helper.EtymologicalLinkHelper;
 import it.cnr.ilc.lexo.service.helper.EtymologyFilterHelper;
 import it.cnr.ilc.lexo.service.helper.EtymologyHelper;
@@ -53,7 +56,9 @@ import it.cnr.ilc.lexo.service.helper.LexicalSenseCoreHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalSenseFilterHelper;
 import it.cnr.ilc.lexo.service.helper.LinkedEntityHelper;
 import it.cnr.ilc.lexo.sparql.SparqlIndex;
+import it.cnr.ilc.lexo.sparql.SparqlVariable;
 import it.cnr.ilc.lexo.util.EnumUtil;
+import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -100,6 +105,8 @@ public class LexiconData extends Service {
     private final EtymologicalLinkHelper etymologicalLinkHelper = new EtymologicalLinkHelper();
     private final ComponentFilterHelper componentFilterHelper = new ComponentFilterHelper();
     private final ComponentHelper componentHelper = new ComponentHelper();
+    private final ConceptSetHelper conceptSetHelper = new ConceptSetHelper();
+    private final SKOSManager skosManager = ManagerFactory.getManager(SKOSManager.class);
 
     @GET
     @Path("{id}/lexicalEntry")
@@ -284,15 +291,18 @@ public class LexiconData extends Service {
                     required = true)
             @PathParam("id") String id) {
         try {
+            String json = "";
             TupleQueryResult etymology = lexiconManager.getEtymology(id);
-            TupleQueryResult etymologicalLinks = lexiconManager.getEtymologicalLinks(id);
-            Etymology e = etymologyHelper.newData(etymology);
-            List<EtymologicalLink> etyLinks = etymologicalLinkHelper.newDataList(etymologicalLinks);
-            TupleQueryResult lexicalEntityLinks = lexiconManager.getLexicalEntityLinks(id);
-            LexicalEntityLinksItem links = lexicalEntityLinksItemHelper.newData(lexicalEntityLinks);
-            lexiconManager.addLexicalEntityLink(e, links);
-            EtymologyTree et = lexiconManager.getEtymologyTree(e, etyLinks);
-            String json = etymologyTreeHelper.toJson(et);
+            if (etymology.hasNext()) {
+                TupleQueryResult etymologicalLinks = lexiconManager.getEtymologicalLinks(id);
+                Etymology e = etymologyHelper.newData(etymology);
+                List<EtymologicalLink> etyLinks = etymologicalLinks.hasNext() ? etymologicalLinkHelper.newDataList(etymologicalLinks) : new ArrayList();
+                TupleQueryResult lexicalEntityLinks = lexiconManager.getLexicalEntityLinks(id);
+                LexicalEntityLinksItem links = lexicalEntityLinks.hasNext() ? lexicalEntityLinksItemHelper.newData(lexicalEntityLinks) : null;
+                lexiconManager.addLexicalEntityLink(e, links);
+                EtymologyTree et = lexiconManager.getEtymologyTree(e, etyLinks);
+                json = etymologyTreeHelper.toJson(et);
+            }
             return Response.ok(json)
                     .type(MediaType.TEXT_PLAIN)
                     .header("Access-Control-Allow-Headers", "content-type")
@@ -640,7 +650,7 @@ public class LexiconData extends Service {
         try {
             TupleQueryResult lingRel = lexiconManager.getLinguisticRelation(id, property);
             if (!lingRel.hasNext()) {
-                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("There are no instances of " + property).build();
+                return Response.status(Response.Status.OK).type(MediaType.TEXT_PLAIN).entity("There are no instances of " + property).build();
             }
             List<LinkedEntity> le = linkedEntityHelper.newDataList(lingRel);
             String json = linkedEntityHelper.toJson(le);
@@ -685,7 +695,7 @@ public class LexiconData extends Service {
         try {
             TupleQueryResult genRel = lexiconManager.getGenericRelation(id, property);
             if (!genRel.hasNext()) {
-                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("There are no instances of " + property).build();
+                return Response.status(Response.Status.OK).type(MediaType.TEXT_PLAIN).entity("There are no instances of " + property).build();
             }
             List<LinkedEntity> le = linkedEntityHelper.newDataList(genRel);
             String json = linkedEntityHelper.toJson(le);
@@ -732,7 +742,7 @@ public class LexiconData extends Service {
     }
 
     @GET
-    @Path("{id}/subTerms") 
+    @Path("{id}/subTerms")
     @Produces(MediaType.APPLICATION_JSON)
     @RequestMapping(
             method = RequestMethod.GET,
@@ -752,19 +762,21 @@ public class LexiconData extends Service {
                     value = "lexical entry ID",
                     required = true)
             @PathParam("id") String id) {
+        String json = "";
         TupleQueryResult lexicalEnties = lexiconManager.getSubTerms(id);
-        List<LexicalEntryItem> entries = lexicalEntryFilterHelper.newDataList(lexicalEnties);
-        HitsDataList hdl = new HitsDataList(lexicalEntryFilterHelper.getTotalHits(), entries);
-        String json = lexicalEntryFilterHelper.toJson(hdl);
+        if (lexicalEnties.hasNext()) {
+            List<LexicalEntryItem> entries = lexicalEntryFilterHelper.newDataList(lexicalEnties);
+            json = lexicalEntryFilterHelper.toJson(entries);
+        }
         return Response.ok(json)
                 .type(MediaType.TEXT_PLAIN)
                 .header("Access-Control-Allow-Headers", "content-type")
                 .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                 .build();
     }
-    
+
     @GET
-    @Path("{id}/correspondsTo") 
+    @Path("{id}/correspondsTo")
     @Produces(MediaType.APPLICATION_JSON)
     @RequestMapping(
             method = RequestMethod.GET,
@@ -784,9 +796,12 @@ public class LexiconData extends Service {
                     value = "component ID",
                     required = true)
             @PathParam("id") String id) {
+        String json = "";
         TupleQueryResult lexicalEntry = lexiconManager.getCorrespondsTo(id);
-        LexicalEntryItem entry = lexicalEntryFilterHelper.newData(lexicalEntry);
-        String json = lexicalEntryFilterHelper.toJson(entry);
+        if (lexicalEntry.hasNext()) {
+            LexicalEntryItem entry = lexicalEntryFilterHelper.newData(lexicalEntry);
+            json = lexicalEntryFilterHelper.toJson(entry);
+        }
         return Response.ok(json)
                 .type(MediaType.TEXT_PLAIN)
                 .header("Access-Control-Allow-Headers", "content-type")
@@ -816,22 +831,57 @@ public class LexiconData extends Service {
                     required = true)
             @PathParam("id") String id) {
         TupleQueryResult _comps = null;
+        String json = "";
         UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
         if (utilityManager.isLexicalEntry(id)) {
-            _comps = lexiconManager.getComponents(id, SparqlIndex.LEXICAL_ENTRY_INDEX, "lexicalEntryLabel");
+            _comps = lexiconManager.getComponents(id, SparqlVariable.LEXICAL_ENTRY_INDEX, "lexicalEntryLabel");
         } else if (utilityManager.isLexicalEntry(id)) {
-            _comps = lexiconManager.getComponents(id, SparqlIndex.COMPONENT_INDEX, "componentLabel");
+            _comps = lexiconManager.getComponents(id, SparqlVariable.COMPONENT_INDEX, "componentLabel");
         } else {
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + id + " is not neither a lexical entry or a component").build();
         }
-        List<ComponentItem> comps = componentFilterHelper.newDataList(_comps);
-        HitsDataList hdl = new HitsDataList(componentFilterHelper.getTotalHits(), comps);
-        String json = componentFilterHelper.toJson(hdl);
+        if (_comps.hasNext()) {
+            List<ComponentItem> comps = componentFilterHelper.newDataList(_comps);
+            json = componentFilterHelper.toJson(comps);
+        }
         return Response.ok(json)
                 .type(MediaType.TEXT_PLAIN)
                 .header("Access-Control-Allow-Headers", "content-type")
                 .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                 .build();
+    }
+
+    // TODO: creating conceptScheme index
+    @GET
+    @Path("conceptSets")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "conceptSets",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "List of Concept Set",
+            notes = "This method returns the list of Concept Set and their metadata")
+    public Response conceptSets(
+            @ApiParam(
+                    name = "key",
+                    value = "authentication token",
+                    example = "lexodemo",
+                    required = true)
+            @QueryParam("key") String key) {
+
+        try {
+            TupleQueryResult cs = skosManager.getConceptSchemes("ontolex:ConceptSet");
+            List<ConceptSet> lcs = conceptSetHelper.newDataList(cs);
+            String json = conceptSetHelper.toJson(lcs);
+            return Response.ok(json)
+                    .type(MediaType.TEXT_PLAIN)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
+        } catch (ManagerException ex) {
+            logger.error(ex.getMessage(), ex);
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        }
     }
 
 }

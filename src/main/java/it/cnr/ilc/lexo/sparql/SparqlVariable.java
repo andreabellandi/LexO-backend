@@ -96,9 +96,25 @@ public class SparqlVariable {
     public static final String LEXICAL_FORM = "lexicalForm";
     
     public static final String LEXICAL_CONCEPT = "lexicalConcept";
+    public static final String LEXICAL_CONCEPT_CREATOR = "creator";
+    
     public static final String CONCEPT_SCHEME = "conceptScheme";
+    public static final String CONCEPT_SCHEME_STATUS = "status";
+    public static final String CONCEPT_SCHEME_CREATOR = "creator";
+    
+    public static final String PREF_LABEL = "prefLabel";
+    public static final String ALT_LABEL = "altLabel";
+    public static final String HIDDEN_LABEL = "hiddenLabel";
+    public static final String DEFINITION = "definition";
+    public static final String EXAMPLE = "example";
+    public static final String CHANGE_NOTE = "changeNote";
+    public static final String HISTORY_NOTE = "historyNote";
+    public static final String EDITORIAL_NOTE = "editorialNote";
+    public static final String SCOPE_NOTE = "scopeNote";
+    public static final String NOTATION = "notation";
     
     public static final String CONCEPT = "concept";
+    public static final String CONCEPT_STATUS = "status";
     public static final String CONCEPT_INSTANCE_NAME = "conceptInstanceName";
     
     public static final String CREATION_DATE = "created";
@@ -144,8 +160,7 @@ public class SparqlVariable {
     
     public static final String HYPERNYM = "hypernym";
     public static final String HYPONYM = "hyponym";
-    public static final String PART_MERONYM = "partMeronym";
-    public static final String MERONYM_TERM = "meronymTerm";
+    public static final String HOLONYM = "holonym";
     public static final String MERONYM = "meronym";
     public static final String SYNONYM = "synonym";
 

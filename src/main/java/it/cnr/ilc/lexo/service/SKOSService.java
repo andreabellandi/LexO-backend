@@ -12,8 +12,13 @@ import it.cnr.ilc.lexo.manager.ManagerException;
 import it.cnr.ilc.lexo.manager.ManagerFactory;
 import it.cnr.ilc.lexo.manager.SKOSManager;
 import it.cnr.ilc.lexo.manager.UtilityManager;
+import it.cnr.ilc.lexo.service.data.lexicon.input.ConceptSchemeFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.input.skos.SKOSDeleter;
 import it.cnr.ilc.lexo.service.data.lexicon.input.skos.SKOSUpdater;
+import it.cnr.ilc.lexo.service.data.lexicon.output.skos.ConceptScheme;
+import it.cnr.ilc.lexo.service.helper.ConceptSchemeHelper;
+import it.cnr.ilc.lexo.service.helper.EtymologyTreeHelper;
+import java.util.List;
 import java.util.logging.Level;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -23,6 +28,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.eclipse.rdf4j.query.TupleQueryResult;
 import org.eclipse.rdf4j.query.UpdateExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +45,7 @@ public class SKOSService extends Service {
 
     private static final Logger logger = LoggerFactory.getLogger(SKOSService.class);
     Logger statLog = LoggerFactory.getLogger("statistics");
-
+    private final ConceptSchemeHelper conceptSchemeHelper = new ConceptSchemeHelper();
     private final SKOSManager skosManager = ManagerFactory.getManager(SKOSManager.class);
 
     @GET
@@ -378,7 +384,7 @@ public class SKOSService extends Service {
             @QueryParam("key") String key, SKOSUpdater su) {
         return Response.status(Response.Status.NOT_IMPLEMENTED).build();
     }
-    
+
     @GET
     @Path("{id}/concept")
     @Produces(MediaType.APPLICATION_JSON)
@@ -402,7 +408,7 @@ public class SKOSService extends Service {
             @PathParam("id") String id) {
         return Response.status(Response.Status.NOT_IMPLEMENTED).build();
     }
-    
+
     @GET
     @Path("{id}/entity")
     @Produces(MediaType.APPLICATION_JSON)
@@ -425,6 +431,38 @@ public class SKOSService extends Service {
                     required = true)
             @PathParam("id") String id) {
         return Response.status(Response.Status.NOT_IMPLEMENTED).build();
+    }
+
+    @POST
+    @Path("conceptSchemes")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.POST,
+            value = "conceptSchemes",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "List of Concept Scheme",
+            notes = "This method return the list of Concept Schemes and their metadata")
+    public Response conceptSchemes(
+            @ApiParam(
+                    name = "key",
+                    value = "authentication token",
+                    example = "lexodemo",
+                    required = true)
+            @QueryParam("key") String key, ConceptSchemeFilter csf) {
+
+        try {
+            TupleQueryResult cs = skosManager.getConceptSchemes("skos:ConceptScheme");
+            List<ConceptScheme> lcs = conceptSchemeHelper.newDataList(cs);
+            String json = conceptSchemeHelper.toJson(lcs);
+            return Response.ok(json)
+                    .type(MediaType.TEXT_PLAIN)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
+        } catch (ManagerException ex) {
+            logger.error(ex.getMessage(), ex);
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        }
     }
 
 }

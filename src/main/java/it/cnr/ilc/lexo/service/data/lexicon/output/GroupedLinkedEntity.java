@@ -37,5 +37,10 @@ public class GroupedLinkedEntity implements Data {
     public void setEntities(List<LinkedEntity> entities) {
         this.entities = entities;
     }
+    
+    public GroupedLinkedEntity(String relationGroup, List<LinkedEntity> entities) {
+        this.relationGroup = relationGroup;
+        this.entities = entities;
+    }
 
 }

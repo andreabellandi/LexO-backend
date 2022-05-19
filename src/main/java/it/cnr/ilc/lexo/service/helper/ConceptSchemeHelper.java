@@ -6,10 +6,9 @@
 package it.cnr.ilc.lexo.service.helper;
 
 import it.cnr.ilc.lexo.LexOProperties;
-import it.cnr.ilc.lexo.service.data.lexicon.output.ConceptSet;
 import it.cnr.ilc.lexo.service.data.lexicon.output.GroupedLinkedEntity;
-import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalConcept;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LinkedEntity;
+import it.cnr.ilc.lexo.service.data.lexicon.output.skos.ConceptScheme;
 import it.cnr.ilc.lexo.sparql.SparqlVariable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,28 +19,28 @@ import org.eclipse.rdf4j.query.BindingSet;
  *
  * @author andreabellandi
  */
-public class ConceptSetHelper extends TripleStoreDataHelper<ConceptSet> {
+public class ConceptSchemeHelper extends TripleStoreDataHelper<ConceptScheme> {
 
     private final String skosDefaultLangLabel = LexOProperties.getProperty("skos.defaultLanguageLabel");
     private final List<String> lexicalLabels = Arrays.asList(
-            SparqlVariable.LABEL + "Grouped",
-            SparqlVariable.PREF_LABEL + "Grouped",
-            SparqlVariable.ALT_LABEL + "Grouped",
+            SparqlVariable.LABEL + "Grouped", 
+            SparqlVariable.PREF_LABEL + "Grouped", 
+            SparqlVariable.ALT_LABEL + "Grouped", 
             SparqlVariable.HIDDEN_LABEL + "Grouped");
     private final List<String> noteProperties = Arrays.asList(
-            SparqlVariable.NOTE + "Grouped",
-            SparqlVariable.DEFINITION + "Grouped",
-            SparqlVariable.HISTORY_NOTE + "Grouped",
+            SparqlVariable.NOTE + "Grouped", 
+            SparqlVariable.DEFINITION + "Grouped", 
+            SparqlVariable.HISTORY_NOTE + "Grouped", 
             SparqlVariable.SCOPE_NOTE + "Grouped",
-            SparqlVariable.CHANGE_NOTE + "Grouped",
-            SparqlVariable.EDITORIAL_NOTE + "Grouped",
+            SparqlVariable.CHANGE_NOTE + "Grouped", 
+            SparqlVariable.EDITORIAL_NOTE + "Grouped", 
             SparqlVariable.EXAMPLE + "Grouped");
 
     @Override
-    public void fillData(ConceptSet data, BindingSet bs) {
+    public void fillData(ConceptScheme data, BindingSet bs) {
         // add count hits when CS index will be available
-        data.setConceptSet(getStringValue(bs, SparqlVariable.CONCEPT_SCHEME));
-        data.setConceptSetInstanceName(getLocalName(bs, SparqlVariable.CONCEPT_SCHEME));
+        data.setConceptScheme(getStringValue(bs, SparqlVariable.CONCEPT_SCHEME));
+        data.setConceptSchemeInstanceName(getLocalName(bs, SparqlVariable.CONCEPT_SCHEME));
         data.setCreationDate(getStringValue(bs, SparqlVariable.CREATION_DATE));
         data.setCreator(getStringValue(bs, SparqlVariable.CONCEPT_SCHEME_CREATOR));
         data.setLastUpdate(getStringValue(bs, SparqlVariable.LAST_UPDATE));
@@ -70,8 +69,8 @@ public class ConceptSetHelper extends TripleStoreDataHelper<ConceptSet> {
     }
 
     @Override
-    public Class<ConceptSet> getDataClass() {
-        return ConceptSet.class;
+    public Class<ConceptScheme> getDataClass() {
+        return ConceptScheme.class;
     }
 
 }

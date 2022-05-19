@@ -63,7 +63,7 @@ public class SparqlInsertData {
             + "INSERT DATA {\n"
             + "    lex:_ID_ a ety:Etymology ;\n"
             + "                   rdfs:label \"Etymology of: _LABEL_\" ;\n"
-            + "                   lexinfo:confidence 1 ;\n"
+//            + "                   lexinfo:confidence 1 ;\n"
             + "                   dct:creator \"_AUTHOR_\" ;\n"
             + "                   dct:created \"_CREATED_\" ;\n"
             + "                   dct:modified \"_MODIFIED_\" . \n"
@@ -106,7 +106,7 @@ public class SparqlInsertData {
             + SparqlPrefix.VS.getSparqlPrefix() + "\n"
             + SparqlPrefix.DECOMP.getSparqlPrefix() + "\n"
             + "INSERT DATA {\n"
-            + "    lex:_ID_ a decomp:Composition ;\n"
+            + "    lex:_ID_ a decomp:Component ;\n"
             + "                   dct:creator \"_AUTHOR_\" ;\n"
             + "                   dct:created \"_CREATED_\" ;\n"
             + "                   dct:modified \"_MODIFIED_\" . \n"
@@ -122,7 +122,8 @@ public class SparqlInsertData {
             + "    _ID_ a ontolex:LexicalConcept ;\n"
             + "                   dct:creator \"_AUTHOR_\" ;\n"
             + "                   dct:created \"_CREATED_\" ;\n"
-            + "                   dct:modified \"_MODIFIED_\" . \n"
+            + "                   dct:modified \"_MODIFIED_\" ; \n"
+            + "                   _LABEL_ . \n"
             + "}";
     
     public static final String CREATE_CONCEPT_SET
@@ -134,7 +135,8 @@ public class SparqlInsertData {
             + "    _ID_ a ontolex:ConceptSet ;\n"
             + "                   dct:creator \"_AUTHOR_\" ;\n"
             + "                   dct:created \"_CREATED_\" ;\n"
-            + "                   dct:modified \"_MODIFIED_\" . \n"
+            + "                   dct:modified \"_MODIFIED_\" ; \n"
+            + "                   _LABEL_ . \n"
             + "}";
 
     public static final String CREATE_LINGUISTIC_RELATION

@@ -13,6 +13,7 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalConcept;
 import it.cnr.ilc.lexo.sparql.SparqlDeleteData;
 import it.cnr.ilc.lexo.sparql.SparqlInsertData;
 import it.cnr.ilc.lexo.sparql.SparqlPrefix;
+import it.cnr.ilc.lexo.sparql.skos.SparqlSKOSData;
 import it.cnr.ilc.lexo.sparql.skos.SparqlSKOSDelete;
 import it.cnr.ilc.lexo.sparql.skos.SparqlSKOSInsert;
 import it.cnr.ilc.lexo.sparql.skos.SparqlSKOSUpdate;
@@ -25,6 +26,7 @@ import java.util.List;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
+import org.eclipse.rdf4j.query.TupleQueryResult;
 
 /**
  *
@@ -36,6 +38,7 @@ public class SKOSManager implements Manager, Cached {
     private final String idInstancePrefix = LexOProperties.getProperty("repository.instance.id");
     private final String lexicalConceptNs = LexOProperties.getProperty("repository.lexicon.lexicalConcept.namespace");
     private final String lexicalizationModel = LexOProperties.getProperty("skos.lexicalizationModel");
+
     private final List<String> allowedLanguages = Arrays.asList("it", "en", "es", "fr");
 
     private static final SimpleDateFormat timestampFormat = new SimpleDateFormat(LexOProperties.getProperty("manager.operationTimestampFormat"));
@@ -121,10 +124,12 @@ public class SKOSManager implements Manager, Cached {
         String id = idInstancePrefix + tm.toString();
         String created = timestampFormat.format(tm);
         String _id = id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
+        String label = lexicalizationModel.equals("label") ? "rdfs:label" : (lexicalizationModel.equals("skos") ? "skos:prefLabel" : "label");
         RDFQueryUtil.update(SparqlInsertData.CREATE_LEXICAL_CONCEPT.replaceAll("_ID_", "<" + lexicalConceptNs + _id + ">")
                 .replace("_AUTHOR_", author)
                 .replace("_CREATED_", created)
-                .replace("_MODIFIED_", created));
+                .replace("_MODIFIED_", created)
+                .replace("_LABEL_", label + " \"" + _id + "\""));
         return setLexicalConcept(_id, created, author);
     }
 
@@ -133,10 +138,12 @@ public class SKOSManager implements Manager, Cached {
         String id = idInstancePrefix + tm.toString();
         String created = timestampFormat.format(tm);
         String _id = id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
+        String label = lexicalizationModel.equals("label") ? "rdfs:label" : (lexicalizationModel.equals("skos") ? "skos:prefLabel" : "label");
         RDFQueryUtil.update(SparqlInsertData.CREATE_CONCEPT_SET.replaceAll("_ID_", "<" + lexicalConceptNs + _id + ">")
                 .replace("_AUTHOR_", author)
                 .replace("_CREATED_", created)
-                .replace("_MODIFIED_", created));
+                .replace("_MODIFIED_", created)
+                .replace("_LABEL_", label + " \"" + _id + "\""));
         return setConceptSet(_id, created, author);
     }
 
@@ -147,6 +154,7 @@ public class SKOSManager implements Manager, Cached {
         lc.setLexicalConcept(lexicalConceptNs + id);
         lc.setLastUpdate(created);
         lc.setCreationDate(created);
+        lc.setLabel(id);
         return lc;
     }
 
@@ -157,6 +165,7 @@ public class SKOSManager implements Manager, Cached {
         cs.setConceptSet(lexicalConceptNs + id);
         cs.setLastUpdate(created);
         cs.setCreationDate(created);
+        cs.setLabel(id);
         return cs;
     }
 
@@ -422,6 +431,16 @@ public class SKOSManager implements Manager, Cached {
                         ? "\"" + sd.getTarget() + "\"@" + sd.getLanguage()
                         : "<" + sd.getTarget() + ">")
                 .replaceAll("_RELATION_", sd.getRelation()));
+    }
+
+    public TupleQueryResult getConceptSchemes(String type) throws ManagerException {
+        String labelRelation = "";
+        String labelQuery = "";
+        String index = "";
+        String query = SparqlSKOSData.DATA_CONCEPT_SCHEMES.replace("_LABEL_QUERY_", labelQuery)
+                .replace("_LABEL_RELATION_", labelRelation)
+                .replace("_INDEX_", index);
+        return RDFQueryUtil.evaluateTQuery(query);
     }
 
 }

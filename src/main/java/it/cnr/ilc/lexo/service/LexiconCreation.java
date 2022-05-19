@@ -26,7 +26,6 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalConcept;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalSenseCore;
 import it.cnr.ilc.lexo.service.helper.BibliographyHelper;
-import it.cnr.ilc.lexo.service.helper.ComponentFilterHelper;
 import it.cnr.ilc.lexo.service.helper.ComponentHelper;
 import it.cnr.ilc.lexo.service.helper.ConceptSetHelper;
 import it.cnr.ilc.lexo.service.helper.EtymologicalLinkHelper;
@@ -492,7 +491,7 @@ public class LexiconCreation extends Service {
             method = RequestMethod.GET,
             value = "lexicalConcept",
             produces = "application/json; charset=UTF-8")
-    @ApiOperation(value = "lLexical Concept creation",
+    @ApiOperation(value = "Lexical Concept creation",
             notes = "This method creates a new lexical concept and returns its id and some metadata")
     public Response lexicalConcept(
             @ApiParam(
