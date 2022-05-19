@@ -153,7 +153,7 @@ public class LexiconDataManager implements Manager, Cached {
     private String createFilter(String lexicalEntryID) {
         return "lexicalEntryIRI:" + "\\\"" + namespace + lexicalEntryID + "\\\"";
     }
-    
+
     private String createComponentFilter(String compID) {
         return "ComponentIRI:" + "\\\"" + namespace + compID + "\\\"";
     }
@@ -238,7 +238,7 @@ public class LexiconDataManager implements Manager, Cached {
                 .replace("[OFFSET]", "0");
         return RDFQueryUtil.evaluateTQuery(query);
     }
-    
+
     public TupleQueryResult getCorrespondsTo(String compID) {
         String query = SparqlSelectData.DATA_CORRESPONDS_TO.replace("[FILTER]", createComponentFilter(compID))
                 .replace("_TYPE_", "")
@@ -325,7 +325,7 @@ public class LexiconDataManager implements Manager, Cached {
         String query = SparqlSelectData.DATA_LEXICAL_ENTRY_CORE.replace("[IRI]", "\\\"" + namespace + lexicalEntryID + "\\\"");
         return RDFQueryUtil.evaluateTQuery(query);
     }
-    
+
     public TupleQueryResult getComponent(String componentID) throws ManagerException {
         String query = SparqlSelectData.DATA_COMPONENT.replace("[IRI]", "\\\"" + namespace + componentID + "\\\"");
         return RDFQueryUtil.evaluateTQuery(query);
@@ -386,11 +386,15 @@ public class LexiconDataManager implements Manager, Cached {
     }
 
     public void addLexicalEntityLink(Etymology e, LexicalEntityLinksItem links) {
-        ArrayList<Link> _links = new ArrayList();
-        for (Link link : links.getLinks()) {
-            _links.add(link);
+        if (links != null) {
+            ArrayList<Link> _links = new ArrayList();
+            for (Link link : links.getLinks()) {
+                _links.add(link);
+            }
+            e.setLinks(_links);
+        } else {
+            e.setLinks(new ArrayList());
         }
-        e.setLinks(_links);
     }
 
     public EtymologyTree getEtymologyTree(Etymology e, List<EtymologicalLink> etyLinks) {
