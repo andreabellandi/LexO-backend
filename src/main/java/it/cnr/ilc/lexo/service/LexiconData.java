@@ -55,7 +55,6 @@ import it.cnr.ilc.lexo.service.helper.LexicalEntryElementHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalSenseCoreHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalSenseFilterHelper;
 import it.cnr.ilc.lexo.service.helper.LinkedEntityHelper;
-import it.cnr.ilc.lexo.sparql.SparqlIndex;
 import it.cnr.ilc.lexo.sparql.SparqlVariable;
 import it.cnr.ilc.lexo.util.EnumUtil;
 import java.util.ArrayList;
