@@ -64,7 +64,7 @@ public class Federation extends Service {
             @QueryParam("endpoint") String endpoint) {
         if (query != null && endpoint != null) {
             try {
-                HitsDataList hdl = federationManager.getFederatedResult();
+                HitsDataList hdl = federationManager.getFederatedResult(endpoint, query);
                 String json = federatedObjectHelper.toJson(hdl);
                 return Response.ok(json)
                     .type(MediaType.TEXT_PLAIN)

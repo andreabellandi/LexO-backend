@@ -40,33 +40,22 @@ public class FederationManager implements Manager, Cached {
 
     }
 
-    public HitsDataList getFederatedResult() throws ManagerException {
+    public HitsDataList getFederatedResult(String endpoint, String query) throws ManagerException {
         ArrayList<FederatedObject> fedList = new ArrayList();
         Repository repository = FedXFactory.newFederation()
-                .withSparqlEndpoint("https://lila-erc.eu/sparql/lila_knowledge_base/sparql")
+                .withSparqlEndpoint(endpoint)
                 .create();
         try ( RepositoryConnection conn = repository.getConnection()) {
-            String query
-                    = "prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
-                    + "prefix ontolex: <http://www.w3.org/ns/lemon/ontolex#>\n"
-                    + "prefix lila: <http://lila-erc.eu/ontologies/lila/>\n"
-                    + "\n"
-                    + "SELECT ?lemma ?pos\n"
-                    + "WHERE {\n"
-                    + "  ?lemma a lila:Lemma ;\n"
-                    + "  ontolex:writtenRep \"donator\" ;\n"
-                    + "  lila:hasPOS ?pos\n"
-                    + "}";
             TupleQuery tq = conn.prepareTupleQuery(query);
             try ( TupleQueryResult tqRes = tq.evaluate()) {
                 while (tqRes.hasNext()) {
-                    FederatedObject fo = new FederatedObject();
                     BindingSet b = tqRes.next();
                     for (String var : b.getBindingNames()) {
+                        FederatedObject fo = new FederatedObject();
                         fo.setKey(var);
                         fo.setValue(b.getValue(var).stringValue());
+                        fedList.add(fo);
                     }
-                    fedList.add(fo);
                 }
             }
         } catch (RepositoryException|MalformedQueryException|QueryEvaluationException e) {
