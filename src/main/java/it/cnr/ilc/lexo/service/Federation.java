@@ -5,45 +5,21 @@
  */
 package it.cnr.ilc.lexo.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import it.cnr.ilc.lexo.manager.FederationManager;
-import it.cnr.ilc.lexo.manager.GraphVizManager;
 import it.cnr.ilc.lexo.manager.ManagerException;
 import it.cnr.ilc.lexo.manager.ManagerFactory;
-import it.cnr.ilc.lexo.service.data.lexicon.input.graphViz.EdgeGraphFilter;
-import it.cnr.ilc.lexo.service.data.lexicon.input.graphViz.NodeGraphFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.output.HitsDataList;
-import it.cnr.ilc.lexo.service.data.lexicon.output.graphViz.NodeLinks;
-import it.cnr.ilc.lexo.service.data.lexicon.output.graphViz.SenseNodeSummary;
-import it.cnr.ilc.lexo.service.data.lexicon.output.graphViz.Cytoscape;
-import it.cnr.ilc.lexo.service.data.lexicon.output.graphViz.SenseEdgeSummary;
 import it.cnr.ilc.lexo.service.helper.FederatedObjectHelper;
-import it.cnr.ilc.lexo.service.helper.HelperException;
-import it.cnr.ilc.lexo.service.helper.NodeLinksHelper;
-import it.cnr.ilc.lexo.service.helper.SenseEdgeSummaryHelper;
-import it.cnr.ilc.lexo.service.helper.SenseNodeSummaryHelper;
-import it.cnr.ilc.lexo.util.EnumUtil;
-import java.util.List;
-import java.util.logging.Level;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.eclipse.rdf4j.federated.FedXFactory;
-import org.eclipse.rdf4j.query.BindingSet;
-import org.eclipse.rdf4j.query.TupleQuery;
-import org.eclipse.rdf4j.query.TupleQueryResult;
-import org.eclipse.rdf4j.repository.Repository;
-import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -73,7 +49,8 @@ public class Federation extends Service {
             produces = "application/json; charset=UTF-8")
     @ApiOperation(value = "Search on external endpoints",
             notes = "This method runs a query on a specific sparql endpoint")
-    public Response search(@ApiParam(
+    public Response search(
+            @ApiParam(
             name = "sparqlQuery",
             value = "a well-formed sparql query with explicit binding variable names",
             example = "SELECT ?s ?p ?o WHERE { ?s ?p ?o } LIMIT 10",
@@ -84,7 +61,7 @@ public class Federation extends Service {
                     value = "Url of the endpoint to query",
                     example = "http://dbpedia.org/sparql",
                     required = true)
-            @PathParam("endpoint") String endpoint) {
+            @QueryParam("endpoint") String endpoint) {
         if (query != null && endpoint != null) {
             try {
                 HitsDataList hdl = federationManager.getFederatedResult();
