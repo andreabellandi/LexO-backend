@@ -42,6 +42,7 @@ public class FederationManager implements Manager, Cached {
 
     public HitsDataList getFederatedResult(String endpoint, String query) throws ManagerException {
         ArrayList<FederatedObject> fedList = new ArrayList();
+        int resultCount = 0;
         Repository repository = FedXFactory.newFederation()
                 .withSparqlEndpoint(endpoint)
                 .create();
@@ -49,6 +50,7 @@ public class FederationManager implements Manager, Cached {
             TupleQuery tq = conn.prepareTupleQuery(query);
             try ( TupleQueryResult tqRes = tq.evaluate()) {
                 while (tqRes.hasNext()) {
+                    resultCount++;
                     BindingSet b = tqRes.next();
                     for (String var : b.getBindingNames()) {
                         FederatedObject fo = new FederatedObject();
@@ -62,7 +64,7 @@ public class FederationManager implements Manager, Cached {
             throw new ManagerException(e.getMessage());
         }
         repository.shutDown();
-        return new HitsDataList(fedList.size(), fedList);
+        return new HitsDataList(resultCount, fedList);
     }
 
 }
