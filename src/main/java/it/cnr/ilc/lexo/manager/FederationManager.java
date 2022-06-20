@@ -9,6 +9,7 @@ import it.cnr.ilc.lexo.LexOProperties;
 import it.cnr.ilc.lexo.service.data.lexicon.output.HitsDataList;
 import it.cnr.ilc.lexo.service.data.lexicon.output.federation.FederatedObject;
 import java.util.ArrayList;
+import java.util.List;
 import org.eclipse.rdf4j.federated.FedXFactory;
 import org.eclipse.rdf4j.query.BindingSet;
 import org.eclipse.rdf4j.query.MalformedQueryException;
@@ -41,7 +42,7 @@ public class FederationManager implements Manager, Cached {
     }
 
     public HitsDataList getFederatedResult(String endpoint, String query) throws ManagerException {
-        ArrayList<FederatedObject> fedList = new ArrayList();
+        ArrayList<List<FederatedObject>> foRows = new ArrayList();
         int resultCount = 0;
         Repository repository = FedXFactory.newFederation()
                 .withSparqlEndpoint(endpoint)
@@ -52,19 +53,21 @@ public class FederationManager implements Manager, Cached {
                 while (tqRes.hasNext()) {
                     resultCount++;
                     BindingSet b = tqRes.next();
+                    ArrayList<FederatedObject> foRow = new ArrayList();
                     for (String var : b.getBindingNames()) {
                         FederatedObject fo = new FederatedObject();
                         fo.setKey(var);
                         fo.setValue(b.getValue(var).stringValue());
-                        fedList.add(fo);
+                        foRow.add(fo);
                     }
+                    foRows.add(foRow);
                 }
             }
         } catch (RepositoryException|MalformedQueryException|QueryEvaluationException e) {
             throw new ManagerException(e.getMessage());
         }
         repository.shutDown();
-        return new HitsDataList(resultCount, fedList);
+        return new HitsDataList(resultCount, foRows);
     }
 
 }
