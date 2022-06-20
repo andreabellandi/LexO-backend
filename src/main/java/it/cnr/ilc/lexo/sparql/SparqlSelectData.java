@@ -85,7 +85,7 @@ public class SparqlSelectData {
             + "          rdfs:label ?" + SparqlVariable.LABEL + " .\n"
             + "   ?tmp_type rdfs:label ?_type .\n"
             + "   OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " lexinfo:partOfSpeech ?" + SparqlVariable.LEXICAL_ENTRY_POS + "} .\n"
-             + "   OPTIONAL { ?" + SparqlVariable.LEXICAL_ENTRY + " lexinfo:confidence ?confidence . }\n"
+            + "   OPTIONAL { ?" + SparqlVariable.LEXICAL_ENTRY + " lexinfo:confidence ?confidence . }\n"
             + "   OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " dct:creator ?" + SparqlVariable.LEXICAL_ENTRY_CREATION_AUTHOR + "} .\n"
             + "   OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " dct:created ?" + SparqlVariable.CREATION_DATE + "} .\n"
             + "   OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " dct:modified ?" + SparqlVariable.LAST_UPDATE + "} .\n"
@@ -524,7 +524,7 @@ public class SparqlSelectData {
             + "                rdfs:label ?" + SparqlVariable.LABEL + ".\n"
             + "    FILTER(!STRSTARTS(STR(?" + SparqlVariable.LEXICAL_ENTRY_TYPE + "), str(owl:)))\n"
             + "    OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " dct:created ?" + SparqlVariable.CREATION_DATE + "} .\n"
-             + "   OPTIONAL { ?" + SparqlVariable.LEXICAL_ENTRY + " lexinfo:confidence ?confidence . }\n"
+            + "   OPTIONAL { ?" + SparqlVariable.LEXICAL_ENTRY + " lexinfo:confidence ?confidence . }\n"
             + "    OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " itant:stemType ?stemType} .\n"
             + "    OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " dct:dateSubmitted ?" + SparqlVariable.COMPLETION_DATE + "} .\n"
             + "    OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " dct:dateAccepted ?" + SparqlVariable.REVISION_DATE + "} .\n"
@@ -562,7 +562,7 @@ public class SparqlSelectData {
             + " ?" + SparqlVariable.CREATION_DATE
             + " ?" + SparqlVariable.REVISION_DATE
             + " ?" + SparqlVariable.LAST_UPDATE
-            + " ?confidence" 
+            + " ?confidence"
             + " ?stemType";
 
     public static final String DATA_FORM_CORE
@@ -601,7 +601,7 @@ public class SparqlSelectData {
             + "      " + SparqlPrefix.LUC.getPrefix() + "totalHits ?" + SparqlVariable.TOTAL_HITS + " ;\n"
             + "      " + SparqlPrefix.LUC.getPrefix() + "entities ?" + SparqlVariable.FORM + " .\n"
             + "    ?" + SparqlVariable.FORM + " " + SparqlPrefix.ONTOLEX.getPrefix() + "writtenRep ?" + SparqlVariable.WRITTEN_REPRESENTATION + " .\n"
-             + "   OPTIONAL { ?" + SparqlVariable.FORM + " lexinfo:confidence ?confidence . }\n"
+            + "   OPTIONAL { ?" + SparqlVariable.FORM + " lexinfo:confidence ?confidence . }\n"
             + "    ?le ?" + SparqlVariable.FORM_TYPE + " ?" + SparqlVariable.FORM + " ;\n"
             + "    OPTIONAL { ?le " + SparqlPrefix.LEXINFO.getPrefix() + "partOfSpeech ?" + SparqlVariable.LEXICAL_ENTRY_POS + " . }\n"
             //            + "    ?" + SparqlVariable.FORM_TYPE + " " + SparqlPrefix.RDFS.getPrefix() + "subPropertyOf  " + SparqlPrefix.ONTOLEX.getPrefix() + "lexicalForm .\n"
@@ -670,7 +670,7 @@ public class SparqlSelectData {
             + " ?" + SparqlVariable.SENSE_CREATION_AUTHOR
             + " ?" + SparqlVariable.CREATION_DATE
             + " ?" + SparqlVariable.SENSE_TOPIC
-            + " ?confidence" 
+            + " ?confidence"
             + " ?" + SparqlVariable.LAST_UPDATE + "\n"
             + "FROM onto:explicit\n"
             + "WHERE {\n"
@@ -721,8 +721,8 @@ public class SparqlSelectData {
             + "  ?" + SparqlVariable.ETYMOLOGY + " rdfs:label ?" + SparqlVariable.LABEL + " ;\n"
             + "             dct:creator ?" + SparqlVariable.ETYMOLOGY_CREATION_AUTHOR + " ;\n"
             + "             dct:modified ?" + SparqlVariable.LAST_UPDATE + " ;\n"
-            + "             dct:created ?" + SparqlVariable.CREATION_DATE + " ;\n"
-            + "             lexinfo:confidence ?" + SparqlVariable.CONFIDENCE + " .\n"
+            + "             dct:created ?" + SparqlVariable.CREATION_DATE + " .\n"
+            + "    OPTIONAL { ?" + SparqlVariable.ETYMOLOGY + " lexinfo:confidence ?" + SparqlVariable.CONFIDENCE + " }\n"
             + "    OPTIONAL { ?" + SparqlVariable.ETYMOLOGY + " rdfs:comment ?" + SparqlVariable.HYPOTHESIS_OF + " }\n"
             + "    OPTIONAL { ?" + SparqlVariable.ETYMOLOGY + " skos:note ?" + SparqlVariable.NOTE + " }\n"
             + "}";
@@ -839,7 +839,7 @@ public class SparqlSelectData {
             + "      luc:query \"ComponentIRI:[IRI]\" ;\n"
             + "      luc:entities ?" + SparqlVariable.COMPONENT + " .\n"
             + "    OPTIONAL {?" + SparqlVariable.COMPONENT + " rdfs:label ?" + SparqlVariable.LABEL + "} .\n"
-             + "   OPTIONAL { ?" + SparqlVariable.COMPONENT + " lexinfo:confidence ?confidence . }\n"
+            + "   OPTIONAL { ?" + SparqlVariable.COMPONENT + " lexinfo:confidence ?confidence . }\n"
             + "    OPTIONAL {?" + SparqlVariable.COMPONENT + " dct:created ?" + SparqlVariable.CREATION_DATE + "} .\n"
             + "    OPTIONAL {?" + SparqlVariable.COMPONENT + " dct:modified ?" + SparqlVariable.LAST_UPDATE + "} .\n"
             + "    OPTIONAL { ?" + SparqlVariable.COMPONENT + " skos:note ?" + SparqlVariable.NOTE + " . }\n"
@@ -942,7 +942,7 @@ public class SparqlSelectData {
             + "    ?" + SparqlVariable.FORM + " dct:creator ?" + SparqlVariable.LEXICAL_ENTRY_CREATION_AUTHOR + " ;\n"
             + "       ontolex:writtenRep ?" + SparqlVariable.WRITTEN_REPRESENTATION + " .\n"
             + "   OPTIONAL { ?" + SparqlVariable.FORM + " ontolex:phoneticRep ?" + SparqlVariable.PHONETIC_REPRESENTATION + " . }\n"
-             + "   OPTIONAL { ?" + SparqlVariable.FORM + " lexinfo:confidence ?confidence . }\n"
+            + "   OPTIONAL { ?" + SparqlVariable.FORM + " lexinfo:confidence ?confidence . }\n"
             + "   OPTIONAL { ?" + SparqlVariable.FORM + " skos:note ?" + SparqlVariable.NOTE + " . }\n"
             + "   OPTIONAL { GRAPH ?g { ?" + SparqlVariable.FORM + " ?morphoTrait ?morphoValue . }  \n"
             + "              FILTER(STRSTARTS(STR(?morphoTrait), str(lexinfo:))) }\n"
@@ -1023,7 +1023,7 @@ public class SparqlSelectData {
             + "   ?" + SparqlVariable.FORM + " dct:creator ?" + SparqlVariable.LEXICAL_ENTRY_CREATION_AUTHOR + " ;\n"
             + "       ontolex:writtenRep ?" + SparqlVariable.WRITTEN_REPRESENTATION + " .\n"
             + "   OPTIONAL { ?" + SparqlVariable.FORM + " ontolex:phoneticRep ?" + SparqlVariable.PHONETIC_REPRESENTATION + " . }\n"
-             + "   OPTIONAL { ?" + SparqlVariable.FORM + " lexinfo:confidence ?confidence . }\n"
+            + "   OPTIONAL { ?" + SparqlVariable.FORM + " lexinfo:confidence ?confidence . }\n"
             + "   OPTIONAL { ?" + SparqlVariable.FORM + " dct:created ?" + SparqlVariable.CREATION_DATE + " . }\n"
             + "   OPTIONAL { ?" + SparqlVariable.FORM + " dct:modified ?" + SparqlVariable.LAST_UPDATE + " . }\n"
             + "   OPTIONAL { ?" + SparqlVariable.FORM + " skos:note ?" + SparqlVariable.NOTE + " . }\n"
@@ -1128,7 +1128,7 @@ public class SparqlSelectData {
             + SparqlPrefix.LUC.getSparqlPrefix() + "\n"
             + SparqlPrefix.VS.getSparqlPrefix() + "\n"
             + SparqlPrefix.SKOS.getSparqlPrefix() + "\n"
-             + SparqlPrefix.DECOMP.getSparqlPrefix() + "\n"
+            + SparqlPrefix.DECOMP.getSparqlPrefix() + "\n"
             + "SELECT ?" + SparqlVariable.LEXICAL_ENTRY
             + " ?" + SparqlVariable.LEXICAL_ENTRY_INSTANCE_NAME
             + " ?" + SparqlVariable.LEXICAL_ENTRY_STATUS
@@ -1160,7 +1160,7 @@ public class SparqlSelectData {
             + "   OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " dct:creator ?" + SparqlVariable.LEXICAL_ENTRY_CREATION_AUTHOR + "} .\n"
             + "   OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " dct:created ?" + SparqlVariable.CREATION_DATE + "} .\n"
             + "   OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " dct:modified ?" + SparqlVariable.LAST_UPDATE + "} .\n"
-             + "   OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " lexinfo:confidence ?confidence} .\n"
+            + "   OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " lexinfo:confidence ?confidence} .\n"
             + "   OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " dct:author ?" + SparqlVariable.LEXICAL_ENTRY_COMPLETING_AUTHOR + "} .\n"
             + "   OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " dct:dateAccepted ?" + SparqlVariable.REVISION_DATE + "} .\n"
             + "   OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " dct:dateSubmitted ?" + SparqlVariable.COMPLETION_DATE + "} .\n"
@@ -1238,7 +1238,7 @@ public class SparqlSelectData {
             + "   OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " dct:creator ?" + SparqlVariable.LEXICAL_ENTRY_CREATION_AUTHOR + "} .\n"
             + "   OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " dct:created ?" + SparqlVariable.CREATION_DATE + "} .\n"
             + "   OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " dct:modified ?" + SparqlVariable.LAST_UPDATE + "} .\n"
-             + "   OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " lexinfo:confidence ?confidence} .\n"
+            + "   OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " lexinfo:confidence ?confidence} .\n"
             + "   OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " dct:author ?" + SparqlVariable.LEXICAL_ENTRY_COMPLETING_AUTHOR + "} .\n"
             + "   OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " dct:dateAccepted ?" + SparqlVariable.REVISION_DATE + "} .\n"
             + "   OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " dct:dateSubmitted ?" + SparqlVariable.COMPLETION_DATE + "} .\n"
@@ -1306,7 +1306,7 @@ public class SparqlSelectData {
             + "      luc:entities ?entity .\n"
             + "  ?entity decomp:constituent ?" + SparqlVariable.COMPONENT + " .\n"
             + "   OPTIONAL {?" + SparqlVariable.COMPONENT + " rdfs:label ?" + SparqlVariable.LABEL + "} .\n"
-              + "   OPTIONAL { ?" + SparqlVariable.COMPONENT + " lexinfo:confidence ?confidence . }\n"
+            + "   OPTIONAL { ?" + SparqlVariable.COMPONENT + " lexinfo:confidence ?confidence . }\n"
             + "   OPTIONAL {?" + SparqlVariable.COMPONENT + " dct:creator ?" + SparqlVariable.COMPONENT_CREATION_AUTHOR + "} .\n"
             + "   OPTIONAL {?" + SparqlVariable.COMPONENT + " skos:note ?" + SparqlVariable.NOTE + "} .\n"
             + "   OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " ?_position ?" + SparqlVariable.COMPONENT + " .\n"
