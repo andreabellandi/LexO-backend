@@ -1,9 +1,7 @@
 # LexO-server (v0.1)
-## _A set of REST services for Linguistic Linked Data_
+## _A set of REST services for Linguistic Linked Data_ [![N|Solid](images/poweredILC4CLARIN.png)](https://ilc4clarin.ilc.cnr.it/)
 
-[![N|Solid](images/poweredILC4CLARIN.jpeg)](https://nodesource.com/products/nsolid)
-
-[![Build Status](https://travis-ci.org/joemccann/dillinger.svg?branch=master)](https://travis-ci.org/joemccann/dillinger)
+[![Build Status](images/build-passing.png)]()
 
 LexO-server is a software backend providing REST services for building and managing lexical and terminological resources in the context of the Semantic Web. 
 It relies on the [_OntoLex-Lemon_](https://www.w3.org/2016/05/ontolex/) model.
