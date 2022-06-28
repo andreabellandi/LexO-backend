@@ -1,5 +1,4 @@
-# LexO-server (v0.1)
-## _A set of REST services for Linguistic Linked Data_ 
+# LexO-server (v0.1): _A set of REST services for Linguistic Linked Data_ 
 
 ![](images/build-passing.png) [![N|Solid](images/clarin.png)](https://ilc4clarin.ilc.cnr.it/) 
 
