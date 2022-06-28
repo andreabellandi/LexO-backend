@@ -5,6 +5,9 @@
  */
 package it.cnr.ilc.lexo.manager;
 
+import com.fasterxml.jackson.core.JacksonException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import it.cnr.ilc.lexo.HibernateUtil;
 import it.cnr.ilc.lexo.hibernate.entity.ConfigurationParameter;
 import it.cnr.ilc.lexo.service.data.lexicon.input.Config;
@@ -30,14 +33,14 @@ public class ConfigurationManager implements Manager, Cached {
     public List<ConfigurationParameter> loadConfigurations() {
         return HibernateUtil.getSession().createCriteria(ConfigurationParameter.class).list();
     }
-    
+
     public ConfigurationParameter loadConfigParameter(String key) {
         Criteria criteria = HibernateUtil.getSession().createCriteria(ConfigurationParameter.class);
         criteria.add(Restrictions.eq("key", key));
         List<ConfigurationParameter> list = criteria.list();
         return list.isEmpty() ? null : list.get(0);
     }
-    
+
     public Date updateConfiguration(ConfigUpdater cu) throws ManagerException {
         ConfigurationParameter cp = loadConfigParameter(cu.getParam());
         if (cp == null) {
@@ -48,10 +51,28 @@ public class ConfigurationManager implements Manager, Cached {
             return _cp.getTime();
         }
     }
-    
+
     public List<Config> getConfigurations() {
         // TODO
         return null;
+    }
+
+    public void initConfigurations(String json) throws ManagerException {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode config = getJsonNode(mapper, json);
+        if (config != null) {
+            
+        } else {
+            throw new ManagerException("Input Json syntax error");
+        }
+    }
+    
+    private JsonNode getJsonNode(ObjectMapper mapper, String json) {
+        try {
+            return mapper.readTree(json);
+        } catch (JacksonException e) {
+            return null;
+        }
     }
 
 }

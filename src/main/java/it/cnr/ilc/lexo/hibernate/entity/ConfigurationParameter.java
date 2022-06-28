@@ -17,6 +17,8 @@ public class ConfigurationParameter extends SuperEntity {
     private String key;
     private String value;
     
+    public ConfigurationParameter() {}
+    
     public ConfigurationParameter(String key, String value) {
         this.key = key;
         this.value = value;
