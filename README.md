@@ -1,5 +1,5 @@
 # LexO-server (v0.1)
-##### _A set of REST services for Linguistic Linked Data_ 
+#### _A set of REST services for Linguistic Linked Data_ 
 
 [![Build Status](images/build-passing.png)](https://github.com/andreabellandi/LexO-backend) [![N|Solid](images/clarin.png)](https://ilc4clarin.ilc.cnr.it/) 
 
