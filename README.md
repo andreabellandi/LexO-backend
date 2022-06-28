@@ -48,7 +48,7 @@ LexO-server uses the following technology to work properly:
 
 ```
 
-   where \$graphdb_intallation_url\$ is the url of your GrapDB installation (typically on port 7200), and repo_name is the name of the repository to connect to.
+   where $graphdb\_intallation\_url$ is the url of your GrapDB installation (typically on port 7200), and $repo\_name$ is the name of the repository to connect to.
 
 5. Compile the project with Maven.
 6. Run the build.
