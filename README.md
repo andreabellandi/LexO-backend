@@ -30,8 +30,8 @@ LexO-server uses the following technology to work properly:
 
 1. [Install](https://graphdb.ontotext.com/documentation/free/quick-start-guide.html) GraphDB. 
 2. [Create](https://graphdb.ontotext.com/documentation/free/creating-a-repository.html) an empty GraphDB repository with default values.
-2. Download the project.
-3. Edit the pom.xml file, as follows:
+3. Download the project.
+4. Edit the pom.xml file, as follows:
 
 ```     
     <profile>
@@ -48,11 +48,11 @@ LexO-server uses the following technology to work properly:
 
 ```
 
-   where graphdb_intallation_url is the url of your GrapDB installation (typically on port 7200), and repo_name is the name of the repository to connect to.
+   where \$graphdb_intallation_url\$ is the url of your GrapDB installation (typically on port 7200), and repo_name is the name of the repository to connect to.
 
-4. Compile the project with Maven.
-5. Run the build.
-6. Open the browser at http://localhost:8080/LexO-backend/, and the swagger sholud appear.
+5. Compile the project with Maven.
+6. Run the build.
+7. Open the browser at http://localhost:8080/LexO-backend/, and the swagger sholud appear.
 
 ## License
 
