@@ -33,20 +33,23 @@ LexO-server uses the following technology to work properly:
 2. Download the project.
 3. Edit the pom.xml file, as follows:
 
-```     <profile>
-            <id>release</id>
-            <properties>
-                <db.jdbcUrl>leave_empty</db.jdbcUrl>
-                <db.user>leave_empty</db.user>
-                <db.password>leave_empty</db.password>
-                <graphdb.url>$graphdb_intallation_url$</graphdb.url>
-                <graphdb.repository>$repo_name$</graphdb.repository>
-                <graphdb.poolSize>5</graphdb.poolSize>
-            </properties>
-        </profile>
+```     
+    <profile>
+        <id>release</id>
+        <properties>
+            <db.jdbcUrl>leave_empty</db.jdbcUrl>
+            <db.user>leave_empty</db.user>
+            <db.password>leave_empty</db.password>
+            <graphdb.url>$graphdb_intallation_url$</graphdb.url>
+            <graphdb.repository>$repo_name$</graphdb.repository>
+            <graphdb.poolSize>5</graphdb.poolSize>
+        </properties>
+    </profile>
+
 ```
 
    where graphdb_intallation_url is the url of your GrapDB installation (typically on port 7200), and repo_name is the name of the repository to connect to.
+
 4. Compile the project with Maven.
 5. Run the build.
 6. Open the browser at http://localhost:8080/LexO-backend/, and the swagger sholud appear.
