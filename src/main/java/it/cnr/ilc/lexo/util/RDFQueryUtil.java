@@ -6,6 +6,17 @@
 package it.cnr.ilc.lexo.util;
 
 import it.cnr.ilc.lexo.GraphDbUtil;
+import it.cnr.ilc.lexo.manager.ManagerException;
+import it.cnr.ilc.lexo.service.data.lexicon.input.ExportSetting;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import org.apache.commons.io.IOUtils;
+import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.model.util.Values;
 import org.eclipse.rdf4j.query.BooleanQuery;
 import org.eclipse.rdf4j.query.MalformedQueryException;
 import org.eclipse.rdf4j.query.QueryEvaluationException;
@@ -15,6 +26,9 @@ import org.eclipse.rdf4j.query.TupleQueryResult;
 import org.eclipse.rdf4j.query.Update;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.repository.RepositoryException;
+import org.eclipse.rdf4j.rio.RDFFormat;
+import org.eclipse.rdf4j.rio.RDFWriter;
+import org.eclipse.rdf4j.rio.Rio;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,4 +91,82 @@ public class RDFQueryUtil {
             GraphDbUtil.releaseConnection(conn);
         }
     }
+
+    public static File export(ExportSetting set) throws ManagerException {
+        RepositoryConnection conn = GraphDbUtil.getConnection();
+        try {
+            if (null != conn) {
+                File _export = new File(set.getFileName() + getFileExtension(set.getFormat()));
+                RDFFormat format = getRDFFormat(set.getFormat());
+                FileOutputStream outputStream = new FileOutputStream(_export);
+                RDFWriter writer = Rio.createWriter(format, outputStream);
+                conn.exportStatements(set.getSubject() != null ? Values.iri(set.getSubject()) : null,
+                        set.getObject() != null ? Values.iri(set.getObject()) : null,
+                        set.getPredicate() != null ? Values.iri(set.getPredicate()) : null,
+                        set.isInferred(),
+                        writer,
+                        getContexts(set.getContext() != null ? set.getContext() : null));
+                IOUtils.closeQuietly(outputStream);
+                return _export;
+            }
+        } catch (RepositoryException | FileNotFoundException e) {
+            logger.error("", e);
+            throw new ManagerException(e.getMessage());
+        } finally {
+            GraphDbUtil.releaseConnection(conn);
+        }
+        return null;
+    }
+
+    private static RDFFormat getRDFFormat(String format) {
+        switch (format) {
+            case "xml":
+                return RDFFormat.RDFXML;
+            case "jsonld":
+                return RDFFormat.JSONLD;
+            case "n3":
+                return RDFFormat.N3;
+            case "ntriples":
+                return RDFFormat.NTRIPLES;
+            case "nquads":
+                return RDFFormat.NQUADS;
+            case "turtle":
+                return RDFFormat.TURTLE;
+            default:
+                return RDFFormat.RDFXML;
+        }
+    }
+
+    private static String getFileExtension(String format) {
+        switch (format) {
+            case "xml":
+                return ".owl";
+            case "jsonld":
+                return ".jsonld";
+            case "n3":
+                return ".n3";
+            case "ntriples":
+                return ".nt";
+            case "nquads":
+                return ".nq";
+            case "turtle":
+                return ".ttl";
+            default:
+                return null;
+        }
+    }
+
+    private static Resource[] getContexts(ArrayList<String> contexts) {
+        if (contexts != null) {
+            Resource[] _contexts = new Resource[contexts.size()];
+            for (int i = 0; i < contexts.size(); i++) {
+                _contexts[i] = Values.iri(contexts.get(i));
+            }
+            return _contexts;
+        } else {
+            return new Resource[0];
+        }
+
+    }
+
 }

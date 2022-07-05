@@ -124,7 +124,7 @@ public class SKOSManager implements Manager, Cached {
         String id = idInstancePrefix + tm.toString();
         String created = timestampFormat.format(tm);
         String _id = id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
-        String label = lexicalizationModel.equals("label") ? "rdfs:label" : (lexicalizationModel.equals("skos") ? "skos:prefLabel" : "label");
+        String label = lexicalizationModel.equals("label") ? "rdfs:label" : (lexicalizationModel.equals("skos") ? "skos:prefLabel" : "skos:prefLabel");
         RDFQueryUtil.update(SparqlInsertData.CREATE_LEXICAL_CONCEPT.replaceAll("_ID_", "<" + lexicalConceptNs + _id + ">")
                 .replace("_AUTHOR_", author)
                 .replace("_CREATED_", created)
