@@ -7,6 +7,7 @@ package it.cnr.ilc.lexo.manager;
 
 import it.cnr.ilc.lexo.LexOProperties;
 import it.cnr.ilc.lexo.service.data.lexicon.input.graphViz.EdgeGraphFilter;
+import it.cnr.ilc.lexo.service.data.lexicon.input.graphViz.HopsFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.input.graphViz.NodeGraphFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.output.graphViz.NodeLinks;
 import it.cnr.ilc.lexo.service.data.lexicon.output.graphViz.SenseNodeSummary;
@@ -78,14 +79,14 @@ public class GraphVizManager implements Manager, Cached {
             if (ngf.getLenght() > 0) {
                 if (in) {
                     query = SparqlGraphViz.GRAPH_VIZ_NODE_GRAPH_WITH_LENGHT_INCOMING.replaceAll("_NODE_ID_", namespace + id)
-                        .replaceAll("_PATH_LENGHT_", String.valueOf(ngf.getLenght()))
-                        .replaceAll("_RELATION_", SparqlPrefix.LEXINFO.getPrefix() + ngf.getRelation().trim());
+                            .replaceAll("_PATH_LENGHT_", String.valueOf(ngf.getLenght()))
+                            .replaceAll("_RELATION_", SparqlPrefix.LEXINFO.getPrefix() + ngf.getRelation().trim());
                 } else {
                     query = SparqlGraphViz.GRAPH_VIZ_NODE_GRAPH_WITH_LENGHT_OUTGOING.replaceAll("_NODE_ID_", namespace + id)
-                        .replaceAll("_PATH_LENGHT_", String.valueOf(ngf.getLenght()))
-                        .replaceAll("_RELATION_", SparqlPrefix.LEXINFO.getPrefix() + ngf.getRelation().trim());
+                            .replaceAll("_PATH_LENGHT_", String.valueOf(ngf.getLenght()))
+                            .replaceAll("_RELATION_", SparqlPrefix.LEXINFO.getPrefix() + ngf.getRelation().trim());
                 }
-                
+
             } else {
                 return null;
             }
@@ -155,5 +156,17 @@ public class GraphVizManager implements Manager, Cached {
 
     public void createNodeSummary(List<NodeLinks> _links, SenseNodeSummary sns) {
         sns.setLinks(_links);
+    }
+
+    public TupleQueryResult getMaxHopsByRel(HopsFilter hf) {
+        StringBuilder pattern = new StringBuilder();
+        for (String rel : hf.getRelation()) {
+            if (!pattern.isEmpty()) {
+                pattern.append(" UNION ");
+            }
+            pattern.append(SparqlGraphViz.GRAPH_VIZ_NODE_MAX_DIST_BY_REL_PATTERN.replaceAll("_SOURCE_", hf.getNode()).replaceAll("_RELATION_", rel));
+        }
+        String query = SparqlGraphViz.GRAPH_VIZ_NODE_MAX_DIST_BY_REL.replaceAll("_PATTERN_", pattern.toString());
+        return RDFQueryUtil.evaluateTQuery(query);
     }
 }

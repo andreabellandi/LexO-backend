@@ -163,7 +163,7 @@ public class SparqlGraphViz {
             + "    ?source skos:definition ?def .\n"
             + "    ?target skos:definition ?defTarget .\n"
             + "}";
-    
+
     public static final String GRAPH_VIZ_NODE_GRAPH_WITH_LENGHT_INCOMING
             = SparqlPrefix.PATH.getSparqlPrefix() + "\n"
             + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
@@ -242,4 +242,16 @@ public class SparqlGraphViz {
             + "    ?target ontolex:isSenseOf [ rdfs:label ?targetLabel ] .\n"
             + "}";
 
+    public static final String GRAPH_VIZ_NODE_MAX_DIST_BY_REL
+            = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
+            + "SELECT ?label (COUNT(?label) as ?labelCount) \n"
+            + "WHERE {\n"
+            + "    _PATTERN_ \n"
+            + "}\n"
+            + "GROUP BY ?label";
+
+    public static final String GRAPH_VIZ_NODE_MAX_DIST_BY_REL_PATTERN
+            = " { lex:_SOURCE_ lexinfo:_RELATION_+ ?o . \n"
+            + "    VALUES (?label) {(lexinfo:_RELATION_)}}";
 }

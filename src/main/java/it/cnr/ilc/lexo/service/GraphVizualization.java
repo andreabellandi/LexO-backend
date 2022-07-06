@@ -13,11 +13,13 @@ import io.swagger.annotations.ApiParam;
 import it.cnr.ilc.lexo.manager.GraphVizManager;
 import it.cnr.ilc.lexo.manager.ManagerFactory;
 import it.cnr.ilc.lexo.service.data.lexicon.input.graphViz.EdgeGraphFilter;
+import it.cnr.ilc.lexo.service.data.lexicon.input.graphViz.HopsFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.input.graphViz.NodeGraphFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.output.graphViz.NodeLinks;
 import it.cnr.ilc.lexo.service.data.lexicon.output.graphViz.SenseNodeSummary;
 import it.cnr.ilc.lexo.service.data.lexicon.output.graphViz.Cytoscape;
 import it.cnr.ilc.lexo.service.data.lexicon.output.graphViz.SenseEdgeSummary;
+import it.cnr.ilc.lexo.service.helper.CountingHelper;
 import it.cnr.ilc.lexo.service.helper.HelperException;
 import it.cnr.ilc.lexo.service.helper.NodeLinksHelper;
 import it.cnr.ilc.lexo.service.helper.SenseEdgeSummaryHelper;
@@ -54,6 +56,7 @@ public class GraphVizualization extends Service {
     private final NodeLinksHelper nodeLinksHelperHelper = new NodeLinksHelper();
     private final SenseNodeSummaryHelper senseNodeSummaryHelper = new SenseNodeSummaryHelper();
     private final SenseEdgeSummaryHelper senseEdgeSummaryHelper = new SenseEdgeSummaryHelper();
+    private final CountingHelper countingHelper = new CountingHelper();
 
     @GET
     @Path("{id}/nodeSummary")
@@ -78,9 +81,9 @@ public class GraphVizualization extends Service {
                     required = true)
             @PathParam("id") String id) {
         TupleQueryResult node = graphVizManager.getNode(id);
+        SenseNodeSummary sns = senseNodeSummaryHelper.newData(node);
         TupleQueryResult links = graphVizManager.getLinks(id);
         List<NodeLinks> _links = nodeLinksHelperHelper.newDataList(links);
-        SenseNodeSummary sns = senseNodeSummaryHelper.newData(node);
         graphVizManager.createNodeSummary(_links, sns);
         String json = senseNodeSummaryHelper.toJson(sns);
         return Response.ok(json)
@@ -163,6 +166,35 @@ public class GraphVizualization extends Service {
         String json = "";
         if (edge.hasNext()) {
             json = senseEdgeSummaryHelper.toJson(senseEdgeSummaryHelper.newData(edge));
+        }
+        return Response.ok(json)
+                .type(MediaType.TEXT_PLAIN)
+                .header("Access-Control-Allow-Headers", "content-type")
+                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                .build();
+    }
+    
+    @POST
+    @Path("nodeMaxHopsByRel")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.POST,
+            value = "/nodeMaxHopsByRel",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Maximum hops by relation",
+            notes = "This method returns the maximum number of hops starting from a node by a specific relation")
+    public Response nodeMaxHopsByRel(@ApiParam(
+            name = "key",
+            value = "authentication token",
+            example = "lexodemo",
+            required = true)
+            @QueryParam("key") String key,
+            HopsFilter hf) throws HelperException {
+        TupleQueryResult maxHops = graphVizManager.getMaxHopsByRel(hf);
+        String json = "";
+        if (maxHops.hasNext()) {
+            json = countingHelper.toJson(countingHelper.newDataList(maxHops));
         }
         return Response.ok(json)
                 .type(MediaType.TEXT_PLAIN)
