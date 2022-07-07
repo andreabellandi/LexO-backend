@@ -620,7 +620,7 @@ public class SparqlSelectData {
             + "              BIND(strafter(str(?morphoTrait),str(" + SparqlPrefix.LEXINFO.getPrefix() + ")) as ?" + SparqlVariable.MORPHOLOGY_TRAIT_NAME + ")\n"
             + "              BIND(strafter(str(?morphoValue),str(" + SparqlPrefix.LEXINFO.getPrefix() + ")) as ?" + SparqlVariable.MORPHOLOGY_TRAIT_VALUE + ")\n"
             + "    }\n"
-            + "    ?" + SparqlVariable.LEXICAL_ENTRY + " " + SparqlPrefix.ONTOLEX.getPrefix() + "canonicalForm|" + SparqlPrefix.ONTOLEX.getPrefix() + "otherForm ?" + SparqlVariable.FORM + " ;\n"
+            + "    ?" + SparqlVariable.LEXICAL_ENTRY + " " + SparqlPrefix.ONTOLEX.getPrefix() + "lexicalForm|" + SparqlPrefix.ONTOLEX.getPrefix() + "canonicalForm|" + SparqlPrefix.ONTOLEX.getPrefix() + "otherForm ?" + SparqlVariable.FORM + " ;\n"
             + "    " + SparqlPrefix.RDFS.getPrefix() + "label ?" + SparqlVariable.LABEL + " .\n"
             + "    OPTIONAL { ?" + SparqlVariable.FORM + " " + SparqlPrefix.ONTOLEX.getPrefix() + "phoneticRep ?" + SparqlVariable.PHONETIC_REPRESENTATION + " }\n"
             + "    OPTIONAL { ?" + SparqlVariable.FORM + " " + SparqlPrefix.LEXINFO.getPrefix() + "transliteration ?" + SparqlVariable.TRANSLITERATION + " }\n"
