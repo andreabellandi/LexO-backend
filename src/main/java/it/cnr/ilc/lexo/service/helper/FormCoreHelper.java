@@ -6,7 +6,6 @@
 package it.cnr.ilc.lexo.service.helper;
 
 import it.cnr.ilc.lexo.service.data.lexicon.output.FormCore;
-import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Morphology;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Property;
 import it.cnr.ilc.lexo.sparql.SparqlVariable;
@@ -33,6 +32,10 @@ public class FormCoreHelper extends TripleStoreDataHelper<FormCore> {
         data.setCreationDate(getStringValue(bs, SparqlVariable.CREATION_DATE));
         data.setCreator(getStringValue(bs, SparqlVariable.FORM_CREATION_AUTHOR));
         data.setConfidence(getDoubleNumber(bs, "confidence"));
+        data.setLexicalEntry(getStringValue(bs, SparqlVariable.LEXICAL_ENTRY));
+        data.setLexicalEntryInstanceName(getLocalName(bs, SparqlVariable.LEXICAL_ENTRY));
+        data.setLexicalEntryLabel(getLiteralLabel(bs, SparqlVariable.LABEL));
+        data.setLanguage(getLiteralLanguage(bs, SparqlVariable.LABEL));
         List<Property> properties = new ArrayList();
         properties.add(new Property(SparqlVariable.WRITTEN_REPRESENTATION, getStringValue(bs, SparqlVariable.WRITTEN_REPRESENTATION)));
         properties.add(new Property(SparqlVariable.PHONETIC_REPRESENTATION, getStringValue(bs, SparqlVariable.PHONETIC_REPRESENTATION)));

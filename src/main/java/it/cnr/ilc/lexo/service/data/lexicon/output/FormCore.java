@@ -23,8 +23,16 @@ public class FormCore implements Data {
     private String form;
     @ApiModelProperty(value = "form short IRI", example = "MUSabbacchiareVERB_PHUabbacchiammo_P1IR")
     private String formInstanceName;
+    @ApiModelProperty(value = "lexical entry IRI", example = "namespace:MUSabbacchiareVERB")
+    private String lexicalEntry;
+    @ApiModelProperty(value = "lexical entry short IRI", example = "MUSabbacchiareVERB")
+    private String lexicalEntryInstanceName;
+    @ApiModelProperty(value = "lexical entry label", example = "label for accedere")
+    private String lexicalEntryLabel;
     @ApiModelProperty(value = "a list of representation properties")
     private List<Property> label;
+    @ApiModelProperty(value = "language", example = "it", reference = "https://www.loc.gov/standards/iso639-2/php/code_list.php")
+    private String language;
     @ApiModelProperty(value = "form types", example = "canonicalForm", allowableValues = "lexicalForm, canonicalForm, otherForm")
     private String type;
     @ApiModelProperty(value = "morphological traits of the form")
@@ -141,6 +149,38 @@ public class FormCore implements Data {
 
     public void setLastUpdate(String lastUpdate) {
         this.lastUpdate = lastUpdate;
+    }
+
+    public String getLexicalEntry() {
+        return lexicalEntry;
+    }
+
+    public void setLexicalEntry(String lexicalEntry) {
+        this.lexicalEntry = lexicalEntry;
+    }
+
+    public String getLexicalEntryInstanceName() {
+        return lexicalEntryInstanceName;
+    }
+
+    public void setLexicalEntryInstanceName(String lexicalEntryInstanceName) {
+        this.lexicalEntryInstanceName = lexicalEntryInstanceName;
+    }
+
+    public String getLexicalEntryLabel() {
+        return lexicalEntryLabel;
+    }
+
+    public void setLexicalEntryLabel(String lexicalEntryLabel) {
+        this.lexicalEntryLabel = lexicalEntryLabel;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
     }
 
 }

@@ -588,6 +588,8 @@ public class SparqlSelectData {
             + " ?" + SparqlVariable.SEGMENTATION
             + " ?" + SparqlVariable.PRONUNCIATION
             + " ?" + SparqlVariable.ROMANIZATION
+            + " ?" + SparqlVariable.LEXICAL_ENTRY
+            + " ?" + SparqlVariable.LABEL
             + " ?confidence"
             + " (GROUP_CONCAT(concat(str(?traitName),\":\",str(?traitValue));SEPARATOR=\";\") AS ?" + SparqlVariable.MORPHOLOGY + ") "
             + " ?" + SparqlVariable.NOTE
@@ -602,10 +604,10 @@ public class SparqlSelectData {
             + "      " + SparqlPrefix.LUC.getPrefix() + "entities ?" + SparqlVariable.FORM + " .\n"
             + "    ?" + SparqlVariable.FORM + " " + SparqlPrefix.ONTOLEX.getPrefix() + "writtenRep ?" + SparqlVariable.WRITTEN_REPRESENTATION + " .\n"
             + "   OPTIONAL { ?" + SparqlVariable.FORM + " lexinfo:confidence ?confidence . }\n"
-            + "    ?le ?" + SparqlVariable.FORM_TYPE + " ?" + SparqlVariable.FORM + " ;\n"
-            + "    OPTIONAL { ?le " + SparqlPrefix.LEXINFO.getPrefix() + "partOfSpeech ?" + SparqlVariable.LEXICAL_ENTRY_POS + " . }\n"
+            + "    ?" + SparqlVariable.LEXICAL_ENTRY + " ?" + SparqlVariable.FORM_TYPE + " ?" + SparqlVariable.FORM + " ;\n"
+            + "    OPTIONAL { ?" + SparqlVariable.LEXICAL_ENTRY + " " + SparqlPrefix.LEXINFO.getPrefix() + "partOfSpeech ?" + SparqlVariable.LEXICAL_ENTRY_POS + " . }\n"
             //            + "    ?" + SparqlVariable.FORM_TYPE + " " + SparqlPrefix.RDFS.getPrefix() + "subPropertyOf  " + SparqlPrefix.ONTOLEX.getPrefix() + "lexicalForm .\n"
-            + "    OPTIONAL { ?le ?inheritedMorphoTrait ?inheritedMorphoValue .\n"
+            + "    OPTIONAL { ?" + SparqlVariable.LEXICAL_ENTRY + " ?inheritedMorphoTrait ?inheritedMorphoValue .\n"
             + "              FILTER(!regex(STR(?inheritedMorphoTrait), \"partOfSpeech\"))\n"
             + "              FILTER(STRSTARTS(STR(?inheritedMorphoTrait), str(" + SparqlPrefix.LEXINFO.getPrefix() + ")))\n"
             + "              FILTER(STRSTARTS(STR(?inheritedMorphoValue), str(" + SparqlPrefix.LEXINFO.getPrefix() + ")))\n"
@@ -618,6 +620,8 @@ public class SparqlSelectData {
             + "              BIND(strafter(str(?morphoTrait),str(" + SparqlPrefix.LEXINFO.getPrefix() + ")) as ?" + SparqlVariable.MORPHOLOGY_TRAIT_NAME + ")\n"
             + "              BIND(strafter(str(?morphoValue),str(" + SparqlPrefix.LEXINFO.getPrefix() + ")) as ?" + SparqlVariable.MORPHOLOGY_TRAIT_VALUE + ")\n"
             + "    }\n"
+            + "    ?" + SparqlVariable.LEXICAL_ENTRY + " " + SparqlPrefix.ONTOLEX.getPrefix() + "canonicalForm|" + SparqlPrefix.ONTOLEX.getPrefix() + "otherForm ?" + SparqlVariable.FORM + " ;\n"
+            + "    " + SparqlPrefix.RDFS.getPrefix() + "label ?" + SparqlVariable.LABEL + " .\n"
             + "    OPTIONAL { ?" + SparqlVariable.FORM + " " + SparqlPrefix.ONTOLEX.getPrefix() + "phoneticRep ?" + SparqlVariable.PHONETIC_REPRESENTATION + " }\n"
             + "    OPTIONAL { ?" + SparqlVariable.FORM + " " + SparqlPrefix.LEXINFO.getPrefix() + "transliteration ?" + SparqlVariable.TRANSLITERATION + " }\n"
             + "    OPTIONAL { ?" + SparqlVariable.FORM + " " + SparqlPrefix.LEXINFO.getPrefix() + "romanization ?" + SparqlVariable.ROMANIZATION + " }\n"
@@ -644,7 +648,9 @@ public class SparqlSelectData {
             + " ?" + SparqlVariable.CREATION_DATE
             + " ?" + SparqlVariable.LAST_UPDATE
             + " ?confidence"
-            + " ?" + SparqlVariable.FORM_CREATION_AUTHOR;
+            + " ?" + SparqlVariable.FORM_CREATION_AUTHOR
+            + " ?" + SparqlVariable.LEXICAL_ENTRY
+            + " ?" + SparqlVariable.LABEL;
 
     public static final String DATA_LEXICAL_SENSE_CORE
             = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
