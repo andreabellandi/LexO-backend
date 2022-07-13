@@ -167,8 +167,12 @@ public class SparqlInsertData {
             + SparqlPrefix.SKOS.getSparqlPrefix() + "\n"
             + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
             + "DELETE { lex:_ID_ dct:modified ?modified . } \n"
-            + "INSERT { _BEGIN_GRAPH_ lex:_ID_ _RELATION_ _VALUE_TO_INSERT_ ;\n"
-            + "                  dct:modified _LAST_UPDATE_ . }  _END_GRAPH_\n"
+            + "INSERT { "
+//            + "_BEGIN_GRAPH_ "
+            + "lex:_ID_ _RELATION_ _VALUE_TO_INSERT_ ;\n"
+            + "                  dct:modified _LAST_UPDATE_ . }  "
+//            + "_END_GRAPH_"
+            + "\n"
             + "WHERE {  OPTIONAL { lex:_ID_ dct:modified ?modified . } }";
 
     public static final String CREATE_GENERIC_RELATION
