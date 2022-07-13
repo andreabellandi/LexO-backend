@@ -242,16 +242,34 @@ public class SparqlGraphViz {
             + "    ?target ontolex:isSenseOf [ rdfs:label ?targetLabel ] .\n"
             + "}";
 
-    public static final String GRAPH_VIZ_NODE_MAX_DIST_BY_REL
-            = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
-            + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
-            + "SELECT ?label (COUNT(?label) as ?labelCount) \n"
+    public static final String GRAPH_VIZ_HOPS_BY_REL
+            = "PREFIX path: <http://www.ontotext.com/path#>\n"
+            + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+            + "PREFIX dbr: <http://dbpedia.org/resource/>\n"
+            + "PREFIX lex: <http://lexica/mylexicon#>\n"
+            + "PREFIX onto: <http://www.ontotext.com/>\n"
+            + "PREFIX dct: <http://purl.org/dc/terms/modified>\n"
+            + "PREFIX lexinfo: <http://www.lexinfo.net/ontology/3.0/lexinfo#>\n"
+            + "PREFIX vartrans: <http://www.w3.org/ns/lemon/vartrans#>\n"
+            + "\n"
+            + "SELECT (COUNT(DISTINCT ?index) as ?" + SparqlVariable.LENGHT + ") (GROUP_CONCAT(?edge;separator=\";\") as ?" + SparqlVariable.HOPS + ")\n"
+            + "#FROM onto:explicit\n"
             + "WHERE {\n"
-            + "    _PATTERN_ \n"
-            + "}\n"
-            + "GROUP BY ?label";
-
-    public static final String GRAPH_VIZ_NODE_MAX_DIST_BY_REL_PATTERN
-            = " { lex:_SOURCE_ lexinfo:_RELATION_+ ?o . \n"
-            + "    VALUES (?label) {(lexinfo:_RELATION_)}}";
+            + "    VALUES (?src) {\n"
+            + "        ( lex:_SOURCE_ )\n"
+            + "    }\n"
+            + "    SERVICE <http://www.ontotext.com/path#search> {\n"
+            + "        <urn:path> path:findPath path:allPaths ;\n"
+            + "                   path:sourceNode ?src ;\n"
+            + "                   path:destinationNode ?dst ;\n"
+            + "                   path:pathIndex ?path ;\n"
+            + "                   path:resultBinding ?edge ;\n"
+            + "                   path:startNode ?source ;\n"
+            + "                   path:endNode ?target ;\n"
+            + "                   path:resultBindingIndex ?index .\n"
+            + "        SERVICE <urn:path> {\n"
+            + "            ?source lexinfo:_RELATION_ ?target\n"
+            + "        }\n"
+            + "   } \n"
+            + "} GROUP BY ?path ORDER BY DESC(?" + SparqlVariable.LENGHT + ")";
 }

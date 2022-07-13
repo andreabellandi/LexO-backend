@@ -16,16 +16,16 @@ import java.util.List;
 @ApiModel(description = "Input model representing hops filter")
 public class HopsFilter {
 
-    @ApiModelProperty(value = "list of comma separated realtion name(s)", example = "[\"synonym\", \"hyponym\", \"partMeronym\"]", allowEmptyValue = false)
-    private List<String> relation;
-    @ApiModelProperty(value = "node IRI", example = "explicit", allowEmptyValue = false)
+    @ApiModelProperty(value = "relation name", example = "synonym", allowEmptyValue = false)
+    private String relation;
+    @ApiModelProperty(value = "node IRI", allowEmptyValue = false)
     private String node;
 
-    public List<String> getRelation() {
+    public String getRelation() {
         return relation;
     }
 
-    public void setRelation(List<String> relation) {
+    public void setRelation(String relation) {
         this.relation = relation;
     }
 

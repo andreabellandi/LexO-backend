@@ -158,15 +158,8 @@ public class GraphVizManager implements Manager, Cached {
         sns.setLinks(_links);
     }
 
-    public TupleQueryResult getMaxHopsByRel(HopsFilter hf) {
-        StringBuilder pattern = new StringBuilder();
-        for (String rel : hf.getRelation()) {
-            if (!pattern.isEmpty()) {
-                pattern.append(" UNION ");
-            }
-            pattern.append(SparqlGraphViz.GRAPH_VIZ_NODE_MAX_DIST_BY_REL_PATTERN.replaceAll("_SOURCE_", hf.getNode()).replaceAll("_RELATION_", rel));
-        }
-        String query = SparqlGraphViz.GRAPH_VIZ_NODE_MAX_DIST_BY_REL.replaceAll("_PATTERN_", pattern.toString());
+    public TupleQueryResult getHopsByRel(HopsFilter hf) {
+        String query = SparqlGraphViz.GRAPH_VIZ_HOPS_BY_REL.replaceAll("_SOURCE_", hf.getNode()).replaceAll("_RELATION_", hf.getRelation());
         return RDFQueryUtil.evaluateTQuery(query);
     }
 }

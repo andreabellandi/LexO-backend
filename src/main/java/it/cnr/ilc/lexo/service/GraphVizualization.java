@@ -15,12 +15,13 @@ import it.cnr.ilc.lexo.manager.ManagerFactory;
 import it.cnr.ilc.lexo.service.data.lexicon.input.graphViz.EdgeGraphFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.input.graphViz.HopsFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.input.graphViz.NodeGraphFilter;
+import it.cnr.ilc.lexo.service.data.lexicon.output.HitsDataList;
 import it.cnr.ilc.lexo.service.data.lexicon.output.graphViz.NodeLinks;
 import it.cnr.ilc.lexo.service.data.lexicon.output.graphViz.SenseNodeSummary;
 import it.cnr.ilc.lexo.service.data.lexicon.output.graphViz.Cytoscape;
-import it.cnr.ilc.lexo.service.data.lexicon.output.graphViz.SenseEdgeSummary;
 import it.cnr.ilc.lexo.service.helper.CountingHelper;
 import it.cnr.ilc.lexo.service.helper.HelperException;
+import it.cnr.ilc.lexo.service.helper.HopHelper;
 import it.cnr.ilc.lexo.service.helper.NodeLinksHelper;
 import it.cnr.ilc.lexo.service.helper.SenseEdgeSummaryHelper;
 import it.cnr.ilc.lexo.service.helper.SenseNodeSummaryHelper;
@@ -56,7 +57,7 @@ public class GraphVizualization extends Service {
     private final NodeLinksHelper nodeLinksHelperHelper = new NodeLinksHelper();
     private final SenseNodeSummaryHelper senseNodeSummaryHelper = new SenseNodeSummaryHelper();
     private final SenseEdgeSummaryHelper senseEdgeSummaryHelper = new SenseEdgeSummaryHelper();
-    private final CountingHelper countingHelper = new CountingHelper();
+    private final HopHelper hopeHelper = new HopHelper();
 
     @GET
     @Path("{id}/nodeSummary")
@@ -175,26 +176,26 @@ public class GraphVizualization extends Service {
     }
     
     @POST
-    @Path("nodeMaxHopsByRel")
+    @Path("hopsByRel")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @RequestMapping(
             method = RequestMethod.POST,
-            value = "/nodeMaxHopsByRel",
+            value = "/hopsByRel",
             produces = "application/json; charset=UTF-8")
-    @ApiOperation(value = "Maximum hops by relation",
-            notes = "This method returns the maximum number of hops starting from a node by a specific relation")
-    public Response nodeMaxHopsByRel(@ApiParam(
+    @ApiOperation(value = "Hops by relation",
+            notes = "This method returns all the possible hops starting from a node by a specific relation")
+    public Response hopsByRel(@ApiParam(
             name = "key",
             value = "authentication token",
             example = "lexodemo",
             required = true)
             @QueryParam("key") String key,
             HopsFilter hf) throws HelperException {
-        TupleQueryResult maxHops = graphVizManager.getMaxHopsByRel(hf);
+        TupleQueryResult maxHops = graphVizManager.getHopsByRel(hf);
         String json = "";
         if (maxHops.hasNext()) {
-            json = countingHelper.toJson(countingHelper.newDataList(maxHops));
+            json = hopeHelper.toJson(hopeHelper.newDataList(maxHops));
         }
         return Response.ok(json)
                 .type(MediaType.TEXT_PLAIN)

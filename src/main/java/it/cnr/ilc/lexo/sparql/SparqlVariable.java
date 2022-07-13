@@ -163,5 +163,7 @@ public class SparqlVariable {
     public static final String HOLONYM = "holonym";
     public static final String MERONYM = "meronym";
     public static final String SYNONYM = "synonym";
+    
+     public static final String HOPS = "hops";
 
 }
