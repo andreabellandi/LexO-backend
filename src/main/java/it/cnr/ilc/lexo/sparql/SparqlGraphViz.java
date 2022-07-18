@@ -256,8 +256,7 @@ public class SparqlGraphViz {
             + "#FROM onto:explicit\n"
             + "WHERE {\n"
             + "    VALUES (?_DIRECTION_ ?" + SparqlVariable.TYPE + ") {\n"
-            + "        ( lex:_SOURCE_ )\n"
-            + "        ( \"_DIRECTIONVALUE_\" )\n"
+            + "        ( lex:_SOURCE_ \"_DIRECTIONVALUE_\" )\n"
             + "    }\n"
             + "    SERVICE <http://www.ontotext.com/path#search> {\n"
             + "        <urn:path> path:findPath path:allPaths ;\n"
@@ -272,5 +271,5 @@ public class SparqlGraphViz {
             + "            ?source lexinfo:_RELATION_ ?target\n"
             + "        }\n"
             + "   } \n"
-            + "} GROUP BY ?path ORDER BY DESC(?" + SparqlVariable.LENGHT + ")";
+            + "} GROUP BY ?path ?" + SparqlVariable.TYPE + " ORDER BY DESC(?" + SparqlVariable.LENGHT + ")";
 }

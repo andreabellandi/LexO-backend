@@ -15,12 +15,10 @@ import it.cnr.ilc.lexo.manager.ManagerFactory;
 import it.cnr.ilc.lexo.service.data.lexicon.input.graphViz.EdgeGraphFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.input.graphViz.HopsFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.input.graphViz.NodeGraphFilter;
-import it.cnr.ilc.lexo.service.data.lexicon.output.HitsDataList;
 import it.cnr.ilc.lexo.service.data.lexicon.output.graphViz.NodeLinks;
 import it.cnr.ilc.lexo.service.data.lexicon.output.graphViz.SenseNodeSummary;
 import it.cnr.ilc.lexo.service.data.lexicon.output.graphViz.Cytoscape;
 import it.cnr.ilc.lexo.service.data.lexicon.output.graphViz.Hop;
-import it.cnr.ilc.lexo.service.helper.CountingHelper;
 import it.cnr.ilc.lexo.service.helper.HelperException;
 import it.cnr.ilc.lexo.service.helper.HopHelper;
 import it.cnr.ilc.lexo.service.helper.NodeLinksHelper;
@@ -203,11 +201,20 @@ public class GraphVizualization extends Service {
                     && !hf.getDirection().equals(EnumUtil.GraphRelationDirection.outgoing.toString())) {
                 return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("direction must be set to \"incoming\" or \"outgoing\"").build();
             } else {
-                hops = hopeHelper.newDataList(graphVizManager.getHopsByRel(hf, (hf.getDirection().equals(EnumUtil.GraphRelationDirection.outgoing.toString()) ? "src" : "dst")));
+                TupleQueryResult tqp = graphVizManager.getHopsByRel(hf, (hf.getDirection().equals(EnumUtil.GraphRelationDirection.outgoing.toString()) ? "src" : "dst"));
+                if (tqp.hasNext()) {
+                    hops = hopeHelper.newDataList(tqp);
+                }
             }
         } else {
-            hops = hopeHelper.newDataList(graphVizManager.getHopsByRel(hf, "src"));
-            hops.addAll(hopeHelper.newDataList(graphVizManager.getHopsByRel(hf, "dst")));
+            TupleQueryResult tqp = graphVizManager.getHopsByRel(hf, "src");
+            if (tqp.hasNext()) {
+                hops = hopeHelper.newDataList(tqp);
+            }
+            tqp = graphVizManager.getHopsByRel(hf, "dst");
+            if (tqp.hasNext()) {
+               hops.addAll(hopeHelper.newDataList(tqp));
+            }    
         }
         if (!hops.isEmpty()) {
             json = hopeHelper.toJson(hops);

@@ -160,7 +160,7 @@ public class GraphVizManager implements Manager, Cached {
 
     public TupleQueryResult getHopsByRel(HopsFilter hf, String direction) {
         String query = SparqlGraphViz.GRAPH_VIZ_HOPS_BY_REL.replaceAll("_SOURCE_", hf.getNode()).replaceAll("_RELATION_", hf.getRelation()).
-                replaceAll("_DIRECTION_", direction).replaceAll("_DIRECTIONVALUE_", hf.getDirection());
+                replaceAll("_DIRECTION_", direction).replaceAll("_DIRECTIONVALUE_", direction.equals("src") ? "outgoing" : "incoming");
         return RDFQueryUtil.evaluateTQuery(query);
     }
 }
