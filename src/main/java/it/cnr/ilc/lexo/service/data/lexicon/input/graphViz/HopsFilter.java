@@ -20,6 +20,8 @@ public class HopsFilter {
     private String relation;
     @ApiModelProperty(value = "node IRI", allowEmptyValue = false)
     private String node;
+    @ApiModelProperty(value = "if the relation is incoming or outgoing w.r.t. the given node", example = "incoming", allowEmptyValue = true, allowableValues = "incoming, outgoing")
+    private String direction;
 
     public String getRelation() {
         return relation;
@@ -35,6 +37,14 @@ public class HopsFilter {
 
     public void setNode(String node) {
         this.node = node;
+    }
+
+    public String getDirection() {
+        return direction;
+    }
+
+    public void setDirection(String direction) {
+        this.direction = direction;
     }
 
 }

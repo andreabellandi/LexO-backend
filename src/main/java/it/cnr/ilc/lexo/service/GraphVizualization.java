@@ -19,6 +19,7 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.HitsDataList;
 import it.cnr.ilc.lexo.service.data.lexicon.output.graphViz.NodeLinks;
 import it.cnr.ilc.lexo.service.data.lexicon.output.graphViz.SenseNodeSummary;
 import it.cnr.ilc.lexo.service.data.lexicon.output.graphViz.Cytoscape;
+import it.cnr.ilc.lexo.service.data.lexicon.output.graphViz.Hop;
 import it.cnr.ilc.lexo.service.helper.CountingHelper;
 import it.cnr.ilc.lexo.service.helper.HelperException;
 import it.cnr.ilc.lexo.service.helper.HopHelper;
@@ -26,6 +27,7 @@ import it.cnr.ilc.lexo.service.helper.NodeLinksHelper;
 import it.cnr.ilc.lexo.service.helper.SenseEdgeSummaryHelper;
 import it.cnr.ilc.lexo.service.helper.SenseNodeSummaryHelper;
 import it.cnr.ilc.lexo.util.EnumUtil;
+import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -174,7 +176,7 @@ public class GraphVizualization extends Service {
                 .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                 .build();
     }
-    
+
     @POST
     @Path("hopsByRel")
     @Produces(MediaType.APPLICATION_JSON)
@@ -192,10 +194,23 @@ public class GraphVizualization extends Service {
             required = true)
             @QueryParam("key") String key,
             HopsFilter hf) throws HelperException {
-        TupleQueryResult maxHops = graphVizManager.getHopsByRel(hf);
+        List<Hop> hops = new ArrayList();
         String json = "";
-        if (maxHops.hasNext()) {
-            json = hopeHelper.toJson(hopeHelper.newDataList(maxHops));
+        if ((hf.getRelation() == null) || (hf.getNode() == null)) {
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("Node or relation must be specified").build();
+        } else if (hf.getDirection() != null) {
+            if (!hf.getDirection().equals(EnumUtil.GraphRelationDirection.incoming.toString())
+                    && !hf.getDirection().equals(EnumUtil.GraphRelationDirection.outgoing.toString())) {
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("direction must be set to \"incoming\" or \"outgoing\"").build();
+            } else {
+                hops = hopeHelper.newDataList(graphVizManager.getHopsByRel(hf, (hf.getDirection().equals(EnumUtil.GraphRelationDirection.outgoing.toString()) ? "src" : "dst")));
+            }
+        } else {
+            hops = hopeHelper.newDataList(graphVizManager.getHopsByRel(hf, "src"));
+            hops.addAll(hopeHelper.newDataList(graphVizManager.getHopsByRel(hf, "dst")));
+        }
+        if (!hops.isEmpty()) {
+            json = hopeHelper.toJson(hops);
         }
         return Response.ok(json)
                 .type(MediaType.TEXT_PLAIN)

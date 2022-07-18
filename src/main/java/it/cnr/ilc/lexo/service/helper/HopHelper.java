@@ -31,6 +31,7 @@ public class HopHelper extends TripleStoreDataHelper<Hop> {
                 if (!hops.contains(nodes[2])) hops.add(nodes[2]);
         }
         data.setHops(hops);
+        data.setDirection(getStringValue(bs, SparqlVariable.TYPE));
     }
     
     

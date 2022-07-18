@@ -15,6 +15,7 @@ import java.util.List;
 public class Hop implements Data {
 
     private int lenght;
+    private String direction;
     private List<String> hops;
 
     public int getLenght() {
@@ -31,6 +32,14 @@ public class Hop implements Data {
 
     public void setHops(List<String> hops) {
         this.hops = hops;
+    }
+
+    public String getDirection() {
+        return direction;
+    }
+
+    public void setDirection(String direction) {
+        this.direction = direction;
     }
 
 }
