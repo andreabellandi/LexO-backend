@@ -17,8 +17,8 @@ public class NodeGraphFilter {
 
     @ApiModelProperty(value = "realtion name", example = "hyponym", allowEmptyValue = false, allowableValues = "synonym, hyponym, meronym")
     private String relation;
-    @ApiModelProperty(value = "type of the named graph", example = "explicit", allowEmptyValue = true, allowableValues = "explicit, implicit, (empty for both explicit and implicit)")
-    private String graph;
+//    @ApiModelProperty(value = "type of the named graph", example = "explicit", allowEmptyValue = true, allowableValues = "explicit, implicit, (empty for both explicit and implicit)")
+//    private String graph;
     @ApiModelProperty(value = "the lenght of the relation path", example = "2", allowEmptyValue = true)
     private Integer lenght;
     @ApiModelProperty(value = "if the relation is incoming or outgoing w.r.t. the given node", example = "incoming", allowEmptyValue = false, allowableValues = "incoming, outgoing")
@@ -32,13 +32,13 @@ public class NodeGraphFilter {
         this.relation = relation;
     }
 
-    public String getGraph() {
-        return graph;
-    }
-
-    public void setGraph(String graph) {
-        this.graph = graph;
-    }
+//    public String getGraph() {
+//        return graph;
+//    }
+//
+//    public void setGraph(String graph) {
+//        this.graph = graph;
+//    }
 
     public Integer getLenght() {
         return lenght;

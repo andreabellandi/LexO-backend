@@ -120,12 +120,15 @@ public class GraphVizualization extends Service {
 
         try {
             TupleQueryResult tqr = null;
+            if (ngf.getLenght() == 0) {
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("lenght must be greather than zero").build();
+            }
             if (ngf.getDirection() != null) {
                 if (ngf.getDirection().equals(EnumUtil.GraphRelationDirection.incoming.toString())) {
-                    tqr = graphVizManager.getNodeGraph(id, ngf, true);
+                    tqr = graphVizManager.getNodeGraph(id, ngf, "dst");
                 } else {
                     if (ngf.getDirection().equals(EnumUtil.GraphRelationDirection.outgoing.toString())) {
-                        tqr = graphVizManager.getNodeGraph(id, ngf, false);
+                        tqr = graphVizManager.getNodeGraph(id, ngf, "src");
                     } else {
                         return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("direction field can set to incoming or outgoing").build();
                     }
@@ -213,8 +216,8 @@ public class GraphVizualization extends Service {
             }
             tqp = graphVizManager.getHopsByRel(hf, "dst");
             if (tqp.hasNext()) {
-               hops.addAll(hopeHelper.newDataList(tqp));
-            }    
+                hops.addAll(hopeHelper.newDataList(tqp));
+            }
         }
         if (!hops.isEmpty()) {
             json = hopeHelper.toJson(hops);
