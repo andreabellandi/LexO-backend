@@ -18,13 +18,13 @@ import java.util.List;
 public class LinkedEntity implements Data {
 
     @ApiModelProperty(value = "lexical entity IRI")
-    private String lexicalEntity;
+    private String entity;
     @ApiModelProperty(value = "lexical entity shor IRI")
-    private String lexicalEntityInstanceName;
+    private String entityInstanceName;
     @ApiModelProperty(value = "lexical entity label")
     private String label;
     @ApiModelProperty(value = "lexical entity type")
-    private List<String> lexicalType;
+    private List<String> entityType;
     @ApiModelProperty(value = "explicit or implicit link")
     private boolean inferred;
     @ApiModelProperty(value = "the type of linked the lexical entity", allowableValues = "internal, external")
@@ -32,20 +32,20 @@ public class LinkedEntity implements Data {
     @ApiModelProperty(value = "the name of the link")
     private String link;
 
-    public String getLexicalEntity() {
-        return lexicalEntity;
+    public String getEntity() {
+        return entity;
     }
 
-    public void setLexicalEntity(String lexicalEntity) {
-        this.lexicalEntity = lexicalEntity;
+    public void setEntity(String entity) {
+        this.entity = entity;
     }
 
-    public String getLexicalEntityInstanceName() {
-        return lexicalEntityInstanceName;
+    public String getEntityInstanceName() {
+        return entityInstanceName;
     }
 
-    public void setLexicalEntityInstanceName(String lexicalEntityInstanceName) {
-        this.lexicalEntityInstanceName = lexicalEntityInstanceName;
+    public void setEntityInstanceName(String entityInstanceName) {
+        this.entityInstanceName = entityInstanceName;
     }
 
     public String getLabel() {
@@ -56,12 +56,12 @@ public class LinkedEntity implements Data {
         this.label = label;
     }
 
-    public List<String> getLexicalType() {
-        return lexicalType;
+    public List<String> getEntityType() {
+        return entityType;
     }
 
-    public void setLexicalType(List<String> lexicalType) {
-        this.lexicalType = lexicalType;
+    public void setEntityType(List<String> entityType) {
+        this.entityType = entityType;
     }
 
     public String getLinkType() {

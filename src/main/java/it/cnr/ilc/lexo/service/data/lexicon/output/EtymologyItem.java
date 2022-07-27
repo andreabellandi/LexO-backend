@@ -5,6 +5,7 @@
  */
 package it.cnr.ilc.lexo.service.data.lexicon.output;
 
+import it.cnr.ilc.lexo.service.data.output.Entity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import it.cnr.ilc.lexo.service.data.Data;
@@ -14,20 +15,12 @@ import it.cnr.ilc.lexo.service.data.Data;
  * @author andreabellandi
  */
 @ApiModel(description = "Output model representing the main features of an etymology")
-public class EtymologyItem implements Data {
+public class EtymologyItem extends Entity implements Data {
 
     @ApiModelProperty(value = "etymology label")
     private String label;
-    @ApiModelProperty(value = "etymology confidence")
-    private double confidence;
     @ApiModelProperty(value = "etymology hypothesis author")
     private String hypothesisOf;
-    @ApiModelProperty(value = "creation author for the etymology", example = "user1")
-    private String creator;
-    @ApiModelProperty(value = "last update of the etymology")
-    private String lastUpdate;
-    @ApiModelProperty(value = "creation date of the etymology")
-    private String creationDate;
     @ApiModelProperty(value = "etymology note", example = "textual content ...")
     private String note;
     @ApiModelProperty(value = "etymology IRI")
@@ -46,40 +39,9 @@ public class EtymologyItem implements Data {
         return label;
     }
 
-    public double getConfidence() {
-        return confidence;
-    }
-
-    public void setConfidence(double confidence) {
-        this.confidence = confidence;
-    }
 
     public void setLabel(String label) {
         this.label = label;
-    }
-
-    public String getCreator() {
-        return creator;
-    }
-
-    public void setCreator(String creator) {
-        this.creator = creator;
-    }
-
-    public String getLastUpdate() {
-        return lastUpdate;
-    }
-
-    public void setLastUpdate(String lastUpdate) {
-        this.lastUpdate = lastUpdate;
-    }
-
-    public String getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(String creationDate) {
-        this.creationDate = creationDate;
     }
 
     public String getNote() {

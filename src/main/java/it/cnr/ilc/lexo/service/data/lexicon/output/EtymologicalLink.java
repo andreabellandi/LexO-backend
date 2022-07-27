@@ -5,6 +5,7 @@
  */
 package it.cnr.ilc.lexo.service.data.lexicon.output;
 
+import it.cnr.ilc.lexo.service.data.output.Entity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import it.cnr.ilc.lexo.service.data.Data;
@@ -16,7 +17,7 @@ import java.util.List;
  * @author andreabellandi
  */
 @ApiModel(description = "Output model representing the etymological link of an etymology")
-public class EtymologicalLink implements Data {
+public class EtymologicalLink extends Entity implements Data {
 
     @ApiModelProperty(value = "etymological link IRI")
     private String etymologicalLink;
@@ -40,24 +41,9 @@ public class EtymologicalLink implements Data {
     private String label;
     @ApiModelProperty(value = "the target short IRI of the etymology (lexical entry)")
     private String etyTargetInstanceName;
-    @ApiModelProperty(value = "etymology creator")
-    private String creator;
     @ApiModelProperty(value = "etymology note", example = "some note ...")
     private String note;
-    @ApiModelProperty(value = "etymology creation date")
-    private String creationDate;
-    @ApiModelProperty(value = "etymology last update")
-    private String lastUpdate;
 
-    private double confidence;
-
-    public double getConfidence() {
-        return confidence;
-    }
-
-    public void setConfidence(double confidence) {
-        this.confidence = confidence;
-    }
 
     public boolean isExternalIRI() {
         return externalIRI;
@@ -130,37 +116,13 @@ public class EtymologicalLink implements Data {
     public void setEtyTarget(String etyTarget) {
         this.etyTarget = etyTarget;
     }
-
-    public String getCreator() {
-        return creator;
-    }
-
-    public void setCreator(String creator) {
-        this.creator = creator;
-    }
-
+    
     public String getNote() {
         return note;
     }
 
     public void setNote(String note) {
         this.note = note;
-    }
-
-    public String getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(String creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    public String getLastUpdate() {
-        return lastUpdate;
-    }
-
-    public void setLastUpdate(String lastUpdate) {
-        this.lastUpdate = lastUpdate;
     }
 
     public String getEtySourceLabel() {

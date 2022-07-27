@@ -5,6 +5,7 @@
  */
 package it.cnr.ilc.lexo.service.data.lexicon.output;
 
+import it.cnr.ilc.lexo.service.data.output.Entity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import it.cnr.ilc.lexo.service.data.Data;
@@ -17,7 +18,7 @@ import java.util.List;
  * @author andreabellandi
  */
 @ApiModel(description = "Output model representing the core data of a form")
-public class FormCore implements Data {
+public class FormCore extends Entity implements Data {
 
     @ApiModelProperty(value = "form IRI", example = "namespace:MUSabbacchiareVERB_PHUabbacchiammo_P1IR")
     private String form;
@@ -41,27 +42,8 @@ public class FormCore implements Data {
     private ArrayList<Morphology> inheritedMorphology;
     @ApiModelProperty(value = "the counting of the links of a lexical entry and their type: Reference (see Also, same As) Bilbiography, Multimedia, Attestation, Other)")
     private ArrayList<Link> links;
-    @ApiModelProperty(value = "form creator (who creates the entry) ", example = "user3")
-    private String creator;
     @ApiModelProperty(value = "form note", example = "some note ...")
     private String note;
-    @ApiModelProperty(value = "form creation date")
-    private String creationDate;
-    @ApiModelProperty(value = "form last update")
-    private String lastUpdate;
-    
-    @ApiModelProperty(value = "if the form is certain")
-    private double confidence;
-
-    public double getConfidence() {
-        return confidence;
-    }
-
-    public void setConfidence(double confidence) {
-        this.confidence = confidence;
-    }
-    
-    
 
     public String getForm() {
         return form;
@@ -119,36 +101,12 @@ public class FormCore implements Data {
         this.links = links;
     }
 
-    public String getCreator() {
-        return creator;
-    }
-
-    public void setCreator(String creator) {
-        this.creator = creator;
-    }
-
     public String getNote() {
         return note;
     }
 
     public void setNote(String note) {
         this.note = note;
-    }
-
-    public String getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(String creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    public String getLastUpdate() {
-        return lastUpdate;
-    }
-
-    public void setLastUpdate(String lastUpdate) {
-        this.lastUpdate = lastUpdate;
     }
 
     public String getLexicalEntry() {

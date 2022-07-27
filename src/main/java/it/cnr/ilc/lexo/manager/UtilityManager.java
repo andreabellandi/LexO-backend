@@ -67,6 +67,13 @@ public final class UtilityManager implements Manager, Cached {
                 .replaceAll("_VALUE_", value);
         return RDFQueryUtil.evaluateBQuery(query);
     }
+    
+    public boolean existsLabel(String id, String labelRelation, String language) {
+        String query = SparqlQueryUtil.ASK_LABEL_RELATION.replaceAll("_ID_", id)
+                .replaceAll("_RELATION_", labelRelation)
+                .replaceAll("_LANGUAGE_", language);
+        return RDFQueryUtil.evaluateBQuery(query);
+    }
 
     public int getNumberOfStatements(String id) throws QueryEvaluationException {
 //        TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL,
@@ -170,6 +177,11 @@ public final class UtilityManager implements Manager, Cached {
         String query = SparqlQueryUtil.IS_LEXICALENTRY_ID.replaceAll("_ID_", id);
         return RDFQueryUtil.evaluateBQuery(query);
     }
+    
+    public boolean isConceptSet(String id) throws QueryEvaluationException {
+        String query = SparqlQueryUtil.IS_CONCEPT_SET_ID.replaceAll("_ID_", id);
+        return RDFQueryUtil.evaluateBQuery(query);
+    }
 
     public boolean isLexicalEntryOrComponent(String id) throws QueryEvaluationException {
         String query = SparqlQueryUtil.IS_LEXICALENTRY_ID_OR_COMPONENT_ID.replaceAll("_ID_", id);
@@ -183,11 +195,6 @@ public final class UtilityManager implements Manager, Cached {
 
     public boolean isLexicalConcept(String id) throws QueryEvaluationException {
         String query = SparqlQueryUtil.IS_LEXICAL_CONCEPT_ID.replaceAll("_ID_", id);
-        return RDFQueryUtil.evaluateBQuery(query);
-    }
-
-    public boolean isConceptSet(String id) throws QueryEvaluationException {
-        String query = SparqlQueryUtil.IS_CONCEPT_SET_ID.replaceAll("_ID_", id);
         return RDFQueryUtil.evaluateBQuery(query);
     }
 

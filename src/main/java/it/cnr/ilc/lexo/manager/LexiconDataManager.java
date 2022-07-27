@@ -16,13 +16,16 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.Etymology;
 import it.cnr.ilc.lexo.service.data.lexicon.output.EtymologyTree;
 import it.cnr.ilc.lexo.service.data.lexicon.output.FormCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.FormItem;
+import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalConcept;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntityLinksItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntityLinksItem.Link;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryElementItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalSenseCore;
+import it.cnr.ilc.lexo.service.data.lexicon.output.LinkedEntity;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Morphology;
+import it.cnr.ilc.lexo.service.data.output.Label;
 import it.cnr.ilc.lexo.sparql.SparqlSelectData;
 import it.cnr.ilc.lexo.sparql.SparqlVariable;
 import it.cnr.ilc.lexo.util.EnumUtil;
@@ -51,6 +54,10 @@ public class LexiconDataManager implements Manager, Cached {
     static final Logger logger = LoggerFactory.getLogger(LexiconDataManager.class.getName());
 
     private final String namespace = LexOProperties.getProperty("repository.lexicon.namespace");
+    private final String idInstancePrefix = LexOProperties.getProperty("repository.instance.id");
+    private final String lexicalConceptNs = LexOProperties.getProperty("repository.lexicon.lexicalConcept.namespace");
+    private final String lexicalizationModel = LexOProperties.getProperty("skos.lexicalizationModel");
+    private final String defaultLanguageLabel = LexOProperties.getProperty("skos.defaultLanguageLabel");
 
     public String getNamespace() {
         return namespace;
@@ -338,6 +345,13 @@ public class LexiconDataManager implements Manager, Cached {
         return RDFQueryUtil.evaluateTQuery(query);
     }
 
+    public TupleQueryResult getLexicalConceptRelation(String id, String property) throws ManagerException {
+        String query = SparqlSelectData.DATA_LEXICAL_CONCEPT_RELATION
+                .replace("_ID_", lexicalConceptNs + id)
+                .replace("_RELATION_", property);
+        return RDFQueryUtil.evaluateTQuery(query);
+    }
+
     public TupleQueryResult getGenericRelation(String lexicalEntryID, String property) throws ManagerException {
         String query = SparqlSelectData.DATA_GENERIC_RELATION
                 .replace("_ID_", lexicalEntryID)
@@ -456,6 +470,14 @@ public class LexiconDataManager implements Manager, Cached {
         return RDFQueryUtil.evaluateTQuery(query);
     }
 
+    public void setDefaultLanguage(LexicalConcept lc) {
+        for (Label l : lc.getLabels()) {          
+            if (l.getType().equals(lexicalizationModel.equals("skos") ? "prefLabel" : "label")
+                    && l.getLanguage().equals(defaultLanguageLabel)) {
+                lc.setDefaultLabel(l.getLabel());
+            }
+        }
+    }
 //    public List<LexicalEntryItem> getGroupedByType(List<LexicalEntryItem> entries) {
 //        ArrayList<LexicalEntryItem> _entries = new ArrayList();
 //        LexicalEntryItem previousLei = new LexicalEntryItem();

@@ -8,6 +8,7 @@ package it.cnr.ilc.lexo.service.data.lexicon.output;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import it.cnr.ilc.lexo.service.data.Data;
+import it.cnr.ilc.lexo.service.data.output.Entity;
 import java.util.ArrayList;
 
 /**
@@ -15,7 +16,7 @@ import java.util.ArrayList;
  * @author andreabellandi
  */
 @ApiModel(description = "Output model representing the main features of a multiword component")
-public class ComponentItem implements Data {
+public class ComponentItem extends Entity implements Data {
 
     @ApiModelProperty(value = "component IRI")
     private String component;
@@ -32,17 +33,7 @@ public class ComponentItem implements Data {
     @ApiModelProperty(value = "component note", example = "some note ...")
     private String note;
 
-    @ApiModelProperty(value = "if the component is certain")
-    private double confidence;
-
-    public double getConfidence() {
-        return confidence;
-    }
-
-    public void setConfidence(double confidence) {
-        this.confidence = confidence;
-    }
-
+   
     public String getComponent() {
         return component;
     }

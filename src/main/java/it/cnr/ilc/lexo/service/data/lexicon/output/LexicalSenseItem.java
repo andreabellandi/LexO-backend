@@ -5,13 +5,14 @@
  */
 package it.cnr.ilc.lexo.service.data.lexicon.output;
 
+import it.cnr.ilc.lexo.service.data.output.Entity;
 import it.cnr.ilc.lexo.service.data.Data;
 
 /**
  *
  * @author andreabellandi
  */
-public class LexicalSenseItem implements Data {
+public class LexicalSenseItem extends Entity implements Data {
 
     private String sense;
     private String senseInstanceName;
@@ -22,9 +23,6 @@ public class LexicalSenseItem implements Data {
     private boolean hasChildren;
     private String label;
     private String definition;
-    private String creator;
-    private String lastUpdate;
-    private String creationDate;
     private String note;
     private String usage;
     private String concept;
@@ -33,7 +31,7 @@ public class LexicalSenseItem implements Data {
     private String gloss;
     private String senseExample;
     private String senseTranslation;
-    private double confidence;
+
 
     public String getSense() {
         return sense;
@@ -97,30 +95,6 @@ public class LexicalSenseItem implements Data {
 
     public void setDefinition(String definition) {
         this.definition = definition;
-    }
-
-    public String getCreator() {
-        return creator;
-    }
-
-    public void setCreator(String creator) {
-        this.creator = creator;
-    }
-
-    public String getLastUpdate() {
-        return lastUpdate;
-    }
-
-    public void setLastUpdate(String lastUpdate) {
-        this.lastUpdate = lastUpdate;
-    }
-
-    public String getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(String creationDate) {
-        this.creationDate = creationDate;
     }
 
     public String getNote() {
@@ -193,14 +167,6 @@ public class LexicalSenseItem implements Data {
 
     public void setSenseTranslation(String senseTranslation) {
         this.senseTranslation = senseTranslation;
-    }
-
-    public double getConfidence() {
-        return confidence;
-    }
-
-    public void setConfidence(double confidence) {
-        this.confidence = confidence;
     }
 
 }

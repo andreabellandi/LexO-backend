@@ -5,6 +5,7 @@
  */
 package it.cnr.ilc.lexo.service.data.lexicon.output;
 
+import it.cnr.ilc.lexo.service.data.output.Entity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import it.cnr.ilc.lexo.service.data.Data;
@@ -17,7 +18,7 @@ import java.util.List;
  * @author andreabellandi
  */
 @ApiModel(description = "Output model representing the core data of a lexical entry")
-public class LexicalEntryCore implements Data {
+public class LexicalEntryCore extends Entity implements Data {
 
     @ApiModelProperty(value = "lexical entry IRI", example = "namespace:MUSaccedereVERB")
     private String lexicalEntry;
@@ -46,34 +47,17 @@ public class LexicalEntryCore implements Data {
     private ArrayList<Link> links;
     @ApiModelProperty(value = "lexical entry author (who completes the entry) ", example = "user9")
     private String author;
-    @ApiModelProperty(value = "lexical entry creator (who creates the entry) ", example = "user3")
-    private String creator;
     @ApiModelProperty(value = "lexical entry revisor(who reviews the entry) ", example = "rev2")
     private String revisor;
     @ApiModelProperty(value = "lexical entry status", example = "working", allowableValues = "working, completed, reviewed")
     private String status;
     @ApiModelProperty(value = "lexical entry note", example = "some note ...")
     private String note;
-    @ApiModelProperty(value = "lexical entry creation date")
-    private String creationDate;
-    @ApiModelProperty(value = "lexical entry last update")
-    private String lastUpdate;
     @ApiModelProperty(value = "lexical entry completed status date")
     private String completionDate;
     @ApiModelProperty(value = "lexical entry reviewed status date")
     private String revisionDate;
     
-    @ApiModelProperty(value = "if the lexical entry is certain")
-    private double confidence;
-
-    public double getConfidence() {
-        return confidence;
-    }
-
-    public void setConfidence(double confidence) {
-        this.confidence = confidence;
-    }
-
     public String getLexicalEntry() {
         return lexicalEntry;
     }
@@ -88,14 +72,6 @@ public class LexicalEntryCore implements Data {
 
     public void setLexicalEntryInstanceName(String lexicalEntryInstanceName) {
         this.lexicalEntryInstanceName = lexicalEntryInstanceName;
-    }
-
-    public String getCreator() {
-        return creator;
-    }
-
-    public void setCreator(String creator) {
-        this.creator = creator;
     }
 
     public String getLabel() {
@@ -191,22 +167,6 @@ public class LexicalEntryCore implements Data {
 
     public void setLinks(ArrayList<Link> links) {
         this.links = links;
-    }
-
-    public String getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(String creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    public String getLastUpdate() {
-        return lastUpdate;
-    }
-
-    public void setLastUpdate(String lastUpdate) {
-        this.lastUpdate = lastUpdate;
     }
 
     public String getCompletionDate() {

@@ -32,10 +32,15 @@ public class SparqlQueryUtil {
     public static final String ASK_ENTITY_GENERIC_RELATION
             = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
             + "ASK { <_ID_> _RELATION_ _VALUE_ }";
-    
+
     public static final String ASK_ENTITY_SKOS_RELATION
             = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
             + "ASK { <_ID_> <_RELATION_> _VALUE_ }";
+
+    public static final String ASK_LABEL_RELATION
+            = SparqlPrefix.SKOS.getSparqlPrefix() + "\n"
+            + "ask { <_ID_> <_RELATION_> ?label \n"
+            + "    FILTER (lang(?label) = \"_LANGUAGE_\") }";
 
     public static final String BIBLIOGRAFY_BY_ITEMKEY
             = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
@@ -55,27 +60,25 @@ public class SparqlQueryUtil {
             = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
             + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
             + "ASK { " + SparqlPrefix.LEX.getPrefix() + "_ID_ a " + SparqlPrefix.ONTOLEX.getPrefix() + "LexicalEntry }";
-    
+
     public static final String IS_COMPONENT_ID
             = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
             + SparqlPrefix.DECOMP.getSparqlPrefix() + "\n"
             + "ASK { " + SparqlPrefix.LEX.getPrefix() + "_ID_ a " + SparqlPrefix.DECOMP.getPrefix() + "Component }";
-    
+
     public static final String IS_LEXICAL_CONCEPT_ID
-            = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
-            + SparqlPrefix.DECOMP.getSparqlPrefix() + "\n"
-            + "ASK { " + SparqlPrefix.LEX.getPrefix() + "_ID_ a " + SparqlPrefix.ONTOLEX.getPrefix() + "LexicalConcept }";
-    
+            = SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
+            + "ASK { <_ID_> a " + SparqlPrefix.ONTOLEX.getPrefix() + "LexicalConcept }";
+
     public static final String IS_CONCEPT_SET_ID
-            = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
-            + SparqlPrefix.DECOMP.getSparqlPrefix() + "\n"
-            + "ASK { " + SparqlPrefix.LEX.getPrefix() + "_ID_ a " + SparqlPrefix.ONTOLEX.getPrefix() + "ConceptSet }";
-    
+            = SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
+            + "ASK { <_ID_> a " + SparqlPrefix.ONTOLEX.getPrefix() + "ConceptSet }";
+
     public static final String IS_LEXICALENTRY_ID_OR_COMPONENT_ID
             = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
             + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
-             + SparqlPrefix.DECOMP.getSparqlPrefix() + "\n"
-            + "ASK { \n" 
+            + SparqlPrefix.DECOMP.getSparqlPrefix() + "\n"
+            + "ASK { \n"
             + "{ " + SparqlPrefix.LEX.getPrefix() + "_ID_ a " + SparqlPrefix.ONTOLEX.getPrefix() + "LexicalEntry }\n"
             + " UNION \n"
             + "{ " + SparqlPrefix.LEX.getPrefix() + "_ID_ a " + SparqlPrefix.DECOMP.getPrefix() + "Component }\n"
@@ -94,7 +97,7 @@ public class SparqlQueryUtil {
     public static final String EXISTS_ID
             = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
             + "ASK { " + SparqlPrefix.LEX.getPrefix() + "_ID_ a ?type }";
-    
+
     public static final String EXISTS_TYPE_ID
             = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
             + "ASK { <_ID_> a <_TYPE_> }";

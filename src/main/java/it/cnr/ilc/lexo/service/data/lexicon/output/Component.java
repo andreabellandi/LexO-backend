@@ -5,6 +5,7 @@
  */
 package it.cnr.ilc.lexo.service.data.lexicon.output;
 
+import it.cnr.ilc.lexo.service.data.output.Entity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import it.cnr.ilc.lexo.service.data.Data;
@@ -15,7 +16,7 @@ import java.util.ArrayList;
  * @author andreabellandi
  */
 @ApiModel(description = "Output model representing a component of a multiword")
-public class Component implements Data {
+public class Component extends Entity implements Data {
 
     @ApiModelProperty(value = "component IRI")
     private String component;
@@ -27,25 +28,8 @@ public class Component implements Data {
     private ArrayList<Morphology> morphology;
     @ApiModelProperty(value = "position of the component in the decomposition")
     private int position;
-    @ApiModelProperty(value = "component creator", example = "user3")
-    private String creator;
     @ApiModelProperty(value = "component note", example = "some note ...")
     private String note;
-    @ApiModelProperty(value = "component creation date")
-    private String creationDate;
-    @ApiModelProperty(value = "component last update")
-    private String lastUpdate;
-
-    @ApiModelProperty(value = "if the component is certain")
-    private double confidence;
-
-    public double getConfidence() {
-        return confidence;
-    }
-
-    public void setConfidence(double confidence) {
-        this.confidence = confidence;
-    }
 
     public String getComponent() {
         return component;
@@ -71,36 +55,12 @@ public class Component implements Data {
         this.label = label;
     }
 
-    public String getCreator() {
-        return creator;
-    }
-
-    public void setCreator(String creator) {
-        this.creator = creator;
-    }
-
     public String getNote() {
         return note;
     }
 
     public void setNote(String note) {
         this.note = note;
-    }
-
-    public String getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(String creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    public String getLastUpdate() {
-        return lastUpdate;
-    }
-
-    public void setLastUpdate(String lastUpdate) {
-        this.lastUpdate = lastUpdate;
     }
 
     public ArrayList<Morphology> getMorphology() {

@@ -5,6 +5,7 @@
  */
 package it.cnr.ilc.lexo.service.data.lexicon.output;
 
+import it.cnr.ilc.lexo.service.data.output.Entity;
 import io.swagger.annotations.ApiModelProperty;
 import it.cnr.ilc.lexo.service.data.Data;
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ import java.util.ArrayList;
  *
  * @author andreabellandi
  */
-public class LexicalEntryItem implements Data {
+public class LexicalEntryItem extends Entity implements Data {
 
     private String status;
     private String revisor;
@@ -22,29 +23,16 @@ public class LexicalEntryItem implements Data {
     private String label;
     private String language;
     private String author;
-    private String creator;
     private String note;
     private boolean hasChildren;
     private String lexicalEntry;
     private String lexicalEntryInstanceName;
     private ArrayList<Morphology> morphology;
-    private String creationDate;
-    private String lastUpdate;
     private String completionDate;
     private String revisionDate;
     
-    @ApiModelProperty(value = "if the lexical entry is certain")
-    private double confidence;
 
     public LexicalEntryItem() {
-    }
-
-    public double getConfidence() {
-        return confidence;
-    }
-
-    public void setConfidence(double confidence) {
-        this.confidence = confidence;
     }
 
     public boolean isHasChildren() {
@@ -54,15 +42,6 @@ public class LexicalEntryItem implements Data {
     public void setHasChildren(boolean hasChildren) {
         this.hasChildren = hasChildren;
     }
-
-    public String getCreator() {
-        return creator;
-    }
-
-    public void setCreator(String creator) {
-        this.creator = creator;
-    }
-
     public String getLanguage() {
         return language;
     }
@@ -149,22 +128,6 @@ public class LexicalEntryItem implements Data {
 
     public void setMorphology(ArrayList<Morphology> morphology) {
         this.morphology = morphology;
-    }
-
-    public String getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(String creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    public String getLastUpdate() {
-        return lastUpdate;
-    }
-
-    public void setLastUpdate(String lastUpdate) {
-        this.lastUpdate = lastUpdate;
     }
 
     public String getCompletionDate() {

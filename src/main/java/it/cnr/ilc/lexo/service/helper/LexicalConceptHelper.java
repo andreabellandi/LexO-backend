@@ -5,7 +5,13 @@
  */
 package it.cnr.ilc.lexo.service.helper;
 
+import it.cnr.ilc.lexo.service.data.lexicon.output.GroupedLinkedEntity;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalConcept;
+import it.cnr.ilc.lexo.service.data.lexicon.output.LinkedEntity;
+import it.cnr.ilc.lexo.service.data.output.Label;
+import it.cnr.ilc.lexo.sparql.SparqlVariable;
+import java.util.ArrayList;
+import java.util.List;
 import org.eclipse.rdf4j.query.BindingSet;
 
 /**
@@ -16,7 +22,39 @@ public class LexicalConceptHelper extends TripleStoreDataHelper<LexicalConcept> 
 
     @Override
     public void fillData(LexicalConcept data, BindingSet bs) {
-       
+        data.setDefaultLabel("");
+        data.setConfidence(getDoubleNumber(bs, SparqlVariable.CONFIDENCE));
+        data.setCreationDate(getStringValue(bs, SparqlVariable.CREATION_DATE));
+        data.setCreator(getStringValue(bs, SparqlVariable.LEXICAL_CONCEPT_CREATOR));
+        data.setLastUpdate(getStringValue(bs, SparqlVariable.LAST_UPDATE));
+        data.setLexicalConcept(getStringValue(bs, SparqlVariable.LEXICAL_CONCEPT));
+        data.setLexicalConceptInstanceName(getLocalName(bs, SparqlVariable.LEXICAL_CONCEPT));
+        List<Label> labels = new ArrayList();
+        labels.addAll(getLabel(getStringValue(bs, SparqlVariable.PREF_LABEL) != null ? getStringValue(bs, SparqlVariable.PREF_LABEL) : null, "prefLabel", ";"));
+        labels.addAll(getLabel(getStringValue(bs, SparqlVariable.ALT_LABEL) != null ? getStringValue(bs, SparqlVariable.ALT_LABEL) : null, "altLabel", ";"));
+        labels.addAll(getLabel(getStringValue(bs, SparqlVariable.HIDDEN_LABEL) != null ? getStringValue(bs, SparqlVariable.HIDDEN_LABEL) : null, "hiddenLabel", ";"));
+        labels.addAll(getLabel(getStringValue(bs, SparqlVariable.DEFINITION) != null ? getStringValue(bs, SparqlVariable.DEFINITION) : null, "definition", "-:-"));
+        data.setLabels(labels);
+        data.setEntities(new ArrayList());
+        //GroupedLinkedEntity gle = new GroupedLinkedEntity();
+        //List<LinkedEntity> entities = new ArrayList();
+
+    }
+
+    private List<Label> getLabel(String labels, String labelType, String separator) {
+        List<Label> label = new ArrayList();
+        if (labels != null) {
+            if (!labels.isEmpty()) {
+                for (String pf : labels.split(separator)) {
+                    Label l = new Label();
+                    l.setLabel(pf.split("@")[0]);
+                    l.setLanguage(pf.split("@")[1]);
+                    l.setType(labelType);
+                    label.add(l);
+                }
+            }
+        }
+        return label;
     }
 
     @Override

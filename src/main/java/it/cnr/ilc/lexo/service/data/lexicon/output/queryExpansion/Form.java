@@ -10,6 +10,7 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.Morphology;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import it.cnr.ilc.lexo.service.data.Data;
+import it.cnr.ilc.lexo.service.data.output.Entity;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +19,7 @@ import java.util.List;
  * @author andreabellandi
  */
 @ApiModel(description = "Output model representing the main features of a form")
-public class Form implements Data {
+public class Form extends Entity implements Data {
 
     @ApiModelProperty(value = "form written represenation", example = "accedere")
     private String label;
@@ -31,18 +32,6 @@ public class Form implements Data {
     private String lexicalEntryInstanceName;
     private String targetSenseInstanceName;
     private String definition;
-    
-    private double confidence;
-
-    public double getConfidence() {
-        return confidence;
-    }
-
-    public void setConfidence(double confidence) {
-        this.confidence = confidence;
-    }
-    
-    
 
     public Form() {
     }

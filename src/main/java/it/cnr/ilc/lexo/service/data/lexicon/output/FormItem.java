@@ -5,6 +5,7 @@
  */
 package it.cnr.ilc.lexo.service.data.lexicon.output;
 
+import it.cnr.ilc.lexo.service.data.output.Entity;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Morphology;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -17,18 +18,12 @@ import java.util.List;
  * @author andreabellandi
  */
 @ApiModel(description = "Output model representing the main features of a form")
-public class FormItem implements Data {
+public class FormItem extends Entity implements Data {
 
     @ApiModelProperty(value = "form type", allowableValues = "canonicalForm, otherForm")
     private String type;
     @ApiModelProperty(value = "form written represenation", example = "accedere")
     private String label;
-    @ApiModelProperty(value = "creation author for the form", example = "user1")
-    private String creator;
-    @ApiModelProperty(value = "last update of the form")
-    private String lastUpdate;
-    @ApiModelProperty(value = "creation date of the form")
-    private String creationDate;
     @ApiModelProperty(value = "form note", example = "textual content ...")
     private String note;
     @ApiModelProperty(value = "form phonetic representation", example = "a'tʃ:ɛdere")
@@ -46,19 +41,9 @@ public class FormItem implements Data {
     private String targetSense;
     private String targetSenseInstanceName;
 
-    @ApiModelProperty(value = "if the form is certain")
-    private double confidence;
-
     public FormItem() {
     }
 
-    public double getConfidence() {
-        return confidence;
-    }
-
-    public void setConfidence(double confidence) {
-        this.confidence = confidence;
-    }
 
     public ArrayList<Morphology> getMorphology() {
         return morphology;
@@ -116,29 +101,6 @@ public class FormItem implements Data {
         this.label = label;
     }
 
-    public String getCreator() {
-        return creator;
-    }
-
-    public void setCreator(String creator) {
-        this.creator = creator;
-    }
-
-    public String getLastUpdate() {
-        return lastUpdate;
-    }
-
-    public void setLastUpdate(String lastUpdate) {
-        this.lastUpdate = lastUpdate;
-    }
-
-    public String getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(String creationDate) {
-        this.creationDate = creationDate;
-    }
 
     public String getNote() {
         return note;

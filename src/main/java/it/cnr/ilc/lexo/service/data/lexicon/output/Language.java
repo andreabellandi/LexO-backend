@@ -5,6 +5,7 @@
  */
 package it.cnr.ilc.lexo.service.data.lexicon.output;
 
+import it.cnr.ilc.lexo.service.data.output.Entity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import it.cnr.ilc.lexo.service.data.Data;
@@ -14,7 +15,7 @@ import it.cnr.ilc.lexo.service.data.Data;
  * @author andreabellandi
  */
 @ApiModel(description = "Output model representing a lexicon language")
-public class Language implements Data {
+public class Language extends Entity implements Data {
 
     @ApiModelProperty(value = "language IRI", example = "namespace:langID")
     private String language;
@@ -28,12 +29,6 @@ public class Language implements Data {
     private String catalog;
     @ApiModelProperty(value = "description for the language", example = "description")
     private String description;
-    @ApiModelProperty(value = "creator of the language")
-    private String creator;
-    @ApiModelProperty(value = "date of language creation")
-    private String creationDate;
-    @ApiModelProperty(value = "language last update")
-    private String lastUpdate;
     @ApiModelProperty(value = "number of entries")
     private int entries;
 
@@ -85,29 +80,6 @@ public class Language implements Data {
         this.description = description;
     }
 
-    public String getCreator() {
-        return creator;
-    }
-
-    public void setCreator(String creator) {
-        this.creator = creator;
-    }
-
-    public String getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(String creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    public String getLastUpdate() {
-        return lastUpdate;
-    }
-
-    public void setLastUpdate(String lastUpdate) {
-        this.lastUpdate = lastUpdate;
-    }
 
     public int getEntries() {
         return entries;

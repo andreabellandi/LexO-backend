@@ -23,13 +23,17 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.BibliographicItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Component;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ComponentItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ConceptSet;
+import it.cnr.ilc.lexo.service.data.lexicon.output.ConceptSetItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.EtymologicalLink;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Etymology;
 import it.cnr.ilc.lexo.service.data.lexicon.output.EtymologyItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.EtymologyTree;
 import it.cnr.ilc.lexo.service.data.lexicon.output.FormCore;
+import it.cnr.ilc.lexo.service.data.lexicon.output.GroupedLinkedEntity;
 import it.cnr.ilc.lexo.service.data.lexicon.output.HitsDataList;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Language;
+import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalConcept;
+import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalConceptItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntityLinksItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryItem;
@@ -40,6 +44,7 @@ import it.cnr.ilc.lexo.service.helper.BibliographyHelper;
 import it.cnr.ilc.lexo.service.helper.ComponentFilterHelper;
 import it.cnr.ilc.lexo.service.helper.ComponentHelper;
 import it.cnr.ilc.lexo.service.helper.ConceptSetHelper;
+import it.cnr.ilc.lexo.service.helper.ConceptSetItemHelper;
 import it.cnr.ilc.lexo.service.helper.EtymologicalLinkHelper;
 import it.cnr.ilc.lexo.service.helper.EtymologyFilterHelper;
 import it.cnr.ilc.lexo.service.helper.EtymologyHelper;
@@ -48,6 +53,8 @@ import it.cnr.ilc.lexo.service.helper.FormCoreHelper;
 import it.cnr.ilc.lexo.service.helper.FormItemsHelper;
 import it.cnr.ilc.lexo.service.helper.HelperException;
 import it.cnr.ilc.lexo.service.helper.LanguageHelper;
+import it.cnr.ilc.lexo.service.helper.LexicalConceptHelper;
+import it.cnr.ilc.lexo.service.helper.LexicalConceptItemHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalEntityLinksItemHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalEntryCoreHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalEntryFilterHelper;
@@ -58,7 +65,9 @@ import it.cnr.ilc.lexo.service.helper.LinkedEntityHelper;
 import it.cnr.ilc.lexo.sparql.SparqlVariable;
 import it.cnr.ilc.lexo.util.EnumUtil;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -99,6 +108,9 @@ public class LexiconData extends Service {
     private final BibliographyHelper bibliographyHelper = new BibliographyHelper();
     private final BibliographyManager bibliographyManager = ManagerFactory.getManager(BibliographyManager.class);
     private final EtymologyHelper etymologyHelper = new EtymologyHelper();
+    private final LexicalConceptItemHelper lexicalConceptItemHelper = new LexicalConceptItemHelper();
+    private final LexicalConceptHelper lexicalConceptHelper = new LexicalConceptHelper();
+    private final ConceptSetItemHelper conceptSetItemHelper = new ConceptSetItemHelper();
     private final EtymologyFilterHelper etymologyFilterHelper = new EtymologyFilterHelper();
     private final EtymologyTreeHelper etymologyTreeHelper = new EtymologyTreeHelper();
     private final EtymologicalLinkHelper etymologicalLinkHelper = new EtymologicalLinkHelper();
@@ -350,6 +362,59 @@ public class LexiconData extends Service {
     }
 
     @GET
+    @Path("{id}/lexicalConcept")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "/{id}/lexicalConcept",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Lexical Concept",
+            notes = "This method returns the data of a lexical concept")
+    public Response lexicalConcept(
+            @ApiParam(
+                    name = "key",
+                    value = "authentication token",
+                    example = "lexodemo",
+                    required = true)
+            @QueryParam("key") String key,
+            @ApiParam(
+                    name = "id",
+                    value = "lexical concept ID",
+                    required = true)
+            @PathParam("id") String id) {
+        try {
+            TupleQueryResult _lc = skosManager.getLexicalConcept(id);
+            LexicalConcept lc = lexicalConceptHelper.newData(_lc);
+            lexiconManager.setDefaultLanguage(lc);
+            List<LinkedEntity> le = new ArrayList();
+            for (String rel : Arrays.asList("isEvokedBy", "lexicalizedSense")) {
+                TupleQueryResult tqr = lexiconManager.getLexicalConceptRelation(id, rel);
+                if (tqr.hasNext()) {
+                    le.addAll(linkedEntityHelper.newDataList(tqr));
+                }
+            }
+//            TupleQueryResult ev = lexiconManager.getLexicalConceptRelation(id, "isEvokedBy");
+//            if (ev.hasNext()) {
+//                le.addAll(linkedEntityHelper.newDataList(ev));
+//            }
+//            TupleQueryResult ls = lexiconManager.getLexicalConceptRelation(id, "lexicalizedSense");
+//            if (ls.hasNext()) {
+//                le.addAll(linkedEntityHelper.newDataList(ls));
+//            }
+            lc.getEntities().add(new GroupedLinkedEntity("ontolex", le));
+            String json = lexicalConceptHelper.toJson(lc);
+            return Response.ok(json)
+                    .type(MediaType.TEXT_PLAIN)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
+        } catch (ManagerException ex) {
+            logger.error(ex.getMessage(), ex);
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        }
+    }
+
+    @GET
     @Path("languages")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
@@ -487,6 +552,77 @@ public class LexiconData extends Service {
                 .header("Access-Control-Allow-Headers", "content-type")
                 .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                 .build();
+    }
+
+    @GET
+    @Path("{id}/lexicalConcepts")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "/{id}/lexicalConcepts",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Lexical concept children",
+            notes = "This method returns all the children of a lexical concept")
+    public Response lexicalConcepts(
+            @ApiParam(
+                    name = "key",
+                    value = "authentication token",
+                    example = "lexodemo",
+                    required = true)
+            @QueryParam("key") String key,
+            @ApiParam(
+                    name = "id",
+                    value = "concept set ID, lexical concept ID or \"root\" for root concepts",
+                    required = false)
+            @PathParam("id") String id) {
+
+        try {
+            TupleQueryResult _lc = skosManager.getLexicalConceptChildren(id);
+            List<LexicalConceptItem> lcs = lexicalConceptItemHelper.newDataList(_lc);
+            HitsDataList hdl = new HitsDataList(lcs.size(), lcs);
+            String json = lexicalConceptItemHelper.toJson(hdl);
+            return Response.ok(json)
+                    .type(MediaType.TEXT_PLAIN)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
+        } catch (ManagerException ex) {
+            java.util.logging.Logger.getLogger(LexiconData.class.getName()).log(Level.SEVERE, null, ex);
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        }
+    }
+
+    @GET
+    @Path("conceptSets")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "/conceptSets",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Concept Sets",
+            notes = "This method returns all the concept sets")
+    public Response conceptSets(
+            @ApiParam(
+                    name = "key",
+                    value = "authentication token",
+                    example = "lexodemo",
+                    required = true)
+            @QueryParam("key") String key) {
+
+        try {
+            TupleQueryResult _cs = skosManager.getConceptSets();
+            List<ConceptSetItem> cs = conceptSetItemHelper.newDataList(_cs);
+            HitsDataList hdl = new HitsDataList(cs.size(), cs);
+            String json = conceptSetItemHelper.toJson(hdl);
+            return Response.ok(json)
+                    .type(MediaType.TEXT_PLAIN)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
+        } catch (ManagerException ex) {
+            java.util.logging.Logger.getLogger(LexiconData.class.getName()).log(Level.SEVERE, null, ex);
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        }
     }
 
     @GET
@@ -848,39 +984,6 @@ public class LexiconData extends Service {
                 .header("Access-Control-Allow-Headers", "content-type")
                 .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                 .build();
-    }
-
-    // TODO: creating conceptScheme index
-    @GET
-    @Path("conceptSets")
-    @Produces(MediaType.APPLICATION_JSON)
-    @RequestMapping(
-            method = RequestMethod.GET,
-            value = "conceptSets",
-            produces = "application/json; charset=UTF-8")
-    @ApiOperation(value = "List of Concept Set",
-            notes = "This method returns the list of Concept Set and their metadata")
-    public Response conceptSets(
-            @ApiParam(
-                    name = "key",
-                    value = "authentication token",
-                    example = "lexodemo",
-                    required = true)
-            @QueryParam("key") String key) {
-
-        try {
-            TupleQueryResult cs = skosManager.getConceptSchemes("ontolex:ConceptSet");
-            List<ConceptSet> lcs = conceptSetHelper.newDataList(cs);
-            String json = conceptSetHelper.toJson(lcs);
-            return Response.ok(json)
-                    .type(MediaType.TEXT_PLAIN)
-                    .header("Access-Control-Allow-Headers", "content-type")
-                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                    .build();
-        } catch (ManagerException ex) {
-            logger.error(ex.getMessage(), ex);
-            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
-        }
     }
 
 }

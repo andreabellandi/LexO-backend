@@ -1,4 +1,4 @@
-/*
+ /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -15,15 +15,13 @@ import java.util.List;
  *
  * @author andreabellandi
  */
-@ApiModel(description = "Output model representing a concept set")
-public class ConceptSet extends SKOSClass implements Data {
+@ApiModel(description = "Output model representing a concept set item")
+public class ConceptSetItem extends SKOSClass implements Data {
 
     @ApiModelProperty(value = "IRI")
     private String conceptSet;
     @ApiModelProperty(value = "short IRI")
     private String conceptSetInstanceName;
-    @ApiModelProperty(value = "the list of relations the concept set is involved in")
-    private List<GroupedLinkedEntity> entities;
 
     public String getConceptSet() {
         return conceptSet;
@@ -39,14 +37,6 @@ public class ConceptSet extends SKOSClass implements Data {
 
     public void setConceptSetInstanceName(String conceptSetInstanceName) {
         this.conceptSetInstanceName = conceptSetInstanceName;
-    }
-
-    public List<GroupedLinkedEntity> getEntities() {
-        return entities;
-    }
-
-    public void setEntities(List<GroupedLinkedEntity> entities) {
-        this.entities = entities;
     }
 
 }

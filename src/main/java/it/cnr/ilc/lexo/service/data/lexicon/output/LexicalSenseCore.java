@@ -5,6 +5,7 @@
  */
 package it.cnr.ilc.lexo.service.data.lexicon.output;
 
+import it.cnr.ilc.lexo.service.data.output.Entity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import it.cnr.ilc.lexo.service.data.Data;
@@ -17,7 +18,7 @@ import java.util.List;
  * @author andreabellandi
  */
 @ApiModel(description = "Output model representing the core data of a sense")
-public class LexicalSenseCore implements Data {
+public class LexicalSenseCore extends Entity implements Data {
 
     @ApiModelProperty(value = "sense IRI", example = "namespace:USem73621abolizione")
     private String sense;
@@ -31,21 +32,13 @@ public class LexicalSenseCore implements Data {
     private String topic;
     @ApiModelProperty(value = "the counting of the links of a lexical entry and their type: Reference (see Also, same As) Bilbiography, Multimedia, Attestation, Other)")
     private ArrayList<Link> links;
-    @ApiModelProperty(value = "sense creator (who creates the entry) ", example = "user3")
-    private String creator;
     @ApiModelProperty(value = "sense note", example = "some note ...")
     private String note;
-    @ApiModelProperty(value = "sense creation date")
-    private String creationDate;
-    @ApiModelProperty(value = "sense last update")
-    private String lastUpdate;
     @ApiModelProperty(value = "IRI of the concept denoted by", example = "namespace:conceptID")
     private String concept;
     @ApiModelProperty(value = "short IRI of the concept denoted by", example = "conceptID")
     private String conceptInstanceName;
 
-    @ApiModelProperty(value = "if the sense is certain")
-    private double confidence;
 
     private String description;
     private String explanation;
@@ -101,14 +94,6 @@ public class LexicalSenseCore implements Data {
         this.links = links;
     }
 
-    public String getCreator() {
-        return creator;
-    }
-
-    public void setCreator(String creator) {
-        this.creator = creator;
-    }
-
     public String getNote() {
         return note;
     }
@@ -116,23 +101,7 @@ public class LexicalSenseCore implements Data {
     public void setNote(String note) {
         this.note = note;
     }
-
-    public String getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(String creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    public String getLastUpdate() {
-        return lastUpdate;
-    }
-
-    public void setLastUpdate(String lastUpdate) {
-        this.lastUpdate = lastUpdate;
-    }
-
+    
     public String getConcept() {
         return concept;
     }
@@ -189,12 +158,5 @@ public class LexicalSenseCore implements Data {
         this.senseTranslation = senseTranslation;
     }
 
-    public double getConfidence() {
-        return confidence;
-    }
-
-    public void setConfidence(double confidence) {
-        this.confidence = confidence;
-    }
 
 }

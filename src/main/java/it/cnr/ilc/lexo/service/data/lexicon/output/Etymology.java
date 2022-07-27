@@ -5,6 +5,7 @@
  */
 package it.cnr.ilc.lexo.service.data.lexicon.output;
 
+import it.cnr.ilc.lexo.service.data.output.Entity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import it.cnr.ilc.lexo.service.data.Data;
@@ -17,7 +18,7 @@ import java.util.List;
  * @author andreabellandi
  */
 @ApiModel(description = "Output model representing the etymology of a lexical entry")
-public class Etymology implements Data {
+public class Etymology extends Entity implements Data {
 
     @ApiModelProperty(value = "etymology IRI")
     private String etymology;
@@ -27,8 +28,6 @@ public class Etymology implements Data {
     private String label;
     @ApiModelProperty(value = "the counting of the links of a lexical entry and their type: Reference (see Also, same As) Bilbiography, Multimedia, Attestation, Other)")
     private ArrayList<Link> links;
-    @ApiModelProperty(value = "confidence of the hypothesis")
-    private double confidence;
     @ApiModelProperty(value = "string representing the name of who made the hypothesis")
     private String hypothesisOf;
 //    @ApiModelProperty(value = "etyLink IRI")
@@ -49,14 +48,8 @@ public class Etymology implements Data {
 //    private String etySourceLabel;
 //    @ApiModelProperty(value = "etyTarget label")
 //    private String etyTargetLabel;
-    @ApiModelProperty(value = "etymology creator", example = "user3")
-    private String creator;
     @ApiModelProperty(value = "etymology note", example = "some note ...")
     private String note;
-    @ApiModelProperty(value = "etymology creation date")
-    private String creationDate;
-    @ApiModelProperty(value = "etymology last update")
-    private String lastUpdate;
 
     public String getEtymology() {
         return etymology;
@@ -82,13 +75,6 @@ public class Etymology implements Data {
         this.label = label;
     }
 
-    public double getConfidence() {
-        return confidence;
-    }
-
-    public void setConfidence(double confidence) {
-        this.confidence = confidence;
-    }
 
     public String getHypothesisOf() {
         return hypothesisOf;
@@ -97,37 +83,13 @@ public class Etymology implements Data {
     public void setHypothesisOf(String hypothesisOf) {
         this.hypothesisOf = hypothesisOf;
     }
-
-    public String getCreator() {
-        return creator;
-    }
-
-    public void setCreator(String creator) {
-        this.creator = creator;
-    }
-
+    
     public String getNote() {
         return note;
     }
 
     public void setNote(String note) {
         this.note = note;
-    }
-
-    public String getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(String creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    public String getLastUpdate() {
-        return lastUpdate;
-    }
-
-    public void setLastUpdate(String lastUpdate) {
-        this.lastUpdate = lastUpdate;
     }
 
     public ArrayList<Link> getLinks() {

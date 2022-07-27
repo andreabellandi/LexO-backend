@@ -8,6 +8,8 @@ package it.cnr.ilc.lexo.service.data.lexicon.output.skos;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import it.cnr.ilc.lexo.service.data.Data;
+import it.cnr.ilc.lexo.service.data.lexicon.output.GroupedLinkedEntity;
+import java.util.List;
 
 /**
  *
@@ -20,6 +22,18 @@ public class Concept extends SKOSClass implements Data {
     private String concept;
     @ApiModelProperty(value = "short IRI")
     private String conceptInstanceName;
+    @ApiModelProperty(value = "the list of relations the lexical concept is involved in")
+    private List<GroupedLinkedEntity> entities;
+
+    public List<GroupedLinkedEntity> getEntities() {
+        return entities;
+    }
+
+    public void setEntities(List<GroupedLinkedEntity> entities) {
+        this.entities = entities;
+    }
+    
+    
 
     public String getConcept() {
         return concept;

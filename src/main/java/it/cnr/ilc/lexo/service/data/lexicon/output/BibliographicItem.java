@@ -5,6 +5,7 @@
  */
 package it.cnr.ilc.lexo.service.data.lexicon.output;
 
+import it.cnr.ilc.lexo.service.data.output.Entity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import it.cnr.ilc.lexo.service.data.Data;
@@ -14,7 +15,7 @@ import it.cnr.ilc.lexo.service.data.Data;
  * @author andreabellandi
  */
 @ApiModel(description = "Output model representing a zotero bibliography record")
-public class BibliographicItem implements Data {
+public class BibliographicItem extends Entity implements Data {
 
     @ApiModelProperty(value = "bibliographic item ID")
     private String id;
@@ -34,14 +35,8 @@ public class BibliographicItem implements Data {
     private String seeAlsoLink;
     @ApiModelProperty(value = "external link to the document", notes = "series of page number followed by line numbers range", example = "4[12-34]; 9[7-21]")
     private String textualReference;
-    @ApiModelProperty(value = "bibliographic link creator")
-    private String creator;
     @ApiModelProperty(value = "bibliographic link note")
     private String note;
-    @ApiModelProperty(value = "bibliographic link creation date")
-    private String creationDate;
-    @ApiModelProperty(value = "bibliographic link last update")
-    private String lastUpdate;
 
     public String getBibliography() {
         return bibliography;
@@ -115,36 +110,12 @@ public class BibliographicItem implements Data {
         this.textualReference = textualReference;
     }
 
-    public String getCreator() {
-        return creator;
-    }
-
-    public void setCreator(String creator) {
-        this.creator = creator;
-    }
-
     public String getNote() {
         return note;
     }
 
     public void setNote(String note) {
         this.note = note;
-    }
-
-    public String getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(String creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    public String getLastUpdate() {
-        return lastUpdate;
-    }
-
-    public void setLastUpdate(String lastUpdate) {
-        this.lastUpdate = lastUpdate;
     }
 
 }
