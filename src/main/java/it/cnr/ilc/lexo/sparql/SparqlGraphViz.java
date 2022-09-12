@@ -127,7 +127,6 @@ public class SparqlGraphViz {
 //            // + "FILTER(regex(str(_NODE_VARIABLE_), \"http://lexica/mylexicon#_NODE_ID_\"))\n"
 //            + "_GRAPH_"
 //            + "}";
-
     public static final String GRAPH_VIZ_NODE_GRAPH
             = "PREFIX path: <http://www.ontotext.com/path#>\n"
             + "PREFIX lexinfo: <http://www.lexinfo.net/ontology/3.0/lexinfo#>\n"
@@ -241,7 +240,6 @@ public class SparqlGraphViz {
 //            + "    ?source skos:definition ?def .\n"
 //            + "    ?target skos:definition ?defTarget .\n"
 //            + "}";
-
 //    public static final String GRAPH_VIZ_NODE_GRAPH_WITH_LENGHT
 //            = SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
 //            + SparqlPrefix.ONTO.getSparqlPrefix() + "\n"
@@ -314,4 +312,46 @@ public class SparqlGraphViz {
             + "        }\n"
             + "   } \n"
             + "} GROUP BY ?path ?" + SparqlVariable.TYPE + " ORDER BY DESC(?" + SparqlVariable.LENGHT + ")";
+
+    public static final String GRAPH_VIZ_MIN_PATH = "PREFIX path: <http://www.ontotext.com/path#>\n"
+            + "PREFIX lex: <http://lexica/mylexicon#>\n"
+            + "PREFIX vartrans: <http://www.w3.org/ns/lemon/vartrans#>\n"
+            + "PREFIX onto: <http://www.ontotext.com/>\n"
+            + "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+            + "PREFIX skos: <http://www.w3.org/2004/02/skos/core#>\n"
+            + "PREFIX ontolex: <http://www.w3.org/ns/lemon/ontolex#>\n"
+            + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+            + "PREFIX lexinfo: <http://www.lexinfo.net/ontology/3.0/lexinfo#>\n"
+            + "\n"
+            + "SELECT ?" + SparqlVariable.PATH_INDEX + " ?edgeInd" + SparqlVariable.EDGE_INDEX + "ex ?source ?label ?def ?pos ?relation ?target ?labelTarget ?defTarget ?posTarget ?graph\n"
+            + "#FROM onto:explicit\n"
+            + "FROM NAMED onto:explicit\n"
+            + "FROM NAMED onto:implicit\n"
+            + "WHERE {\n"
+            + "    VALUES (?src ?dst) {\n"
+            + "        ( <_SRC_NODE_> <_DST_NODE_> )\n"
+            + "    }\n"
+            + "    SERVICE path:search {\n"
+            + "        [] path:findPath path:shortestPath ;\n"
+            + "           path:sourceNode ?src ;\n"
+            + "           path:destinationNode ?dst ;\n"
+            + "           path:pathIndex ?" + SparqlVariable.PATH_INDEX + " ;\n"
+            + "           path:resultBindingIndex ?" + SparqlVariable.EDGE_INDEX + " ;\n"
+            + "           path:resultBinding ?edge .\n"
+            + "    } \n"
+            + "    BIND (rdf:isTriple(?edge) as ?isTriple)\n"
+            + "    { BIND (rdf:subject(?edge) as ?source) \n"
+            + "        ?source skos:definition ?def .\n"
+            + "        ?les ontolex:sense ?source ;\n"
+            + "            rdfs:label ?label ;\n"
+            + "            lexinfo:partOfSpeech ?pos .\n"
+            + "      BIND (rdf:predicate(?edge) as ?relation)\n"
+            + "      BIND (rdf:object(?edge) as ?target) \n"
+            + "        ?target skos:definition ?defTarget .\n"
+            + "        ?leo ontolex:sense ?target ;\n"
+            + "            rdfs:label ?labelTarget ;\n"
+            + "            lexinfo:partOfSpeech ?posTarget .\n"
+            + "      OPTIONAL { GRAPH ?graph { ?source ?relation ?target } }\n"
+            + "    }\n"
+            + "}";
 }

@@ -27,6 +27,7 @@ import it.cnr.ilc.lexo.service.helper.SenseNodeSummaryHelper;
 import it.cnr.ilc.lexo.util.EnumUtil;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -223,6 +224,76 @@ public class GraphVizualization extends Service {
             json = hopeHelper.toJson(hops);
         }
         return Response.ok(json)
+                .type(MediaType.TEXT_PLAIN)
+                .header("Access-Control-Allow-Headers", "content-type")
+                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                .build();
+    }
+
+    @POST
+    @Path("minPath")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.POST,
+            value = "/minPath",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Minimum path between two nodes",
+            notes = "This method returns the minimum path between two nodes according to the input parameters")
+    public Response minPath(@ApiParam(
+            name = "key",
+            value = "authentication token",
+            example = "lexodemo",
+            required = true)
+            @QueryParam("key") String key,
+            @ApiParam(
+                    name = "source",
+                    value = "source node ID",
+                    required = true)
+            @QueryParam("source") String source,
+            @ApiParam(
+                    name = "target",
+                    value = "target node ID",
+                    required = true)
+            @QueryParam("target") String target) throws HelperException {
+        if (source != null && target != null) {
+            try {
+                TupleQueryResult tqp = graphVizManager.getMinPath(source, target);
+                //Cytoscape ng = graphVizManager.getNodeGraph(tqr, ngf.getRelation());
+                ArrayList<Cytoscape> ng = graphVizManager.splitPaths(tqp);
+                ObjectMapper mapper = new ObjectMapper();
+                String json = mapper.writeValueAsString(ng);
+                return Response.ok(json)
+                        .type(MediaType.TEXT_PLAIN)
+                        .header("Access-Control-Allow-Headers", "content-type")
+                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                        .build();
+            } catch (JsonProcessingException ex) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            }
+        } else {
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("source and target nodes must be specified").build();
+        }
+    }
+
+    @POST
+    @Path("allPaths")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.POST,
+            value = "/allPaths",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "All paths between two nodes",
+            notes = "This method returns all the paths between two nodes according to the input parameters")
+    public Response allPaths(@ApiParam(
+            name = "key",
+            value = "authentication token",
+            example = "lexodemo",
+            required = true)
+            @QueryParam("key") String key,
+            HopsFilter hf) throws HelperException {
+        return Response.ok()
                 .type(MediaType.TEXT_PLAIN)
                 .header("Access-Control-Allow-Headers", "content-type")
                 .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")

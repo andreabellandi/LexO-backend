@@ -167,6 +167,10 @@ public class SparqlVariable {
     public static final String SYNONYM = "synonym";
 
     public static final String HOPS = "hops";
+    
+    public static final String PATH_INDEX = "pathIndex";
+    public static final String EDGE_INDEX = "edgeIndex";
+    public static final String EDGE = "edge";
 
     // skos variables
     public static final String CHILD = "child";
