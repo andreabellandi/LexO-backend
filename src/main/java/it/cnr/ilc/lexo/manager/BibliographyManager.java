@@ -143,26 +143,24 @@ public class BibliographyManager implements Manager, Cached {
     private static String getContributor(JsonNode contributors) {
         String contributor = "";
         if (contributors.get("creators") != null) {
-            if (contributors.isArray()) {
-                ArrayNode arrayNode = (ArrayNode) contributors;
-                for (int i = 0; i < arrayNode.size(); i++) {
-                    JsonNode arrayElement = arrayNode.get(i);
-                    Iterator<Map.Entry<String, JsonNode>> iter = arrayElement.fields();
-                    boolean author = false;
-                    while (iter.hasNext()) {
-                        Map.Entry<String, JsonNode> entry = iter.next();
-                        if (entry.getKey().equals("creatorType")) {
-                            if (entry.getValue().textValue().equals("author")) {
-                                author = true;
-                            } else {
-                                author = false;
-                            }
+            ArrayNode arrayNode = (ArrayNode) contributors.get("creators");
+            for (int i = 0; i < arrayNode.size(); i++) {
+                JsonNode arrayElement = arrayNode.get(i);
+                Iterator<Map.Entry<String, JsonNode>> iter = arrayElement.fields();
+                boolean author = false;
+                while (iter.hasNext()) {
+                    Map.Entry<String, JsonNode> entry = iter.next();
+                    if (entry.getKey().equals("creatorType")) {
+                        if (entry.getValue().textValue().equals("author")) {
+                            author = true;
                         } else {
-                            if (author) {
-                                if (entry.getKey().equals("lastName")) {
-                                    if (!entry.getValue().textValue().isEmpty()) {
-                                        contributor = contributor.isEmpty() ? contributor + entry.getValue().textValue() : contributor + ", " + entry.getValue().textValue();
-                                    }
+                            author = false;
+                        }
+                    } else {
+                        if (author) {
+                            if (entry.getKey().equals("lastName")) {
+                                if (!entry.getValue().textValue().isEmpty()) {
+                                    contributor = contributor.isEmpty() ? contributor + entry.getValue().textValue() : contributor + ", " + entry.getValue().textValue();
                                 }
                             }
                         }
