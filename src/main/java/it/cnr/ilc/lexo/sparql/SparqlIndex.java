@@ -95,7 +95,9 @@ public class SparqlIndex {
             + "                \"http://purl.org/dc/terms/creator\"\n"
             + "          ]\n"
             + "     }\n"
-            + "   ]\n"
+            + "   ],\n"
+                // lexical entries having not a  rdfs:label are not indexed 
+            + "   \"documentFilter\": \"bound(?lexicalEntryLabel)\""
             + " }\n"
             + " ''' .\n"
             + " }";
