@@ -110,7 +110,7 @@ public class GraphVizManager implements Manager, Cached {
         return RDFQueryUtil.evaluateTQuery(query);
     }
 
-    public ArrayList<Cytoscape> splitPaths(TupleQueryResult tqr) {
+    public ArrayList<Cytoscape> splitPaths(TupleQueryResult tqr, boolean inference) {
         ArrayList<Cytoscape> cl = new ArrayList<>();
         if (tqr != null) {
             int pathIndex = 0;
@@ -120,42 +120,45 @@ public class GraphVizManager implements Manager, Cached {
                 if ((Integer.parseInt(bindingSet.getBinding(SparqlVariable.PATH_INDEX).getValue().stringValue())) == pathIndex) {
                     bs.add(bindingSet);
                 } else {
-                    cl.add(getNodeGraph(bs));
+                    cl.add(getNodeGraph(bs, inference));
                     bs.clear();
                     bs.add(bindingSet);
                     pathIndex++;
                 }
             }
-            cl.add(getNodeGraph(bs));
+            cl.add(getNodeGraph(bs, inference));
             return cl;
         }
         return null;
     }
 
-    private Cytoscape getNodeGraph(ArrayList<BindingSet> bs) {
+    private Cytoscape getNodeGraph(ArrayList<BindingSet> bs, boolean inference) {
         HashMap<String, String> usem = new HashMap<>();
         Cytoscape cytoscape = new Cytoscape();
         cytoscape.setNodes(new ArrayList<>());
         cytoscape.setEdges(new ArrayList<>());
+        // IMPORTANT: we need to check if the bindings return null. In this case we assume that all the bindings are not null!!!
         for (BindingSet _bs : bs) {
+            String sourceLabel = (_bs.getBinding("label") == null ? (inference ? "conceptLabel" : "label") : "label");
             if (usem.get(((IRI) _bs.getBinding("source").getValue()).getLocalName()) == null) {
                 NodeData ds = new NodeData(((IRI) _bs.getBinding("source").getValue()).getLocalName(),
-                        ((Literal) _bs.getBinding("label").getValue()).getLabel(),
-                        _bs.getBinding("def").getValue().stringValue(),
+                        ((Literal) _bs.getBinding(sourceLabel).getValue()).getLabel(),
+                        ((_bs.getBinding("def") == null) ? "" : _bs.getBinding("def").getValue().stringValue()),
                         ((IRI) _bs.getBinding("source").getValue()).stringValue(),
-                        ((IRI) _bs.getBinding("pos").getValue()).getLocalName());
+                        ((_bs.getBinding("pos") == null) ? "" : ((IRI) _bs.getBinding("pos").getValue()).getLocalName()));
                 Node ns = new Node(((IRI) _bs.getBinding("source").getValue()).getLocalName(), ds);
                 cytoscape.getNodes().add(ns);
                 usem.put(((IRI) _bs.getBinding("source").getValue()).getLocalName(), ((IRI) _bs.getBinding("source").getValue()).getLocalName());
             }
 
             // add target node
+            String targetLabel = (_bs.getBinding("labelTarget") == null ? (inference ? "conceptLabelTarget" : "labelTarget") : "labelTarget");
             if (usem.get(((IRI) _bs.getBinding("target").getValue()).getLocalName()) == null) {
                 NodeData dt = new NodeData(((IRI) _bs.getBinding("target").getValue()).getLocalName(),
-                        ((Literal) _bs.getBinding("labelTarget").getValue()).getLabel(),
-                        _bs.getBinding("defTarget").getValue().stringValue(),
+                        ((Literal) _bs.getBinding(targetLabel).getValue()).getLabel(),
+                        ((_bs.getBinding("defTarget") == null) ? "" : _bs.getBinding("defTarget").getValue().stringValue()),
                         ((IRI) _bs.getBinding("target").getValue()).stringValue(),
-                        ((IRI) _bs.getBinding("posTarget").getValue()).getLocalName());
+                        ((_bs.getBinding("posTarget") == null) ? "" : ((IRI) _bs.getBinding("posTarget").getValue()).getLocalName()));
                 Node nt = new Node(((IRI) _bs.getBinding("target").getValue()).getLocalName(), dt);
                 cytoscape.getNodes().add(nt);
                 usem.put(((IRI) _bs.getBinding("target").getValue()).getLocalName(), ((IRI) _bs.getBinding("target").getValue()).getLocalName());
@@ -165,8 +168,8 @@ public class GraphVizManager implements Manager, Cached {
                     + ((IRI) _bs.getBinding("target").getValue()).getLocalName(),
                     ((IRI) _bs.getBinding("source").getValue()).getLocalName(),
                     ((IRI) _bs.getBinding("target").getValue()).getLocalName(),
-                    ((Literal) _bs.getBinding("label").getValue()).getLabel(),
-                    ((Literal) _bs.getBinding("labelTarget").getValue()).getLabel(),
+                    ((Literal) _bs.getBinding(sourceLabel).getValue()).getLabel(),
+                    ((Literal) _bs.getBinding(targetLabel).getValue()).getLabel(),
                     (_bs.getBinding("graph") != null ? ((IRI) _bs.getBinding("graph").getValue()).getLocalName().contains("implicit") : null));
             e.setRelationType(_bs.getBinding("relation").getValue().stringValue());
             Edge edge = new Edge(e);
@@ -238,8 +241,15 @@ public class GraphVizManager implements Manager, Cached {
         return RDFQueryUtil.evaluateTQuery(query);
     }
 
-    public TupleQueryResult getMinPath(String source, String target) {
-        String query = SparqlGraphViz.GRAPH_VIZ_MIN_PATH.replaceAll("_SRC_NODE_", namespace + source).replaceAll("_DST_NODE_", namespace + target);
+    public TupleQueryResult getMinPath(String source, String target, Boolean inference) throws ManagerException {
+        String query = "";
+        if (inference != null) {
+            query = inference ? SparqlGraphViz.GRAPH_VIZ_MIN_PATH_WITH_CONCEPTS.replaceAll("_SRC_NODE_", namespace + source).replaceAll("_DST_NODE_", namespace + target)
+                    .replaceAll("_REPO_", "repository:SIMPLE_ONTO"):
+               SparqlGraphViz.GRAPH_VIZ_MIN_PATH.replaceAll("_SRC_NODE_", namespace + source).replaceAll("_DST_NODE_", namespace + target);     
+        } else {
+            query = SparqlGraphViz.GRAPH_VIZ_MIN_PATH.replaceAll("_SRC_NODE_", namespace + source).replaceAll("_DST_NODE_", namespace + target);   
+        }
         return RDFQueryUtil.evaluateTQuery(query);
     }
 }

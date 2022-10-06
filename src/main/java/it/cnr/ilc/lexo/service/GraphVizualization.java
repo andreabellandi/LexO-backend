@@ -11,6 +11,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import it.cnr.ilc.lexo.manager.GraphVizManager;
+import it.cnr.ilc.lexo.manager.ManagerException;
 import it.cnr.ilc.lexo.manager.ManagerFactory;
 import it.cnr.ilc.lexo.service.data.lexicon.input.graphViz.EdgeGraphFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.input.graphViz.HopsFilter;
@@ -255,25 +256,31 @@ public class GraphVizualization extends Service {
                     name = "target",
                     value = "target node ID",
                     required = true)
-            @QueryParam("target") String target) throws HelperException {
+            @QueryParam("target") String target,
+            @ApiParam(
+                    name = "inference",
+                    value = "true or false",
+                    required = true)
+            @QueryParam("inference") Boolean inference) throws HelperException {
         if (source != null && target != null) {
-            try {
-                TupleQueryResult tqp = graphVizManager.getMinPath(source, target);
-                //Cytoscape ng = graphVizManager.getNodeGraph(tqr, ngf.getRelation());
-                ArrayList<Cytoscape> ng = graphVizManager.splitPaths(tqp);
-                ObjectMapper mapper = new ObjectMapper();
-                String json = mapper.writeValueAsString(ng);
-                return Response.ok(json)
-                        .type(MediaType.TEXT_PLAIN)
-                        .header("Access-Control-Allow-Headers", "content-type")
-                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                        .build();
-            } catch (JsonProcessingException ex) {
-                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+                try {
+                    TupleQueryResult tqp = graphVizManager.getMinPath(source, target, inference);
+                    ArrayList<Cytoscape> ng = graphVizManager.splitPaths(tqp, inference);
+                    ObjectMapper mapper = new ObjectMapper();
+                    String json = mapper.writeValueAsString(ng);
+                    return Response.ok(json)
+                            .type(MediaType.TEXT_PLAIN)
+                            .header("Access-Control-Allow-Headers", "content-type")
+                            .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                            .build();
+                } catch (JsonProcessingException ex) {
+                    return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+                } catch (ManagerException ex) {
+                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+                }
+            } else {
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("inference and concept options must be specified").build();
             }
-        } else {
-            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("source and target nodes must be specified").build();
-        }
     }
 
     @POST
