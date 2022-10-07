@@ -41,6 +41,7 @@
             <pattern>%d %p %c{1.}:%L [%t] %m%n</pattern>
         </encoder>
     </appender>
+ 
     
 <!--    <logger name="org.apache.http.headers" level="debug" additivity="false">
         <appender-ref ref="FILE-ROLLING"/>

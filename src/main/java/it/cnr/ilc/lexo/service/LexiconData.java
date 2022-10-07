@@ -148,7 +148,7 @@ public class LexiconData extends Service {
                     required = true)
             @PathParam("id") String id) {
         try {
-            logger.info("lexicalEntry({}, {}, {})", key, aspect, id);
+            statLog.info("/{id}/lexicalEntry {}", id);
             long start = System.currentTimeMillis();
             TupleQueryResult lexicalEntry = lexiconManager.getLexicalEntry(id, aspect);
             if (aspect.equals(EnumUtil.LexicalAspects.Core.toString())) {
@@ -158,19 +158,13 @@ public class LexiconData extends Service {
                 LexicalEntityLinksItem links = lexicalEntityLinksItemHelper.newData(lexicalEntityLinks);
                 lexiconManager.addLexicalEntityLink(lec, links);
                 String json = lexicalEntryCoreHelper.toJson(lec);
-                long finish = System.currentTimeMillis();
-                long timeElapsed = finish - start;
-                logger.info("lexicalEntry response: {}ms {}", timeElapsed, json.substring(0, Math.min(json.length(), 20)));
-                statLog.info("STAT lexicalEntry response: {}ms {}", timeElapsed, json.substring(0, Math.min(json.length(), 20)));
+                statLog.info("response in: {}ms", System.currentTimeMillis() - start);
                 return Response.ok(json)
                         .type(MediaType.TEXT_PLAIN)
                         .header("Access-Control-Allow-Headers", "content-type")
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
             }
-            long finish = System.currentTimeMillis();
-            long timeElapsed = finish - start;
-            logger.info("lexicalEntry response: lexical aspect not available {}ms", timeElapsed);
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("lexical aspect not available").build();
         } catch (ManagerException ex) {
             logger.error(ex.getMessage(), ex);
@@ -210,6 +204,8 @@ public class LexiconData extends Service {
                     required = true)
             @PathParam("id") String id) {
         try {
+            statLog.info("/{id}/form {}", id);
+            long start = System.currentTimeMillis();
             TupleQueryResult form = lexiconManager.getForm(id, aspect);
             if (aspect.equals(EnumUtil.LexicalAspects.Core.toString())) {
                 List<FormCore> fc = formCoreHelper.newDataList(form);
@@ -218,6 +214,7 @@ public class LexiconData extends Service {
                 LexicalEntityLinksItem links = lexicalEntityLinksItemHelper.newData(lexicalEntityLinks);
                 lexiconManager.addLexicalEntityLink(_fc, links);
                 String json = formCoreHelper.toJson(_fc);
+                statLog.info("response in: {}ms", System.currentTimeMillis() - start);
                 return Response.ok(json)
                         .type(MediaType.TEXT_PLAIN)
                         .header("Access-Control-Allow-Headers", "content-type")
@@ -260,6 +257,8 @@ public class LexiconData extends Service {
                     required = true)
             @PathParam("id") String id) {
         try {
+            statLog.info("/{id}/lexicalSense {}", id);
+            long start = System.currentTimeMillis();
             TupleQueryResult sense = lexiconManager.getLexicalSense(id, aspect);
             if (aspect.equals(EnumUtil.LexicalAspects.Core.toString())) {
                 LexicalSenseCore lsc = lexicalSenseCoreHelper.newData(sense);
@@ -267,6 +266,7 @@ public class LexiconData extends Service {
                 LexicalEntityLinksItem links = lexicalEntityLinksItemHelper.newData(lexicalEntityLinks);
                 lexiconManager.addLexicalEntityLink(lsc, links);
                 String json = lexicalSenseCoreHelper.toJson(lsc);
+                statLog.info("response in: {}ms", System.currentTimeMillis() - start);
                 return Response.ok(json)
                         .type(MediaType.TEXT_PLAIN)
                         .header("Access-Control-Allow-Headers", "content-type")
@@ -302,6 +302,8 @@ public class LexiconData extends Service {
                     required = true)
             @PathParam("id") String id) {
         try {
+            statLog.info("/{id}/etymology {}", id);
+            long start = System.currentTimeMillis();
             String json = "";
             TupleQueryResult etymology = lexiconManager.getEtymology(id);
             if (etymology.hasNext()) {
@@ -314,6 +316,7 @@ public class LexiconData extends Service {
                 EtymologyTree et = lexiconManager.getEtymologyTree(e, etyLinks);
                 json = etymologyTreeHelper.toJson(et);
             }
+            statLog.info("response in: {}ms", System.currentTimeMillis() - start);
             return Response.ok(json)
                     .type(MediaType.TEXT_PLAIN)
                     .header("Access-Control-Allow-Headers", "content-type")
@@ -347,9 +350,12 @@ public class LexiconData extends Service {
                     required = true)
             @PathParam("id") String id) {
         try {
+            statLog.info("/{id}/component {}", id);
+            long start = System.currentTimeMillis();
             TupleQueryResult _comp = lexiconManager.getComponent(id);
             Component comp = componentHelper.newData(_comp);
             String json = componentHelper.toJson(comp);
+            statLog.info("response in: {}ms", System.currentTimeMillis() - start);
             return Response.ok(json)
                     .type(MediaType.TEXT_PLAIN)
                     .header("Access-Control-Allow-Headers", "content-type")
@@ -383,6 +389,8 @@ public class LexiconData extends Service {
                     required = true)
             @PathParam("id") String id) {
         try {
+            statLog.info("/{id}/lexicalConcept {}", id);
+            long start = System.currentTimeMillis();
             TupleQueryResult _lc = skosManager.getLexicalConcept(id);
             LexicalConcept lc = lexicalConceptHelper.newData(_lc);
             lexiconManager.setDefaultLanguage(lc);
@@ -393,16 +401,9 @@ public class LexiconData extends Service {
                     le.addAll(linkedEntityHelper.newDataList(tqr));
                 }
             }
-//            TupleQueryResult ev = lexiconManager.getLexicalConceptRelation(id, "isEvokedBy");
-//            if (ev.hasNext()) {
-//                le.addAll(linkedEntityHelper.newDataList(ev));
-//            }
-//            TupleQueryResult ls = lexiconManager.getLexicalConceptRelation(id, "lexicalizedSense");
-//            if (ls.hasNext()) {
-//                le.addAll(linkedEntityHelper.newDataList(ls));
-//            }
             lc.getEntities().add(new GroupedLinkedEntity("ontolex", le));
             String json = lexicalConceptHelper.toJson(lc);
+            statLog.info("response in: {}ms", System.currentTimeMillis() - start);
             return Response.ok(json)
                     .type(MediaType.TEXT_PLAIN)
                     .header("Access-Control-Allow-Headers", "content-type")
@@ -426,9 +427,12 @@ public class LexiconData extends Service {
             notes = "This method returns a list of lexicon languages according to the input filter")
     public Response languages(@QueryParam("key") String key) throws HelperException {
         try {
+            statLog.info("/languages");
+            long start = System.currentTimeMillis();
             TupleQueryResult languages = lexiconManager.getLexiconLanguages();
             List<Language> entries = languageHelper.newDataList(languages);
             String json = languageHelper.toJson(entries);
+            statLog.info("response in: {}ms", System.currentTimeMillis() - start);
             return Response.ok(json)
                     .type(MediaType.TEXT_PLAIN)
                     .header("Access-Control-Allow-Headers", "content-type")
@@ -452,10 +456,13 @@ public class LexiconData extends Service {
             notes = "This method returns a list of lexical senses according to the input filter")
     public Response sensesList(@QueryParam("key") String key, LexicalSenseFilter lsf) throws HelperException {
         try {
+            statLog.info("/lexicalSenses");
+            long start = System.currentTimeMillis();
             TupleQueryResult lexicalSenses = lexiconManager.getFilterdLexicalSenses(lsf);
             List<LexicalSenseItem> senses = lexicalSenseFilterHelper.newDataList(lexicalSenses);
             HitsDataList hdl = new HitsDataList(lexicalSenseFilterHelper.getTotalHits(), senses);
             String json = lexicalSenseFilterHelper.toJson(hdl);
+            statLog.info("response in: {}ms", System.currentTimeMillis() - start);
             return Response.ok(json)
                     .type(MediaType.TEXT_PLAIN)
                     .header("Access-Control-Allow-Headers", "content-type")
@@ -479,10 +486,13 @@ public class LexiconData extends Service {
             notes = "This method returns a list of lexical entries according to the input filter")
     public Response entriesList(@QueryParam("key") String key, LexicalEntryFilter lef) throws HelperException {
         try {
+            statLog.info("/lexicalEntries");
+            long start = System.currentTimeMillis();
             TupleQueryResult lexicalEnties = lexiconManager.getFilterdLexicalEntries(lef);
             List<LexicalEntryItem> entries = lexicalEntryFilterHelper.newDataList(lexicalEnties);
             HitsDataList hdl = new HitsDataList(lexicalEntryFilterHelper.getTotalHits(), entries);
             String json = lexicalEntryFilterHelper.toJson(hdl);
+            statLog.info("response in: {}ms", System.currentTimeMillis() - start);
             return Response.ok(json)
                     .type(MediaType.TEXT_PLAIN)
                     .header("Access-Control-Allow-Headers", "content-type")
@@ -506,10 +516,13 @@ public class LexiconData extends Service {
             notes = "This method returns a list of forms according to the input filter")
     public Response forms(@QueryParam("key") String key, FormFilter ff) throws HelperException {
         try {
+            statLog.info("/forms");
+            long start = System.currentTimeMillis();
             TupleQueryResult forms = lexiconManager.getFilterdForms(ff);
             List<FormItem> fi = formItemsHelper.newDataList(forms);
             HitsDataList hdl = new HitsDataList(formItemsHelper.getTotalHits(), fi);
             String json = formItemsHelper.toJson(hdl);
+            statLog.info("response in: {}ms", System.currentTimeMillis() - start);
             return Response.ok(json)
                     .type(MediaType.TEXT_PLAIN)
                     .header("Access-Control-Allow-Headers", "content-type")
@@ -543,10 +556,12 @@ public class LexiconData extends Service {
                     example = "MUSaccedereVERB",
                     required = true)
             @PathParam("id") String id) {
-//        log(Level.INFO, "get lexicon entries types");
+        statLog.info("/{id}/forms {}", id);
+        long start = System.currentTimeMillis();
         TupleQueryResult _forms = lexiconManager.getForms(id);
         List<FormItem> forms = formItemsHelper.newDataList(_forms);
         String json = formItemsHelper.toJson(forms);
+        statLog.info("response in: {}ms", System.currentTimeMillis() - start);
         return Response.ok(json)
                 .type(MediaType.TEXT_PLAIN)
                 .header("Access-Control-Allow-Headers", "content-type")
@@ -577,10 +592,13 @@ public class LexiconData extends Service {
             @PathParam("id") String id) {
 
         try {
+            statLog.info("/{id}/lexicalConcepts {}", id);
+            long start = System.currentTimeMillis();
             TupleQueryResult _lc = skosManager.getLexicalConceptChildren(id);
             List<LexicalConceptItem> lcs = lexicalConceptItemHelper.newDataList(_lc);
             HitsDataList hdl = new HitsDataList(lcs.size(), lcs);
             String json = lexicalConceptItemHelper.toJson(hdl);
+            statLog.info("response in: {}ms", System.currentTimeMillis() - start);
             return Response.ok(json)
                     .type(MediaType.TEXT_PLAIN)
                     .header("Access-Control-Allow-Headers", "content-type")
@@ -610,10 +628,13 @@ public class LexiconData extends Service {
             @QueryParam("key") String key) {
 
         try {
+            statLog.info("/{conceptSets");
+            long start = System.currentTimeMillis();
             TupleQueryResult _cs = skosManager.getConceptSets();
             List<ConceptSetItem> cs = conceptSetItemHelper.newDataList(_cs);
             HitsDataList hdl = new HitsDataList(cs.size(), cs);
             String json = conceptSetItemHelper.toJson(hdl);
+            statLog.info("response in: {}ms", System.currentTimeMillis() - start);
             return Response.ok(json)
                     .type(MediaType.TEXT_PLAIN)
                     .header("Access-Control-Allow-Headers", "content-type")
@@ -647,10 +668,12 @@ public class LexiconData extends Service {
                     example = "MUSaccedereVERB",
                     required = true)
             @PathParam("id") String id) {
-//        log(Level.INFO, "get lexicon entries types");
+        statLog.info("/{id}/senses {}", id);
+        long start = System.currentTimeMillis();
         TupleQueryResult _forms = lexiconManager.getLexicalSenses(id);
         List<LexicalSenseItem> senses = lexicalSenseFilterHelper.newDataList(_forms);
         String json = lexicalSenseFilterHelper.toJson(senses);
+        statLog.info("response in: {}ms", System.currentTimeMillis() - start);
         return Response.ok(json)
                 .type(MediaType.TEXT_PLAIN)
                 .header("Access-Control-Allow-Headers", "content-type")
@@ -680,9 +703,12 @@ public class LexiconData extends Service {
                     example = "MUSaccedereVERB",
                     required = true)
             @PathParam("id") String id) {
+        statLog.info("/{id}/etymologies {}", id);
+        long start = System.currentTimeMillis();
         TupleQueryResult _etys = lexiconManager.getEtymologies(id);
         List<EtymologyItem> etys = etymologyFilterHelper.newDataList(_etys);
         String json = etymologyFilterHelper.toJson(etys);
+        statLog.info("response in: {}ms", System.currentTimeMillis() - start);
         return Response.ok(json)
                 .type(MediaType.TEXT_PLAIN)
                 .header("Access-Control-Allow-Headers", "content-type")
@@ -712,9 +738,12 @@ public class LexiconData extends Service {
                     example = "97-Cause_Change",
                     required = true)
             @PathParam("id") String id) {
+        statLog.info("/{id}/sensesByConcept {}", id);
+        long start = System.currentTimeMillis();
         TupleQueryResult _forms = lexiconManager.getLexicalSensesByConcept(id);
         List<LexicalSenseItem> senses = lexicalSenseFilterHelper.newDataList(_forms);
         String json = lexicalSenseFilterHelper.toJson(senses);
+        statLog.info("response in: {}ms", System.currentTimeMillis() - start);
         return Response.ok(json)
                 .type(MediaType.TEXT_PLAIN)
                 .header("Access-Control-Allow-Headers", "content-type")
@@ -744,10 +773,12 @@ public class LexiconData extends Service {
                     example = "MUSaccedereVERB",
                     required = true)
             @PathParam("id") String id) {
-//        log(Level.INFO, "get lexicon entries types");
+        statLog.info("/{id}/elements {}", id);
+        long start = System.currentTimeMillis();
         TupleQueryResult _elements = lexiconManager.getElements(id);
         LexicalEntryElementItem elements = lexicalEntryElementHelper.newData(_elements);
         String json = lexicalEntryElementHelper.toJson(elements);
+        statLog.info("response in: {}ms", System.currentTimeMillis() - start);
         return Response.ok(json)
                 .type(MediaType.TEXT_PLAIN)
                 .header("Access-Control-Allow-Headers", "content-type")
@@ -783,12 +814,15 @@ public class LexiconData extends Service {
                     required = true)
             @PathParam("id") String id) {
         try {
+            statLog.info("/{id}/linguisticRelation {}", id);
+            long start = System.currentTimeMillis();
             TupleQueryResult lingRel = lexiconManager.getLinguisticRelation(id, property);
             if (!lingRel.hasNext()) {
                 return Response.status(Response.Status.OK).type(MediaType.TEXT_PLAIN).entity("There are no instances of " + property).build();
             }
             List<LinkedEntity> le = linkedEntityHelper.newDataList(lingRel);
             String json = linkedEntityHelper.toJson(le);
+            statLog.info("response in: {}ms", System.currentTimeMillis() - start);
             return Response.ok(json)
                     .type(MediaType.TEXT_PLAIN)
                     .header("Access-Control-Allow-Headers", "content-type")
@@ -828,12 +862,15 @@ public class LexiconData extends Service {
                     required = true)
             @PathParam("id") String id) {
         try {
+            statLog.info("/{id}/genericRelation {}", id);
+            long start = System.currentTimeMillis();
             TupleQueryResult genRel = lexiconManager.getGenericRelation(id, property);
             if (!genRel.hasNext()) {
                 return Response.status(Response.Status.OK).type(MediaType.TEXT_PLAIN).entity("There are no instances of " + property).build();
             }
             List<LinkedEntity> le = linkedEntityHelper.newDataList(genRel);
             String json = linkedEntityHelper.toJson(le);
+            statLog.info("response in: {}ms", System.currentTimeMillis() - start);
             return Response.ok(json)
                     .type(MediaType.TEXT_PLAIN)
                     .header("Access-Control-Allow-Headers", "content-type")
@@ -866,9 +903,12 @@ public class LexiconData extends Service {
                     value = "lexical entity ID",
                     required = true)
             @PathParam("id") String id) {
+        statLog.info("/{id}/bibliography {}", id);
+        long start = System.currentTimeMillis();
         TupleQueryResult bib = bibliographyManager.getBibliography(id);
         List<BibliographicItem> bibs = bibliographyHelper.newDataList(bib);
         String json = bibliographyHelper.toJson(bibs);
+        statLog.info("response in: {}ms", System.currentTimeMillis() - start);
         return Response.ok(json)
                 .type(MediaType.TEXT_PLAIN)
                 .header("Access-Control-Allow-Headers", "content-type")
@@ -897,12 +937,15 @@ public class LexiconData extends Service {
                     value = "lexical entry ID",
                     required = true)
             @PathParam("id") String id) {
+        statLog.info("/{id}/subTerms {}", id);
+        long start = System.currentTimeMillis();
         String json = "";
         TupleQueryResult lexicalEnties = lexiconManager.getSubTerms(id);
         if (lexicalEnties.hasNext()) {
             List<LexicalEntryItem> entries = lexicalEntryFilterHelper.newDataList(lexicalEnties);
             json = lexicalEntryFilterHelper.toJson(entries);
         }
+        statLog.info("response in: {}ms", System.currentTimeMillis() - start);
         return Response.ok(json)
                 .type(MediaType.TEXT_PLAIN)
                 .header("Access-Control-Allow-Headers", "content-type")
@@ -931,12 +974,15 @@ public class LexiconData extends Service {
                     value = "component ID",
                     required = true)
             @PathParam("id") String id) {
+        statLog.info("/{id}/correspondsTo {}", id);
+        long start = System.currentTimeMillis();
         String json = "";
         TupleQueryResult lexicalEntry = lexiconManager.getCorrespondsTo(id);
         if (lexicalEntry.hasNext()) {
             LexicalEntryItem entry = lexicalEntryFilterHelper.newData(lexicalEntry);
             json = lexicalEntryFilterHelper.toJson(entry);
         }
+        statLog.info("response in: {}ms", System.currentTimeMillis() - start);
         return Response.ok(json)
                 .type(MediaType.TEXT_PLAIN)
                 .header("Access-Control-Allow-Headers", "content-type")
@@ -965,6 +1011,8 @@ public class LexiconData extends Service {
                     value = "lexical entry or component ID",
                     required = true)
             @PathParam("id") String id) {
+        statLog.info("/{id}/constituents {}", id);
+        long start = System.currentTimeMillis();
         TupleQueryResult _comps = null;
         String json = "";
         UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
@@ -979,6 +1027,7 @@ public class LexiconData extends Service {
             List<ComponentItem> comps = componentFilterHelper.newDataList(_comps);
             json = componentFilterHelper.toJson(comps);
         }
+        statLog.info("response in: {}ms", System.currentTimeMillis() - start);
         return Response.ok(json)
                 .type(MediaType.TEXT_PLAIN)
                 .header("Access-Control-Allow-Headers", "content-type")
