@@ -23,6 +23,7 @@ public class ReferencedLinguisticObjectListHelper extends TripleStoreDataHelper<
         data.setConceptInstanceName(getLocalName(bs, SparqlVariable.CONCEPT));
         data.setLemma(getStringValue(bs, SparqlVariable.WRITTEN_REPRESENTATION));
         data.setDefinition(getStringValue(bs, SparqlVariable.SENSE_DEFINITION));
+        data.setTraitInstanceName(getLocalName(bs, SparqlVariable.TRAIT));
     }
 
     @Override

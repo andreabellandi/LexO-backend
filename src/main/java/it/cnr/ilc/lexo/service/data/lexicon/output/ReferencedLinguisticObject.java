@@ -19,6 +19,7 @@ public class ReferencedLinguisticObject implements Data {
     private String lemma;
     private String definition;
     private String conceptInstanceName;
+    private String traitInstanceName;
 
     public String getLemma() {
         return lemma;
@@ -66,6 +67,14 @@ public class ReferencedLinguisticObject implements Data {
 
     public void setLexicalEntryInstanceName(String lexicalEntryInstanceName) {
         this.lexicalEntryInstanceName = lexicalEntryInstanceName;
+    }
+
+    public String getTraitInstanceName() {
+        return traitInstanceName;
+    }
+
+    public void setTraitInstanceName(String traitInstanceName) {
+        this.traitInstanceName = traitInstanceName;
     }
 
 }

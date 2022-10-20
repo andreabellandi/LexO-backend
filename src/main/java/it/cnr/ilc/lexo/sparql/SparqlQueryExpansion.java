@@ -37,7 +37,7 @@ public class SparqlQueryExpansion {
             + "    ?" + SparqlVariable.LEXICAL_ENTRY + " lexinfo:partOfSpeech ?" + SparqlVariable.LEXICAL_ENTRY_POS + " .\n"
             + "}";
 
-    public static final String QUERY_EXPANSION_FORMS 
+    public static final String QUERY_EXPANSION_FORMS
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
             + SparqlPrefix.INST.getSparqlPrefix() + "\n"
             + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
@@ -68,7 +68,7 @@ public class SparqlQueryExpansion {
             + "   BIND(strafter(str(?" + SparqlVariable.MORPHOLOGY_TRAIT_VALUE + "),str(lexinfo:)) as ?tv)\n"
             + "   } GROUP BY ?" + SparqlVariable.FORM + " ?" + SparqlVariable.LEXICAL_ENTRY_POS + " ?" + SparqlVariable.WRITTEN_REPRESENTATION + " ?" + SparqlVariable.LEXICAL_ENTRY + "\n"
             + "  ";
-    
+
     public static final String DATA_FORMS_BY_LEXICAL_SENSE
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
             + SparqlPrefix.INST.getSparqlPrefix() + "\n"
@@ -111,13 +111,12 @@ public class SparqlQueryExpansion {
             + " ?" + SparqlVariable.WRITTEN_REPRESENTATION
             + " ?" + SparqlVariable.LEXICAL_ENTRY
             + " ?" + SparqlVariable.FORM_TYPE
-            + " ?" + SparqlVariable.SENSE 
+            + " ?" + SparqlVariable.SENSE
             + " ?" + SparqlVariable.SENSE_DEFINITION
             + "\n"
             + "  ORDER BY ?"
             + SparqlVariable.WRITTEN_REPRESENTATION;
-    
-    
+
     public static final String DATA_PATH_LENGTH
             = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
             + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
@@ -129,4 +128,32 @@ public class SparqlQueryExpansion {
             + "}\n"
             + "GROUP BY ?" + SparqlVariable.IRI + " ?lexicalEntry \n"
             + "ORDER BY ?lenght";
+
+    // for test purposes only !!
+    public static final String QUERY_EXPANSION_REFERENCED_LINGUISTIC_OBJECT2
+            = SparqlPrefix.ONTOLOGY.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.SKOS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
+            + "SELECT ?" + SparqlVariable.WRITTEN_REPRESENTATION + " ?" + SparqlVariable.SENSE_DEFINITION + " ?" + SparqlVariable.LEXICAL_ENTRY + 
+            " ?" + SparqlVariable.CONCEPT + " ?" + SparqlVariable.TRAIT + " ?" + SparqlVariable.LEXICAL_ENTRY_POS + "\n"
+            + "WHERE {\n"
+            + "  _CONCEPTS_"
+            + "  ?" + SparqlVariable.SENSE + " a ontolex:LexicalSense ;\n"
+            + "    ontolex:reference ?" + SparqlVariable.CONCEPT + " ;\n"
+            + "    skos:definition ?" + SparqlVariable.SENSE_DEFINITION + " ;\n"
+            + "    ontolex:isSenseOf ?" + SparqlVariable.LEXICAL_ENTRY + " .\n"
+            + "        ?" + SparqlVariable.LEXICAL_ENTRY + " ontolex:canonicalForm [ ontolex:writtenRep ?" + SparqlVariable.WRITTEN_REPRESENTATION + " ] .\n"
+            + "        ?" + SparqlVariable.LEXICAL_ENTRY + " lexinfo:partOfSpeech ?" + SparqlVariable.LEXICAL_ENTRY_POS + " .\n"
+            + "  }\n"
+            + "    UNION\n"
+            + "  _TRAITS_"
+            + "  ?" + SparqlVariable.SENSE + " a ontolex:LexicalSense ;\n"
+            + "    ontology:trait ?" + SparqlVariable.TRAIT + " ;\n"
+            + "    skos:definition ?" + SparqlVariable.SENSE_DEFINITION + " ;\n"
+            + "    ontolex:isSenseOf ?" + SparqlVariable.LEXICAL_ENTRY + " .\n"
+            + "        ?" + SparqlVariable.LEXICAL_ENTRY + " ontolex:canonicalForm [ ontolex:writtenRep ?" + SparqlVariable.WRITTEN_REPRESENTATION + " ] .\n"
+            + "        ?" + SparqlVariable.LEXICAL_ENTRY + " lexinfo:partOfSpeech ?" + SparqlVariable.LEXICAL_ENTRY_POS + " .\n"
+            + "  }\n"
+            + "} ORDER BY ?" + SparqlVariable.WRITTEN_REPRESENTATION + "";
 }

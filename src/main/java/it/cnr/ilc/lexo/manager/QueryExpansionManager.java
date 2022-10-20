@@ -9,6 +9,7 @@ import it.cnr.ilc.lexo.LexOProperties;
 import it.cnr.ilc.lexo.service.data.lexicon.input.ConceptList;
 import it.cnr.ilc.lexo.service.data.lexicon.input.FormBySenseFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalEntryList;
+import it.cnr.ilc.lexo.service.data.lexicon.input.ConceptTraitList;
 import it.cnr.ilc.lexo.service.data.lexicon.output.FormItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Morphology;
 import it.cnr.ilc.lexo.service.data.lexicon.output.queryExpansion.Form;
@@ -58,6 +59,31 @@ public class QueryExpansionManager implements Manager, Cached {
         }
         String query = SparqlQueryExpansion.QUERY_EXPANSION_REFERENCED_LINGUISTIC_OBJECT.
                 replace("[CONCEPTS_LIST]", conceptsList.substring(0, conceptsList.length() - 3));
+        return RDFQueryUtil.evaluateTQuery(query);
+    }
+    
+    public TupleQueryResult getReferencedLinguisticObject(ConceptTraitList ctl) throws ManagerException {
+        String conceptsList = "";
+        String traitsList = "";
+        if (ctl.getConceptList() != null) {
+            for (String c : ctl.getConceptList()) {
+                    conceptsList = conceptsList + "(<" + ontologyNamespace + c + ">)\n";
+                }
+        }
+        if (ctl.getTraitList() != null) {
+            for (String t : ctl.getTraitList()) {
+                    traitsList = traitsList + "(<" + ontologyNamespace + t + ">)\n";
+                }
+        }
+        String conceptsQueryPart = "  { VALUES (?" + SparqlVariable.CONCEPT + ") {\n"
+            + "     " + conceptsList
+            + "  }\n";
+        String traitsQueryPart = "  { VALUES (?" + SparqlVariable.TRAIT + ") {\n"
+            + "     " + traitsList
+            + "  }\n";
+        String query = SparqlQueryExpansion.QUERY_EXPANSION_REFERENCED_LINGUISTIC_OBJECT2.
+                replace("_CONCEPTS_", conceptsList.isEmpty() ? "" : conceptsQueryPart).
+                replace("_TRAITS_", traitsList.isEmpty() ? "" : traitsQueryPart);
         return RDFQueryUtil.evaluateTQuery(query);
     }
     

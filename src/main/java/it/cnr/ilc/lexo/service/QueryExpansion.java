@@ -13,6 +13,7 @@ import it.cnr.ilc.lexo.manager.QueryExpansionManager;
 import it.cnr.ilc.lexo.service.data.lexicon.input.ConceptList;
 import it.cnr.ilc.lexo.service.data.lexicon.input.FormBySenseFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalEntryList;
+import it.cnr.ilc.lexo.service.data.lexicon.input.ConceptTraitList;
 import it.cnr.ilc.lexo.service.data.lexicon.output.FormByLexicalEntry;
 import it.cnr.ilc.lexo.service.data.lexicon.output.queryExpansion.FormList;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ReferencedLinguisticObject;
@@ -70,6 +71,29 @@ public class QueryExpansion extends Service {
             notes = "This method returns a list of linguistic objects starting from a list of concepts")
     public Response lemmaByConcept(@QueryParam("key") String key, ConceptList cl) throws HelperException, ManagerException {
         TupleQueryResult lingObjs = queryExpansionManager.getReferencedLinguisticObject(cl);
+        List<ReferencedLinguisticObject> los = referencedLinguisticObjectListHelper.newDataList(lingObjs);
+        String json = referencedLinguisticObjectListHelper.toJson(los);
+        return Response.ok(json)
+                .type(MediaType.TEXT_PLAIN)
+                .header("Access-Control-Allow-Headers", "content-type")
+                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                .build();
+    }
+    
+    
+    // It is for test purposes only !!
+    @POST
+    @Path("referencedLinguisticObject2")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.POST,
+            value = "/referencedLinguisticObject2",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Linguistic objects list",
+            notes = "This service is not valid. It is for test purposes only")
+    public Response lemmaByConcept2(@QueryParam("key") String key, ConceptTraitList ctl) throws HelperException, ManagerException {
+        TupleQueryResult lingObjs = queryExpansionManager.getReferencedLinguisticObject(ctl);
         List<ReferencedLinguisticObject> los = referencedLinguisticObjectListHelper.newDataList(lingObjs);
         String json = referencedLinguisticObjectListHelper.toJson(los);
         return Response.ok(json)
@@ -196,68 +220,6 @@ public class QueryExpansion extends Service {
                     }
                 }
             }
-
-//                        
-//                        for (RelationPath c : pathLenghtHelper.newDataList(queryExpansionManager.getRelationByLenght(ff.getExtendTo(), sense))) {
-//                            if (ff.getExtensionDegree() >= c.getLenght()) {
-//                                if (lenght == c.getLenght()) {
-//                                    targetSense = c.getLexicalSense();
-//                                    targetSenseInstanceName = c.getLexicalSenseInstanceName();
-//                                    TupleQueryResult _res = queryExpansionManager.getFilterdForms(c.getLexicalEntryInstanceName());
-//                                    List<FormItem> _forms = new ArrayList();
-//                                    _forms.addAll(formItemsHelper.newDataList(_res));
-//                                    for (FormItem fi : _forms) {
-//                                        fi.setTargetSense(targetSense);
-//                                        fi.setTargetSenseInstanceName(targetSenseInstanceName);
-//                                    }
-//                                    forms.addAll(_forms);
-//                                } else {
-//                                    list.add(new FormList(ff.getExtendTo(), lenght, queryExpansionManager.getNamespace() + sense, sense,
-//                                            queryExpansionManager.getFormItemListCopy(forms)));
-//                                    forms.clear();
-//                                    lenght++;
-//                                    targetSense = c.getLexicalSense();
-//                                    targetSenseInstanceName = c.getLexicalSenseInstanceName();
-//                                    TupleQueryResult _res = queryExpansionManager.getFilterdForms(c.getLexicalEntryInstanceName());
-//                                    List<FormItem> _forms = new ArrayList();
-//                                    _forms.addAll(formItemsHelper.newDataList(_res));
-//                                    for (FormItem fi : _forms) {
-//                                        fi.setTargetSense(targetSense);
-//                                        fi.setTargetSenseInstanceName(targetSenseInstanceName);
-//                                    }
-//                                    forms.addAll(_forms);
-//                                }
-//                            }
-//                        }
-//                        list.add(new FormList(ff.getExtendTo(), lenght, queryExpansionManager.getNamespace() + sense, sense,
-//                                queryExpansionManager.getFormItemListCopy(forms)));
-//                    } else if (ff.getExtendTo().equals(EnumUtil.AcceptedSearchFormExtendTo.Synonym.toString())) {
-//                        TupleQueryResult _resForms = queryExpansionManager.getFormsBySenseRelation(ff, sense);
-//                        if (_resForms.hasNext()) {
-//                            List<FormItem> lfi = formItemsHelper.newDataList(_resForms);
-//                            List<FormItem> newFormList = new ArrayList<>();
-//                            String target = "", targetInstanceName = "";
-//                            for (FormItem fi : lfi) {
-//                                if (target.isEmpty()) {
-//                                    target = fi.getTargetSense();
-//                                    targetInstanceName = fi.getTargetSenseInstanceName();
-//                                }
-//                                if (target.equals(fi.getTargetSense())) {
-//                                    newFormList.add(fi);
-//                                } else {
-//                                    list.add(new FormList("synonym", 1, queryExpansionManager.getNamespace() + sense, sense,
-//                                            queryExpansionManager.getFormItemListCopy(newFormList)));
-//                                    target = fi.getTargetSense();
-//                                    targetInstanceName = fi.getTargetSenseInstanceName();
-//                                    newFormList.clear();
-//                                }
-//                            }
-//                            list.add(new FormList("synonym", 1, queryExpansionManager.getNamespace() + sense, sense,
-//                                    queryExpansionManager.getFormItemListCopy(newFormList)));
-//                        }
-//                    }
-//                }
-//            }
             String json = formListHelper.toJson(list);
             return Response.ok(json)
                     .type(MediaType.TEXT_PLAIN)
