@@ -29,7 +29,7 @@ public class ExportManager implements Manager, Cached {
     }
     
     private ExportSetting checkDefaultSettings(ExportSetting set) {
-        set.setFormat(set.getFormat() != null ? set.getFormat() : "default");
+        set.setFormat(set.getFormat() != null ? set.getFormat() : "turtle");
         set.setFileName(set.getFileName()!= null ? set.getFileName() : "export");
         return set;
     }

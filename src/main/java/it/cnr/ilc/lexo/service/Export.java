@@ -102,7 +102,7 @@ public class Export extends Service {
             produces = "application/json; charset=UTF-8")
     @ApiOperation(value = "Lexicon export",
             notes = "This method exports the lexicon according to the input settings")
-    public Response sensesList(@QueryParam("key") String key, ExportSetting set) throws HelperException {
+    public Response export(@QueryParam("key") String key, ExportSetting set) throws HelperException {
         try {
             File export = exportManager.export(set);
             return Response.ok(export)
