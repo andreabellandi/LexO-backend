@@ -29,6 +29,7 @@ public class LexicalConceptHelper extends TripleStoreDataHelper<LexicalConcept> 
         data.setLastUpdate(getStringValue(bs, SparqlVariable.LAST_UPDATE));
         data.setLexicalConcept(getStringValue(bs, SparqlVariable.LEXICAL_CONCEPT));
         data.setLexicalConceptInstanceName(getLocalName(bs, SparqlVariable.LEXICAL_CONCEPT));
+        data.setInScheme(getStringValue(bs, SparqlVariable.CONCEPT_SCHEME));
         List<Label> labels = new ArrayList();
         labels.addAll(getLabel(getStringValue(bs, SparqlVariable.PREF_LABEL) != null ? getStringValue(bs, SparqlVariable.PREF_LABEL) : null, "prefLabel", ";"));
         labels.addAll(getLabel(getStringValue(bs, SparqlVariable.ALT_LABEL) != null ? getStringValue(bs, SparqlVariable.ALT_LABEL) : null, "altLabel", ";"));

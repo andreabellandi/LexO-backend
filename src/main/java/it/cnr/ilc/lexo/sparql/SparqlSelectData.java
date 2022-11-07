@@ -1503,6 +1503,7 @@ public class SparqlSelectData {
             + "SELECT\n"
             + "?" + SparqlVariable.LEXICAL_CONCEPT + "\n"
             + " ?" + SparqlVariable.LEXICAL_CONCEPT_CREATOR
+            + " ?" + SparqlVariable.CONCEPT_SCHEME
             + " ?" + SparqlVariable.LAST_UPDATE + " ?" + SparqlVariable.CREATION_DATE + " ?" + SparqlVariable.CONFIDENCE + "\n"
             + "(group_concat(distinct(concat(?_prefLabel,\"@\",lang(?_prefLabel)));separator=\";\") as ?" + SparqlVariable.PREF_LABEL + ")\n"
             + "(group_concat(distinct(concat(?_altLabel,\"@\",lang(?_altLabel)));separator=\";\") as ?" + SparqlVariable.ALT_LABEL + ")\n"
@@ -1512,6 +1513,7 @@ public class SparqlSelectData {
             + "      ?search a inst:lexicalConceptIndex ;\n"
             + "      luc:query \"lexicalConceptIRI:\\\"_ID_\\\"\" ;\n"
             + "      luc:entities ?" + SparqlVariable.LEXICAL_CONCEPT + " .\n"
+            + "    OPTIONAL { ?" + SparqlVariable.LEXICAL_CONCEPT + " skos:inScheme ?" + SparqlVariable.CONCEPT_SCHEME + " }\n"
             + "    OPTIONAL { ?" + SparqlVariable.LEXICAL_CONCEPT + " skos:prefLabel ?_prefLabel }\n"
             + "    OPTIONAL { ?" + SparqlVariable.LEXICAL_CONCEPT + " skos:altLabel ?_altLabel }\n"
             + "    OPTIONAL { ?" + SparqlVariable.LEXICAL_CONCEPT + " skos:hiddenLabel ?_hiddenLabel }\n"
@@ -1522,5 +1524,6 @@ public class SparqlSelectData {
             + "    OPTIONAL { ?" + SparqlVariable.LEXICAL_CONCEPT + " lexinfo:confidence ?" + SparqlVariable.CONFIDENCE + " }\n"
             + "}\n"
             + "GROUP BY ?" + SparqlVariable.LEXICAL_CONCEPT + " ?" + SparqlVariable.LEXICAL_CONCEPT_CREATOR
-            + " ?" + SparqlVariable.LAST_UPDATE + " ?" + SparqlVariable.CREATION_DATE + " ?" + SparqlVariable.CONFIDENCE;
+            + " ?" + SparqlVariable.LAST_UPDATE + " ?" + SparqlVariable.CREATION_DATE + " ?" + SparqlVariable.CONFIDENCE
+            + " ?" + SparqlVariable.CONCEPT_SCHEME;
 }
