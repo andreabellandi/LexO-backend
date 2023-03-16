@@ -21,16 +21,16 @@ public class EtymologicalLink extends Entity implements Data {
 
     @ApiModelProperty(value = "etymological link IRI")
     private String etymologicalLink;
-    @ApiModelProperty(value = "etymological link short IRI")
-    private String etymologicalLinkInstanceName;
+//    @ApiModelProperty(value = "etymological link short IRI")
+//    private String etymologicalLinkInstanceName;
     @ApiModelProperty(value = "if the IRI is external", allowableValues = "true, false")
     private boolean externalIRI;
     @ApiModelProperty(value = "type of the etymological link")
     private String etyLinkType;
     @ApiModelProperty(value = "the source of the etymology (etymon)")
     private String etySource;
-    @ApiModelProperty(value = "the source short IRI of the etymology (etymon)")
-    private String etySourceInstanceName;
+//    @ApiModelProperty(value = "the source short IRI of the etymology (etymon)")
+//    private String etySourceInstanceName;
     @ApiModelProperty(value = "label of the source of the etymology (etymon)")
     private String etySourceLabel;
     @ApiModelProperty(value = "the target IRI of the etymology (lexical entry)")
@@ -39,8 +39,8 @@ public class EtymologicalLink extends Entity implements Data {
     private String etyTargetLabel;
     @ApiModelProperty(value = "etymological link label (the default value it should be equal to that of the etySourceLabel)")
     private String label;
-    @ApiModelProperty(value = "the target short IRI of the etymology (lexical entry)")
-    private String etyTargetInstanceName;
+//    @ApiModelProperty(value = "the target short IRI of the etymology (lexical entry)")
+//    private String etyTargetInstanceName;
     @ApiModelProperty(value = "etymology note", example = "some note ...")
     private String note;
 
@@ -59,22 +59,6 @@ public class EtymologicalLink extends Entity implements Data {
 
     public void setEtymologicalLink(String etymologicalLink) {
         this.etymologicalLink = etymologicalLink;
-    }
-
-    public String getEtymologicalLinkInstanceName() {
-        return etymologicalLinkInstanceName;
-    }
-
-    public void setEtymologicalLinkInstanceName(String etymologicalLinkInstanceName) {
-        this.etymologicalLinkInstanceName = etymologicalLinkInstanceName;
-    }
-
-    public String getEtySourceInstanceName() {
-        return etySourceInstanceName;
-    }
-
-    public void setEtySourceInstanceName(String etySourceInstanceName) {
-        this.etySourceInstanceName = etySourceInstanceName;
     }
 
     public String getLabel() {
@@ -99,14 +83,6 @@ public class EtymologicalLink extends Entity implements Data {
 
     public void setEtySource(String etySource) {
         this.etySource = etySource;
-    }
-
-    public String getEtyTargetInstanceName() {
-        return etyTargetInstanceName;
-    }
-
-    public void setEtyTargetInstanceName(String etyTargetInstanceName) {
-        this.etyTargetInstanceName = etyTargetInstanceName;
     }
 
     public String getEtyTarget() {

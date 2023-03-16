@@ -7,12 +7,9 @@ package it.cnr.ilc.lexo.service;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import it.cnr.ilc.lexo.manager.LexinfoManager;
 import it.cnr.ilc.lexo.manager.ManagerFactory;
 import it.cnr.ilc.lexo.manager.OntolexManager;
-import it.cnr.ilc.lexo.service.helper.LexinfoMorphoHelper;
-import it.cnr.ilc.lexo.service.helper.LexinfoPropertyHierarchyHelper;
-import it.cnr.ilc.lexo.service.helper.OntolexValuesHelper;
+import it.cnr.ilc.lexo.service.helper.VocabularyValuesHelper;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -30,7 +27,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class OntolexData extends Service {
 
     private final OntolexManager lexiconManager = ManagerFactory.getManager(OntolexManager.class);
-    private final OntolexValuesHelper ontolexValuesHelper = new OntolexValuesHelper();
+    private final VocabularyValuesHelper ontolexValuesHelper = new VocabularyValuesHelper();
  
     @GET
     @Path("lexicalEntryType")
@@ -88,4 +85,23 @@ public class OntolexData extends Service {
                 .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                 .build();
     }
+    
+    @GET
+    @Path("representation")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "representation",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Forms represenation properties from the OntoLex vocabulary",
+            notes = "This method returns the forms represenatation properties from the OntoLex vocabulary")
+    public Response representation() {
+        String json = ontolexValuesHelper.toJson(lexiconManager.getRepresentations());
+        return Response.ok(json)
+                .type(MediaType.TEXT_PLAIN)
+                .header("Access-Control-Allow-Headers", "content-type")
+                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                .build();
+    }
+    
 }

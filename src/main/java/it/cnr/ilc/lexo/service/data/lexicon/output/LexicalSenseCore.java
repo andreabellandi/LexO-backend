@@ -22,8 +22,6 @@ public class LexicalSenseCore extends Entity implements Data {
 
     @ApiModelProperty(value = "sense IRI", example = "namespace:USem73621abolizione")
     private String sense;
-    @ApiModelProperty(value = "sense short IRI", example = "USem73621abolizione")
-    private String senseInstanceName;
     @ApiModelProperty(value = "a list of definition properties")
     private List<Property> definition;
     @ApiModelProperty(value = "example of usage")
@@ -36,8 +34,8 @@ public class LexicalSenseCore extends Entity implements Data {
     private String note;
     @ApiModelProperty(value = "IRI of the concept denoted by", example = "namespace:conceptID")
     private String concept;
-    @ApiModelProperty(value = "short IRI of the concept denoted by", example = "conceptID")
-    private String conceptInstanceName;
+//    @ApiModelProperty(value = "short IRI of the concept denoted by", example = "conceptID")
+//    private String conceptInstanceName;
 
 
     private String description;
@@ -52,14 +50,6 @@ public class LexicalSenseCore extends Entity implements Data {
 
     public void setSense(String sense) {
         this.sense = sense;
-    }
-
-    public String getSenseInstanceName() {
-        return senseInstanceName;
-    }
-
-    public void setSenseInstanceName(String senseInstanceName) {
-        this.senseInstanceName = senseInstanceName;
     }
 
     public List<Property> getDefinition() {
@@ -108,14 +98,6 @@ public class LexicalSenseCore extends Entity implements Data {
 
     public void setConcept(String concept) {
         this.concept = concept;
-    }
-
-    public String getConceptInstanceName() {
-        return conceptInstanceName;
-    }
-
-    public void setConceptInstanceName(String conceptInstanceName) {
-        this.conceptInstanceName = conceptInstanceName;
     }
 
     public String getDescription() {

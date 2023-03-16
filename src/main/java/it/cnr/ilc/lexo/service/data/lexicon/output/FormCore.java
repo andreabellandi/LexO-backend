@@ -22,12 +22,8 @@ public class FormCore extends Entity implements Data {
 
     @ApiModelProperty(value = "form IRI", example = "namespace:MUSabbacchiareVERB_PHUabbacchiammo_P1IR")
     private String form;
-    @ApiModelProperty(value = "form short IRI", example = "MUSabbacchiareVERB_PHUabbacchiammo_P1IR")
-    private String formInstanceName;
     @ApiModelProperty(value = "lexical entry IRI", example = "namespace:MUSabbacchiareVERB")
     private String lexicalEntry;
-    @ApiModelProperty(value = "lexical entry short IRI", example = "MUSabbacchiareVERB")
-    private String lexicalEntryInstanceName;
     @ApiModelProperty(value = "lexical entry label", example = "label for accedere")
     private String lexicalEntryLabel;
     @ApiModelProperty(value = "a list of representation properties")
@@ -51,14 +47,6 @@ public class FormCore extends Entity implements Data {
 
     public void setForm(String form) {
         this.form = form;
-    }
-
-    public String getFormInstanceName() {
-        return formInstanceName;
-    }
-
-    public void setFormInstanceName(String formInstanceName) {
-        this.formInstanceName = formInstanceName;
     }
 
     public List<Property> getLabel() {
@@ -115,14 +103,6 @@ public class FormCore extends Entity implements Data {
 
     public void setLexicalEntry(String lexicalEntry) {
         this.lexicalEntry = lexicalEntry;
-    }
-
-    public String getLexicalEntryInstanceName() {
-        return lexicalEntryInstanceName;
-    }
-
-    public void setLexicalEntryInstanceName(String lexicalEntryInstanceName) {
-        this.lexicalEntryInstanceName = lexicalEntryInstanceName;
     }
 
     public String getLexicalEntryLabel() {

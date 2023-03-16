@@ -11,14 +11,14 @@ import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.eclipse.rdf4j.repository.RepositoryConnection;
-import org.eclipse.rdf4j.repository.RepositoryException;
+import org.apache.log4j.DailyRollingFileAppender;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
 import org.hibernate.HibernateError;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -27,18 +27,28 @@ import org.slf4j.LoggerFactory;
 @WebFilter(urlPatterns = {"/faces/*", "/service/*", "/servlet/*"})
 public class LexOFilter implements Filter {
 
-    static final Logger logger = LoggerFactory.getLogger(LexOFilter.class.getName());
+    static final Logger logger = Logger.getLogger(LexOFilter.class.getName());
     public static String CONTEXT;
     public static String VERSION;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         CONTEXT = filterConfig.getServletContext().getContextPath().substring(1);
-        logger.info("init(): Context " + CONTEXT);
         VERSION = LexOProperties.getProperty("application.version");
-        logger.info("init(): Version " + VERSION);
         File logFile = new File(filterConfig.getServletContext().getRealPath("/"));
-        logger.info("init(): " + CONTEXT + " started");
+        logFile = new File(logFile.getParentFile().getParentFile(), "logs/" + CONTEXT + ".log");
+        PatternLayout layout = new PatternLayout();
+        String conversionPattern = "%d %p %m\n";
+        layout.setConversionPattern(conversionPattern);
+        DailyRollingFileAppender rollingAppender = new DailyRollingFileAppender();
+        rollingAppender.setFile(logFile.getAbsolutePath());
+        rollingAppender.setDatePattern("'.'yyyy-MM-dd");
+        rollingAppender.setLayout(layout);
+        rollingAppender.activateOptions();
+        Logger logger = Logger.getLogger(CONTEXT);
+        logger.setLevel(Level.INFO);
+        logger.addAppender(rollingAppender);
+        logger.info(CONTEXT + " start");
     }
 
     @Override

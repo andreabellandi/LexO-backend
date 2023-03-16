@@ -15,11 +15,11 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Property;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalSenseCore;
 import it.cnr.ilc.lexo.sparql.SparqlInsertData;
-import it.cnr.ilc.lexo.sparql.SparqlPrefix;
 import it.cnr.ilc.lexo.util.RDFQueryUtil;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -28,26 +28,23 @@ import java.util.List;
  */
 public class LexiconCreationManager implements Manager, Cached {
 
-    private final String namespace = LexOProperties.getProperty("repository.lexicon.namespace");
     private final String idInstancePrefix = LexOProperties.getProperty("repository.instance.id");
     private static final SimpleDateFormat timestampFormat = new SimpleDateFormat(LexOProperties.getProperty("manager.operationTimestampFormat"));
-
-    public String getNamespace() {
-        return namespace;
-    }
 
     @Override
     public void reloadCache() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    public Language createLanguage(String author, String lang) throws ManagerException {
+    public Language createLanguage(String prefix, String baseIRI, String author, String lang) throws ManagerException {
         Timestamp tm = new Timestamp(System.currentTimeMillis());
         String id = idInstancePrefix + tm.toString();
         String created = timestampFormat.format(tm);
-        String _id = id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
+        String sparqlPrefix = "PREFIX " + prefix + ": <" + baseIRI + ">";
+        String _id = baseIRI + id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
         RDFQueryUtil.update(SparqlInsertData.CREATE_LEXICON_LANGUAGE.replace("_ID_", _id)
                 .replace("_LANG_", lang)
+                .replace("_PREFIX_", sparqlPrefix)
                 .replace("_AUTHOR_", author)
                 .replace("_CREATED_", created)
                 .replace("_MODIFIED_", created));
@@ -56,24 +53,28 @@ public class LexiconCreationManager implements Manager, Cached {
 
     private Language setLanguage(String id, String created, String author, String lang) {
         Language l = new Language();
+        ArrayList<String> cat = new ArrayList();
+        cat.add("http://www.lexinfo.net/ontology/3.0/lexinfo#");
         l.setCreator(author);
-        l.setLanguageInstanceName(id);
-        l.setLanguage(getNamespace() + id);
+        l.setConfidence(-1);
+        l.setLanguage(id);
         l.setLabel(lang);
-        l.setCatalog("http://www.lexinfo.net/ontology/3.0/lexinfo#");
+        l.setCatalog(cat);
         l.setLastUpdate(created);
         l.setCreationDate(created);
         l.setEntries(0);
         return l;
     }
 
-    public LexicalEntryCore createLexicalEntry(String author) throws ManagerException {
+    public LexicalEntryCore createLexicalEntry(String author, String prefix, String baseIRI) throws ManagerException {
         Timestamp tm = new Timestamp(System.currentTimeMillis());
         String id = idInstancePrefix + tm.toString();
         String created = timestampFormat.format(tm);
-        String _id = id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
+        String sparqlPrefix = "PREFIX " + prefix + ": <" + baseIRI + ">";
+        String _id = baseIRI + id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
         RDFQueryUtil.update(SparqlInsertData.CREATE_LEXICAL_ENTRY.replace("[ID]", _id)
                 .replace("[LABEL]", _id)
+                .replace("_PREFIX_", sparqlPrefix)
                 .replace("[AUTHOR]", author)
                 .replace("[CREATED]", created)
                 .replace("[MODIFIED]", created));
@@ -88,22 +89,23 @@ public class LexiconCreationManager implements Manager, Cached {
         lec.setLabel(id);
         lec.setConfidence(-1);
         lec.setType(types);
-        lec.setLexicalEntryInstanceName(id);
-        lec.setLexicalEntry(getNamespace() + id);
+        lec.setLexicalEntry(id);
         lec.setStatus("working");
         lec.setLastUpdate(created);
         lec.setCreationDate(created);
         return lec;
     }
 
-    public FormCore createForm(String leID, String author, String lang) throws ManagerException {
+    public FormCore createForm(String leID, String author, String lang, String prefix, String baseIRI) throws ManagerException {
         Timestamp tm = new Timestamp(System.currentTimeMillis());
         String id = idInstancePrefix + tm.toString();
         String created = timestampFormat.format(tm);
-        String _id = id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
+        String sparqlPrefix = "PREFIX " + prefix + ": <" + baseIRI + ">";
+        String _id = baseIRI + id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
         RDFQueryUtil.update(SparqlInsertData.CREATE_FORM.replaceAll("_ID_", _id)
                 .replace("_LABEL_", _id)
                 .replace("_LANG_", lang)
+                .replace("_PREFIX_", sparqlPrefix)
                 .replace("_AUTHOR_", author)
                 .replace("_CREATED_", created)
                 .replace("_MODIFIED_", created)
@@ -120,21 +122,22 @@ public class LexiconCreationManager implements Manager, Cached {
         fc.setLabel(pl);
         fc.setConfidence(-1);
         fc.setType("lexicalForm");
-        fc.setFormInstanceName(id);
-        fc.setForm(getNamespace() + id);
+        fc.setForm(id);
         fc.setLastUpdate(created);
         fc.setCreationDate(created);
         return fc;
     }
 
-    public Etymology createEtymology(String leID, String author, String label) throws ManagerException {
+    public Etymology createEtymology(String leID, String author, String label, String prefix, String baseIRI) throws ManagerException {
         Timestamp tm = new Timestamp(System.currentTimeMillis());
         String id = idInstancePrefix + tm.toString();
         String created = timestampFormat.format(tm);
-        String _id = id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
+        String sparqlPrefix = "PREFIX " + prefix + ": <" + baseIRI + ">";
+        String _id = baseIRI + id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
         RDFQueryUtil.update(SparqlInsertData.CREATE_ETYMOLOGY.replaceAll("_ID_", _id)
                 .replace("_LABEL_", label)
                 .replace("_AUTHOR_", author)
+                .replace("_PREFIX_", sparqlPrefix)
                 .replace("_CREATED_", created)
                 .replace("_MODIFIED_", created)
                 .replaceAll("_LEID_", leID));
@@ -146,21 +149,22 @@ public class LexiconCreationManager implements Manager, Cached {
         e.setCreator(author);
         e.setConfidence(-1);
         e.setLabel("Etymology of " + label);
-        e.setEtymologyInstanceName(id);
-        e.setEtymology(getNamespace() + id);
+        e.setEtymology(id);
         e.setLastUpdate(created);
         e.setCreationDate(created);
         return e;
     }
     
-    public EtymologicalLink createEtymologicalLink(String leID, String author, String etymologyID) throws ManagerException {
+    public EtymologicalLink createEtymologicalLink(String leID, String author, String etymologyID, String prefix, String baseIRI) throws ManagerException {
         Timestamp tm = new Timestamp(System.currentTimeMillis());
         String id = idInstancePrefix + tm.toString();
         String created = timestampFormat.format(tm);
-        String _id = id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
+        String sparqlPrefix = "PREFIX " + prefix + ": <" + baseIRI + ">";
+        String _id = baseIRI + id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
         RDFQueryUtil.update(SparqlInsertData.CREATE_ETYMOLOGICAL_LINK.replaceAll("_ID_", _id)
                 .replace("_ETID_", etymologyID)
                 .replace("_AUTHOR_", author)
+                .replace("_PREFIX_", sparqlPrefix)
                 .replace("_CREATED_", created)
                 .replace("_MODIFIED_", created)
                 .replaceAll("_LEID_", leID));
@@ -170,39 +174,43 @@ public class LexiconCreationManager implements Manager, Cached {
     private EtymologicalLink setEtymologicalLink(String id, String created, String author, String leID) {
         EtymologicalLink el = new EtymologicalLink();
         el.setEtyLinkType("inheritance");
-        el.setEtyTargetInstanceName(leID);
+//        el.setEtyTargetInstanceName(leID);
         el.setConfidence(-1);
-        el.setEtyTarget(SparqlPrefix.LEX.getUri() + leID);
-        el.setEtymologicalLink(SparqlPrefix.LEX.getUri() + id);
-        el.setEtymologicalLinkInstanceName(id);
+        el.setEtyTarget(leID);
+        el.setEtymologicalLink(id);
+//        el.setEtymologicalLinkInstanceName(id);
         el.setCreator(author);
         el.setLastUpdate(created);
         el.setCreationDate(created);
         return el;
     }
     
-    public LexicalSenseCore createLexicalSense(String leID, String author) throws ManagerException {
+    public LexicalSenseCore createLexicalSense(String leID, String author, String prefix, String baseIRI) throws ManagerException {
         Timestamp tm = new Timestamp(System.currentTimeMillis());
         String id = idInstancePrefix + tm.toString();
         String created = timestampFormat.format(tm);
-        String _id = id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
+        String sparqlPrefix = "PREFIX " + prefix + ": <" + baseIRI + ">";
+        String _id = baseIRI + id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
         RDFQueryUtil.update(SparqlInsertData.CREATE_LEXICAL_SENSE.replaceAll("_ID_", _id)
                 .replace("_LABEL_", _id)
                 .replace("_AUTHOR_", author)
+                .replace("_PREFIX_", sparqlPrefix)
                 .replace("_CREATED_", created)
                 .replace("_MODIFIED_", created)
                 .replaceAll("_LEID_", leID));
         return setSense(_id, created, author);
     }
     
-     public Component createComponent(String leID, String author) throws ManagerException {
+     public Component createComponent(String leID, String author, String prefix, String baseIRI) throws ManagerException {
         Timestamp tm = new Timestamp(System.currentTimeMillis());
         String id = idInstancePrefix + tm.toString();
         String created = timestampFormat.format(tm);
-        String _id = id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
+        String sparqlPrefix = "PREFIX " + prefix + ": <" + baseIRI + ">";
+        String _id = baseIRI + id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
         RDFQueryUtil.update(SparqlInsertData.CREATE_COMPONENT.replaceAll("_ID_", _id)
                 .replace("_AUTHOR_", author)
                 .replace("_CREATED_", created)
+                .replace("_PREFIX_", sparqlPrefix)
                 .replace("_LEID_", leID)
                 .replace("_MODIFIED_", created));
         return setComponent(_id, created, author);
@@ -212,8 +220,7 @@ public class LexiconCreationManager implements Manager, Cached {
         LexicalSenseCore sc = new LexicalSenseCore();
         sc.setCreator(author);
         sc.setConfidence(-1);
-        sc.setSenseInstanceName(id);
-        sc.setSense(getNamespace() + id);
+        sc.setSense(id);
         sc.setLastUpdate(created);
         sc.setCreationDate(created);
         return sc;
@@ -224,8 +231,7 @@ public class LexiconCreationManager implements Manager, Cached {
         sc.setCreator(author);
         sc.setConfidence(-1);
         sc.setPosition(-1);
-        sc.setComponentInstanceName(id);
-        sc.setComponent(getNamespace() + id);
+        sc.setComponent(id);
         sc.setLastUpdate(created);
         sc.setCreationDate(created);
         return sc;

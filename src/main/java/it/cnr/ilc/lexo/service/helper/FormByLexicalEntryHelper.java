@@ -18,12 +18,11 @@ public class FormByLexicalEntryHelper extends TripleStoreDataHelper<FormByLexica
     @Override
     public void fillData(FormByLexicalEntry data, BindingSet bs) {
         data.setForm(getStringValue(bs, SparqlVariable.FORM));
-        data.setFormInstanceName(getLocalName(bs, SparqlVariable.FORM));
+//        data.setFormInstanceName(getLocalName(bs, SparqlVariable.FORM));
         data.setLabel(getStringValue(bs, SparqlVariable.WRITTEN_REPRESENTATION));
         data.setMorphology(getMorphologyWithPoS(bs, getStringValue(bs, SparqlVariable.MORPHOLOGY), 
                 getLocalName(bs, SparqlVariable.LEXICAL_ENTRY_POS)));
         data.setLexicalEntry(getStringValue(bs, SparqlVariable.LEXICAL_ENTRY));
-        data.setLexicalEntryInstanceName(getLocalName(bs, SparqlVariable.LEXICAL_ENTRY));
         data.setConfidence(getDoubleNumber(bs, "confidence"));
     }
 

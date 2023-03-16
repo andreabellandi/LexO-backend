@@ -19,14 +19,13 @@ public class ConceptSetItemHelper extends TripleStoreDataHelper<ConceptSetItem> 
     public void fillData(ConceptSetItem data, BindingSet bs) {
         // add count hits when CS index will be available
         data.setConceptSet(getStringValue(bs, SparqlVariable.CONCEPT_SCHEME));
-        data.setConceptSetInstanceName(getLocalName(bs, SparqlVariable.CONCEPT_SCHEME));
         data.setCreationDate(getStringValue(bs, SparqlVariable.CREATION_DATE));
         data.setCreator(getStringValue(bs, SparqlVariable.CONCEPT_SCHEME_CREATOR));
         data.setLastUpdate(getStringValue(bs, SparqlVariable.LAST_UPDATE));
-        data.setDefaultLabel(getLiteralLabel(bs, SparqlVariable.LABEL) != null ? getLiteralLabel(bs, SparqlVariable.LABEL) : getLocalName(bs, SparqlVariable.ROOT));
+        data.setDefaultLabel(getLiteralLabel(bs, SparqlVariable.LABEL) != null ? getLiteralLabel(bs, SparqlVariable.LABEL) : getStringValue(bs, SparqlVariable.ROOT));
         data.setConceptSet(getStringValue(bs, SparqlVariable.ROOT));
-        data.setConceptSetInstanceName(getLocalName(bs, SparqlVariable.ROOT));
         data.setConfidence(getDoubleNumber(bs, SparqlVariable.CONFIDENCE));
+        data.setLanguage(getLiteralLanguage(bs, SparqlVariable.LABEL));
     }
     
     @Override

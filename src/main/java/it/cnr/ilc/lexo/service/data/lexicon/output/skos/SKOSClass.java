@@ -9,9 +9,6 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import it.cnr.ilc.lexo.service.data.Data;
 import it.cnr.ilc.lexo.service.data.output.Entity;
-import it.cnr.ilc.lexo.service.data.lexicon.output.GroupedLinkedEntity;
-import it.cnr.ilc.lexo.service.data.output.Label;
-import java.util.List;
 
 /**
  *
@@ -22,6 +19,8 @@ public class SKOSClass extends Entity implements Data {
 
     @ApiModelProperty(value = "label class")
     private String defaultLabel;
+    @ApiModelProperty(value = "label language")
+    private String language;
 
     public String getDefaultLabel() {
         return defaultLabel;
@@ -29,6 +28,14 @@ public class SKOSClass extends Entity implements Data {
 
     public void setDefaultLabel(String defaultLabel) {
         this.defaultLabel = defaultLabel;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
     }
 
 }

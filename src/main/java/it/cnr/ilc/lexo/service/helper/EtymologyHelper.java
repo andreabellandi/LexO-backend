@@ -21,7 +21,6 @@ public class EtymologyHelper extends TripleStoreDataHelper<Etymology> {
         data.setCreationDate(getStringValue(bs, SparqlVariable.CREATION_DATE));
         data.setCreator(getStringValue(bs, SparqlVariable.ETYMOLOGY_CREATION_AUTHOR));
         data.setEtymology(getStringValue(bs, SparqlVariable.ETYMOLOGY));
-        data.setEtymologyInstanceName(getLocalName(bs, SparqlVariable.ETYMOLOGY));
         data.setHypothesisOf(getStringValue(bs, SparqlVariable.HYPOTHESIS_OF));
         data.setLabel(getStringValue(bs, SparqlVariable.LABEL));
         data.setLastUpdate(getStringValue(bs, SparqlVariable.LAST_UPDATE));

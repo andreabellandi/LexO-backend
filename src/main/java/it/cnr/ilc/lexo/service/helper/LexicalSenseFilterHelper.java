@@ -25,10 +25,8 @@ public class LexicalSenseFilterHelper extends TripleStoreDataHelper<LexicalSense
         String definition = (bs.getBinding(SparqlVariable.SENSE_DEFINITION) != null) ? ((Literal) bs.getBinding(SparqlVariable.SENSE_DEFINITION).getValue()).getLabel() : "";
         String name = (!definition.isEmpty() && definition.length() > Constant.SENSE_NAME_MAX_LENGHT) ? definition.substring(0, Constant.SENSE_NAME_MAX_LENGHT - 1).concat(" ...") : definition;
         data.setLexicalEntry(getStringValue(bs, SparqlVariable.LEXICAL_ENTRY));
-        data.setLexicalEntryInstanceName(getLocalName(bs, SparqlVariable.LEXICAL_ENTRY));
         data.setPos(getLocalName(bs, SparqlVariable.LEXICAL_ENTRY_POS));
         data.setSense(getStringValue(bs, SparqlVariable.SENSE));
-        data.setSenseInstanceName(getStringValue(bs, SparqlVariable.SENSE_INSTANCE_NAME));
         data.setCreator(((bs.getBinding(SparqlVariable.LEXICAL_ENTRY_CREATION_AUTHOR) != null) ? bs.getBinding(SparqlVariable.LEXICAL_ENTRY_CREATION_AUTHOR).getValue().stringValue() : ""));
         data.setDefinition(definition);
         data.setConfidence(getDoubleNumber(bs, "confidence"));
@@ -36,7 +34,7 @@ public class LexicalSenseFilterHelper extends TripleStoreDataHelper<LexicalSense
         data.setNote(((bs.getBinding(SparqlVariable.NOTE) != null) ? bs.getBinding(SparqlVariable.NOTE).getValue().stringValue() : ""));
         data.setUsage(((bs.getBinding(SparqlVariable.SENSE_USAGE) != null) ? bs.getBinding(SparqlVariable.SENSE_USAGE).getValue().stringValue() : ""));
         data.setConcept(((bs.getBinding(SparqlVariable.CONCEPT) != null) ? bs.getBinding(SparqlVariable.CONCEPT).getValue().stringValue() : ""));
-        data.setConceptInstanceName(((bs.getBinding(SparqlVariable.CONCEPT_INSTANCE_NAME) != null) ? bs.getBinding(SparqlVariable.CONCEPT_INSTANCE_NAME).getValue().stringValue() : ""));
+//        data.setConceptInstanceName(((bs.getBinding(SparqlVariable.CONCEPT_INSTANCE_NAME) != null) ? bs.getBinding(SparqlVariable.CONCEPT_INSTANCE_NAME).getValue().stringValue() : ""));
         data.setHasChildren(false);
         data.setLemma(getStringValue(bs, SparqlVariable.WRITTEN_REPRESENTATION));
         data.setLastUpdate(getStringValue(bs, SparqlVariable.LAST_UPDATE));

@@ -67,7 +67,19 @@ public class SKOSService extends Service {
                     value = "authentication token",
                     example = "lexodemo",
                     required = true)
-            @QueryParam("key") String key) {
+            @QueryParam("key") String key,
+            @ApiParam(
+                    name = "prefix",
+                    value = "prefix of the namespace",
+                    example = "myprefix",
+                    required = true)
+            @QueryParam("prefix") String prefix,
+            @ApiParam(
+                    name = "baseIRI",
+                    value = "base IRI of the language",
+                    example = "http://mydata.com#",
+                    required = true)
+            @QueryParam("baseIRI") String baseIRI) {
         return Response.status(Response.Status.NOT_IMPLEMENTED).build();
     }
 
@@ -92,7 +104,19 @@ public class SKOSService extends Service {
                     value = "authentication token",
                     example = "lexodemo",
                     required = true)
-            @QueryParam("key") String key) {
+            @QueryParam("key") String key,
+            @ApiParam(
+                    name = "prefix",
+                    value = "prefix of the namespace",
+                    example = "myprefix",
+                    required = true)
+            @QueryParam("prefix") String prefix,
+            @ApiParam(
+                    name = "baseIRI",
+                    value = "base IRI of the language",
+                    example = "http://mydata.com#",
+                    required = true)
+            @QueryParam("baseIRI") String baseIRI) {
         return Response.status(Response.Status.NOT_IMPLEMENTED).build();
     }
 

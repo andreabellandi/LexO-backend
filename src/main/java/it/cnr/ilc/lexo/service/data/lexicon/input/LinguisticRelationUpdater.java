@@ -18,9 +18,9 @@ public class LinguisticRelationUpdater {
     @ApiModelProperty(value = "the type of relation", example = "morphology", allowEmptyValue = false,
             allowableValues = "morphology, decomp, conceptRef, lexicalRel, senseRel, conceptRel, etyLink")
     private String type;
-    @ApiModelProperty(value = "realtion name", example = "partOfSpeech", allowEmptyValue = false)
+    @ApiModelProperty(value = "realtion name", example = "http://www.lexinfo.net/ontology/3.0/lexinfo#partOfSpeech", allowEmptyValue = false)
     private String relation;
-    @ApiModelProperty(value = "realtion value", example = "noun", allowEmptyValue = true)
+    @ApiModelProperty(value = "realtion value", example = "http://www.lexinfo.net/ontology/3.0/lexinfo#noun", allowEmptyValue = true)
     private String value;
     @ApiModelProperty(value = "previous realtion/attribute value or value to delete (leave empty, if a new relation value is needed)", example = "oldValue", allowEmptyValue = true)
     private String currentValue;

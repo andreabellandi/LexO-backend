@@ -20,7 +20,7 @@ public class HopsFilter {
     private String relation;
     @ApiModelProperty(value = "node IRI", allowEmptyValue = false)
     private String node;
-    @ApiModelProperty(value = "if the relation is incoming or outgoing w.r.t. the given node", example = "incoming", allowEmptyValue = true, allowableValues = "incoming, outgoing")
+    @ApiModelProperty(value = "if the relation is incoming or outgoing w.r.t. the given node", example = "incoming", allowEmptyValue = false, allowableValues = "incoming, outgoing")
     private String direction;
 
     public String getRelation() {

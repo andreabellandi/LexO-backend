@@ -26,6 +26,9 @@ import it.cnr.ilc.lexo.service.helper.NodeLinksHelper;
 import it.cnr.ilc.lexo.service.helper.SenseEdgeSummaryHelper;
 import it.cnr.ilc.lexo.service.helper.SenseNodeSummaryHelper;
 import it.cnr.ilc.lexo.util.EnumUtil;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -62,11 +65,11 @@ public class GraphVizualization extends Service {
     private final HopHelper hopeHelper = new HopHelper();
 
     @GET
-    @Path("{id}/nodeSummary")
+    @Path("nodeSummary")
     @Produces(MediaType.APPLICATION_JSON)
     @RequestMapping(
             method = RequestMethod.GET,
-            value = "/{id}/nodeSummary",
+            value = "nodeSummary",
             produces = "application/json; charset=UTF-8")
     @ApiOperation(value = "Node Summary of lexical senses",
             notes = "This method returns the summary data related to a specific sense node")
@@ -80,29 +83,33 @@ public class GraphVizualization extends Service {
             @ApiParam(
                     name = "id",
                     value = "lexical sense ID",
-                    example = "USemD2698conciso",
                     required = true)
-            @PathParam("id") String id) {
-        TupleQueryResult node = graphVizManager.getNode(id);
-        SenseNodeSummary sns = senseNodeSummaryHelper.newData(node);
-        TupleQueryResult links = graphVizManager.getLinks(id);
-        List<NodeLinks> _links = nodeLinksHelperHelper.newDataList(links);
-        graphVizManager.createNodeSummary(_links, sns);
-        String json = senseNodeSummaryHelper.toJson(sns);
-        return Response.ok(json)
-                .type(MediaType.TEXT_PLAIN)
-                .header("Access-Control-Allow-Headers", "content-type")
-                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                .build();
+            @QueryParam("id") String id) {
+        try {
+            String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
+            TupleQueryResult node = graphVizManager.getNode(_id);
+            SenseNodeSummary sns = senseNodeSummaryHelper.newData(node);
+            TupleQueryResult links = graphVizManager.getLinks(_id);
+            List<NodeLinks> _links = nodeLinksHelperHelper.newDataList(links);
+            graphVizManager.createNodeSummary(_links, sns);
+            String json = senseNodeSummaryHelper.toJson(sns);
+            return Response.ok(json)
+                    .type(MediaType.TEXT_PLAIN)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
+        } catch (UnsupportedEncodingException ex) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        }
     }
 
     @POST
-    @Path("{id}/nodeGraph")
+    @Path("nodeGraph")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @RequestMapping(
             method = RequestMethod.POST,
-            value = "/{id}/nodeGraph",
+            value = "nodeGraph",
             produces = "application/json; charset=UTF-8")
     @ApiOperation(value = "Graph of a node",
             notes = "This method returns the incoming and outgoing edges of a node")
@@ -115,22 +122,21 @@ public class GraphVizualization extends Service {
             @ApiParam(
                     name = "id",
                     value = "lexical sense ID",
-                    example = "USemD2698conciso",
                     required = true)
-            @PathParam("id") String id,
+            @QueryParam("id") String id,
             NodeGraphFilter ngf) throws HelperException {
-
         try {
+            String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
             TupleQueryResult tqr = null;
             if (ngf.getLenght() == 0) {
                 return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("lenght must be greather than zero").build();
             }
             if (ngf.getDirection() != null) {
                 if (ngf.getDirection().equals(EnumUtil.GraphRelationDirection.incoming.toString())) {
-                    tqr = graphVizManager.getNodeGraph(id, ngf, "dst");
+                    tqr = graphVizManager.getNodeGraph(_id, ngf, "dst");
                 } else {
                     if (ngf.getDirection().equals(EnumUtil.GraphRelationDirection.outgoing.toString())) {
-                        tqr = graphVizManager.getNodeGraph(id, ngf, "src");
+                        tqr = graphVizManager.getNodeGraph(_id, ngf, "src");
                     } else {
                         return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("direction field can set to incoming or outgoing").build();
                     }
@@ -146,7 +152,7 @@ public class GraphVizualization extends Service {
             } else {
                 return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("direction field is mandatory").build();
             }
-        } catch (JsonProcessingException ex) {
+        } catch (JsonProcessingException | UnsupportedEncodingException ex) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }
     }
@@ -157,7 +163,7 @@ public class GraphVizualization extends Service {
     @Consumes(MediaType.APPLICATION_JSON)
     @RequestMapping(
             method = RequestMethod.POST,
-            value = "/edgeGraph",
+            value = "edgeGraph",
             produces = "application/json; charset=UTF-8")
     @ApiOperation(value = "Edge details",
             notes = "This method returns the details of an eadge")
@@ -263,8 +269,11 @@ public class GraphVizualization extends Service {
                     required = true)
             @QueryParam("inference") Boolean inference) throws HelperException {
         if (source != null && target != null) {
+            try {
+                String _source = URLDecoder.decode(source, StandardCharsets.UTF_8.name());
+                String _target = URLDecoder.decode(target, StandardCharsets.UTF_8.name());
                 try {
-                    TupleQueryResult tqp = graphVizManager.getMinPath(source, target, inference);
+                    TupleQueryResult tqp = graphVizManager.getMinPath(_source, _target, inference);
                     ArrayList<Cytoscape> ng = graphVizManager.splitPaths(tqp, inference);
                     ObjectMapper mapper = new ObjectMapper();
                     String json = mapper.writeValueAsString(ng);
@@ -278,9 +287,12 @@ public class GraphVizualization extends Service {
                 } catch (ManagerException ex) {
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
                 }
-            } else {
-                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("inference and concept options must be specified").build();
+            } catch (UnsupportedEncodingException ex) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
             }
+        } else {
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("inference and concept options must be specified").build();
+        }
     }
 
     @POST

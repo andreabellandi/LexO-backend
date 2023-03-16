@@ -20,7 +20,6 @@ public class FormItemsHelper extends TripleStoreDataHelper<FormItem> {
         setTotalHits(getIntegerNumber(bs, SparqlVariable.TOTAL_HITS));
         data.setCreator(getStringValue(bs, SparqlVariable.LEXICAL_ENTRY_CREATION_AUTHOR));
         data.setForm(getStringValue(bs, SparqlVariable.FORM));
-        data.setFormInstanceName(getStringValue(bs, SparqlVariable.FORM_INSTANCE_NAME));
         data.setLabel(getStringValue(bs, SparqlVariable.WRITTEN_REPRESENTATION));
         data.setNote(getStringValue(bs, SparqlVariable.NOTE));
         data.setPhoneticRep(getStringValue(bs, SparqlVariable.PHONETIC_REPRESENTATION));
@@ -30,8 +29,6 @@ public class FormItemsHelper extends TripleStoreDataHelper<FormItem> {
         data.setLastUpdate(getStringValue(bs, SparqlVariable.LAST_UPDATE));
         data.setCreationDate(getStringValue(bs, SparqlVariable.CREATION_DATE));
         data.setLexicalEntry(getStringValue(bs, SparqlVariable.LEXICAL_ENTRY));
-        data.setLexicalEntryInstanceName(getLocalName(bs, SparqlVariable.LEXICAL_ENTRY));
-        data.setTargetSenseInstanceName(getLocalName(bs, SparqlVariable.TARGET));
         data.setTargetSense(getStringValue(bs, SparqlVariable.TARGET));
         data.setConfidence(getDoubleNumber(bs, "confidence"));
     }

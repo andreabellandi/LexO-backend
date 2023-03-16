@@ -18,11 +18,6 @@ public class FormList implements Data {
     private String semanticRelation;
     private int distance;
     private String sense;
-    private String senseInstanceName;
-//    private String label;
-//    private String definition;
-//    private String targetSense;
-//    private String targetSenseInstanceName;
     private List<Form> target;
 
     public String getSemanticRelation() {
@@ -49,30 +44,6 @@ public class FormList implements Data {
         this.sense = sense;
     }
 
-    public String getSenseInstanceName() {
-        return senseInstanceName;
-    }
-
-    public void setSenseInstanceName(String senseInstanceName) {
-        this.senseInstanceName = senseInstanceName;
-    }
-
-//    public String getLabel() {
-//        return label;
-//    }
-//
-//    public void setLabel(String label) {
-//        this.label = label;
-//    }
-//
-//    public String getDefinition() {
-//        return definition;
-//    }
-//
-//    public void setDefinition(String definition) {
-//        this.definition = definition;
-//    }
-
     public List<Form> getTarget() {
         return target;
     }
@@ -81,26 +52,10 @@ public class FormList implements Data {
         this.target = target;
     }
 
-//    public String getTargetSense() {
-//        return targetSense;
-//    }
-//
-//    public void setTargetSense(String targetSense) {
-//        this.targetSense = targetSense;
-//    }
-//
-//    public String getTargetSenseInstanceName() {
-//        return targetSenseInstanceName;
-//    }
-//
-//    public void setTargetSenseInstanceName(String targetSenseInstanceName) {
-//        this.targetSenseInstanceName = targetSenseInstanceName;
-//    }
-
-    
     public FormList() {}
     
-    public FormList(String semanticRelation, int distance, String sense, String senseInstanceName, 
+    public FormList(String semanticRelation, int distance, String sense, 
+//            String senseInstanceName, 
 //            String targetSense, String targetSenseInstanceName, 
 //            String label, String definition, 
             List<Form> target) {
@@ -109,7 +64,6 @@ public class FormList implements Data {
 //        this.label = label;
         this.semanticRelation = semanticRelation;
         this.sense = sense;
-        this.senseInstanceName = senseInstanceName;
         this.target = target;
 //        this.targetSense = targetSense;
 //        this.targetSenseInstanceName = targetSenseInstanceName;

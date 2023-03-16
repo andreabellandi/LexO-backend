@@ -35,6 +35,9 @@ import it.cnr.ilc.lexo.service.helper.LanguageHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalConceptHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalEntryCoreHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalSenseCoreHelper;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.Consumes;
@@ -85,6 +88,7 @@ public class LexiconCreation extends Service {
                     value = "authentication token",
                     example = "lexodemo",
                     required = true)
+//            @HeaderParam("Authorization") String key,
             @QueryParam("key") String key,
             @ApiParam(
                     name = "lang",
@@ -97,15 +101,29 @@ public class LexiconCreation extends Service {
                     value = "the account is being creating the language",
                     example = "user7",
                     required = true)
-            @QueryParam("author") String author) {
+            @QueryParam("author") String author,
+            @ApiParam(
+                    name = "prefix",
+                    value = "prefix of the namespace",
+                    example = "myprefix",
+                    required = true)
+            @QueryParam("prefix") String prefix,
+            @ApiParam(
+                    name = "baseIRI",
+                    value = "base IRI of the language",
+                    example = "http://mydata.com#",
+                    required = true)
+            @QueryParam("baseIRI") String baseIRI) {
+        
         if (key.equals("PRINitant19")) {
             try {
-                //        log(Level.INFO, "get lexicon entries types");
+                
                 UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+                utilityManager.validateNamespace(prefix, baseIRI);
                 if (utilityManager.languageExists(lang)) {
                     return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Language label " + lang + " already exists").build();
                 }
-                Language l = lexiconManager.createLanguage(author, lang);
+                Language l = lexiconManager.createLanguage(prefix, baseIRI, author, lang);
                 String json = languageHelper.toJson(l);
                 return Response.ok(json)
                         .type(MediaType.TEXT_PLAIN)
@@ -142,11 +160,24 @@ public class LexiconCreation extends Service {
                     value = "the account is being creating the lexical entry",
                     example = "user7",
                     required = true)
-            @QueryParam("author") String author) {
+            @QueryParam("author") String author,
+            @ApiParam(
+                    name = "prefix",
+                    value = "prefix of the namespace",
+                    example = "myprefix",
+                    required = true)
+            @QueryParam("prefix") String prefix,
+            @ApiParam(
+                    name = "baseIRI",
+                    value = "base IRI of the language",
+                    example = "http://mydata.com#",
+                    required = true)
+            @QueryParam("baseIRI") String baseIRI) {
         if (key.equals("PRINitant19")) {
             try {
-                //        log(Level.INFO, "get lexicon entries types");
-                LexicalEntryCore lec = lexiconManager.createLexicalEntry(author);
+               UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+                utilityManager.validateNamespace(prefix, baseIRI);
+                LexicalEntryCore lec = lexiconManager.createLexicalEntry(author, prefix, baseIRI);
                 String json = lexicalEntryCoreHelper.toJson(lec);
                 return Response.ok(json)
                         .type(MediaType.TEXT_PLAIN)
@@ -189,28 +220,45 @@ public class LexiconCreation extends Service {
                     value = "the account is being creating the form",
                     example = "user7",
                     required = true)
-            @QueryParam("author") String author) {
+            @QueryParam("author") String author,
+            @ApiParam(
+                    name = "prefix",
+                    value = "prefix of the namespace",
+                    example = "myprefix",
+                    required = true)
+            @QueryParam("prefix") String prefix,
+            @ApiParam(
+                    name = "baseIRI",
+                    value = "base IRI of the language",
+                    example = "http://mydata.com#",
+                    required = true)
+            @QueryParam("baseIRI") String baseIRI) {
         if (key.equals("PRINitant19")) {
             try {
-                //        log(Level.INFO, "get lexicon entries types");
-                UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
-                if (!utilityManager.isLexicalEntry(lexicalEntryID)) {
-                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + lexicalEntryID + " does not exist").build();
+                String _lexicalEntryID = URLDecoder.decode(lexicalEntryID, StandardCharsets.UTF_8.name());
+                try {
+                    UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+                    utilityManager.validateNamespace(prefix, baseIRI);
+                    if (!utilityManager.isLexicalEntry(_lexicalEntryID)) {
+                        return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _lexicalEntryID + " does not exist").build();
+                    }
+                    String lang = utilityManager.getLanguage(_lexicalEntryID);
+                    if (lang == null) {
+                        return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("form cannot be created: the lexical entry language must be set first").build();
+                    }
+                    FormCore fc = lexiconManager.createForm(_lexicalEntryID, author, lang, prefix, baseIRI);
+                    String json = formCoreHelper.toJson(fc);
+                    return Response.ok(json)
+                            .type(MediaType.TEXT_PLAIN)
+                            .header("Access-Control-Allow-Headers", "content-type")
+                            .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                            .build();
+                } catch (ManagerException ex) {
+                    Logger.getLogger(LexiconCreation.class.getName()).log(Level.SEVERE, null, ex);
+                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
                 }
-                String lang = utilityManager.getLanguage(lexicalEntryID);
-                if (lang == null) {
-                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("form cannot be created: the lexical entry language must be set first").build();
-                }
-                FormCore fc = lexiconManager.createForm(lexicalEntryID, author, lang);
-                String json = formCoreHelper.toJson(fc);
-                return Response.ok(json)
-                        .type(MediaType.TEXT_PLAIN)
-                        .header("Access-Control-Allow-Headers", "content-type")
-                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                        .build();
-            } catch (ManagerException ex) {
-                Logger.getLogger(LexiconCreation.class.getName()).log(Level.SEVERE, null, ex);
-                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            } catch (UnsupportedEncodingException ex) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
             }
         } else {
             return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Insertion denied, wrong key").build();
@@ -244,24 +292,41 @@ public class LexiconCreation extends Service {
                     value = "the account is being creating the sense",
                     example = "user7",
                     required = true)
-            @QueryParam("author") String author) {
+            @QueryParam("author") String author,
+            @ApiParam(
+                    name = "prefix",
+                    value = "prefix of the namespace",
+                    example = "myprefix",
+                    required = true)
+            @QueryParam("prefix") String prefix,
+            @ApiParam(
+                    name = "baseIRI",
+                    value = "base IRI of the language",
+                    example = "http://mydata.com#",
+                    required = true)
+            @QueryParam("baseIRI") String baseIRI){
         if (key.equals("PRINitant19")) {
             try {
-                //        log(Level.INFO, "get lexicon entries types");
-                UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
-                if (!utilityManager.isLexicalEntry(lexicalEntryID)) {
-                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + lexicalEntryID + " does not exist").build();
+                String _lexicalEntryID = URLDecoder.decode(lexicalEntryID, StandardCharsets.UTF_8.name());
+                try {
+                    UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+                    utilityManager.validateNamespace(prefix, baseIRI);
+                    if (!utilityManager.isLexicalEntry(_lexicalEntryID)) {
+                        return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _lexicalEntryID + " does not exist").build();
+                    }
+                    LexicalSenseCore sc = lexiconManager.createLexicalSense(_lexicalEntryID, author, prefix, baseIRI);
+                    String json = lexicalSenseCoreHelper.toJson(sc);
+                    return Response.ok(json)
+                            .type(MediaType.TEXT_PLAIN)
+                            .header("Access-Control-Allow-Headers", "content-type")
+                            .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                            .build();
+                } catch (ManagerException ex) {
+                    Logger.getLogger(LexiconCreation.class.getName()).log(Level.SEVERE, null, ex);
+                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
                 }
-                LexicalSenseCore sc = lexiconManager.createLexicalSense(lexicalEntryID, author);
-                String json = lexicalSenseCoreHelper.toJson(sc);
-                return Response.ok(json)
-                        .type(MediaType.TEXT_PLAIN)
-                        .header("Access-Control-Allow-Headers", "content-type")
-                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                        .build();
-            } catch (ManagerException ex) {
-                Logger.getLogger(LexiconCreation.class.getName()).log(Level.SEVERE, null, ex);
-                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            } catch (UnsupportedEncodingException ex) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
             }
         } else {
             return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Insertion denied, wrong key").build();
@@ -294,23 +359,41 @@ public class LexiconCreation extends Service {
                     value = "the account is being creating the component",
                     example = "user7",
                     required = true)
-            @QueryParam("author") String author) {
+            @QueryParam("author") String author,
+            @ApiParam(
+                    name = "prefix",
+                    value = "prefix of the namespace",
+                    example = "myprefix",
+                    required = true)
+            @QueryParam("prefix") String prefix,
+            @ApiParam(
+                    name = "baseIRI",
+                    value = "base IRI of the language",
+                    example = "http://mydata.com#",
+                    required = true)
+            @QueryParam("baseIRI") String baseIRI){
         if (key.equals("PRINitant19")) {
             try {
-                UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
-                if (!utilityManager.isLexicalEntryOrComponent(id)) {
-                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + id + " is not neither a lexical entry nor a component").build();
+                String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
+                try {
+                    UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+                    utilityManager.validateNamespace(prefix, baseIRI);
+                    if (!utilityManager.isLexicalEntryOrComponent(_id)) {
+                        return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " is not neither a lexical entry nor a component").build();
+                    }
+                    Component comp = lexiconManager.createComponent(_id, author, prefix, baseIRI);
+                    String json = componentHelper.toJson(comp);
+                    return Response.ok(json)
+                            .type(MediaType.TEXT_PLAIN)
+                            .header("Access-Control-Allow-Headers", "content-type")
+                            .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                            .build();
+                } catch (ManagerException ex) {
+                    Logger.getLogger(LexiconCreation.class.getName()).log(Level.SEVERE, null, ex);
+                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
                 }
-                Component comp = lexiconManager.createComponent(id, author);
-                String json = componentHelper.toJson(comp);
-                return Response.ok(json)
-                        .type(MediaType.TEXT_PLAIN)
-                        .header("Access-Control-Allow-Headers", "content-type")
-                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                        .build();
-            } catch (ManagerException ex) {
-                Logger.getLogger(LexiconCreation.class.getName()).log(Level.SEVERE, null, ex);
-                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            } catch (UnsupportedEncodingException ex) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
             }
         } else {
             return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Insertion denied, wrong key").build();
@@ -344,27 +427,45 @@ public class LexiconCreation extends Service {
                     value = "the account is being creating the etymology",
                     example = "user7",
                     required = true)
-            @QueryParam("author") String author) {
+            @QueryParam("author") String author,
+            @ApiParam(
+                    name = "prefix",
+                    value = "prefix of the namespace",
+                    example = "myprefix",
+                    required = true)
+            @QueryParam("prefix") String prefix,
+            @ApiParam(
+                    name = "baseIRI",
+                    value = "base IRI of the language",
+                    example = "http://mydata.com#",
+                    required = true)
+            @QueryParam("baseIRI") String baseIRI){
         if (key.equals("PRINitant19")) {
             try {
-                UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
-                if (!utilityManager.isLexicalEntry(lexicalEntryID)) {
-                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + lexicalEntryID + " does not exist").build();
+                String _lexicalEntryID = URLDecoder.decode(lexicalEntryID, StandardCharsets.UTF_8.name());
+                try {
+                    UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+                    utilityManager.validateNamespace(prefix, baseIRI);
+                    if (!utilityManager.isLexicalEntry(_lexicalEntryID)) {
+                        return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _lexicalEntryID + " does not exist").build();
+                    }
+                    String label = utilityManager.getLabel(_lexicalEntryID);
+                    if (label == null) {
+                        return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("etymology cannot be created: the lexical entry label is not definied").build();
+                    }
+                    Etymology e = lexiconManager.createEtymology(_lexicalEntryID, author, label, prefix, baseIRI);
+                    String json = etymologyHelper.toJson(e);
+                    return Response.ok(json)
+                            .type(MediaType.TEXT_PLAIN)
+                            .header("Access-Control-Allow-Headers", "content-type")
+                            .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                            .build();
+                } catch (ManagerException ex) {
+                    Logger.getLogger(LexiconCreation.class.getName()).log(Level.SEVERE, null, ex);
+                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
                 }
-                String label = utilityManager.getLabel(lexicalEntryID);
-                if (label == null) {
-                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("etymology cannot be created: the lexical entry label is not definied").build();
-                }
-                Etymology e = lexiconManager.createEtymology(lexicalEntryID, author, label);
-                String json = etymologyHelper.toJson(e);
-                return Response.ok(json)
-                        .type(MediaType.TEXT_PLAIN)
-                        .header("Access-Control-Allow-Headers", "content-type")
-                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                        .build();
-            } catch (ManagerException ex) {
-                Logger.getLogger(LexiconCreation.class.getName()).log(Level.SEVERE, null, ex);
-                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            } catch (UnsupportedEncodingException ex) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
             }
         } else {
             return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Insertion denied, wrong key").build();
@@ -403,30 +504,49 @@ public class LexiconCreation extends Service {
                     value = "the account is being creating the etymological link",
                     example = "user7",
                     required = true)
-            @QueryParam("author") String author) {
+            @QueryParam("author") String author,
+            @ApiParam(
+                    name = "prefix",
+                    value = "prefix of the namespace",
+                    example = "myprefix",
+                    required = true)
+            @QueryParam("prefix") String prefix,
+            @ApiParam(
+                    name = "baseIRI",
+                    value = "base IRI of the language",
+                    example = "http://mydata.com#",
+                    required = true)
+            @QueryParam("baseIRI") String baseIRI){
         if (key.equals("PRINitant19")) {
             try {
-                UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
-                if (!utilityManager.isLexicalEntry(lexicalEntryID)) {
-                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + lexicalEntryID + " does not exist").build();
+                String _lexicalEntryID = URLDecoder.decode(lexicalEntryID, StandardCharsets.UTF_8.name());
+                try {
+                    UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+                    utilityManager.validateNamespace(prefix, baseIRI);
+                    if (!utilityManager.isLexicalEntry(_lexicalEntryID)) {
+                        return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _lexicalEntryID + " does not exist").build();
+                    }
+                    String label = utilityManager.getLabel(_lexicalEntryID);
+                    if (label == null) {
+                        return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("etymology cannot be created: the lexical entry label is not definied").build();
+                    }
+                    String _etymologyID = URLDecoder.decode(etymologyID, StandardCharsets.UTF_8.name());
+                    if (!utilityManager.isEtymology(_etymologyID)) {
+                        return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _etymologyID + " does not exist").build();
+                    }
+                    EtymologicalLink el = lexiconManager.createEtymologicalLink(_lexicalEntryID, author, _etymologyID, prefix, baseIRI);
+                    String json = etymologicalLinkHelper.toJson(el);
+                    return Response.ok(json)
+                            .type(MediaType.TEXT_PLAIN)
+                            .header("Access-Control-Allow-Headers", "content-type")
+                            .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                            .build();
+                } catch (ManagerException ex) {
+                    Logger.getLogger(LexiconCreation.class.getName()).log(Level.SEVERE, null, ex);
+                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
                 }
-                String label = utilityManager.getLabel(lexicalEntryID);
-                if (label == null) {
-                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("etymology cannot be created: the lexical entry label is not definied").build();
-                }
-                if (!utilityManager.isEtymology(etymologyID)) {
-                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + etymologyID + " does not exist").build();
-                }
-                EtymologicalLink el = lexiconManager.createEtymologicalLink(lexicalEntryID, author, etymologyID);
-                String json = etymologicalLinkHelper.toJson(el);
-                return Response.ok(json)
-                        .type(MediaType.TEXT_PLAIN)
-                        .header("Access-Control-Allow-Headers", "content-type")
-                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                        .build();
-            } catch (ManagerException ex) {
-                Logger.getLogger(LexiconCreation.class.getName()).log(Level.SEVERE, null, ex);
-                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            } catch (UnsupportedEncodingException ex) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
             }
         } else {
             return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Insertion denied, wrong key").build();
@@ -445,11 +565,10 @@ public class LexiconCreation extends Service {
             notes = "This method creates a new bibliography for a lexical entity and returns it")
     public Response bibliography(
             @ApiParam(
-                    name = "lexicalEntityID",
+                    name = "id",
                     value = "the lexical entity id, the bibliography refers to",
-                    example = "MUStestNOUN",
                     required = true)
-            @QueryParam("lexicalEntityID") String lexicalEntityID,
+            @QueryParam("id") String id,
             @ApiParam(
                     name = "key",
                     value = "authentication token",
@@ -462,22 +581,41 @@ public class LexiconCreation extends Service {
                     example = "user7",
                     required = true)
             @QueryParam("author") String author,
-            Bibliography bibliography) {
+            Bibliography bibliography,
+            @ApiParam(
+                    name = "prefix",
+                    value = "prefix of the namespace",
+                    example = "myprefix",
+                    required = true)
+            @QueryParam("prefix") String prefix,
+            @ApiParam(
+                    name = "baseIRI",
+                    value = "base IRI of the language",
+                    example = "http://mydata.com#",
+                    required = true)
+            @QueryParam("baseIRI") String baseIRI) {
         if (key.equals("PRINitant19")) {
             try {
-                if ((bibliography.getId() == null || bibliography.getId().isEmpty())) {
-                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("id of bibliography must be defined").build();
+                String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
+                try {
+                    UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+                    utilityManager.validateNamespace(prefix, baseIRI);
+                    if ((bibliography.getId() == null || bibliography.getId().isEmpty())) {
+                        return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("id of bibliography must be defined").build();
+                    }
+                    BibliographicItem bi = bibliographyManager.createBibliographyReference(_id, author, bibliography, prefix, baseIRI);
+                    String json = bibliographyHelper.toJson(bi);
+                    return Response.ok(json)
+                            .type(MediaType.TEXT_PLAIN)
+                            .header("Access-Control-Allow-Headers", "content-type")
+                            .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                            .build();
+                } catch (ManagerException ex) {
+                    Logger.getLogger(LexiconCreation.class.getName()).log(Level.SEVERE, null, ex);
+                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
                 }
-                BibliographicItem bi = bibliographyManager.createBibliographyReference(lexicalEntityID, author, bibliography);
-                String json = bibliographyHelper.toJson(bi);
-                return Response.ok(json)
-                        .type(MediaType.TEXT_PLAIN)
-                        .header("Access-Control-Allow-Headers", "content-type")
-                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                        .build();
-            } catch (ManagerException ex) {
-                Logger.getLogger(LexiconCreation.class.getName()).log(Level.SEVERE, null, ex);
-                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            } catch (UnsupportedEncodingException ex) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
             }
         } else {
             return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Insertion denied, wrong key").build();
@@ -505,10 +643,24 @@ public class LexiconCreation extends Service {
                     value = "the account is being creating the lexical concept",
                     example = "user7",
                     required = true)
-            @QueryParam("author") String author) {
+            @QueryParam("author") String author,
+            @ApiParam(
+                    name = "prefix",
+                    value = "prefix of the namespace",
+                    example = "myprefix",
+                    required = true)
+            @QueryParam("prefix") String prefix,
+            @ApiParam(
+                    name = "baseIRI",
+                    value = "base IRI of the language",
+                    example = "http://mydata.com#",
+                    required = true)
+            @QueryParam("baseIRI") String baseIRI){
         if (key.equals("PRINitant19")) {
             try {
-                LexicalConcept lc = skosManager.createLexicalConcept(author);
+                UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+                utilityManager.validateNamespace(prefix, baseIRI);
+                LexicalConcept lc = skosManager.createLexicalConcept(author, prefix, baseIRI);
                 String json = lexicalConceptHelper.toJson(lc);
                 return Response.ok(json)
                         .type(MediaType.TEXT_PLAIN)
@@ -545,10 +697,24 @@ public class LexiconCreation extends Service {
                     value = "the account is being creating the concept set",
                     example = "user7",
                     required = true)
-            @QueryParam("author") String author) {
+            @QueryParam("author") String author,
+            @ApiParam(
+                    name = "prefix",
+                    value = "prefix of the namespace",
+                    example = "myprefix",
+                    required = true)
+            @QueryParam("prefix") String prefix,
+            @ApiParam(
+                    name = "baseIRI",
+                    value = "base IRI of the language",
+                    example = "http://mydata.com#",
+                    required = true)
+            @QueryParam("baseIRI") String baseIRI){
         if (key.equals("PRINitant19")) {
             try {
-                ConceptSet cs = skosManager.createConceptSet(author);
+                UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+                utilityManager.validateNamespace(prefix, baseIRI);
+                ConceptSet cs = skosManager.createConceptSet(author, prefix, baseIRI);
                 String json = conceptSetHelper.toJson(cs);
                 return Response.ok(json)
                         .type(MediaType.TEXT_PLAIN)

@@ -19,8 +19,6 @@ public class LexicalConceptItem extends SKOSClass implements Data {
 
     @ApiModelProperty(value = "IRI")
     private String lexicalConcept;
-    @ApiModelProperty(value = "short IRI")
-    private String lexicalConceptInstanceName;
     private boolean hasChildren;
     private int children;
     private String defaultLabel;
@@ -31,14 +29,6 @@ public class LexicalConceptItem extends SKOSClass implements Data {
 
     public void setLexicalConcept(String lexicalConcept) {
         this.lexicalConcept = lexicalConcept;
-    }
-
-    public String getLexicalConceptInstanceName() {
-        return lexicalConceptInstanceName;
-    }
-
-    public void setLexicalConceptInstanceName(String lexicalConceptInstanceName) {
-        this.lexicalConceptInstanceName = lexicalConceptInstanceName;
     }
 
     public boolean isHasChildren() {

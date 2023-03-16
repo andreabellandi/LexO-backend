@@ -20,8 +20,6 @@ public class ConceptSetItem extends SKOSClass implements Data {
 
     @ApiModelProperty(value = "IRI")
     private String conceptSet;
-    @ApiModelProperty(value = "short IRI")
-    private String conceptSetInstanceName;
 
     public String getConceptSet() {
         return conceptSet;
@@ -31,12 +29,5 @@ public class ConceptSetItem extends SKOSClass implements Data {
         this.conceptSet = conceptSet;
     }
 
-    public String getConceptSetInstanceName() {
-        return conceptSetInstanceName;
-    }
-
-    public void setConceptSetInstanceName(String conceptSetInstanceName) {
-        this.conceptSetInstanceName = conceptSetInstanceName;
-    }
 
 }

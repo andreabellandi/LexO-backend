@@ -45,4 +45,17 @@ public class SparqlSelectOntolexData {
             + "       OPTIONAL { ?" + SparqlVariable.FORM_TYPE + " " + SparqlPrefix.RDFS.getPrefix() + "comment ?" + SparqlVariable.PROPERTY_COMMENT + " }\n"
             //        c   + "    FILTER(STRSTARTS(str(?" + SparqlVariable.LEXICAL_ENTRY_TYPE + "), str(" + SparqlPrefix.ONTOLEX.getPrefix() + ") ))\n"
             + "}";
+    
+    public static final String REPRESENTATION
+            = SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
+            + "SELECT ?" + SparqlVariable.FORM_REPRESENTATION + " ?" + SparqlVariable.LABEL + " ?" + SparqlVariable.PROPERTY_COMMENT + " \n"
+            + "WHERE {\n"
+            + "	?" + SparqlVariable.FORM_REPRESENTATION + " " + SparqlPrefix.RDFS.getPrefix() + "subPropertyOf " + SparqlPrefix.ONTOLEX.getPrefix() + "representation ;\n"
+            + "       " + SparqlPrefix.RDFS.getPrefix() + "label ?" + SparqlVariable.LABEL + " .\n"
+            + "       OPTIONAL { ?" + SparqlVariable.FORM_REPRESENTATION + " " + SparqlPrefix.RDFS.getPrefix() + "comment ?" + SparqlVariable.PROPERTY_COMMENT + " }\n"
+            + "       FILTER(!regex(str(?" + SparqlVariable.FORM_REPRESENTATION + "), \"representation\"))\n"
+            + "       FILTER(!regex(str(?" + SparqlVariable.FORM_REPRESENTATION + "), \"lexinfo\"))\n"
+            + "}";
+
 }

@@ -20,8 +20,6 @@ public class Component extends Entity implements Data {
 
     @ApiModelProperty(value = "component IRI")
     private String component;
-    @ApiModelProperty(value = "component short IRI")
-    private String componentInstanceName;
     @ApiModelProperty(value = "component label")
     private String label;
     @ApiModelProperty(value = "morphological traits of the component")
@@ -37,14 +35,6 @@ public class Component extends Entity implements Data {
 
     public void setComponent(String component) {
         this.component = component;
-    }
-
-    public String getComponentInstanceName() {
-        return componentInstanceName;
-    }
-
-    public void setComponentInstanceName(String componentInstanceName) {
-        this.componentInstanceName = componentInstanceName;
     }
 
     public String getLabel() {

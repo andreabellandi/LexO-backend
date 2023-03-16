@@ -16,8 +16,7 @@ import it.cnr.ilc.lexo.service.data.Data;
 @ApiModel(description = "Input model representing a skos updater")
 public class SKOSUpdater implements Data {
 
-    @ApiModelProperty(value = "skos property", allowEmptyValue = false,
-            allowableValues = "see skos properties at https://www.w3.org/TR/2009/REC-skos-reference-20090818/")
+    @ApiModelProperty(value = "skos property, see values at https://www.w3.org/TR/2009/REC-skos-reference-20090818/", allowEmptyValue = false)
     private String relation;
     @ApiModelProperty(value = "the subject IRI of the relation", allowEmptyValue = false)
     private String source;
@@ -25,8 +24,10 @@ public class SKOSUpdater implements Data {
     private String target;
     @ApiModelProperty(value = "the old object IRI of the relation (empty in case of new relation)", example = "test", allowEmptyValue = true)
     private String oldTarget;
-    @ApiModelProperty(value = "the language of the target (if it is a literal, empty elsewhether) ", allowEmptyValue = true)
-    private String language;
+    @ApiModelProperty(value = "the language of the target", allowEmptyValue = true)
+    private String targetLanguage;
+    @ApiModelProperty(value = "the language of the old target", allowEmptyValue = true)
+    private String oldTargetLanguage;
 
     public String getRelation() {
         return relation;
@@ -60,12 +61,20 @@ public class SKOSUpdater implements Data {
         this.oldTarget = oldTarget;
     }
 
-    public String getLanguage() {
-        return language;
+    public String getTargetLanguage() {
+        return targetLanguage;
     }
 
-    public void setLanguage(String language) {
-        this.language = language;
+    public void setTargetLanguage(String targetLanguage) {
+        this.targetLanguage = targetLanguage;
+    }
+
+    public String getOldTargetLanguage() {
+        return oldTargetLanguage;
+    }
+
+    public void setOldTargetLanguage(String oldTargetLanguage) {
+        this.oldTargetLanguage = oldTargetLanguage;
     }
 
 }

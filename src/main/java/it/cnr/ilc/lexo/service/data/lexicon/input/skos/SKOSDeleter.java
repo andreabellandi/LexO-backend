@@ -16,8 +16,7 @@ import it.cnr.ilc.lexo.service.data.Data;
 @ApiModel(description = "Input model representing a skos deleter")
 public class SKOSDeleter implements Data {
 
-    @ApiModelProperty(value = "skos property", allowEmptyValue = false,
-            allowableValues = "see skos properties at https://www.w3.org/TR/2009/REC-skos-reference-20090818/")
+    @ApiModelProperty(value = "skos property, see values at https://www.w3.org/TR/2009/REC-skos-reference-20090818/", allowEmptyValue = false)
     private String relation;
     @ApiModelProperty(value = "the subject IRI of the relation", allowEmptyValue = false)
     private String source;

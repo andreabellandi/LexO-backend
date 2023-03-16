@@ -8,8 +8,11 @@ package it.cnr.ilc.lexo.manager;
 import it.cnr.ilc.lexo.sparql.SparqlQueryUtil;
 import it.cnr.ilc.lexo.sparql.SparqlVariable;
 import it.cnr.ilc.lexo.util.RDFQueryUtil;
+import java.util.ArrayList;
+import java.util.Iterator;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Literal;
+import org.eclipse.rdf4j.model.Namespace;
 import org.eclipse.rdf4j.query.BindingSet;
 import org.eclipse.rdf4j.query.QueryEvaluationException;
 import org.eclipse.rdf4j.query.TupleQueryResult;
@@ -23,28 +26,6 @@ public final class UtilityManager implements Manager, Cached {
     @Override
     public void reloadCache() {
 
-    }
-
-    // ret values: 
-    // null = id does not exist
-    // empty = attribute value does not exist
-    // string = attribute value
-    public String getEntityAttribute(String id, String relation) throws QueryEvaluationException {
-//        TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL,
-//                SparqlQueryUtil.ENTITY_RELATION.replaceAll("_ID_", id)
-//                        .replaceAll("_RELATION_", relation));
-//        try (TupleQueryResult result = tupleQuery.evaluate()) {
-        String query = SparqlQueryUtil.ENTITY_RELATION.replaceAll("_ID_", id)
-                .replaceAll("_RELATION_", relation);
-        try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {
-            while (result.hasNext()) {
-                BindingSet bs = result.next();
-                return (bs.getBinding(SparqlVariable.TYPE) != null)
-                        ? ((bs.getBinding(SparqlVariable.VALUE) != null) ? bs.getBinding(SparqlVariable.VALUE).getValue().stringValue() : "") : null;
-            }
-        } catch (QueryEvaluationException qee) {
-        }
-        return null;
     }
 
     public boolean existsLinguisticRelation(String id, String relation, String value) throws QueryEvaluationException {
@@ -67,7 +48,7 @@ public final class UtilityManager implements Manager, Cached {
                 .replaceAll("_VALUE_", value);
         return RDFQueryUtil.evaluateBQuery(query);
     }
-    
+
     public boolean existsLabel(String id, String labelRelation, String language) {
         String query = SparqlQueryUtil.ASK_LABEL_RELATION.replaceAll("_ID_", id)
                 .replaceAll("_RELATION_", labelRelation)
@@ -75,25 +56,7 @@ public final class UtilityManager implements Manager, Cached {
         return RDFQueryUtil.evaluateBQuery(query);
     }
 
-    public int getNumberOfStatements(String id) throws QueryEvaluationException {
-//        TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL,
-//                SparqlQueryUtil.NUMBER_OF_STATEMENTS.replaceAll("_ID_", id));
-//        try (TupleQueryResult result = tupleQuery.evaluate()) {
-        String query = SparqlQueryUtil.NUMBER_OF_STATEMENTS.replaceAll("_ID_", id);
-        try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {
-            while (result.hasNext()) {
-                BindingSet bs = result.next();
-                return (bs.getBinding(SparqlVariable.STATEMENTS_NUMBER) != null) ? ((Literal) bs.getBinding(SparqlVariable.LABEL).getValue()).intValue() : null;
-            }
-        } catch (QueryEvaluationException qee) {
-        }
-        return 0;
-    }
-
     public String getLanguage(String id) throws QueryEvaluationException {
-//        TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL,
-//                SparqlQueryUtil.LANGUAGE.replaceAll("_ID_", id));
-//        try (TupleQueryResult result = tupleQuery.evaluate()) {
         String query = SparqlQueryUtil.LANGUAGE.replaceAll("_ID_", id);
         try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {
             while (result.hasNext()) {
@@ -118,15 +81,26 @@ public final class UtilityManager implements Manager, Cached {
     }
 
     public String getLexicalEntryByForm(String id) throws QueryEvaluationException {
-//        TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL,
-//                SparqlQueryUtil.LEXICAL_ENTRY_BY_FORM.replaceAll("_ID_", id));
-//        try (TupleQueryResult result = tupleQuery.evaluate()) {
         String query = SparqlQueryUtil.LEXICAL_ENTRY_BY_FORM.replaceAll("_ID_", id);
         try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {
             while (result.hasNext()) {
                 BindingSet bs = result.next();
-                return (bs.getBinding(SparqlVariable.LEXICAL_ENTRY_INSTANCE_NAME) != null)
-                        ? ((IRI) bs.getBinding(SparqlVariable.LEXICAL_ENTRY_INSTANCE_NAME).getValue()).getLocalName() : null;
+                return (bs.getBinding(SparqlVariable.LEXICAL_ENTRY) != null)
+                        ? (bs.getBinding(SparqlVariable.LEXICAL_ENTRY).getValue().toString()) : null;
+            }
+        } catch (QueryEvaluationException qee) {
+        }
+        return null;
+    }
+    
+    public String getLexicalEntryType(String id) throws QueryEvaluationException {
+        String query = SparqlQueryUtil.LEXICALENTRY_TYPE.replaceAll("_ID_", id);
+        ArrayList<String> types = new ArrayList();
+        try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {
+            while (result.hasNext()) {
+                BindingSet bs = result.next();
+                return (bs.getBinding(SparqlVariable.LEXICAL_ENTRY_TYPE) != null)
+                        ? (bs.getBinding(SparqlVariable.LEXICAL_ENTRY_TYPE).getValue().toString()) : null;
             }
         } catch (QueryEvaluationException qee) {
         }
@@ -139,7 +113,7 @@ public final class UtilityManager implements Manager, Cached {
             while (result.hasNext()) {
                 BindingSet bs = result.next();
                 return (bs.getBinding(SparqlVariable.BIBLIOGRAPHY_ID) != null)
-                        ? ((IRI) bs.getBinding(SparqlVariable.BIBLIOGRAPHY_ID).getValue()).getLocalName() : null;
+                        ? (bs.getBinding(SparqlVariable.BIBLIOGRAPHY_ID).getValue().toString()) : null;
             }
         } catch (QueryEvaluationException qee) {
         }
@@ -160,15 +134,11 @@ public final class UtilityManager implements Manager, Cached {
     }
 
     public boolean isLexiconLanguage(String id) throws QueryEvaluationException {
-//        BooleanQuery ask = GraphDbUtil.getConnection().prepareBooleanQuery(QueryLanguage.SPARQL,
-//                SparqlQueryUtil.IS_LEXICON_LANGUAGE.replaceAll("_ID_", id));
         String query = SparqlQueryUtil.IS_LEXICON_LANGUAGE.replaceAll("_ID_", id);
         return RDFQueryUtil.evaluateBQuery(query);
     }
 
     public boolean hasLexicalEntryChildren(String id) throws QueryEvaluationException {
-//        BooleanQuery ask = GraphDbUtil.getConnection().prepareBooleanQuery(QueryLanguage.SPARQL,
-//                SparqlQueryUtil.HAS_LEXICALENTRY_CHILDREN.replaceAll("_ID_", id));
         String query = SparqlQueryUtil.HAS_LEXICALENTRY_CHILDREN.replaceAll("_ID_", id);
         return RDFQueryUtil.evaluateBQuery(query);
     }
@@ -177,7 +147,7 @@ public final class UtilityManager implements Manager, Cached {
         String query = SparqlQueryUtil.IS_LEXICALENTRY_ID.replaceAll("_ID_", id);
         return RDFQueryUtil.evaluateBQuery(query);
     }
-    
+
     public boolean isConceptSet(String id) throws QueryEvaluationException {
         String query = SparqlQueryUtil.IS_CONCEPT_SET_ID.replaceAll("_ID_", id);
         return RDFQueryUtil.evaluateBQuery(query);
@@ -209,29 +179,21 @@ public final class UtilityManager implements Manager, Cached {
     }
 
     public boolean languageExists(String lang) throws QueryEvaluationException {
-//        BooleanQuery ask = GraphDbUtil.getConnection().prepareBooleanQuery(QueryLanguage.SPARQL,
-//                SparqlQueryUtil.EXISTS_LANGUAGE.replaceAll("_LANG_", lang));
         String query = SparqlQueryUtil.EXISTS_LANGUAGE.replaceAll("_LANG_", lang);
         return RDFQueryUtil.evaluateBQuery(query);
     }
 
     public boolean isForm(String id) throws QueryEvaluationException {
-//        BooleanQuery ask = GraphDbUtil.getConnection().prepareBooleanQuery(QueryLanguage.SPARQL,
-//                SparqlQueryUtil.IS_FORM_ID.replaceAll("_ID_", id));
         String query = SparqlQueryUtil.IS_FORM_ID.replaceAll("_ID_", id);
         return RDFQueryUtil.evaluateBQuery(query);
     }
 
     public boolean isLexicalSense(String id) throws QueryEvaluationException {
-//        BooleanQuery ask = GraphDbUtil.getConnection().prepareBooleanQuery(QueryLanguage.SPARQL,
-//                SparqlQueryUtil.IS_LEXICALSENSE_ID.replaceAll("_ID_", id));
         String query = SparqlQueryUtil.IS_LEXICALSENSE_ID.replaceAll("_ID_", id);
         return RDFQueryUtil.evaluateBQuery(query);
     }
 
     public boolean isEtymology(String id) throws QueryEvaluationException {
-//        BooleanQuery ask = GraphDbUtil.getConnection().prepareBooleanQuery(QueryLanguage.SPARQL,
-//                SparqlQueryUtil.IS_FORM_ID.replaceAll("_ID_", id));
         String query = SparqlQueryUtil.IS_ETYMOLOGY_ID.replaceAll("_ID_", id);
         return RDFQueryUtil.evaluateBQuery(query);
     }
@@ -244,6 +206,47 @@ public final class UtilityManager implements Manager, Cached {
     public boolean isCognate(String id, int n) {
         String query = SparqlQueryUtil.IS_COGNATE.replaceAll("_ID_", id).replace("_COG_NUMBER_", String.valueOf(n));
         return RDFQueryUtil.evaluateBQuery(query);
+    }
+
+    public void validateNamespace(String prefix, String baseIRI) throws ManagerException {
+        if (prefix == null || baseIRI == null) {
+            throw new ManagerException("prefix and  base IRI have to be defined");
+        }
+        if (prefix.isEmpty()) {
+            throw new ManagerException("prefix cannot be empty");
+        }
+        if (baseIRI.isEmpty()) {
+            throw new ManagerException("base IRI cannot be empty");
+        }
+        String namepsace = RDFQueryUtil.getNamespace(prefix);
+        String found = "";
+        if (namepsace == null) {
+            Iterator<Namespace> nsit = RDFQueryUtil.getNamespaces().iterator();
+            while (nsit.hasNext()) {
+                Namespace ns = nsit.next();
+                if (ns.getName().equals(baseIRI)) {
+                    found = ns.getPrefix();
+                    break;
+                }
+            }
+            if (!found.isEmpty()) {
+                throw new ManagerException(prefix + " corresponds to a different base IRI");
+            }
+        } else {
+            if (!namepsace.equals(baseIRI)) {
+                throw new ManagerException(namepsace + " already exists, but it corresponds to a different prefix");
+            }
+        }
+    }
+
+    public boolean existsNamespace(String baseIRI) throws ManagerException {
+        Iterator<Namespace> nsit = RDFQueryUtil.getNamespaces().iterator();
+        while (nsit.hasNext()) {
+            if (nsit.next().getName().equals(baseIRI)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

@@ -12,7 +12,7 @@ import org.eclipse.rdf4j.query.BindingSet;
  *
  * @author andreabellandi
  */
-public class OntolexValuesHelper extends TripleStoreDataHelper<Value> {
+public class VocabularyValuesHelper extends TripleStoreDataHelper<Value> {
 
     @Override
     public Class<Value> getDataClass() {

@@ -22,8 +22,6 @@ public class LexicalEntryCore extends Entity implements Data {
 
     @ApiModelProperty(value = "lexical entry IRI", example = "namespace:MUSaccedereVERB")
     private String lexicalEntry;
-    @ApiModelProperty(value = "lexical entry short IRI", example = "MUSaccedereVERB")
-    private String lexicalEntryInstanceName;
     @ApiModelProperty(value = "lexical entry label", example = "label for accedere")
     private String label;
     @ApiModelProperty(value = "lexical entry types", example = "word", allowableValues = "word, multi-word expression, affix, etymon, cognate")
@@ -37,13 +35,7 @@ public class LexicalEntryCore extends Entity implements Data {
     private String stemType;
     @ApiModelProperty(value = "common morphological traits of a lexical entry")
     private ArrayList<Morphology> morphology;
-//    @ApiModelProperty(value = "IRI of the concept denoted by", example = "namespace:conceptID")
-//    private String concept;
-//    @ApiModelProperty(value = "short IRI of the concept denoted by", example = "conceptID")
-//    private String conceptInstanceName;
-
     @ApiModelProperty(value = "the counting of the links of a lexical entry and their type: Reference (see Also, same As) Bilbiography, Multimedia, Attestation, Other)")
-//    private ArrayList<LexicalEntryElementItem> links;
     private ArrayList<Link> links;
     @ApiModelProperty(value = "lexical entry author (who completes the entry) ", example = "user9")
     private String author;
@@ -64,14 +56,6 @@ public class LexicalEntryCore extends Entity implements Data {
 
     public void setLexicalEntry(String lexicalEntry) {
         this.lexicalEntry = lexicalEntry;
-    }
-
-    public String getLexicalEntryInstanceName() {
-        return lexicalEntryInstanceName;
-    }
-
-    public void setLexicalEntryInstanceName(String lexicalEntryInstanceName) {
-        this.lexicalEntryInstanceName = lexicalEntryInstanceName;
     }
 
     public String getLabel() {

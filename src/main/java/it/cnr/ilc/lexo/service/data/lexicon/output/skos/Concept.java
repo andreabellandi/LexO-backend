@@ -20,8 +20,6 @@ public class Concept extends SKOSClass implements Data {
 
     @ApiModelProperty(value = "IRI")
     private String concept;
-    @ApiModelProperty(value = "short IRI")
-    private String conceptInstanceName;
     @ApiModelProperty(value = "the list of relations the lexical concept is involved in")
     private List<GroupedLinkedEntity> entities;
 
@@ -31,9 +29,7 @@ public class Concept extends SKOSClass implements Data {
 
     public void setEntities(List<GroupedLinkedEntity> entities) {
         this.entities = entities;
-    }
-    
-    
+    }   
 
     public String getConcept() {
         return concept;
@@ -42,14 +38,4 @@ public class Concept extends SKOSClass implements Data {
     public void setConcept(String concept) {
         this.concept = concept;
     }
-
-    public String getConceptInstanceName() {
-        return conceptInstanceName;
-    }
-
-    public void setConceptInstanceName(String conceptInstanceName) {
-        this.conceptInstanceName = conceptInstanceName;
-    }
-
-
 }

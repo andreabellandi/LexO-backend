@@ -19,8 +19,6 @@ public class LinkedEntity implements Data {
 
     @ApiModelProperty(value = "lexical entity IRI")
     private String entity;
-    @ApiModelProperty(value = "lexical entity shor IRI")
-    private String entityInstanceName;
     @ApiModelProperty(value = "lexical entity label")
     private String label;
     @ApiModelProperty(value = "lexical entity type")
@@ -38,14 +36,6 @@ public class LinkedEntity implements Data {
 
     public void setEntity(String entity) {
         this.entity = entity;
-    }
-
-    public String getEntityInstanceName() {
-        return entityInstanceName;
-    }
-
-    public void setEntityInstanceName(String entityInstanceName) {
-        this.entityInstanceName = entityInstanceName;
     }
 
     public String getLabel() {

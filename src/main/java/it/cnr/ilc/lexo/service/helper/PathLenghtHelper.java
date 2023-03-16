@@ -25,9 +25,7 @@ public class PathLenghtHelper extends TripleStoreDataHelper<RelationPath> {
     public void fillData(RelationPath data, BindingSet bs) {
         data.setLenght(getIntegerNumber(bs, SparqlVariable.LENGHT));
         data.setLexicalEntry(getStringValue(bs, SparqlVariable.LEXICAL_ENTRY));
-        data.setLexicalEntryInstanceName(getLocalName(bs, SparqlVariable.LEXICAL_ENTRY));
         data.setLexicalSense(getStringValue(bs, SparqlVariable.IRI));
-        data.setLexicalSenseInstanceName(getLocalName(bs, SparqlVariable.IRI));
     }
     
     

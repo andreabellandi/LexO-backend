@@ -25,12 +25,9 @@ public class Form extends Entity implements Data {
     private String label;
     @ApiModelProperty(value = "form morphology")
     private ArrayList<Morphology> morphology;
-//    @ApiModelProperty(value = "form IRI", example = "namespace:MUSaccedereVERB")
-//    private String formInstanceName;
-    @ApiModelProperty(value = "lexical entry short IRI", example = "MUSaccedereVERB")
     private String formType;
-    private String lexicalEntryInstanceName;
-    private String targetSenseInstanceName;
+    private String lexicalEntry;
+    private String targetSense;
     private String definition;
 
     public Form() {
@@ -44,12 +41,12 @@ public class Form extends Entity implements Data {
         this.morphology = morphology;
     }
 
-    public String getLexicalEntryInstanceName() {
-        return lexicalEntryInstanceName;
+    public String getLexicalEntry() {
+        return lexicalEntry;
     }
 
-    public void setLexicalEntryInstanceName(String lexicalEntryInstanceName) {
-        this.lexicalEntryInstanceName = lexicalEntryInstanceName;
+    public void setLexicalEntry(String lexicalEntry) {
+        this.lexicalEntry = lexicalEntry;
     }
 
     public String getLabel() {
@@ -60,12 +57,12 @@ public class Form extends Entity implements Data {
         this.label = label;
     }
 
-    public String getTargetSenseInstanceName() {
-        return targetSenseInstanceName;
+    public String getTargetSense() {
+        return targetSense;
     }
 
-    public void setTargetSenseInstanceName(String targetSenseInstanceName) {
-        this.targetSenseInstanceName = targetSenseInstanceName;
+    public void setTargetSense(String targetSense) {
+        this.targetSense = targetSense;
     }
 
     public String getFormType() {

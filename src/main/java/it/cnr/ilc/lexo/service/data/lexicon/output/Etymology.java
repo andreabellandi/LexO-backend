@@ -22,32 +22,13 @@ public class Etymology extends Entity implements Data {
 
     @ApiModelProperty(value = "etymology IRI")
     private String etymology;
-    @ApiModelProperty(value = "etymology short IRI")
-    private String etymologyInstanceName;
     @ApiModelProperty(value = "label")
     private String label;
     @ApiModelProperty(value = "the counting of the links of a lexical entry and their type: Reference (see Also, same As) Bilbiography, Multimedia, Attestation, Other)")
     private ArrayList<Link> links;
     @ApiModelProperty(value = "string representing the name of who made the hypothesis")
     private String hypothesisOf;
-//    @ApiModelProperty(value = "etyLink IRI")
-//    private String etyLink;
-//    @ApiModelProperty(value = "etyLink short IRI")
-//    private String etyLinkInstanceName;
-//    @ApiModelProperty(value = "etyLink type", allowableValues = "inheritance, borrowing")
-//    private String etyLinkType;
-//    @ApiModelProperty(value = "etySource IRI")
-//    private String etySource;
-//    @ApiModelProperty(value = "etySource short IRI")
-//    private String etyTarget;
-//    @ApiModelProperty(value = "etyTarget IRI")
-//    private String etySourceInstanceName;
-//    @ApiModelProperty(value = "etyTarget short IRI")
-//    private String etyTargetInstanceName;
-//    @ApiModelProperty(value = "etySource label")
-//    private String etySourceLabel;
-//    @ApiModelProperty(value = "etyTarget label")
-//    private String etyTargetLabel;
+
     @ApiModelProperty(value = "etymology note", example = "some note ...")
     private String note;
 
@@ -57,14 +38,6 @@ public class Etymology extends Entity implements Data {
 
     public void setEtymology(String etymology) {
         this.etymology = etymology;
-    }
-
-    public String getEtymologyInstanceName() {
-        return etymologyInstanceName;
-    }
-
-    public void setEtymologyInstanceName(String etymologyInstanceName) {
-        this.etymologyInstanceName = etymologyInstanceName;
     }
 
     public String getLabel() {

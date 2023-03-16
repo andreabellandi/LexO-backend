@@ -21,8 +21,8 @@ public class BibliographicItem extends Entity implements Data {
     private String id;
     @ApiModelProperty(value = "internal bibliographic IRI")
     private String bibliography;
-    @ApiModelProperty(value = "internal bibliographic Ishort RI")
-    private String bibliographyInstanceName;
+//    @ApiModelProperty(value = "internal bibliographic Ishort RI")
+//    private String bibliographyInstanceName;
     @ApiModelProperty(value = "title of the bibliographic item")
     private String title;
     @ApiModelProperty(value = "authors of the bibliographic item")
@@ -44,14 +44,6 @@ public class BibliographicItem extends Entity implements Data {
 
     public void setBibliography(String bibliography) {
         this.bibliography = bibliography;
-    }
-
-    public String getBibliographyInstanceName() {
-        return bibliographyInstanceName;
-    }
-
-    public void setBibliographyInstanceName(String bibliographyInstanceName) {
-        this.bibliographyInstanceName = bibliographyInstanceName;
     }
 
     public String getId() {

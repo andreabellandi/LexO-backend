@@ -15,9 +15,7 @@ import it.cnr.ilc.lexo.service.data.Data;
 public class LexicalSenseItem extends Entity implements Data {
 
     private String sense;
-    private String senseInstanceName;
     private String lexicalEntry;
-    private String lexicalEntryInstanceName;
     private String pos;
     private String lemma;
     private boolean hasChildren;
@@ -26,7 +24,7 @@ public class LexicalSenseItem extends Entity implements Data {
     private String note;
     private String usage;
     private String concept;
-    private String conceptInstanceName;
+//    private String conceptInstanceName;
     private String description;
     private String gloss;
     private String senseExample;
@@ -47,14 +45,6 @@ public class LexicalSenseItem extends Entity implements Data {
 
     public void setLemma(String lemma) {
         this.lemma = lemma;
-    }
-
-    public String getSenseInstanceName() {
-        return senseInstanceName;
-    }
-
-    public void setSenseInstanceName(String senseInstanceName) {
-        this.senseInstanceName = senseInstanceName;
     }
 
     public String getLexicalEntry() {
@@ -119,22 +109,6 @@ public class LexicalSenseItem extends Entity implements Data {
 
     public void setConcept(String concept) {
         this.concept = concept;
-    }
-
-    public String getConceptInstanceName() {
-        return conceptInstanceName;
-    }
-
-    public void setConceptInstanceName(String conceptInstanceName) {
-        this.conceptInstanceName = conceptInstanceName;
-    }
-
-    public String getLexicalEntryInstanceName() {
-        return lexicalEntryInstanceName;
-    }
-
-    public void setLexicalEntryInstanceName(String lexicalEntryInstanceName) {
-        this.lexicalEntryInstanceName = lexicalEntryInstanceName;
     }
 
     public String getDescription() {

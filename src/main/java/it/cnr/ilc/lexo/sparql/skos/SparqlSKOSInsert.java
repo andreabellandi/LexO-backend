@@ -16,7 +16,7 @@ public class SparqlSKOSInsert {
     public static final String CREATE_RELATION
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
             + "DELETE { _ID_ dct:modified ?modified . } \n"
-            + "INSERT { _ID_ _RELATION_ _VALUE_TO_INSERT_ ;\n"
+            + "INSERT { _ID_ <_RELATION_> _VALUE_TO_INSERT_ ;\n"
             + "                  dct:modified _LAST_UPDATE_ . }\n"
             + "WHERE {  OPTIONAL { _ID_ dct:modified ?modified . } }";
     

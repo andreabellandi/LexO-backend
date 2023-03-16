@@ -5,7 +5,6 @@
  */
 package it.cnr.ilc.lexo.service.data.lexicon.input.graphViz;
 
-import it.cnr.ilc.lexo.service.data.lexicon.input.*;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -18,9 +17,9 @@ public class EdgeGraphFilter {
 
     @ApiModelProperty(value = "realtion name", example = "hyponym", allowEmptyValue = false, allowableValues = "synonym, hyponym, meronym")
     private String relation;
-    @ApiModelProperty(value = "id source node", example = "USem60701abbattimento", allowEmptyValue = false)
+    @ApiModelProperty(value = "id source node", allowEmptyValue = false)
     private String source;
-    @ApiModelProperty(value = "id target node", example = "USem6521reazione", allowEmptyValue = false)
+    @ApiModelProperty(value = "id target node", allowEmptyValue = false)
     private String target;
 
     public String getRelation() {

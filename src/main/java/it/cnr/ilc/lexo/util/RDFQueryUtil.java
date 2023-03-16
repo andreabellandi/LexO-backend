@@ -12,10 +12,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
-import java.util.logging.Level;
 import org.apache.commons.io.IOUtils;
+import org.eclipse.rdf4j.model.Namespace;
 import org.eclipse.rdf4j.model.Resource;
-import org.eclipse.rdf4j.model.Value;
 import org.eclipse.rdf4j.model.util.Values;
 import org.eclipse.rdf4j.query.BooleanQuery;
 import org.eclipse.rdf4j.query.MalformedQueryException;
@@ -26,6 +25,7 @@ import org.eclipse.rdf4j.query.TupleQueryResult;
 import org.eclipse.rdf4j.query.Update;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.repository.RepositoryException;
+import org.eclipse.rdf4j.repository.RepositoryResult;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.RDFWriter;
 import org.eclipse.rdf4j.rio.Rio;
@@ -39,6 +39,34 @@ import org.slf4j.LoggerFactory;
 public class RDFQueryUtil {
 
     static final Logger logger = LoggerFactory.getLogger(RDFQueryUtil.class.getName());
+
+    public static String getNamespace(String prefix) {
+        RepositoryConnection conn = GraphDbUtil.getConnection();
+        try {
+            if (null != conn) {
+                return conn.getNamespace(prefix);
+            }
+        } catch (MalformedQueryException | QueryEvaluationException | RepositoryException e) {
+            logger.error("", e);
+        } finally {
+            GraphDbUtil.releaseConnection(conn);
+        }
+        return null;
+    }
+    
+    public static RepositoryResult<Namespace> getNamespaces() {
+        RepositoryConnection conn = GraphDbUtil.getConnection();
+        try {
+            if (null != conn) {
+                return conn.getNamespaces();
+            }
+        } catch (MalformedQueryException | QueryEvaluationException | RepositoryException e) {
+            logger.error("", e);
+        } finally {
+            GraphDbUtil.releaseConnection(conn);
+        }
+        return null;
+    }
 
     public static TupleQueryResult evaluateTQuery(String query) {
         TupleQueryResult tqr = null;

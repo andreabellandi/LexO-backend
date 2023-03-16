@@ -1,6 +1,8 @@
 package it.cnr.ilc.lexo.util;
 
-import java.text.Normalizer;
+import it.cnr.ilc.lexo.manager.ManagerException;
+import it.cnr.ilc.lexo.manager.ManagerFactory;
+import it.cnr.ilc.lexo.manager.UtilityManager;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -78,4 +80,34 @@ public class StringUtil {
         return false;
     }
 
+    public static boolean existsIRI(String id) throws ManagerException {
+        UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+        if (!utilityManager.exists(id)) {
+            return false;
+        }
+        return true;
+    }
+    
+    public static boolean existsTypedIRI(String id, String type) throws ManagerException {
+        UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+        if (!utilityManager.existsTyped(id, type)) {
+            return false;
+        }
+        return true;
+    }
+    
+    public static void validateIRI(String iri) throws ManagerException {
+        if (iri != null) {
+            if (iri.isEmpty()) {
+                throw new ManagerException("cannot be empty");
+            } else {
+                if (!ManagerFactory.getManager(UtilityManager.class).existsNamespace(iri)) {
+                    throw new ManagerException("is not a valid IRI");
+                } 
+            }
+        } else {
+            throw new ManagerException("cannot be undefined");
+        }
+    }
+    
 }

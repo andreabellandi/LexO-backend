@@ -6,6 +6,9 @@
 package it.cnr.ilc.lexo.service.helper;
 
 import it.cnr.ilc.lexo.LexOProperties;
+import it.cnr.ilc.lexo.manager.ManagerException;
+import it.cnr.ilc.lexo.manager.ManagerFactory;
+import it.cnr.ilc.lexo.manager.UtilityManager;
 import it.cnr.ilc.lexo.service.data.Data;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Morphology;
 import it.cnr.ilc.lexo.service.data.lexicon.output.graphViz.NodeLinks;
@@ -13,7 +16,6 @@ import it.cnr.ilc.lexo.util.StringUtil;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.eclipse.rdf4j.model.IRI;
@@ -28,13 +30,13 @@ import org.eclipse.rdf4j.query.TupleQueryResult;
  */
 public abstract class TripleStoreDataHelper<D extends Data> extends Helper<D> {
 
-    private final String MORPHOLOGY_PATTERN = "(([a-zA-Z-]+):(([a-zA-Z-]+\\s?)+));?";
-    private final Pattern morphoPattern = Pattern.compile(MORPHOLOGY_PATTERN);
-
-    private final String TYPE_PATTERN = "#([\\w\\-]+)";
-    private final Pattern typePattern = Pattern.compile(TYPE_PATTERN);
-
-    private final String namespace = LexOProperties.getProperty("repository.lexicon.namespace");
+//    private final String MORPHOLOGY_PATTERN = "(([a-zA-Z-]+):(([a-zA-Z-]+\\s?)+));?";
+//    private final Pattern morphoPattern = Pattern.compile(MORPHOLOGY_PATTERN);
+//
+//    private final String TYPE_PATTERN = "#([\\w\\-]+)";
+//    private final Pattern typePattern = Pattern.compile(TYPE_PATTERN);
+//
+//    private final String namespace = LexOProperties.getProperty("repository.lexicon.namespace");
 
     public abstract void fillData(D data, BindingSet bs);
 
@@ -108,12 +110,26 @@ public abstract class TripleStoreDataHelper<D extends Data> extends Helper<D> {
         return types;
     }
 
+    public ArrayList<String> getCatalogs(BindingSet bs, String _cats) {
+        ArrayList<String> types = new ArrayList();
+        if (!_cats.isEmpty()) {
+            for (String t : _cats.split(";")) {
+                types.add(t.trim());
+            }
+        }
+        return types;
+    }
+
     public ArrayList<Morphology> getMorphology(BindingSet bs, String morpho) {
         ArrayList<Morphology> morphos = new ArrayList();
         if (!morpho.isEmpty()) {
-            Matcher matcher = morphoPattern.matcher(morpho);
-            while (matcher.find()) {
-                morphos.add(new Morphology(matcher.group(2), matcher.group(3)));
+//            Matcher matcher = morphoPattern.matcher(morpho);
+//            while (matcher.find()) {
+//                morphos.add(new Morphology(matcher.group(2), matcher.group(3)));
+//            }
+            for (String m : morpho.split(";")) {
+                String[] _m = m.split("<>");
+                morphos.add(new Morphology(_m[0], _m[1]));
             }
         }
         return morphos;
@@ -138,9 +154,13 @@ public abstract class TripleStoreDataHelper<D extends Data> extends Helper<D> {
             morphos.add(new Morphology("partOfSpeech", pos));
         }
         if (!morpho.isEmpty()) {
-            Matcher matcher = morphoPattern.matcher(morpho);
-            while (matcher.find()) {
-                morphos.add(new Morphology(matcher.group(2), matcher.group(3)));
+//            Matcher matcher = morphoPattern.matcher(morpho);
+//            while (matcher.find()) {
+//                morphos.add(new Morphology(matcher.group(2), matcher.group(3)));
+//            }
+            for (String m : morpho.split(";")) {
+                String[] _m = m.split("<>");
+                morphos.add(new Morphology(_m[0], _m[1]));
             }
         }
         return morphos;
@@ -148,7 +168,12 @@ public abstract class TripleStoreDataHelper<D extends Data> extends Helper<D> {
 
     public boolean isExternalUri(String uri) {
         if (StringUtil.validateURL(uri)) {
-            if (!uri.contains(namespace)) {
+            try {
+                if (!ManagerFactory.getManager(UtilityManager.class).existsNamespace(uri)) {
+//            if (!uri.contains(namespace)) {
+                    return true;
+                }
+            } catch (ManagerException ex) {
                 return true;
             }
         }

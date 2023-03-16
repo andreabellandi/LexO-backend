@@ -39,9 +39,7 @@ import org.eclipse.rdf4j.query.TupleQueryResult;
  */
 public class SKOSManager implements Manager, Cached {
 
-    private final String namespace = LexOProperties.getProperty("repository.lexicon.namespace");
     private final String idInstancePrefix = LexOProperties.getProperty("repository.instance.id");
-    private final String lexicalConceptNs = LexOProperties.getProperty("repository.lexicon.lexicalConcept.namespace");
     private final String lexicalizationModel = LexOProperties.getProperty("skos.lexicalizationModel");
     private final String defaultLanguageLabel = LexOProperties.getProperty("skos.defaultLanguageLabel");
 
@@ -51,10 +49,6 @@ public class SKOSManager implements Manager, Cached {
 
     private static final ValueFactory skosFactory = SimpleValueFactory.getInstance();
     private static final UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
-
-    public String getNamespace() {
-        return namespace;
-    }
 
     @Override
     public void reloadCache() {
@@ -125,28 +119,32 @@ public class SKOSManager implements Manager, Cached {
         }
     }
 
-    public LexicalConcept createLexicalConcept(String author) throws ManagerException {
+    public LexicalConcept createLexicalConcept(String author, String prefix, String baseIRI) throws ManagerException {
         Timestamp tm = new Timestamp(System.currentTimeMillis());
         String id = idInstancePrefix + tm.toString();
         String created = timestampFormat.format(tm);
-        String _id = id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
+        String sparqlPrefix = "PREFIX " + prefix + ": <" + baseIRI + ">";
+        String _id = baseIRI + id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
         String label = lexicalizationModel.equals("label") ? "rdfs:label" : (lexicalizationModel.equals("skos") ? "skos:prefLabel" : "skos:prefLabel");
-        RDFQueryUtil.update(SparqlInsertData.CREATE_LEXICAL_CONCEPT.replaceAll("_ID_", "<" + lexicalConceptNs + _id + ">")
+        RDFQueryUtil.update(SparqlInsertData.CREATE_LEXICAL_CONCEPT.replaceAll("_ID_", _id)
                 .replace("_AUTHOR_", author)
                 .replace("_CREATED_", created)
+                .replace("_PREFIX_", sparqlPrefix)
                 .replace("_MODIFIED_", created)
                 .replace("_LABEL_", label + " \"" + _id + "\"@" + defaultLanguageLabel));
         return setLexicalConcept(_id, created, author);
     }
 
-    public ConceptSet createConceptSet(String author) throws ManagerException {
+    public ConceptSet createConceptSet(String author, String prefix, String baseIRI) throws ManagerException {
         Timestamp tm = new Timestamp(System.currentTimeMillis());
         String id = idInstancePrefix + tm.toString();
         String created = timestampFormat.format(tm);
-        String _id = id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
+        String sparqlPrefix = "PREFIX " + prefix + ": <" + baseIRI + ">";
+        String _id = baseIRI + id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
         String label = lexicalizationModel.equals("label") ? "rdfs:label" : (lexicalizationModel.equals("skos") ? "skos:prefLabel" : "label");
-        RDFQueryUtil.update(SparqlInsertData.CREATE_CONCEPT_SET.replaceAll("_ID_", "<" + lexicalConceptNs + _id + ">")
+        RDFQueryUtil.update(SparqlInsertData.CREATE_CONCEPT_SET.replaceAll("_ID_", _id)
                 .replace("_AUTHOR_", author)
+                .replace("_PREFIX_", sparqlPrefix)
                 .replace("_CREATED_", created)
                 .replace("_MODIFIED_", created)
                 .replace("_LABEL_", label + " \"" + _id + "\"@" + defaultLanguageLabel));
@@ -156,43 +154,35 @@ public class SKOSManager implements Manager, Cached {
     private LexicalConcept setLexicalConcept(String id, String created, String author) {
         LexicalConcept lc = new LexicalConcept();
         lc.setCreator(author);
-        lc.setLexicalConceptInstanceName(id);
-        lc.setLexicalConcept(lexicalConceptNs + id);
+        lc.setLexicalConcept(id);
         lc.setLastUpdate(created);
         lc.setConfidence(-1.0);
         lc.setCreationDate(created);
-        lc.setDefaultLabel(id + "@" + defaultLanguageLabel);
+        lc.setDefaultLabel(id);
+        lc.setLanguage(defaultLanguageLabel);
         return lc;
     }
 
     private ConceptSet setConceptSet(String id, String created, String author) {
         ConceptSet cs = new ConceptSet();
         cs.setCreator(author);
-        cs.setConceptSetInstanceName(id);
-        cs.setConceptSet(lexicalConceptNs + id);
+        cs.setConceptSet(id);
         cs.setLastUpdate(created);
         cs.setCreationDate(created);
         cs.setConfidence(-1.0);
-        cs.setDefaultLabel(id + "@" + defaultLanguageLabel);
+        cs.setDefaultLabel(id);
+        cs.setLanguage(defaultLanguageLabel);
         return cs;
     }
 
-    private List<Label> getDefaultLabel(String id) {
-        ArrayList<Label> labels = new ArrayList();
-        Label l = new Label();
-        l.setLabel(id);
-        l.setLanguage(defaultLanguageLabel);
-        l.setType(lexicalizationModel.equals("label") ? SparqlPrefix.RDFS.getUri() + "label" : SparqlPrefix.SKOS.getUri() + "prefLabel");
-        labels.add(l);
-        return labels;
-    }
-
-    public void deleteLexicalConcept(String id) throws ManagerException {
+    public String deleteLexicalConcept(String id) throws ManagerException {
         RDFQueryUtil.update(SparqlDeleteData.DELETE_LEXICAL_CONCEPT.replaceAll("_ID_", id));
+        return timestampFormat.format(new Timestamp(System.currentTimeMillis()));
     }
 
-    public void deleteConceptSet(String id) throws ManagerException {
+    public String deleteConceptSet(String id) throws ManagerException {
         RDFQueryUtil.update(SparqlDeleteData.DELETE_CONCEPT_SET.replaceAll("_ID_", id));
+        return timestampFormat.format(new Timestamp(System.currentTimeMillis()));
     }
 
     private String getTarget(SKOSUpdater su) {
@@ -207,16 +197,16 @@ public class SKOSManager implements Manager, Cached {
 
         if (utilityManager.existsSKOSRelation(su.getSource(), su.getRelation(), "<" + getTarget(su) + ">")) {
             // update
-            entityCheck(su.getOldTarget(), SparqlPrefix.SKOS.getUri() + SKOSEntity.SKOSClass.Concept.toString());
+            entityCheck(su.getOldTarget(), SKOSEntity.SKOSClass.Concept.toString());
             return update(su);
         } else {
             // new
             relationCheck(su.getRelation());
-            IRI relation = skosFactory.createIRI(su.getRelation());
-            validateScheme(relation.getNamespace(), null);
-            validateSemanticRelation(relation.getLocalName());
-            entityCheck(su.getSource(), SparqlPrefix.SKOS.getUri() + SKOSEntity.SKOSClass.Concept.toString());
-            entityCheck(su.getTarget(), SparqlPrefix.SKOS.getUri() + SKOSEntity.SKOSClass.Concept.toString());
+//            IRI relation = skosFactory.createIRI(su.getRelation());
+//            validateScheme(relation.getNamespace(), null);
+            validateSemanticRelation(su.getRelation());
+            entityCheck(su.getSource(), SKOSEntity.SKOSClass.Concept.toString());
+            entityCheck(su.getTarget(), SKOSEntity.SKOSClass.Concept.toString());
             return create(su);
         }
     }
@@ -229,19 +219,19 @@ public class SKOSManager implements Manager, Cached {
         if (utilityManager.existsSKOSRelation(su.getSource(), su.getRelation(), "<" + getTarget(su) + ">")) {
             // update
             entityCheck(su.getOldTarget(),
-                    su.getRelation().equals(SparqlPrefix.SKOS.getUri() + SKOSEntity.SchemeProperty.hasTopConcept.toString())
-                    ? SparqlPrefix.SKOS.getUri() + SKOSEntity.SKOSClass.Concept.toString() : SparqlPrefix.SKOS.getUri() + SKOSEntity.SKOSClass.ConceptScheme.toString());
+                    su.getRelation().equals(SKOSEntity.SchemeProperty.hasTopConcept.toString())
+                    ? SKOSEntity.SKOSClass.Concept.toString() : SKOSEntity.SKOSClass.ConceptScheme.toString());
             return update(su);
         } else {
             // new
             relationCheck(su.getRelation());
-            IRI relation = skosFactory.createIRI(su.getRelation());
-            validateScheme(relation.getNamespace(), null);
-            validateSchemeRelation(relation.getLocalName());
-            entityCheck(su.getSource(), su.getRelation().equals(SparqlPrefix.SKOS.getUri() + SKOSEntity.SchemeProperty.hasTopConcept.toString())
-                    ? SparqlPrefix.SKOS.getUri() + SKOSEntity.SKOSClass.ConceptScheme.toString() : SparqlPrefix.SKOS.getUri() + SKOSEntity.SKOSClass.Concept.toString());
-            entityCheck(su.getTarget(), su.getRelation().equals(SparqlPrefix.SKOS.getUri() + SKOSEntity.SchemeProperty.hasTopConcept.toString())
-                    ? SparqlPrefix.SKOS.getUri() + SKOSEntity.SKOSClass.Concept.toString() : SparqlPrefix.SKOS.getUri() + SKOSEntity.SKOSClass.ConceptScheme.toString());
+//            IRI relation = skosFactory.createIRI(su.getRelation());
+//            validateScheme(relation.getNamespace(), null);
+            validateSchemeRelation(su.getRelation());
+            entityCheck(su.getSource(), su.getRelation().equals(SKOSEntity.SchemeProperty.hasTopConcept.toString())
+                    ? SKOSEntity.SKOSClass.ConceptScheme.toString() : SKOSEntity.SKOSClass.Concept.toString());
+            entityCheck(su.getTarget(), su.getRelation().equals(SKOSEntity.SchemeProperty.hasTopConcept.toString())
+                    ? SKOSEntity.SKOSClass.Concept.toString() : SKOSEntity.SKOSClass.ConceptScheme.toString());
             return create(su);
         }
     }
@@ -253,16 +243,16 @@ public class SKOSManager implements Manager, Cached {
         }
         if (utilityManager.existsSKOSRelation(su.getSource(), su.getRelation(), "<" + getTarget(su) + ">")) {
             // update
-            entityCheck(su.getOldTarget(), SparqlPrefix.SKOS.getUri() + SKOSEntity.SKOSClass.Concept.toString());
+            entityCheck(su.getOldTarget(), SKOSEntity.SKOSClass.Concept.toString());
             return update(su);
         } else {
             // new
             relationCheck(su.getRelation());
-            IRI relation = skosFactory.createIRI(su.getRelation());
-            validateScheme(relation.getNamespace(), null);
-            validateMappingRelation(relation.getLocalName());
-            entityCheck(su.getSource(), SparqlPrefix.SKOS.getUri() + SKOSEntity.SKOSClass.Concept.toString());
-            entityCheck(su.getTarget(), SparqlPrefix.SKOS.getUri() + SKOSEntity.SKOSClass.Concept.toString());
+//            IRI relation = skosFactory.createIRI(su.getRelation());
+//            validateScheme(relation.getNamespace(), null);
+            validateMappingRelation(su.getRelation());
+            entityCheck(su.getSource(), SKOSEntity.SKOSClass.Concept.toString());
+            entityCheck(su.getTarget(), SKOSEntity.SKOSClass.Concept.toString());
             return create(su);
         }
     }
@@ -272,16 +262,16 @@ public class SKOSManager implements Manager, Cached {
         if (!inputCheck(su, true)) {
             throw new ManagerException("input json does not contain all the needed fields");
         }
-        if (utilityManager.existsSKOSRelation(su.getSource(), su.getRelation(), "\"" + getTarget(su) + "\"@" + su.getLanguage())) {
+        if (utilityManager.existsSKOSRelation(su.getSource(), su.getRelation(), "\"" + getTarget(su) + "\"@" + su.getTargetLanguage())) {
             // update
             return updateLiteral(su);
         } else {
             // new
             relationCheck(su.getRelation());
-            IRI relation = skosFactory.createIRI(su.getRelation());
-            validateScheme(relation.getNamespace(), null);
-            validateNotation(relation.getLocalName());
-            validateLanguage(su.getLanguage());
+//            IRI relation = skosFactory.createIRI(su.getRelation());
+//            validateScheme(relation.getNamespace(), null);
+            validateNotation(su.getRelation());
+            validateLanguage(su.getTargetLanguage());
             return createLiteral(su);
         }
     }
@@ -291,16 +281,16 @@ public class SKOSManager implements Manager, Cached {
         if (!inputCheck(su, true)) {
             throw new ManagerException("input json does not contain all the needed fields");
         }
-        if (utilityManager.existsSKOSRelation(su.getSource(), su.getRelation(), "\"" + getTarget(su) + "\"@" + su.getLanguage())) {
+        if (utilityManager.existsSKOSRelation(su.getSource(), su.getRelation(), "\"" + getTarget(su) + "\"@" + su.getTargetLanguage())) {
             // update
             return updateLiteral(su);
         } else {
             // new
             relationCheck(su.getRelation());
-            IRI relation = skosFactory.createIRI(su.getRelation());
-            validateScheme(relation.getNamespace(), null);
-            validateNoteRelation(relation.getLocalName());
-            validateLanguage(su.getLanguage());
+//            IRI relation = skosFactory.createIRI(su.getRelation());
+//            validateScheme(relation.getNamespace(), null);
+            validateNoteRelation(su.getRelation());
+            validateLanguage(su.getTargetLanguage());
             return createLiteral(su);
         }
     }
@@ -324,16 +314,16 @@ public class SKOSManager implements Manager, Cached {
     }
 
     private String updateLexicalPropertyLabel(SKOSUpdater su) throws ManagerException, IllegalArgumentException {
-        if (su.getOldTarget() != null) {
-            if (!su.getOldTarget().isEmpty()) {
+        if (su.getOldTarget() != null && su.getOldTargetLanguage() != null) {
+            if (!su.getOldTarget().isEmpty() && !su.getOldTargetLanguage().isEmpty()) {
                 // update 
-                if (utilityManager.existsSKOSRelation(su.getSource(), su.getRelation(), "\"" + su.getOldTarget() + "\"@" + su.getLanguage())) {
+                if (utilityManager.existsSKOSRelation(su.getSource(), su.getRelation(), "\"" + su.getOldTarget() + "\"@" + su.getOldTargetLanguage())) {
                     return updateLiteral(su);
                 } else {
-                    throw new ManagerException(su.getSource() + " " + su.getRelation() + " \"" + su.getOldTarget() + "\"@" + su.getLanguage() + " does not exist");
+                    throw new ManagerException(su.getSource() + " " + su.getRelation() + " \"" + su.getOldTarget() + "\"@" + su.getOldTargetLanguage() + " does not exist");
                 }
             } else {
-                throw new ManagerException("oldTarget field cannot be empty");
+                throw new ManagerException("oldTarget or oldTargetLanguage field cannot be empty");
             }
         } else {
             // create 
@@ -341,8 +331,8 @@ public class SKOSManager implements Manager, Cached {
             IRI relation = skosFactory.createIRI(su.getRelation());
             validateScheme(relation.getNamespace(), SparqlPrefix.RDFS.getUri());
             validateLexicalizationModel(relation.getLocalName());
-            validateLanguage(su.getLanguage());
-            if (utilityManager.existsLabel(su.getSource(), su.getRelation(), su.getLanguage())) {
+            validateLanguage(su.getTargetLanguage());
+            if (utilityManager.existsLabel(su.getSource(), su.getRelation(), su.getTargetLanguage())) {
                 throw new ManagerException("one label for each language is allowed only");
             }
             return createLiteral(su);
@@ -350,16 +340,16 @@ public class SKOSManager implements Manager, Cached {
     }
 
     private String updateLexicalPropertySKOS(SKOSUpdater su) throws ManagerException {
-        if (su.getOldTarget() != null) {
-            if (!su.getOldTarget().isEmpty()) {
+        if (su.getOldTarget() != null && su.getOldTargetLanguage() != null) {
+            if (!su.getOldTarget().isEmpty() && !su.getOldTargetLanguage().isEmpty()) {
                 // update 
-                if (utilityManager.existsSKOSRelation(su.getSource(), su.getRelation(), "\"" + su.getOldTarget() + "\"@" + su.getLanguage())) {
+                if (utilityManager.existsSKOSRelation(su.getSource(), su.getRelation(), "\"" + su.getOldTarget() + "\"@" + su.getOldTargetLanguage())) {
                     return updateLiteral(su);
                 } else {
-                    throw new ManagerException(su.getSource() + " " + su.getRelation() + " \"" + su.getOldTarget() + "\"@" + su.getLanguage() + " does not exist");
+                    throw new ManagerException(su.getSource() + " " + su.getRelation() + " \"" + su.getOldTarget() + "\"@" + su.getOldTargetLanguage() + " does not exist");
                 }
             } else {
-                throw new ManagerException("oldTarget field cannot be empty");
+                throw new ManagerException("oldTarget or oldTargetLanguage field cannot be empty");
             }
         } else {
             // create 
@@ -367,8 +357,8 @@ public class SKOSManager implements Manager, Cached {
             IRI relation = skosFactory.createIRI(su.getRelation());
             validateScheme(relation.getNamespace(), SparqlPrefix.SKOS.getUri());
             validateLexicalizationModel(relation.getLocalName());
-            validateLanguage(su.getLanguage());
-            if (utilityManager.existsLabel(su.getSource(), su.getRelation(), su.getLanguage())) {
+            validateLanguage(su.getTargetLanguage());
+            if (utilityManager.existsLabel(su.getSource(), su.getRelation(), su.getTargetLanguage())) {
                 throw new ManagerException("one label for each language is allowed only");
             }
             return createLiteral(su);
@@ -382,7 +372,7 @@ public class SKOSManager implements Manager, Cached {
     private String update(SKOSUpdater su) {
         String lastupdate = timestampFormat.format(new Timestamp(System.currentTimeMillis()));
         RDFQueryUtil.update(SparqlSKOSUpdate.UPDATE_RELATION.replaceAll("_ID_", "<" + su.getSource() + ">")
-                .replaceAll("_RELATION_", "<" + su.getRelation() + ">")
+                .replaceAll("_RELATION_", su.getRelation())
                 .replaceAll("_VALUE_TO_INSERT_", "<" + su.getTarget() + ">")
                 .replaceAll("_VALUE_TO_DELETE_", "<" + su.getOldTarget() + ">")
                 .replaceAll("_LAST_UPDATE_", "\"" + lastupdate + "\""));
@@ -392,9 +382,9 @@ public class SKOSManager implements Manager, Cached {
     private String updateLiteral(SKOSUpdater su) {
         String lastupdate = timestampFormat.format(new Timestamp(System.currentTimeMillis()));
         RDFQueryUtil.update(SparqlSKOSUpdate.UPDATE_RELATION.replaceAll("_ID_", "<" + su.getSource() + ">")
-                .replaceAll("_RELATION_", "<" + su.getRelation() + ">")
-                .replaceAll("_VALUE_TO_INSERT_", "\"" + su.getTarget() + "\"@" + su.getLanguage())
-                .replaceAll("_VALUE_TO_DELETE_", "\"" + su.getOldTarget() + "\"@" + su.getLanguage())
+                .replaceAll("_RELATION_", su.getRelation())
+                .replaceAll("_VALUE_TO_INSERT_", "\"" + su.getTarget() + "\"@" + su.getTargetLanguage())
+                .replaceAll("_VALUE_TO_DELETE_", "\"" + su.getOldTarget() + "\"@" + su.getOldTargetLanguage())
                 .replaceAll("_LAST_UPDATE_", "\"" + lastupdate + "\""));
         return lastupdate;
     }
@@ -402,7 +392,7 @@ public class SKOSManager implements Manager, Cached {
     private String create(SKOSUpdater su) {
         String lastupdate = timestampFormat.format(new Timestamp(System.currentTimeMillis()));
         RDFQueryUtil.update(SparqlSKOSInsert.CREATE_RELATION.replaceAll("_ID_", "<" + su.getSource() + ">")
-                .replaceAll("_RELATION_", "<" + su.getRelation() + ">")
+                .replaceAll("_RELATION_", su.getRelation())
                 .replaceAll("_VALUE_TO_INSERT_", "<" + su.getTarget() + ">")
                 .replaceAll("_LAST_UPDATE_", "\"" + lastupdate + "\""));
         return lastupdate;
@@ -411,8 +401,8 @@ public class SKOSManager implements Manager, Cached {
     private String createLiteral(SKOSUpdater su) {
         String lastupdate = timestampFormat.format(new Timestamp(System.currentTimeMillis()));
         RDFQueryUtil.update(SparqlSKOSInsert.CREATE_RELATION.replaceAll("_ID_", "<" + su.getSource() + ">")
-                .replaceAll("_RELATION_", "<" + su.getRelation() + ">")
-                .replaceAll("_VALUE_TO_INSERT_", "\"" + su.getTarget() + "\"@" + su.getLanguage())
+                .replaceAll("_RELATION_", su.getRelation())
+                .replaceAll("_VALUE_TO_INSERT_", "\"" + su.getTarget() + "\"@" + su.getTargetLanguage())
                 .replaceAll("_LAST_UPDATE_", "\"" + lastupdate + "\""));
         return lastupdate;
     }
@@ -421,8 +411,8 @@ public class SKOSManager implements Manager, Cached {
         if (su.getRelation() != null && su.getSource() != null && su.getTarget() != null) {
             if (!su.getRelation().isEmpty() && !su.getSource().isEmpty() && !su.getTarget().isEmpty()) {
                 if (literal) {
-                    if (su.getLanguage() != null) {
-                        if (!su.getLanguage().isEmpty()) {
+                    if (su.getTargetLanguage() != null) {
+                        if (!su.getTargetLanguage().isEmpty()) {
                             return true;
                         }
                     }
@@ -491,12 +481,12 @@ public class SKOSManager implements Manager, Cached {
                     .replace("_DEFAULTLANGUAGE_", defaultLanguageLabel);
         } else {
             UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
-            if (utilityManager.isConceptSet(lexicalConceptNs + id)) {
-                query = SparqlSelectData.DATA_TOP_LEXICAL_CONCEPT_OF_A_CONCEPT_SET.replace("_LEXICALCONCEPT_", lexicalConceptNs + id)
+            if (utilityManager.isConceptSet(id)) {
+                query = SparqlSelectData.DATA_TOP_LEXICAL_CONCEPT_OF_A_CONCEPT_SET.replace("_LEXICALCONCEPT_", id)
                         .replace("_LABELPROPERTY_", lexicalizationModel.equals("label") ? SparqlPrefix.RDFS.getUri() + "label" : SparqlPrefix.SKOS.getUri() + "prefLabel")
                         .replace("_DEFAULTLANGUAGE_", defaultLanguageLabel);
-            } else if (utilityManager.isLexicalConcept(lexicalConceptNs + id)) {
-                query = SparqlSelectData.DATA_LEXICAL_CONCEPTS_CHILDREN.replace("_LEXICALCONCEPT_", lexicalConceptNs + id)
+            } else if (utilityManager.isLexicalConcept(id)) {
+                query = SparqlSelectData.DATA_LEXICAL_CONCEPTS_CHILDREN.replace("_LEXICALCONCEPT_", id)
                         .replace("_LABELPROPERTY_", lexicalizationModel.equals("label") ? SparqlPrefix.RDFS.getUri() + "label" : SparqlPrefix.SKOS.getUri() + "prefLabel")
                         .replace("_DEFAULTLANGUAGE_", defaultLanguageLabel);
             } else {
@@ -513,7 +503,7 @@ public class SKOSManager implements Manager, Cached {
     }
     
     public TupleQueryResult getLexicalConcept(String id) throws ManagerException {
-        String query = SparqlSelectData.DATA_LEXICAL_CONCEPT.replaceAll("_ID_", lexicalConceptNs + id);
+        String query = SparqlSelectData.DATA_LEXICAL_CONCEPT.replaceAll("_ID_", id);
         return RDFQueryUtil.evaluateTQuery(query);
     }
 

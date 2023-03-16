@@ -40,7 +40,6 @@ public class ConceptSchemeHelper extends TripleStoreDataHelper<ConceptScheme> {
     public void fillData(ConceptScheme data, BindingSet bs) {
         // add count hits when CS index will be available
         data.setConceptScheme(getStringValue(bs, SparqlVariable.CONCEPT_SCHEME));
-        data.setConceptSchemeInstanceName(getLocalName(bs, SparqlVariable.CONCEPT_SCHEME));
         data.setCreationDate(getStringValue(bs, SparqlVariable.CREATION_DATE));
         data.setCreator(getStringValue(bs, SparqlVariable.CONCEPT_SCHEME_CREATOR));
         data.setLastUpdate(getStringValue(bs, SparqlVariable.LAST_UPDATE));

@@ -6,14 +6,7 @@
 package it.cnr.ilc.lexo.service.helper;
 
 import it.cnr.ilc.lexo.service.data.lexicon.output.BibliographicItem;
-import it.cnr.ilc.lexo.service.data.lexicon.output.Etymology;
-import it.cnr.ilc.lexo.service.data.lexicon.output.FormCore;
-import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryCore;
-import it.cnr.ilc.lexo.service.data.lexicon.output.Morphology;
-import it.cnr.ilc.lexo.service.data.lexicon.output.Property;
 import it.cnr.ilc.lexo.sparql.SparqlVariable;
-import java.util.ArrayList;
-import java.util.List;
 import org.eclipse.rdf4j.query.BindingSet;
 
 /**
@@ -36,7 +29,7 @@ public class BibliographyHelper extends TripleStoreDataHelper<BibliographicItem>
         data.setTitle(getStringValue(bs, SparqlVariable.BIBLIOGRAPHY_TITLE));
         data.setUrl(getStringValue(bs, SparqlVariable.BIBLIOGRAPHY_URL));
         data.setBibliography(getStringValue(bs, SparqlVariable.BIBLIOGRAPHY));
-        data.setBibliographyInstanceName(getLocalName(bs, SparqlVariable.BIBLIOGRAPHY));
+//        data.setBibliographyInstanceName(getLocalName(bs, SparqlVariable.BIBLIOGRAPHY));
     }
 
     @Override

@@ -1,16 +1,15 @@
 package it.cnr.ilc.lexo.service;
 
-import io.swagger.annotations.Contact;
 import io.swagger.annotations.ExternalDocs;
 import io.swagger.annotations.Info;
-import io.swagger.annotations.License;
 import io.swagger.annotations.SwaggerDefinition;
-import io.swagger.annotations.Tag;
 import it.cnr.ilc.lexo.HibernateUtil;
 import it.cnr.ilc.lexo.LexOFilter;
 import it.cnr.ilc.lexo.LexOProperties;
 import it.cnr.ilc.lexo.hibernate.entity.Account;
 import it.cnr.ilc.lexo.hibernate.entity.SuperEntity.Status;
+import it.cnr.ilc.lexo.manager.ManagerFactory;
+import it.cnr.ilc.lexo.manager.UserManager;
 import it.cnr.ilc.lexo.service.data.AuthenticationData;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -21,6 +20,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -31,10 +32,10 @@ import java.util.TimerTask;
                 description = "OntoLex-Lemon lexica manager",
                 version = "V0.1",
                 title = "LexO API"//,
-//                license = @License(
-//                        name = "Apache 2.0",
-//                        url = "http://www.apache.org/licenses/LICENSE-2.0"
-//                )
+        //                license = @License(
+        //                        name = "Apache 2.0",
+        //                        url = "http://www.apache.org/licenses/LICENSE-2.0"
+        //                )
         ),
         consumes = {"application/json", "application/xml"},
         produces = {"application/json", "application/xml"},
@@ -46,23 +47,36 @@ abstract class Service {
     protected AuthenticationData authenticationData;
     protected Account account;
     protected Map<String, Object> session;
+    private final String ANONYMOUS_USER = "ANONYMOUS";
+
+    private final UserManager userManager = ManagerFactory.getManager(UserManager.class);
 
     protected void putkKey(AuthenticationData authenticationData) {
         this.authenticationData = authenticationData;
         KEY_MANAGER.put(authenticationData);
     }
 
-    protected void checkKey(String key) throws Exception {
-        authenticationData = KEY_MANAGER.get(key);
-        if (authenticationData != null) {
-            account = HibernateUtil.getSession().get(Account.class, authenticationData.getId());
-            if (account == null || !account.getStatus().equals(Status.VALID) || !account.getEnabled()) {
-                KEY_MANAGER.remove(key);
-                authenticationData = null;
-                account = null;
+    protected void checkKey(String key) throws AuthorizationException {
+        if (LexOProperties.getProperty("keycloack.url") != null) {
+            try {
+                // LexO-server server was configured with Keycloack
+                authenticationData = userManager.authorize(key);
+            } catch (Exception ex) {
+                throw new AuthorizationException(ex.getMessage());
             }
+        } else {
+            // LexO-server server was configured with the internal user management
+            authenticationData = KEY_MANAGER.get(key);
+            if (authenticationData != null) {
+                account = HibernateUtil.getSession().get(Account.class, authenticationData.getId());
+                if (account == null || !account.getStatus().equals(Status.VALID) || !account.getEnabled()) {
+                    KEY_MANAGER.remove(key);
+                    authenticationData = null;
+                    account = null;
+                }
+            }
+            session = KEY_MANAGER.getSession(key);
         }
-        session = KEY_MANAGER.getSession(key);
     }
 
     protected List<AuthenticationData> list() {
@@ -72,10 +86,15 @@ abstract class Service {
 //    protected void log(Level level, String message) {
 //        Logger.getLogger(LexOFilter.CONTEXT).log(level, "(" + authenticationData.getUsername() + ") [" + authenticationData.getKey() + "] " + message);
 //    }
-//
-//    protected void log(Level level, String message, Throwable t) {
-//        Logger.getLogger(LexOFilter.CONTEXT).log(level, "(" + authenticationData.getUsername() + ") [" + authenticationData.getKey() + "] " + message, t);
-//    }
+    protected void log(Level level, String message) {
+        Logger.getLogger(LexOFilter.CONTEXT).log(level,
+                "[" + (authenticationData != null ? authenticationData.getUsername().toUpperCase() : ANONYMOUS_USER) + "] "
+                + message);
+    }
+
+    protected void log(Level level, String message, Throwable t) {
+        Logger.getLogger(LexOFilter.CONTEXT).log(level, "(" + authenticationData.getUsername() + ") [" + authenticationData.getKey() + "] " + message, t);
+    }
 
     private static final KeyManager KEY_MANAGER = new KeyManager();
 
@@ -177,7 +196,7 @@ abstract class Service {
                     timer.purge();
                     sessions.remove(key);
                     AuthenticationData authenticationData = keys.remove(key);
-//                    Logger.getLogger(LexOFilter.CONTEXT).info("(" + authenticationData.getUsername() + ") [" + key + "] session expired");
+                    Logger.getLogger(LexOFilter.CONTEXT).info("(" + authenticationData.getUsername() + ") [" + key + "] session expired");
                 }
             }
 

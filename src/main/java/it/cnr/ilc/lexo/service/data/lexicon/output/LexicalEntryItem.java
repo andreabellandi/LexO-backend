@@ -26,7 +26,6 @@ public class LexicalEntryItem extends Entity implements Data {
     private String note;
     private boolean hasChildren;
     private String lexicalEntry;
-    private String lexicalEntryInstanceName;
     private ArrayList<Morphology> morphology;
     private String completionDate;
     private String revisionDate;
@@ -112,14 +111,6 @@ public class LexicalEntryItem extends Entity implements Data {
 
     public void setLexicalEntry(String lexicalEntry) {
         this.lexicalEntry = lexicalEntry;
-    }
-
-    public String getLexicalEntryInstanceName() {
-        return lexicalEntryInstanceName;
-    }
-
-    public void setLexicalEntryInstanceName(String lexicalEntryInstanceName) {
-        this.lexicalEntryInstanceName = lexicalEntryInstanceName;
     }
 
     public ArrayList<Morphology> getMorphology() {

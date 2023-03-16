@@ -18,7 +18,6 @@ public class ReferencedLinguisticObjectListHelper extends TripleStoreDataHelper<
     @Override
     public void fillData(ReferencedLinguisticObject data, BindingSet bs) {
         data.setLexicalEntry(getStringValue(bs, SparqlVariable.LEXICAL_ENTRY));
-        data.setLexicalEntryInstanceName(getLocalName(bs, SparqlVariable.LEXICAL_ENTRY));
         data.setPos(getLocalName(bs, SparqlVariable.LEXICAL_ENTRY_POS));
         data.setConceptInstanceName(getLocalName(bs, SparqlVariable.CONCEPT));
         data.setLemma(getStringValue(bs, SparqlVariable.WRITTEN_REPRESENTATION));

@@ -30,12 +30,6 @@ public class FederationManager implements Manager, Cached {
 
     static final Logger logger = LoggerFactory.getLogger(FederationManager.class.getName());
 
-    private final String namespace = LexOProperties.getProperty("repository.lexicon.namespace");
-
-    public String getNamespace() {
-        return namespace;
-    }
-
     @Override
     public void reloadCache() {
 

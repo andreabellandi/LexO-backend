@@ -19,7 +19,6 @@ public class ComponentHelper extends TripleStoreDataHelper<Component> {
     @Override
     public void fillData(Component data, BindingSet bs) {
        data.setComponent(getStringValue(bs, SparqlVariable.COMPONENT));
-       data.setComponentInstanceName(getLocalName(bs, SparqlVariable.COMPONENT));
        data.setConfidence(getDoubleNumber(bs, "confidence"));
        data.setCreationDate(getStringValue(bs, SparqlVariable.CREATION_DATE));
        data.setCreator(getStringValue(bs, SparqlVariable.COMPONENT_CREATION_AUTHOR));

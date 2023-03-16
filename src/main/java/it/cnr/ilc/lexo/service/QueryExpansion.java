@@ -35,6 +35,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.query.TupleQueryResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -139,7 +140,7 @@ public class QueryExpansion extends Service {
             List<FormList> list = new ArrayList();
             TupleQueryResult res = queryExpansionManager.getFilterdForms(ff);
             String targetSense = "", targetSenseInstanceName = "";
-            list.add(new FormList("", 0, "", "",
+            list.add(new FormList("", 0, "",
                     formHelper.newDataList(res)));
             if (!ff.getExtendTo().equals(EnumUtil.AcceptedSearchFormExtendTo.None.toString())) {
                 for (String sense : ff.getSenseUris()) {
@@ -176,7 +177,8 @@ public class QueryExpansion extends Service {
                                     List<Form> _forms = new ArrayList();
                                     _forms.addAll(formHelper.newDataList(_res));
                                     forms.addAll(_forms);
-                                    list.add(new FormList(ff.getExtendTo(), lenght, queryExpansionManager.getNamespace() + sense, sense,
+                                    list.add(new FormList(ff.getExtendTo(), lenght, sense, 
+//                                            SimpleValueFactory.getInstance().createIRI(sense).getLocalName(),
                                             queryExpansionManager.getFormItemListCopy(forms)));
                                     forms.clear();
                                     lenght++;
@@ -191,7 +193,8 @@ public class QueryExpansion extends Service {
                             List<Form> _forms = new ArrayList();
                             _forms.addAll(formHelper.newDataList(_res));
                             forms.addAll(_forms);
-                            list.add(new FormList(ff.getExtendTo(), lenght, queryExpansionManager.getNamespace() + sense, sense,
+                            list.add(new FormList(ff.getExtendTo(), lenght, sense, 
+//                                    SimpleValueFactory.getInstance().createIRI(sense).getLocalName(),
                                     queryExpansionManager.getFormItemListCopy(forms)));
                         }
 
@@ -203,18 +206,20 @@ public class QueryExpansion extends Service {
                             String target = "", targetInstanceName = "";
                             for (Form fi : lfi) {
                                 if (target.isEmpty()) {
-                                    targetInstanceName = fi.getTargetSenseInstanceName();
+                                    targetInstanceName = fi.getTargetSense();
                                 }
-                                if (targetInstanceName.equals(fi.getTargetSenseInstanceName())) {
+                                if (targetInstanceName.equals(fi.getTargetSense())) {
                                     newFormList.add(fi);
                                 } else {
-                                    list.add(new FormList("synonym", 1, queryExpansionManager.getNamespace() + sense, sense,
+                                    list.add(new FormList("synonym", 1, sense, 
+//                                            SimpleValueFactory.getInstance().createIRI(sense).getLocalName(),
                                             queryExpansionManager.getFormItemListCopy(newFormList)));
-                                    targetInstanceName = fi.getTargetSenseInstanceName();
+                                    targetInstanceName = fi.getTargetSense();
                                     newFormList.clear();
                                 }
                             }
-                            list.add(new FormList("synonym", 1, queryExpansionManager.getNamespace() + sense, sense,
+                            list.add(new FormList("synonym", 1, sense, 
+//                                    SimpleValueFactory.getInstance().createIRI(sense).getLocalName(),
                                     queryExpansionManager.getFormItemListCopy(newFormList)));
                         }
                     }

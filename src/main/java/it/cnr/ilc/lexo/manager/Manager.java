@@ -3,8 +3,6 @@ package it.cnr.ilc.lexo.manager;
 import it.cnr.ilc.lexo.service.data.vocabulary.MorphologicalProperty;
 import it.cnr.ilc.lexo.util.EnumUtil;
 import java.util.Arrays;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  *
@@ -18,13 +16,6 @@ public interface Manager {
             throw new ManagerException(parameterName + " field must be one of " + Arrays.toString(EnumUtil.stringValues(enumClass)));
         }
     }
-
-//    public static void validateWithOntoLexEntity(String parameterName, Class<? extends Enum> enumClass, String parameterValue) throws ManagerException {
-//        if (!EnumUtil.containsString(enumClass, parameterValue)) {
-//            throw new ManagerException(parameterName + " field must be one of " + Arrays.toString(EnumUtil.stringValues(enumClass)));
-//        }
-//    }
-
 
     public static void validateMorphology(String trait, String value) throws ManagerException {
         LexinfoManager lexinfoManager = ManagerFactory.getManager(LexinfoManager.class);

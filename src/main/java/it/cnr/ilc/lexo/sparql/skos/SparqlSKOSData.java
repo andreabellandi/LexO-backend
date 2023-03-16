@@ -15,8 +15,7 @@ import it.cnr.ilc.lexo.sparql.SparqlVariable;
 public class SparqlSKOSData {
 
     public static final String DATA_CONCEPT_SCHEMES
-            = SparqlPrefix.LEX.getSparqlPrefix() + "\n"
-            + SparqlPrefix.SKOS.getSparqlPrefix() + "\n"
+            = SparqlPrefix.SKOS.getSparqlPrefix() + "\n"
             + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
             + SparqlPrefix.RDF.getSparqlPrefix() + "\n"
             + SparqlPrefix.DCT.getSparqlPrefix() + "\n"

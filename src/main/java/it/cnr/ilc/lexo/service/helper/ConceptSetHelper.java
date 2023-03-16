@@ -8,7 +8,6 @@ package it.cnr.ilc.lexo.service.helper;
 import it.cnr.ilc.lexo.LexOProperties;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ConceptSet;
 import it.cnr.ilc.lexo.service.data.lexicon.output.GroupedLinkedEntity;
-import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalConcept;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LinkedEntity;
 import it.cnr.ilc.lexo.sparql.SparqlVariable;
 import java.util.ArrayList;
@@ -41,7 +40,6 @@ public class ConceptSetHelper extends TripleStoreDataHelper<ConceptSet> {
     public void fillData(ConceptSet data, BindingSet bs) {
         // add count hits when CS index will be available
         data.setConceptSet(getStringValue(bs, SparqlVariable.CONCEPT_SCHEME));
-        data.setConceptSetInstanceName(getLocalName(bs, SparqlVariable.CONCEPT_SCHEME));
         data.setCreationDate(getStringValue(bs, SparqlVariable.CREATION_DATE));
         data.setCreator(getStringValue(bs, SparqlVariable.CONCEPT_SCHEME_CREATOR));
         data.setLastUpdate(getStringValue(bs, SparqlVariable.LAST_UPDATE));

@@ -18,6 +18,9 @@ import it.cnr.ilc.lexo.manager.UtilityManager;
 import it.cnr.ilc.lexo.service.data.lexicon.input.RelationDeleter;
 import it.cnr.ilc.lexo.service.data.lexicon.output.EtymologicalLink;
 import it.cnr.ilc.lexo.service.helper.EtymologicalLinkHelper;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -48,7 +51,7 @@ public class LexiconDeletion extends Service {
     private final EtymologicalLinkHelper etymologicalLinkHelper = new EtymologicalLinkHelper();
 
     @GET
-    @Path("{id}/language")
+    @Path("language")
     @Produces(MediaType.APPLICATION_JSON)
     @RequestMapping(
             method = RequestMethod.GET,
@@ -66,28 +69,32 @@ public class LexiconDeletion extends Service {
             @ApiParam(
                     name = "id",
                     value = "lexicon language ID",
-                    example = "langID",
                     required = true)
-            @PathParam("id") String id) {
+            @QueryParam("id") String id) {
         if (key.equals("PRINitant19")) {
             try {
-                //        log(Level.INFO, "get lexicon entries types");
-                UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
-                if (!utilityManager.isLexiconLanguage(id)) {
-                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + id + " does not exist").build();
+                String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
+                try {
+                    //        log(Level.INFO, "get lexicon entries types");
+                    UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+                    if (!utilityManager.isLexiconLanguage(_id)) {
+                        return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " does not exist").build();
+                    }
+                    if (utilityManager.lexicalEntriesNumberByLanguage(_id) != 0) {
+                        return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " cannot be deleted. Remove all its entries first").build();
+                    }
+                    lexiconManager.deleteLexiconLanguage(_id);
+                    return Response.ok()
+                            .type(MediaType.TEXT_PLAIN)
+                            .header("Access-Control-Allow-Headers", "content-type")
+                            .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                            .build();
+                } catch (ManagerException ex) {
+                    Logger.getLogger(LexiconDeletion.class.getName()).log(Level.SEVERE, null, ex);
+                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
                 }
-                if (utilityManager.lexicalEntriesNumberByLanguage(id) != 0) {
-                    return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("IRI " + id + " cannot be deleted. Remove all its entries first").build();
-                }
-                lexiconManager.deleteLexiconLanguage(id);
-                return Response.ok()
-                        .type(MediaType.TEXT_PLAIN)
-                        .header("Access-Control-Allow-Headers", "content-type")
-                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                        .build();
-            } catch (ManagerException ex) {
-                Logger.getLogger(LexiconDeletion.class.getName()).log(Level.SEVERE, null, ex);
-                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            } catch (UnsupportedEncodingException ex) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
             }
         } else {
             return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Deletion denied, wrong key").build();
@@ -95,7 +102,7 @@ public class LexiconDeletion extends Service {
     }
 
     @GET
-    @Path("{id}/lexicalEntry")
+    @Path("lexicalEntry")
     @Produces(MediaType.APPLICATION_JSON)
     @RequestMapping(
             method = RequestMethod.GET,
@@ -113,25 +120,28 @@ public class LexiconDeletion extends Service {
             @ApiParam(
                     name = "id",
                     value = "lexical entry ID",
-                    example = "MUSaccedereVERB",
                     required = true)
-            @PathParam("id") String id) {
+            @QueryParam("id") String id) {
         if (key.equals("PRINitant19")) {
             try {
-                //        log(Level.INFO, "get lexicon entries types");
-                UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
-                if (!utilityManager.isLexicalEntry(id)) {
-                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + id + " does not exist").build();
+                String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
+                try {
+                    //        log(Level.INFO, "get lexicon entries types");
+                    UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+                    if (!utilityManager.isLexicalEntry(_id)) {
+                        return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " does not exist").build();
+                    }
+                    return Response.ok(lexiconManager.deleteLexicalEntry(_id))
+                            .type(MediaType.TEXT_PLAIN)
+                            .header("Access-Control-Allow-Headers", "content-type")
+                            .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                            .build();
+                } catch (ManagerException ex) {
+                    Logger.getLogger(LexiconDeletion.class.getName()).log(Level.SEVERE, null, ex);
+                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
                 }
-                lexiconManager.deleteLexicalEntry(id);
-                return Response.ok()
-                        .type(MediaType.TEXT_PLAIN)
-                        .header("Access-Control-Allow-Headers", "content-type")
-                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                        .build();
-            } catch (ManagerException ex) {
-                Logger.getLogger(LexiconDeletion.class.getName()).log(Level.SEVERE, null, ex);
-                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            } catch (UnsupportedEncodingException ex) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
             }
         } else {
             return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Deletion denied, wrong key").build();
@@ -139,7 +149,7 @@ public class LexiconDeletion extends Service {
     }
 
     @GET
-    @Path("{id}/form")
+    @Path("form")
     @Produces(MediaType.APPLICATION_JSON)
     @RequestMapping(
             method = RequestMethod.GET,
@@ -156,25 +166,29 @@ public class LexiconDeletion extends Service {
             @QueryParam("key") String key,
             @ApiParam(
                     name = "id",
-                    value = "form ID",
                     required = true)
-            @PathParam("id") String id) {
+            @QueryParam("id") String id) {
         if (key.equals("PRINitant19")) {
             try {
-                //        log(Level.INFO, "get lexicon entries types");
-                UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
-                if (!utilityManager.isForm(id)) {
-                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + id + " does not exist").build();
+                String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
+                try {
+                    //        log(Level.INFO, "get lexicon entries types");
+                    UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+                    if (!utilityManager.isForm(_id)) {
+                        return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " does not exist").build();
+                    }
+                    
+                    return Response.ok(lexiconManager.deleteForm(_id))
+                            .type(MediaType.TEXT_PLAIN)
+                            .header("Access-Control-Allow-Headers", "content-type")
+                            .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                            .build();
+                } catch (ManagerException ex) {
+                    Logger.getLogger(LexiconDeletion.class.getName()).log(Level.SEVERE, null, ex);
+                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
                 }
-                lexiconManager.deleteForm(id);
-                return Response.ok()
-                        .type(MediaType.TEXT_PLAIN)
-                        .header("Access-Control-Allow-Headers", "content-type")
-                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                        .build();
-            } catch (ManagerException ex) {
-                Logger.getLogger(LexiconDeletion.class.getName()).log(Level.SEVERE, null, ex);
-                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            } catch (UnsupportedEncodingException ex) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
             }
         } else {
             return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Deletion denied, wrong key").build();
@@ -182,7 +196,7 @@ public class LexiconDeletion extends Service {
     }
 
     @GET
-    @Path("{id}/lexicalSense")
+    @Path("lexicalSense")
     @Produces(MediaType.APPLICATION_JSON)
     @RequestMapping(
             method = RequestMethod.GET,
@@ -199,25 +213,29 @@ public class LexiconDeletion extends Service {
             @QueryParam("key") String key,
             @ApiParam(
                     name = "id",
-                    value = "sense ID",
                     required = true)
-            @PathParam("id") String id) {
+            @QueryParam("id") String id) {
         if (key.equals("PRINitant19")) {
             try {
-                //        log(Level.INFO, "get lexicon entries types");
-                UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
-                if (!utilityManager.isLexicalSense(id)) {
-                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + id + " does not exist").build();
+                String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
+                try {
+                    //        log(Level.INFO, "get lexicon entries types");
+                    UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+                    if (!utilityManager.isLexicalSense(_id)) {
+                        return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " does not exist").build();
+                    }
+                    
+                    return Response.ok(lexiconManager.deleteLexicalSense(_id))
+                            .type(MediaType.TEXT_PLAIN)
+                            .header("Access-Control-Allow-Headers", "content-type")
+                            .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                            .build();
+                } catch (ManagerException ex) {
+                    Logger.getLogger(LexiconDeletion.class.getName()).log(Level.SEVERE, null, ex);
+                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
                 }
-                lexiconManager.deleteLexicalSense(id);
-                return Response.ok()
-                        .type(MediaType.TEXT_PLAIN)
-                        .header("Access-Control-Allow-Headers", "content-type")
-                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                        .build();
-            } catch (ManagerException ex) {
-                Logger.getLogger(LexiconDeletion.class.getName()).log(Level.SEVERE, null, ex);
-                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            } catch (UnsupportedEncodingException ex) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
             }
         } else {
             return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Deletion denied, wrong key").build();
@@ -225,7 +243,7 @@ public class LexiconDeletion extends Service {
     }
 
     @GET
-    @Path("{id}/etymologicalLink")
+    @Path("etymologicalLink")
     @Produces(MediaType.APPLICATION_JSON)
     @RequestMapping(
             method = RequestMethod.GET,
@@ -242,24 +260,28 @@ public class LexiconDeletion extends Service {
             @QueryParam("key") String key,
             @ApiParam(
                     name = "id",
-                    value = "etymologicalLink ID",
                     required = true)
-            @PathParam("id") String id) {
+            @QueryParam("id") String id) {
         if (key.equals("PRINitant19")) {
             try {
-                UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
-                if (!utilityManager.isEtymologicalLink(id)) {
-                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + id + " does not exist").build();
+                String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
+                try {
+                    UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+                    if (!utilityManager.isEtymologicalLink(_id)) {
+                        return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " does not exist").build();
+                    }
+                    
+                    return Response.ok(lexiconManager.deleteEtymologicalLink(_id))
+                            .type(MediaType.TEXT_PLAIN)
+                            .header("Access-Control-Allow-Headers", "content-type")
+                            .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                            .build();
+                } catch (ManagerException ex) {
+                    Logger.getLogger(LexiconDeletion.class.getName()).log(Level.SEVERE, null, ex);
+                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
                 }
-                lexiconManager.deleteEtymologicalLink(id);
-                return Response.ok()
-                        .type(MediaType.TEXT_PLAIN)
-                        .header("Access-Control-Allow-Headers", "content-type")
-                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                        .build();
-            } catch (ManagerException ex) {
-                Logger.getLogger(LexiconDeletion.class.getName()).log(Level.SEVERE, null, ex);
-                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            } catch (UnsupportedEncodingException ex) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
             }
         } else {
             return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Deletion denied, wrong key").build();
@@ -267,7 +289,7 @@ public class LexiconDeletion extends Service {
     }
 
     @GET
-    @Path("{id}/etymology")
+    @Path("etymology")
     @Produces(MediaType.APPLICATION_JSON)
     @RequestMapping(
             method = RequestMethod.GET,
@@ -284,29 +306,33 @@ public class LexiconDeletion extends Service {
             @QueryParam("key") String key,
             @ApiParam(
                     name = "id",
-                    value = "etymology ID",
                     required = true)
-            @PathParam("id") String id) {
+            @QueryParam("id") String id) {
         if (key.equals("PRINitant19")) {
             try {
-                UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
-                if (!utilityManager.isEtymology(id)) {
-                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + id + " does not exist").build();
+                String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
+                try {
+                    UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+                    if (!utilityManager.isEtymology(_id)) {
+                        return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " does not exist").build();
+                    }
+                    TupleQueryResult etymologicalLinks = lexiconDataManager.getEtymologicalLinks(_id);
+                    List<EtymologicalLink> etyLinks = etymologicalLinkHelper.newDataList(etymologicalLinks);
+                    for (EtymologicalLink el : etyLinks) {
+                        lexiconManager.deleteEtymologicalLink(el.getEtymologicalLink());
+                    }
+                    
+                    return Response.ok(lexiconManager.deleteEtymology(_id))
+                            .type(MediaType.TEXT_PLAIN)
+                            .header("Access-Control-Allow-Headers", "content-type")
+                            .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                            .build();
+                } catch (ManagerException ex) {
+                    Logger.getLogger(LexiconDeletion.class.getName()).log(Level.SEVERE, null, ex);
+                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
                 }
-                TupleQueryResult etymologicalLinks = lexiconDataManager.getEtymologicalLinks(id);
-                List<EtymologicalLink> etyLinks = etymologicalLinkHelper.newDataList(etymologicalLinks);
-                for (EtymologicalLink el : etyLinks) {
-                    lexiconManager.deleteEtymologicalLink(el.getEtymologicalLinkInstanceName());
-                }
-                lexiconManager.deleteEtymology(id);
-                return Response.ok()
-                        .type(MediaType.TEXT_PLAIN)
-                        .header("Access-Control-Allow-Headers", "content-type")
-                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                        .build();
-            } catch (ManagerException ex) {
-                Logger.getLogger(LexiconDeletion.class.getName()).log(Level.SEVERE, null, ex);
-                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            } catch (UnsupportedEncodingException ex) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
             }
         } else {
             return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Deletion denied, wrong key").build();
@@ -314,7 +340,7 @@ public class LexiconDeletion extends Service {
     }
 
     @GET
-    @Path("{id}/bibliography")
+    @Path("bibliography")
     @Produces(MediaType.APPLICATION_JSON)
     @RequestMapping(
             method = RequestMethod.GET,
@@ -333,18 +359,22 @@ public class LexiconDeletion extends Service {
                     name = "id",
                     value = "bibliography ID",
                     required = true)
-            @PathParam("id") String id) {
+            @QueryParam("id") String id) {
         if (key.equals("PRINitant19")) {
             try {
-                bibliographyManager.deleteBibliography(id);
-                return Response.ok()
-                        .type(MediaType.TEXT_PLAIN)
-                        .header("Access-Control-Allow-Headers", "content-type")
-                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                        .build();
-            } catch (ManagerException ex) {
-                Logger.getLogger(LexiconDeletion.class.getName()).log(Level.SEVERE, null, ex);
-                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+                String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
+                try {
+                    return Response.ok(bibliographyManager.deleteBibliography(_id))
+                            .type(MediaType.TEXT_PLAIN)
+                            .header("Access-Control-Allow-Headers", "content-type")
+                            .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                            .build();
+                } catch (ManagerException ex) {
+                    Logger.getLogger(LexiconDeletion.class.getName()).log(Level.SEVERE, null, ex);
+                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+                }
+            } catch (UnsupportedEncodingException ex) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
             }
         } else {
             return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Deletion denied, wrong key").build();
@@ -352,7 +382,7 @@ public class LexiconDeletion extends Service {
     }
 
     @POST
-    @Path("{id}/relation")
+    @Path("relation")
     @Produces(MediaType.APPLICATION_JSON)
     @RequestMapping(
             method = RequestMethod.GET,
@@ -371,18 +401,23 @@ public class LexiconDeletion extends Service {
                     name = "id",
                     value = "lexical entity ID",
                     required = true)
-            @PathParam("id") String id, RelationDeleter rd) {
+            @QueryParam("id") String id, RelationDeleter rd) {
         if (key.equals("PRINitant19")) {
             try {
-                lexiconManager.deleteRelation(id, rd);
-                return Response.ok()
-                        .type(MediaType.TEXT_PLAIN)
-                        .header("Access-Control-Allow-Headers", "content-type")
-                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                        .build();
-            } catch (ManagerException ex) {
-                Logger.getLogger(LexiconDeletion.class.getName()).log(Level.SEVERE, null, ex);
-                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+                String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
+                try {
+                   
+                    return Response.ok(lexiconManager.deleteRelation(_id, rd))
+                            .type(MediaType.TEXT_PLAIN)
+                            .header("Access-Control-Allow-Headers", "content-type")
+                            .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                            .build();
+                } catch (ManagerException ex) {
+                    Logger.getLogger(LexiconDeletion.class.getName()).log(Level.SEVERE, null, ex);
+                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+                }
+            } catch (UnsupportedEncodingException ex) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
             }
         } else {
             return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Deletion denied, wrong key").build();
@@ -390,7 +425,7 @@ public class LexiconDeletion extends Service {
     }
 
     @GET
-    @Path("{id}/component")
+    @Path("component")
     @Produces(MediaType.APPLICATION_JSON)
     @RequestMapping(
             method = RequestMethod.GET,
@@ -409,22 +444,27 @@ public class LexiconDeletion extends Service {
                     name = "id",
                     value = "component ID",
                     required = true)
-            @PathParam("id") String id) {
+            @QueryParam("id") String id) {
         if (key.equals("PRINitant19")) {
             try {
-                UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
-                if (!utilityManager.isComponent(id)) {
-                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + id + " does not exist or it is not a Component").build();
+                String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
+                try {
+                    UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+                    if (!utilityManager.isComponent(_id)) {
+                        return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " does not exist or it is not a Component").build();
+                    }
+                    
+                    return Response.ok(lexiconManager.deleteComponent(_id))
+                            .type(MediaType.TEXT_PLAIN)
+                            .header("Access-Control-Allow-Headers", "content-type")
+                            .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                            .build();
+                } catch (ManagerException ex) {
+                    Logger.getLogger(LexiconDeletion.class.getName()).log(Level.SEVERE, null, ex);
+                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
                 }
-                lexiconManager.deleteComponent(id);
-                return Response.ok()
-                        .type(MediaType.TEXT_PLAIN)
-                        .header("Access-Control-Allow-Headers", "content-type")
-                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                        .build();
-            } catch (ManagerException ex) {
-                Logger.getLogger(LexiconDeletion.class.getName()).log(Level.SEVERE, null, ex);
-                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            } catch (UnsupportedEncodingException ex) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
             }
         } else {
             return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Deletion denied, wrong key").build();
@@ -432,7 +472,7 @@ public class LexiconDeletion extends Service {
     }
     
     @GET
-    @Path("{id}/lexicalConcept")
+    @Path("lexicalConcept")
     @Produces(MediaType.APPLICATION_JSON)
     @RequestMapping(
             method = RequestMethod.GET,
@@ -451,22 +491,27 @@ public class LexiconDeletion extends Service {
                     name = "id",
                     value = "lexical concept ID",
                     required = true)
-            @PathParam("id") String id) {
+            @QueryParam("id") String id) {
         if (key.equals("PRINitant19")) {
             try {
-                UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
-                if (!utilityManager.isLexicalConcept(id)) {
-                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + id + " does not exist or it is not a Lexical Concept").build();
+                String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
+                try {
+                    UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+                    if (!utilityManager.isLexicalConcept(_id)) {
+                        return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " does not exist or it is not a Lexical Concept").build();
+                    }
+                   
+                    return Response.ok(skosManager.deleteLexicalConcept(_id))
+                            .type(MediaType.TEXT_PLAIN)
+                            .header("Access-Control-Allow-Headers", "content-type")
+                            .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                            .build();
+                } catch (ManagerException ex) {
+                    Logger.getLogger(LexiconDeletion.class.getName()).log(Level.SEVERE, null, ex);
+                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
                 }
-                skosManager.deleteLexicalConcept(id);
-                return Response.ok()
-                        .type(MediaType.TEXT_PLAIN)
-                        .header("Access-Control-Allow-Headers", "content-type")
-                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                        .build();
-            } catch (ManagerException ex) {
-                Logger.getLogger(LexiconDeletion.class.getName()).log(Level.SEVERE, null, ex);
-                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            } catch (UnsupportedEncodingException ex) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
             }
         } else {
             return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Deletion denied, wrong key").build();
@@ -474,7 +519,7 @@ public class LexiconDeletion extends Service {
     }
     
     @GET
-    @Path("{id}/conceptSet")
+    @Path("conceptSet")
     @Produces(MediaType.APPLICATION_JSON)
     @RequestMapping(
             method = RequestMethod.GET,
@@ -493,22 +538,27 @@ public class LexiconDeletion extends Service {
                     name = "id",
                     value = "concept set ID",
                     required = true)
-            @PathParam("id") String id) {
+            @QueryParam("id") String id) {
         if (key.equals("PRINitant19")) {
             try {
-                UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
-                if (!utilityManager.isConceptSet(id)) {
-                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + id + " does not exist or it is not a Concept Set").build();
+                String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
+                try {
+                    UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+                    if (!utilityManager.isConceptSet(_id)) {
+                        return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " does not exist or it is not a Concept Set").build();
+                    }
+                    
+                    return Response.ok(skosManager.deleteConceptSet(_id))
+                            .type(MediaType.TEXT_PLAIN)
+                            .header("Access-Control-Allow-Headers", "content-type")
+                            .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                            .build();
+                } catch (ManagerException ex) {
+                    Logger.getLogger(LexiconDeletion.class.getName()).log(Level.SEVERE, null, ex);
+                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
                 }
-                skosManager.deleteConceptSet(id);
-                return Response.ok()
-                        .type(MediaType.TEXT_PLAIN)
-                        .header("Access-Control-Allow-Headers", "content-type")
-                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                        .build();
-            } catch (ManagerException ex) {
-                Logger.getLogger(LexiconDeletion.class.getName()).log(Level.SEVERE, null, ex);
-                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            } catch (UnsupportedEncodingException ex) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
             }
         } else {
             return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Deletion denied, wrong key").build();

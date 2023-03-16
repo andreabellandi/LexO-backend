@@ -9,6 +9,7 @@ import it.cnr.ilc.lexo.service.data.output.Entity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import it.cnr.ilc.lexo.service.data.Data;
+import java.util.ArrayList;
 
 /**
  *
@@ -19,14 +20,12 @@ public class Language extends Entity implements Data {
 
     @ApiModelProperty(value = "language IRI", example = "namespace:langID")
     private String language;
-    @ApiModelProperty(value = "language short IRI", example = "langID")
-    private String languageInstanceName;
     @ApiModelProperty(value = "language label", example = "en")
     private String label;
     @ApiModelProperty(value = "lexvo url", example = "http://id.loc.gov/vocabulary/iso639-2/en")
     private String lexvo;
     @ApiModelProperty(value = "linguistic catalog", example = "http://www.lexinfo.net/ontologies/3.0/lexinfo")
-    private String catalog;
+    private ArrayList<String> catalog;
     @ApiModelProperty(value = "description for the language", example = "description")
     private String description;
     @ApiModelProperty(value = "number of entries")
@@ -38,14 +37,6 @@ public class Language extends Entity implements Data {
 
     public void setLanguage(String language) {
         this.language = language;
-    }
-
-    public String getLanguageInstanceName() {
-        return languageInstanceName;
-    }
-
-    public void setLanguageInstanceName(String languageInstanceName) {
-        this.languageInstanceName = languageInstanceName;
     }
 
     public String getLabel() {
@@ -64,11 +55,11 @@ public class Language extends Entity implements Data {
         this.lexvo = lexvo;
     }
 
-    public String getCatalog() {
+    public ArrayList<String> getCatalog() {
         return catalog;
     }
 
-    public void setCatalog(String catalog) {
+    public void setCatalog(ArrayList<String> catalog) {
         this.catalog = catalog;
     }
 
@@ -79,7 +70,6 @@ public class Language extends Entity implements Data {
     public void setDescription(String description) {
         this.description = description;
     }
-
 
     public int getEntries() {
         return entries;

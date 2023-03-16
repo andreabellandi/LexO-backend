@@ -20,11 +20,11 @@ public class LexicalConceptItemHelper extends TripleStoreDataHelper<LexicalConce
        data.setHasChildren(getIntegerNumber(bs, SparqlVariable.NGCHILD) > 0);
        data.setChildren(getIntegerNumber(bs, SparqlVariable.NGCHILD));
        data.setLexicalConcept(getStringValue(bs, SparqlVariable.CHILD));
-       data.setLexicalConceptInstanceName(getLocalName(bs, SparqlVariable.CHILD));
        data.setConfidence(getDoubleNumber(bs, SparqlVariable.CONFIDENCE));
        data.setCreationDate(getStringValue(bs, SparqlVariable.CREATION_DATE));
        data.setCreator(getStringValue(bs, SparqlVariable.LEXICAL_CONCEPT_CREATOR));
        data.setLastUpdate(getStringValue(bs, SparqlVariable.LAST_UPDATE));
+       data.setLanguage(getLiteralLanguage(bs, SparqlVariable.LABEL));
        data.setDefaultLabel(getLiteralLabel(bs, SparqlVariable.LABEL) != null ? getLiteralLabel(bs, SparqlVariable.LABEL) : getLocalName(bs, SparqlVariable.CHILD));
     }
 

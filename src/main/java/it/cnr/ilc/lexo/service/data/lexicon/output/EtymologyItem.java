@@ -25,12 +25,8 @@ public class EtymologyItem extends Entity implements Data {
     private String note;
     @ApiModelProperty(value = "etymology IRI")
     private String etymology;
-    @ApiModelProperty(value = "etymology short IRI")
-    private String etymologyInstanceName;
     @ApiModelProperty(value = "lexical entry IRI")
     private String lexicalEntry;
-    @ApiModelProperty(value = "lexical entry short IRI")
-    private String lexicalEntryInstanceName;
 
     public EtymologyItem() {
     }
@@ -60,28 +56,12 @@ public class EtymologyItem extends Entity implements Data {
         this.etymology = etymology;
     }
 
-    public String getEtymologyInstanceName() {
-        return etymologyInstanceName;
-    }
-
-    public void setEtymologyInstanceName(String etymologyInstanceName) {
-        this.etymologyInstanceName = etymologyInstanceName;
-    }
-
     public String getLexicalEntry() {
         return lexicalEntry;
     }
 
     public void setLexicalEntry(String lexicalEntry) {
         this.lexicalEntry = lexicalEntry;
-    }
-
-    public String getLexicalEntryInstanceName() {
-        return lexicalEntryInstanceName;
-    }
-
-    public void setLexicalEntryInstanceName(String lexicalEntryInstanceName) {
-        this.lexicalEntryInstanceName = lexicalEntryInstanceName;
     }
 
     public String getHypothesisOf() {

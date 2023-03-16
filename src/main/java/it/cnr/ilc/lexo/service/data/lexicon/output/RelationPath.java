@@ -18,14 +18,10 @@ public class RelationPath implements Data {
 
     @ApiModelProperty(value = "lexical entry")
     private String lexicalEntry;
-    @ApiModelProperty(value = "lexical entry")
-    private String lexicalEntryInstanceName;
     @ApiModelProperty(value = "path lenght level")
     private int lenght;
     @ApiModelProperty(value = "target sense")
     private String lexicalSense;
-    @ApiModelProperty(value = "target sense")
-    private String lexicalSenseInstanceName;
 
     public String getLexicalEntry() {
         return lexicalEntry;
@@ -33,14 +29,6 @@ public class RelationPath implements Data {
 
     public void setLexicalEntry(String lexicalEntry) {
         this.lexicalEntry = lexicalEntry;
-    }
-
-    public String getLexicalEntryInstanceName() {
-        return lexicalEntryInstanceName;
-    }
-
-    public void setLexicalEntryInstanceName(String lexicalEntryInstanceName) {
-        this.lexicalEntryInstanceName = lexicalEntryInstanceName;
     }
 
     public int getLenght() {
@@ -57,14 +45,6 @@ public class RelationPath implements Data {
 
     public void setLexicalSense(String lexicalSense) {
         this.lexicalSense = lexicalSense;
-    }
-
-    public String getLexicalSenseInstanceName() {
-        return lexicalSenseInstanceName;
-    }
-
-    public void setLexicalSenseInstanceName(String lexicalSenseInstanceName) {
-        this.lexicalSenseInstanceName = lexicalSenseInstanceName;
     }
 
     public RelationPath() {

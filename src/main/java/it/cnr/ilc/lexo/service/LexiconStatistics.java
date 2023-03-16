@@ -5,6 +5,8 @@
  */
 package it.cnr.ilc.lexo.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -12,13 +14,19 @@ import it.cnr.ilc.lexo.manager.LexiconStatisticsManager;
 import it.cnr.ilc.lexo.manager.ManagerFactory;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Counting;
 import it.cnr.ilc.lexo.service.helper.CountingHelper;
+import it.cnr.ilc.lexo.util.RDFQueryUtil;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.eclipse.rdf4j.model.Namespace;
 import org.eclipse.rdf4j.query.TupleQueryResult;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -63,10 +71,10 @@ public class LexiconStatistics extends Service {
         List<Counting> types = countingHelper.newDataList(lexicalEntryTypes);
         String json = countingHelper.toJson(types);
         return Response.ok(json)
-                    .type(MediaType.TEXT_PLAIN)
-                    .header("Access-Control-Allow-Headers", "content-type")
-                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                    .build();
+                .type(MediaType.TEXT_PLAIN)
+                .header("Access-Control-Allow-Headers", "content-type")
+                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                .build();
     }
 
     @GET
@@ -92,10 +100,10 @@ public class LexiconStatistics extends Service {
         List<Counting> status = countingHelper.newDataList(lexicalEntryStates);
         String json = countingHelper.toJson(status);
         return Response.ok(json)
-                    .type(MediaType.TEXT_PLAIN)
-                    .header("Access-Control-Allow-Headers", "content-type")
-                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                    .build();
+                .type(MediaType.TEXT_PLAIN)
+                .header("Access-Control-Allow-Headers", "content-type")
+                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                .build();
     }
 
     @GET
@@ -121,10 +129,10 @@ public class LexiconStatistics extends Service {
         List<Counting> authors = countingHelper.newDataList(lexicalEntryAuthors);
         String json = countingHelper.toJson(authors);
         return Response.ok(json)
-                    .type(MediaType.TEXT_PLAIN)
-                    .header("Access-Control-Allow-Headers", "content-type")
-                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                    .build();
+                .type(MediaType.TEXT_PLAIN)
+                .header("Access-Control-Allow-Headers", "content-type")
+                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                .build();
     }
 
     @GET
@@ -150,10 +158,10 @@ public class LexiconStatistics extends Service {
         List<Counting> langs = countingHelper.newDataList(languages);
         String json = countingHelper.toJson(langs);
         return Response.ok(json)
-                    .type(MediaType.TEXT_PLAIN)
-                    .header("Access-Control-Allow-Headers", "content-type")
-                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                    .build();
+                .type(MediaType.TEXT_PLAIN)
+                .header("Access-Control-Allow-Headers", "content-type")
+                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                .build();
     }
 
     @GET
@@ -178,6 +186,46 @@ public class LexiconStatistics extends Service {
         TupleQueryResult _pos = lexiconManager.getPos();
         List<Counting> pos = countingHelper.newDataList(_pos);
         String json = countingHelper.toJson(pos);
+        return Response.ok(json)
+                .type(MediaType.TEXT_PLAIN)
+                .header("Access-Control-Allow-Headers", "content-type")
+                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                .build();
+    }
+
+    @GET
+    @Path("namespaces")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "/namespaces",
+            produces = "application/json; charset=UTF-8")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    @ApiOperation(value = "Namepsaces repository",
+            notes = "This method returns all the namespaces definined in the repository")
+    public Response namespaces(
+            @ApiParam(
+                    name = "key",
+                    value = "authentication token",
+                    example = "lexodemo",
+                    required = true)
+            @QueryParam("key") String key) {
+        String json = "";
+        try {
+            Iterator<Namespace> nsit = RDFQueryUtil.getNamespaces().iterator();
+            ArrayList<it.cnr.ilc.lexo.service.data.lexicon.output.Namespace> nsList = new ArrayList();
+            while (nsit.hasNext()) {
+                Namespace ns = nsit.next();
+                it.cnr.ilc.lexo.service.data.lexicon.output.Namespace _ns = new it.cnr.ilc.lexo.service.data.lexicon.output.Namespace();
+                _ns.setBase(ns.getName());
+                _ns.setPrefix(ns.getPrefix());
+                nsList.add(_ns);
+            }
+            json = new ObjectMapper().writeValueAsString(nsList);
+        } catch (JsonProcessingException ex) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        }
         return Response.ok(json)
                     .type(MediaType.TEXT_PLAIN)
                     .header("Access-Control-Allow-Headers", "content-type")

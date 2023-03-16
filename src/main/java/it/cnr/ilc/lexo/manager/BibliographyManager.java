@@ -38,12 +38,13 @@ public class BibliographyManager implements Manager, Cached {
     public void reloadCache() {
     }
 
-    public BibliographicItem createBibliographyReference(String leID, String author, Bibliography bibliography) throws ManagerException {
+    public BibliographicItem createBibliographyReference(String leID, String author, Bibliography bibliography, String prefix, String baseIRI) throws ManagerException {
         setBibliography(bibliography);
         Timestamp tm = new Timestamp(System.currentTimeMillis());
         String idBib = idInstancePrefix + tm.toString();
         String created = timestampFormat.format(tm);
-        String _idBib = idBib.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
+        String sparqlPrefix = "PREFIX " + prefix + ": <" + baseIRI + ">";
+        String _idBib = baseIRI + idBib.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
         String optional = "";
         if (bibliography.getUrl() != null && !bibliography.getUrl().isEmpty()) {
             optional = "        dc:identifier \"" + bibliography.getUrl() + "\" ;\n";
@@ -55,6 +56,7 @@ public class BibliographyManager implements Manager, Cached {
                 .replaceAll("_ID_", _idBib)
                 .replace("_KEY_", bibliography.getId())
                 .replace("_AUTHOR_", author)
+                .replace("_PREFIX_", sparqlPrefix)
                 .replace("_CREATED_", created)
                 .replace("_MODIFIED_", created)
                 .replace("_OPTIONAL_", optional)
@@ -80,8 +82,9 @@ public class BibliographyManager implements Manager, Cached {
     private BibliographicItem setBibliographicItem(String id, String created, String author, Bibliography bibliography) {
         BibliographicItem b = new BibliographicItem();
         b.setAuthor(bibliography.getAuthor());
-        b.setBibliography(SparqlPrefix.LEXBIB.getUri() + id);
-        b.setBibliographyInstanceName(id);
+//        b.setBibliography(SparqlPrefix.LEXBIB.getUri() + id);
+        b.setBibliography(id);
+//        b.setBibliographyInstanceName(id);
         b.setDate(bibliography.getDate());
         b.setId(bibliography.getId());
         b.setSeeAlsoLink((bibliography.getSeeAlsoLink() == null || bibliography.getSeeAlsoLink().isEmpty()) ? "" : bibliography.getSeeAlsoLink());
@@ -100,8 +103,9 @@ public class BibliographyManager implements Manager, Cached {
         return RDFQueryUtil.evaluateTQuery(query);
     }
 
-    public void deleteBibliography(String id) throws ManagerException {
+    public String deleteBibliography(String id) throws ManagerException {
         RDFQueryUtil.update(SparqlDeleteData.DELETE_BIBLIOGRAPHY.replaceAll("_ID_", id));
+        return timestampFormat.format(new Timestamp(System.currentTimeMillis()));
 
     }
 

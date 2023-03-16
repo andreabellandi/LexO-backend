@@ -7,22 +7,15 @@ package it.cnr.ilc.lexo.service;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import it.cnr.ilc.lexo.manager.LexiconDataManager;
-import it.cnr.ilc.lexo.manager.LexiconUpdateManager;
 import it.cnr.ilc.lexo.manager.LexinfoManager;
 import it.cnr.ilc.lexo.manager.ManagerFactory;
-import it.cnr.ilc.lexo.service.data.vocabulary.PropertyHierarchy;
-import it.cnr.ilc.lexo.service.helper.LexicalEntryElementHelper;
 import it.cnr.ilc.lexo.service.helper.LexinfoMorphoHelper;
-import it.cnr.ilc.lexo.service.helper.LexinfoPropertyHierarchyHelper;
-import java.util.ArrayList;
-import java.util.List;
+import it.cnr.ilc.lexo.service.helper.VocabularyValuesHelper;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.eclipse.rdf4j.query.TupleQueryResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -36,7 +29,7 @@ public class LexinfoData extends Service {
 
     private final LexinfoManager lexiconManager = ManagerFactory.getManager(LexinfoManager.class);
     private final LexinfoMorphoHelper lexinfoMorphoHelper = new LexinfoMorphoHelper();
-    private final LexinfoPropertyHierarchyHelper lexinfoPropertyHierarchyHelper = new LexinfoPropertyHierarchyHelper();
+    private final VocabularyValuesHelper vocabularyValuesHelper = new VocabularyValuesHelper();
  
     @GET
     @Path("morphology")
@@ -48,8 +41,43 @@ public class LexinfoData extends Service {
     @ApiOperation(value = "Morphological traits and their values",
             notes = "This method returns the morphological traits with their values defined in the Lexinfo vocabulary")
     public Response morpho() {
-//        log(Level.INFO, "get lexicon entries types");
         String json = lexinfoMorphoHelper.toJson(lexiconManager.getMorpho());
+        return Response.ok(json)
+                .type(MediaType.TEXT_PLAIN)
+                .header("Access-Control-Allow-Headers", "content-type")
+                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                .build();
+    }
+    
+    @GET
+    @Path("representation")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "representation",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Representation properties for forms",
+            notes = "This method returns all the representation properties (segmentation, romanization, transliterations")
+    public Response representation() {
+        String json = vocabularyValuesHelper.toJson(lexiconManager.getRepresentationProperties());
+        return Response.ok(json)
+                .type(MediaType.TEXT_PLAIN)
+                .header("Access-Control-Allow-Headers", "content-type")
+                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                .build();
+    }
+    
+    @GET
+    @Path("senseDefinition")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "senseDefinition",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Definition properties for senses",
+            notes = "This method returns all the definition properties for sense (example, translation, gloss")
+    public Response senseDefinition() {
+        String json = vocabularyValuesHelper.toJson(lexiconManager.getSenseProperties());
         return Response.ok(json)
                 .type(MediaType.TEXT_PLAIN)
                 .header("Access-Control-Allow-Headers", "content-type")

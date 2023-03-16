@@ -22,11 +22,13 @@ public class FormBySenseFilter implements Data {
     private String form;
     @ApiModelProperty(value = "the type of form the serach is performed on", allowableValues = "keyword, lemma", example = "lemma", allowEmptyValue = false)
     private String formType;
-    @ApiModelProperty(value = "the lexical entry ID", example = "MUSpescaNOUN", allowEmptyValue = false)
+    @ApiModelProperty(value = "the lexical entry ID", allowEmptyValue = false)
     private String lexicalEntry;
-    @ApiModelProperty(value = "senses to be extend to with a lexico semantic relation", example = "USem72095pesca", allowEmptyValue = true)
+    @ApiModelProperty(value = "senses IRIs to be extend to with a lexico semantic relation", allowEmptyValue = true)
     private ArrayList<String> senseUris;
-    @ApiModelProperty(value = "the lexico-semantic relation of the list of senses, the search has to be extended to", allowableValues = "synonym, hypernym, hyponym", example = "hyponym", allowEmptyValue = true)
+    @ApiModelProperty(value = "the lexico-semantic relation of the list of senses, the search has to be extended to", 
+            allowableValues = "http://www.lexinfo.net/ontology/3.0/lexinfo#synonym, http://www.lexinfo.net/ontology/3.0/lexinfo#hypernym, http://www.lexinfo.net/ontology/3.0/lexinfo#hyponym", 
+            example = "http://www.lexinfo.net/ontology/3.0/lexinfo#hyponym", allowEmptyValue = true)
     private String extendTo;
     @ApiModelProperty(value = "the depth of the lexico-semantic relation, the search has to get up to  (only 1 for synonym)", allowableValues = "1, 2, 3", example = "3", allowEmptyValue = false)
     private int extensionDegree;

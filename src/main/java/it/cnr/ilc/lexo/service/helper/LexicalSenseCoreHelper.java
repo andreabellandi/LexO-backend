@@ -6,7 +6,6 @@
 package it.cnr.ilc.lexo.service.helper;
 
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalSenseCore;
-import it.cnr.ilc.lexo.service.data.lexicon.output.Morphology;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Property;
 import it.cnr.ilc.lexo.sparql.SparqlVariable;
 import java.util.ArrayList;
@@ -22,13 +21,12 @@ public class LexicalSenseCoreHelper extends TripleStoreDataHelper<LexicalSenseCo
     @Override
     public void fillData(LexicalSenseCore data, BindingSet bs) {
         data.setConcept(getStringValue(bs, SparqlVariable.CONCEPT));
-        data.setConceptInstanceName(getLocalName(bs, SparqlVariable.CONCEPT));
+//        data.setConceptInstanceName(getLocalName(bs, SparqlVariable.CONCEPT));
         data.setCreationDate(getStringValue(bs, SparqlVariable.CREATION_DATE));
         data.setCreator(getStringValue(bs, SparqlVariable.SENSE_CREATION_AUTHOR));
         data.setLastUpdate(getStringValue(bs, SparqlVariable.LAST_UPDATE));
         data.setNote(getStringValue(bs, SparqlVariable.NOTE));
         data.setSense(getStringValue(bs, SparqlVariable.SENSE));
-        data.setSenseInstanceName(getLocalName(bs, SparqlVariable.SENSE));
         data.setUsage(getStringValue(bs, SparqlVariable.SENSE_USAGE));
         data.setTopic(getStringValue(bs, SparqlVariable.SENSE_TOPIC));
         data.setConfidence(getDoubleNumber(bs, "confidence"));
@@ -39,15 +37,6 @@ public class LexicalSenseCoreHelper extends TripleStoreDataHelper<LexicalSenseCo
         properties.add(new Property(SparqlVariable.SENSE_GLOSS, getStringValue(bs, SparqlVariable.SENSE_GLOSS)));
         properties.add(new Property(SparqlVariable.SENSE_TRANSLATION, getStringValue(bs, SparqlVariable.SENSE_TRANSLATION)));
         data.setDefinition(properties);
-    }
-
-    private ArrayList<Morphology> getMorphology(BindingSet bs) {
-        ArrayList<Morphology> m = new ArrayList();
-        if (!getStringValue(bs, SparqlVariable.INHERITED_MORPHOLOGY_TRAIT_NAME).isEmpty()) {
-            m.add(new Morphology(getStringValue(bs, SparqlVariable.INHERITED_MORPHOLOGY_TRAIT_NAME),
-                    getStringValue(bs, SparqlVariable.INHERITED_MORPHOLOGY_TRAIT_VALUE)));
-        }
-        return m;
     }
 
     @Override

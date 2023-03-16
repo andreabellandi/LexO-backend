@@ -22,7 +22,6 @@ public class FormCoreHelper extends TripleStoreDataHelper<FormCore> {
     @Override
     public void fillData(FormCore data, BindingSet bs) {
         data.setForm(getStringValue(bs, SparqlVariable.FORM));
-        data.setFormInstanceName(getLocalName(bs, SparqlVariable.FORM));
         data.setCreator(getStringValue(bs, SparqlVariable.FORM_CREATION_AUTHOR));
         data.setNote(getStringValue(bs, SparqlVariable.NOTE));
         data.setType(getLocalName(bs, SparqlVariable.FORM_TYPE));
@@ -33,7 +32,6 @@ public class FormCoreHelper extends TripleStoreDataHelper<FormCore> {
         data.setCreator(getStringValue(bs, SparqlVariable.FORM_CREATION_AUTHOR));
         data.setConfidence(getDoubleNumber(bs, "confidence"));
         data.setLexicalEntry(getStringValue(bs, SparqlVariable.LEXICAL_ENTRY));
-        data.setLexicalEntryInstanceName(getLocalName(bs, SparqlVariable.LEXICAL_ENTRY));
         data.setLexicalEntryLabel(getLiteralLabel(bs, SparqlVariable.LABEL));
         data.setLanguage(getLiteralLanguage(bs, SparqlVariable.LABEL));
         List<Property> properties = new ArrayList();
@@ -50,7 +48,8 @@ public class FormCoreHelper extends TripleStoreDataHelper<FormCore> {
         ArrayList<Morphology> m = new ArrayList();
         if (!getStringValue(bs, SparqlVariable.LEXICAL_ENTRY_POS).isEmpty()) {
             m.add(new Morphology("partOfSpeech",
-                    getLocalName(bs, SparqlVariable.LEXICAL_ENTRY_POS)));
+                    getStringValue(bs, SparqlVariable.LEXICAL_ENTRY_POS)));
+//            getLocalName(bs, SparqlVariable.LEXICAL_ENTRY_POS)));
         }
         if (!getStringValue(bs, SparqlVariable.INHERITED_MORPHOLOGY_TRAIT_NAME).isEmpty()) {
             m.add(new Morphology(getStringValue(bs, SparqlVariable.INHERITED_MORPHOLOGY_TRAIT_NAME),

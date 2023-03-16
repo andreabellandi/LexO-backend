@@ -5,6 +5,7 @@
  */
 package it.cnr.ilc.lexo.util;
 
+import it.cnr.ilc.lexo.sparql.SparqlPrefix;
 import java.util.EnumSet;
 
 /**
@@ -13,10 +14,12 @@ import java.util.EnumSet;
  */
 public class EnumUtil {
 
+    
     public static boolean containsString(Class<? extends Enum> enumClass, String string) {
         String[] stringValues = stringValues(enumClass);
         for (int i = 0; i < stringValues.length; i++) {
             if (stringValues[i].equals(string)) {
+//            if (stringValues[i].contains(string)) {
                 return true;
             }
         }
@@ -161,186 +164,6 @@ public class EnumUtil {
 
     }
 
-    public static enum LexicalRel {
-        Cognate("cognate");
-
-        private final String lexicalRel;
-
-        private LexicalRel(String lexicalRel) {
-            this.lexicalRel = lexicalRel;
-        }
-
-        @Override
-        public String toString() {
-            return this.lexicalRel;
-        }
-
-    }
-
-    public static enum Decomp {
-        SubTerm("subterm"),
-        Constituent("constituent"),
-        CorrespondsTo("correspondsTo"),
-        Position("position");
-
-        private final String decomp;
-
-        private Decomp(String decomp) {
-            this.decomp = decomp;
-        }
-
-        @Override
-        public String toString() {
-            return this.decomp;
-        }
-
-    }
-
-    public static enum LanguageAttributes {
-        Description("description"),
-        Language("language"),
-        Lexvo("lexvo");
-
-        private final String languageAttributes;
-
-        private LanguageAttributes(String languageAttributes) {
-            this.languageAttributes = languageAttributes;
-        }
-
-        @Override
-        public String toString() {
-            return this.languageAttributes;
-        }
-
-    }
-
-    public static enum FormRepresentationType {
-        WrittenRepresentation("writtenRep"),
-        PhoneticRepresentation("phoneticRep"),
-        Segmentation("segmentation"),
-        Pronunciation("pronunciation"),
-        Transliteration("transliteration"),
-        Romanization("romanization");
-
-        private final String formRepresentationType;
-
-        private FormRepresentationType(String formRepresentationType) {
-            this.formRepresentationType = formRepresentationType;
-        }
-
-        @Override
-        public String toString() {
-            return this.formRepresentationType;
-        }
-
-    }
-
-    public static enum LexicalEntryAttributes {
-        Label("label"),
-        Type("type"),
-        Status("status"),
-        Note("note"),
-        Language("language"),
-        Denotes("denotes");
-
-        private final String lexicalEntryAttributes;
-
-        private LexicalEntryAttributes(String lexicalEntryAttributes) {
-            this.lexicalEntryAttributes = lexicalEntryAttributes;
-        }
-
-        @Override
-        public String toString() {
-            return this.lexicalEntryAttributes;
-        }
-
-    }
-
-    public static enum FormAttributes {
-        Note("note"),
-        Type("type"),
-        WrittenRep("writtenRep"),
-        PhoneticRep("phoneticRep"),
-        Pronunciation("pronunciation"),
-        Segmentation("segmentation"),
-        Transliteration("transliteration"),
-        Romanization("romanization");
-
-        private final String formAttributes;
-
-        private FormAttributes(String formAttributes) {
-            this.formAttributes = formAttributes;
-        }
-
-        @Override
-        public String toString() {
-            return this.formAttributes;
-        }
-
-    }
-
-    public static enum LexicalSenseAttributes {
-        Note("note"),
-        Usage("usage"),
-        Reference("reference"),
-        Topic("subject"),
-        Definition("definition"),
-        Description("description"),
-        Explanation("explanation"),
-        Gloss("gloss"),
-        SenseExample("senseExample"),
-        SenseTranslation("senseTranslation");
-
-        private final String senseAttributes;
-
-        private LexicalSenseAttributes(String senseAttributes) {
-            this.senseAttributes = senseAttributes;
-        }
-
-        @Override
-        public String toString() {
-            return this.senseAttributes;
-        }
-
-    }
-
-    public static enum EtymologyAttributes {
-        Note("note"),
-//        Confidence("confidence"),
-        HypothesisOf("hypothesisOf"),
-        Label("label");
-
-        private final String etymologyAttributes;
-
-        private EtymologyAttributes(String etymologyAttributes) {
-            this.etymologyAttributes = etymologyAttributes;
-        }
-
-        @Override
-        public String toString() {
-            return this.etymologyAttributes;
-        }
-
-    }
-
-    public static enum EtymologicalLinkAttributes {
-        Type("etyLinkType"),
-        Note("note"),
-        Label("label");
-
-        private final String etyLinkAttributes;
-
-        private EtymologicalLinkAttributes(String etyLinkAttributes) {
-            this.etyLinkAttributes = etyLinkAttributes;
-        }
-
-        @Override
-        public String toString() {
-            return this.etyLinkAttributes;
-        }
-
-    }
-
     public static enum LexicalSenseSearchFilter {
         Definition("definition"),
         Description("description"),
@@ -370,6 +193,7 @@ public class EnumUtil {
         EtymologicalLink("etyLink"),
         Decomp("decomp"),
         Extension("extension"),
+        Lexicon("lexicon"),
         //        Cognate("cognate"),
         ConceptRel("conceptRel");
 
@@ -410,8 +234,8 @@ public class EnumUtil {
     }
 
     public static enum GenericRelationReference {
-        seeAlso("seeAlso"),
-        sameAs("sameAs");
+        seeAlso(SparqlPrefix.RDFS.getUri() + "seeAlso"),
+        sameAs(SparqlPrefix.OWL.getUri() + "sameAs");
 
         private final String genericRelationReference;
 
@@ -425,10 +249,10 @@ public class EnumUtil {
         }
 
     }
-    
+
     public static enum GenericRelationConfidence {
-        confidence("confidence"),
-        translationConfidence("translationConfidence");
+        confidence(SparqlPrefix.LEXINFO.getUri() + "confidence"),
+        translationConfidence(SparqlPrefix.LEXINFO.getUri() + "translationConfidence");
 
         private final String genericRelationConfidence;
 
@@ -444,7 +268,7 @@ public class EnumUtil {
     }
 
     public static enum PositionRelation {
-        rdfListPosition("rdf:_n");
+        rdfListPosition(SparqlPrefix.RDF.getUri() + "_n");
 
         private final String positionRelation;
 
@@ -460,8 +284,8 @@ public class EnumUtil {
     }
 
     public static enum GenericRelationBibliography {
-        textualReference("label"),
-        note("note");
+        textualReference(SparqlPrefix.RDFS.getUri() + "label"),
+        note(SparqlPrefix.SKOS.getUri() + "note");
 
         private final String genericRelationBibliography;
 
@@ -472,23 +296,6 @@ public class EnumUtil {
         @Override
         public String toString() {
             return this.genericRelationBibliography;
-        }
-
-    }
-
-    public static enum GenericRelationDecomp {
-        label("label"),
-        note("note");
-
-        private final String genericRelationDecomp;
-
-        private GenericRelationDecomp(String genericRelationDecomp) {
-            this.genericRelationDecomp = genericRelationDecomp;
-        }
-
-        @Override
-        public String toString() {
-            return this.genericRelationDecomp;
         }
 
     }
@@ -510,23 +317,23 @@ public class EnumUtil {
 
     }
     
-    public static enum LinguisticRelationConceptRel {
-        evokes("evokes"),
-        isEvokedBy("isEvokedBy"),
-        lexicalizedSense("lexicalizedSense"),
-        isLexicalizedSenseOf("isLexicalizedSenseOf"),
-        concept("concept"),
-        isConceptOf("isConceptOf");
+    public static enum FormRepresentationType {
+        WrittenRepresentation("writtenRep"),
+        PhoneticRepresentation("phoneticRep"),
+        Segmentation("segmentation"),
+        Pronunciation("pronunciation"),
+        Transliteration("transliteration"),
+        Romanization("romanization");
 
-        private final String linguisticRelationConceptRel;
+        private final String formRepresentationType;
 
-        private LinguisticRelationConceptRel(String linguisticRelationConceptRel) {
-            this.linguisticRelationConceptRel = linguisticRelationConceptRel;
+        private FormRepresentationType(String formRepresentationType) {
+            this.formRepresentationType = formRepresentationType;
         }
 
         @Override
         public String toString() {
-            return this.linguisticRelationConceptRel;
+            return this.formRepresentationType;
         }
 
     }

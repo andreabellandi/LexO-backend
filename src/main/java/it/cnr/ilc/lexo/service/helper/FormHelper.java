@@ -25,8 +25,8 @@ public class FormHelper extends TripleStoreDataHelper<Form> {
         data.setMorphology(getMorphologyWithPoS(bs, getStringValue(bs, SparqlVariable.MORPHOLOGY), 
                 getStringValue(bs, SparqlVariable.LEXICAL_ENTRY_POS)));
 //        data.setLexicalEntry(getStringValue(bs, SparqlVariable.LEXICAL_ENTRY));
-        data.setLexicalEntryInstanceName(getLocalName(bs, SparqlVariable.LEXICAL_ENTRY));
-        data.setTargetSenseInstanceName(getLocalName(bs, SparqlVariable.SENSE));
+        data.setLexicalEntry(getLocalName(bs, SparqlVariable.LEXICAL_ENTRY));
+        data.setTargetSense(getLocalName(bs, SparqlVariable.SENSE));
 //        data.setTargetSense(getStringValue(bs, SparqlVariable.SENSE));
 data.setConfidence(getDoubleNumber(bs, "confidence"));
         data.setFormType(getLocalName(bs, SparqlVariable.FORM_TYPE));

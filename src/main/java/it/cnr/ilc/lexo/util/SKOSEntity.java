@@ -5,6 +5,7 @@
  */
 package it.cnr.ilc.lexo.util;
 
+import it.cnr.ilc.lexo.sparql.SparqlPrefix;
 import java.util.EnumSet;
 
 /**
@@ -17,6 +18,7 @@ public class SKOSEntity {
         String[] stringValues = stringValues(enumClass);
         for (int i = 0; i < stringValues.length; i++) {
             if (stringValues[i].equals(string)) {
+//            if (stringValues[i].contains(string)) {
                 return true;
             }
         }
@@ -35,10 +37,10 @@ public class SKOSEntity {
     }
 
     public static enum SKOSClass {
-        Concept("Concept"),
-        ConceptScheme("ConceptScheme"),
-        Collection("Collection"),
-        OrderedCollection("OrderedCollection");
+        Concept(SparqlPrefix.SKOS.getUri() + "Concept"),
+        ConceptScheme(SparqlPrefix.SKOS.getUri() + "ConceptScheme"),
+        Collection(SparqlPrefix.SKOS.getUri() + "Collection"),
+        OrderedCollection(SparqlPrefix.SKOS.getUri() + "OrderedCollection");
 
         private final String type;
 
@@ -53,9 +55,9 @@ public class SKOSEntity {
     }
 
     public static enum SchemeProperty {
-        inScheme("inScheme"),
-        hasTopConcept("hasTopConcept"),
-        topConceptOf("topConceptOf");
+        inScheme(SparqlPrefix.SKOS.getUri() + "inScheme"),
+        hasTopConcept(SparqlPrefix.SKOS.getUri() + "hasTopConcept"),
+        topConceptOf(SparqlPrefix.SKOS.getUri() + "topConceptOf");
 
         private final String type;
 
@@ -70,12 +72,12 @@ public class SKOSEntity {
     }
 
     public static enum SemanticRelation {
-        semanticRelation("semanticRelation"),
-        broaderTransitive("broaderTransitive"),
-        narrowerTransitive("narrowerTransitive"),
-        broader("broader"),
-        narrower("narrower"),
-        related("related");
+        semanticRelation(SparqlPrefix.SKOS.getUri() + "semanticRelation"),
+        broaderTransitive(SparqlPrefix.SKOS.getUri() + "broaderTransitive"),
+        narrowerTransitive(SparqlPrefix.SKOS.getUri() + "narrowerTransitive"),
+        broader(SparqlPrefix.SKOS.getUri() + "broader"),
+        narrower(SparqlPrefix.SKOS.getUri() + "narrower"),
+        related(SparqlPrefix.SKOS.getUri() + "related");
 
         private final String type;
 
@@ -90,9 +92,9 @@ public class SKOSEntity {
     }
 
     public static enum LexicalLabel {
-        altLabel("altLabel"),
-        hiddenLabel("hiddenLabel"),
-        prefLabel("prefLabel");
+        altLabel(SparqlPrefix.SKOS.getUri() + "altLabel"),
+        hiddenLabel(SparqlPrefix.SKOS.getUri() + "hiddenLabel"),
+        prefLabel(SparqlPrefix.SKOS.getUri() + "prefLabel");
 
         private final String type;
 
@@ -107,7 +109,7 @@ public class SKOSEntity {
     }
 
     public static enum Notation {
-        notation("notation");
+        notation(SparqlPrefix.SKOS.getUri() + "notation");
 
         private final String type;
 
@@ -122,12 +124,12 @@ public class SKOSEntity {
     }
 
     public static enum NoteProperty {
-        changeNote("changeNote"),
-        definition("definition"),
-        example("example"),
-        historyNote("historyNote"),
-        scopeNote("scopeNote"),
-        note("note");
+        changeNote(SparqlPrefix.SKOS.getUri() + "changeNote"),
+        definition(SparqlPrefix.SKOS.getUri() + "definition"),
+        example(SparqlPrefix.SKOS.getUri() + "example"),
+        historyNote(SparqlPrefix.SKOS.getUri() + "historyNote"),
+        scopeNote(SparqlPrefix.SKOS.getUri() + "scopeNote"),
+        note(SparqlPrefix.SKOS.getUri() + "note");
 
         private final String type;
 
@@ -142,12 +144,12 @@ public class SKOSEntity {
     }
 
     public static enum MappingProperty {
-        broadMatch("broadMatch"),
-        closeMatch("closeMatch"),
-        exactMatch("exactMatch"),
-        mappingRelation("mappingRelation"),
-        narrowMatch("narrowMatch"),
-        relatedMatch("relatedMatch");
+        broadMatch(SparqlPrefix.SKOS.getUri() + "broadMatch"),
+        closeMatch(SparqlPrefix.SKOS.getUri() + "closeMatch"),
+        exactMatch(SparqlPrefix.SKOS.getUri() + "exactMatch"),
+        mappingRelation(SparqlPrefix.SKOS.getUri() + "mappingRelation"),
+        narrowMatch(SparqlPrefix.SKOS.getUri() + "narrowMatch"),
+        relatedMatch(SparqlPrefix.SKOS.getUri() + "relatedMatch");
 
         private final String type;
 
@@ -162,8 +164,8 @@ public class SKOSEntity {
     }
 
     public static enum CollectionProperty {
-        member("member"),
-        memberList("memberList");
+        member(SparqlPrefix.SKOS.getUri() + "member"),
+        memberList(SparqlPrefix.SKOS.getUri() + "memberList");
 
         private final String type;
 
@@ -178,7 +180,7 @@ public class SKOSEntity {
     }
 
     public static enum SKOSXLClass {
-        Label("Label");
+        Label(SparqlPrefix.SKOS_XL.getUri() + "Label");
 
         private final String type;
 
@@ -193,10 +195,11 @@ public class SKOSEntity {
     }
 
     public static enum SKOSXLLexicalLabel {
-        literalForm("literalForm"),
-        altLabel("altLabel"),
-        hiddenLabel("hiddenLabel"),
-        prefLabel("prefLabel");
+        literalForm(SparqlPrefix.SKOS_XL.getUri() + "literalForm"),
+        altLabel(SparqlPrefix.SKOS_XL.getUri() + "altLabel"),
+        hiddenLabel(SparqlPrefix.SKOS_XL.getUri() + "hiddenLabel"),
+        prefLabel(SparqlPrefix.SKOS_XL.getUri() + "prefLabel"),
+        labelRelation(SparqlPrefix.SKOS_XL.getUri() + "labelRelation");
 
         private final String type;
 

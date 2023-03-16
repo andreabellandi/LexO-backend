@@ -21,11 +21,9 @@ public class EtymologyFilterHelper extends TripleStoreDataHelper<EtymologyItem> 
         data.setCreationDate(getStringValue(bs, SparqlVariable.CREATION_DATE));
         data.setCreator(getStringValue(bs, SparqlVariable.ETYMOLOGY_CREATION_AUTHOR));
         data.setEtymology(getStringValue(bs, SparqlVariable.ETYMOLOGY));
-        data.setEtymologyInstanceName(getLocalName(bs, SparqlVariable.ETYMOLOGY));
         data.setLabel(getStringValue(bs, SparqlVariable.LABEL));
         data.setLastUpdate(getStringValue(bs, SparqlVariable.LAST_UPDATE));
         data.setLexicalEntry(getStringValue(bs, SparqlVariable.LEXICAL_ENTRY));
-        data.setLexicalEntryInstanceName(getLocalName(bs, SparqlVariable.LEXICAL_ENTRY));
         data.setNote(getStringValue(bs, SparqlVariable.NOTE));
         data.setConfidence(getDoubleNumber(bs, SparqlVariable.CONFIDENCE));
         data.setHypothesisOf(getStringValue(bs, SparqlVariable.HYPOTHESIS_OF));

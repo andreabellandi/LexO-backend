@@ -21,8 +21,7 @@ public class ConceptSet extends SKOSClass implements Data {
     @ApiModelProperty(value = "IRI")
     private String conceptSet;
     @ApiModelProperty(value = "short IRI")
-    private String conceptSetInstanceName;
-    @ApiModelProperty(value = "the list of relations the concept set is involved in")
+    
     private List<GroupedLinkedEntity> entities;
 
     public String getConceptSet() {
@@ -32,15 +31,7 @@ public class ConceptSet extends SKOSClass implements Data {
     public void setConceptSet(String conceptSet) {
         this.conceptSet = conceptSet;
     }
-
-    public String getConceptSetInstanceName() {
-        return conceptSetInstanceName;
-    }
-
-    public void setConceptSetInstanceName(String conceptSetInstanceName) {
-        this.conceptSetInstanceName = conceptSetInstanceName;
-    }
-
+    
     public List<GroupedLinkedEntity> getEntities() {
         return entities;
     }

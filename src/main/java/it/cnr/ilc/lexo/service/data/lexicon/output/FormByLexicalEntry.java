@@ -26,12 +26,10 @@ public class FormByLexicalEntry extends Entity implements Data {
     private ArrayList<Morphology> morphology;
     @ApiModelProperty(value = "form IRI", example = "namespace:MUSaccedereVERB")
     private String form;
-    @ApiModelProperty(value = "form short IRI", example = "MUSaccedereVERB")
-    private String formInstanceName;
+//    @ApiModelProperty(value = "form short IRI", example = "MUSaccedereVERB")
+//    private String formInstanceName;
     @ApiModelProperty(value = "lexical entry IRI", example = "namespace:MUSaccedereVERB")
     private String lexicalEntry;
-    @ApiModelProperty(value = "lexical entry short IRI", example = "MUSaccedereVERB")
-    private String lexicalEntryInstanceName;
     
     public FormByLexicalEntry() {
     }
@@ -52,28 +50,12 @@ public class FormByLexicalEntry extends Entity implements Data {
         this.lexicalEntry = lexicalEntry;
     }
 
-    public String getLexicalEntryInstanceName() {
-        return lexicalEntryInstanceName;
-    }
-
-    public void setLexicalEntryInstanceName(String lexicalEntryInstanceName) {
-        this.lexicalEntryInstanceName = lexicalEntryInstanceName;
-    }
-
     public String getForm() {
         return form;
     }
 
     public void setForm(String form) {
         this.form = form;
-    }
-
-    public String getFormInstanceName() {
-        return formInstanceName;
-    }
-
-    public void setFormInstanceName(String formInstanceName) {
-        this.formInstanceName = formInstanceName;
     }
 
     public String getLabel() {

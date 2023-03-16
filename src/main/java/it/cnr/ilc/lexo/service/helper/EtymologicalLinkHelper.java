@@ -6,8 +6,6 @@
 package it.cnr.ilc.lexo.service.helper;
 
 import it.cnr.ilc.lexo.service.data.lexicon.output.EtymologicalLink;
-import it.cnr.ilc.lexo.sparql.Namespace;
-import it.cnr.ilc.lexo.sparql.SparqlPrefix;
 import it.cnr.ilc.lexo.sparql.SparqlVariable;
 import org.eclipse.rdf4j.query.BindingSet;
 
@@ -24,13 +22,13 @@ public class EtymologicalLinkHelper extends TripleStoreDataHelper<EtymologicalLi
         data.setLastUpdate(getStringValue(bs, SparqlVariable.LAST_UPDATE));
         data.setNote(getStringValue(bs, SparqlVariable.NOTE));
         data.setEtymologicalLink(getStringValue(bs, SparqlVariable.ETY_LINK));
-        data.setEtymologicalLinkInstanceName(getLocalName(bs, SparqlVariable.ETY_LINK));
+//        data.setEtymologicalLinkInstanceName(getLocalName(bs, SparqlVariable.ETY_LINK));
         data.setEtyLinkType(getStringValue(bs, SparqlVariable.ETY_LINK_TYPE));
         data.setEtySource(getStringValue(bs, SparqlVariable.ETY_SOURCE));
-        data.setEtySourceInstanceName(isExternalUri(getStringValue(bs, SparqlVariable.ETY_SOURCE)) ? "" : getLocalName(bs, SparqlVariable.ETY_SOURCE));
+//        data.setEtySourceInstanceName(isExternalUri(getStringValue(bs, SparqlVariable.ETY_SOURCE)) ? "" : getLocalName(bs, SparqlVariable.ETY_SOURCE));
         data.setEtySourceLabel(getStringValue(bs, SparqlVariable.ETY_SOURCE_LABEL));
         data.setEtyTarget(getStringValue(bs, SparqlVariable.ETY_TARGET));
-        data.setEtyTargetInstanceName(getLocalName(bs, SparqlVariable.ETY_TARGET));
+//        data.setEtyTargetInstanceName(getLocalName(bs, SparqlVariable.ETY_TARGET));
         data.setEtyTargetLabel(getStringValue(bs, SparqlVariable.ETY_TARGET_LABEL));
         data.setLabel(getStringValue(bs, SparqlVariable.ETY_LINK_LABEL));
         data.setExternalIRI(isExternalUri(getStringValue(bs, SparqlVariable.ETY_SOURCE)));

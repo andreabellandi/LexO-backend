@@ -14,7 +14,6 @@ import it.cnr.ilc.lexo.service.data.Data;
 public class ReferencedLinguisticObject implements Data {
 
     private String lexicalEntry;
-    private String lexicalEntryInstanceName;
     private String pos;
     private String lemma;
     private String definition;
@@ -59,14 +58,6 @@ public class ReferencedLinguisticObject implements Data {
 
     public void setConceptInstanceName(String conceptInstanceName) {
         this.conceptInstanceName = conceptInstanceName;
-    }
-
-    public String getLexicalEntryInstanceName() {
-        return lexicalEntryInstanceName;
-    }
-
-    public void setLexicalEntryInstanceName(String lexicalEntryInstanceName) {
-        this.lexicalEntryInstanceName = lexicalEntryInstanceName;
     }
 
     public String getTraitInstanceName() {
