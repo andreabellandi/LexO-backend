@@ -1,6 +1,6 @@
 package it.cnr.ilc.lexo.manager;
 
-import it.cnr.ilc.lexo.service.data.vocabulary.MorphologicalProperty;
+import it.cnr.ilc.lexo.service.data.vocabulary.RangedProperty;
 import it.cnr.ilc.lexo.util.EnumUtil;
 import java.util.Arrays;
 
@@ -19,10 +19,10 @@ public interface Manager {
 
     public static void validateMorphology(String trait, String value) throws ManagerException {
         LexinfoManager lexinfoManager = ManagerFactory.getManager(LexinfoManager.class);
-        MorphologicalProperty mp = lexinfoManager.getMorphoHash().get(trait);
+        RangedProperty mp = lexinfoManager.getMorphoHash().get(trait);
         if (null != mp) {
             boolean found = false;
-            for (MorphologicalProperty.MorphologicalValue mv : mp.getPropertyValues()) {
+            for (RangedProperty.RangedValue mv : mp.getPropertyValues()) {
                 if (mv.getValueId().equals(value)) {
                     found = true;
                 }

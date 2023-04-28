@@ -196,4 +196,24 @@ public class SparqlInsertData {
             + "INSERT DATA {  "
             + "<_IDLE_> rdf:_POSITION <_IDCOMPONENT_>. "
             + "}";
+    
+    public static final String CREATE_IMAGE_REFERENCE
+            // source, rights, title, description, creator
+            = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.FOAF.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
+            + "_PREFIX_ \n"
+            + "INSERT DATA {\n"
+            + "    <_ID_> a foaf:Image ; \n"
+            + "        dct:identifier \"_IMAGEURL_\" ;\n"
+            + "        dct:format \"image/_FORMAT_\" ;\n"
+            + "        dct:type \"image\" ;\n"
+            + "        dct:publisher \"_AUTHOR_\" ;\n"
+            + "        dct:created \"_CREATED_\" ;\n"
+            + "        dct:modified \"_MODIFIED_\" . \n"
+            + "    <_LEID_> foaf:depiction <_ID_> .\n"
+            + "}";
+    
 }

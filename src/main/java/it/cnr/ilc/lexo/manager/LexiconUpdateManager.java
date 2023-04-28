@@ -164,7 +164,7 @@ public final class LexiconUpdateManager implements Manager, Cached {
         Manager.validateWithEnum("attribute", OntoLexEntity.EtymologicalLinkAttributes.class, attribute);
     }
 
-    public String updateLexiconLanguage(String id, LanguageUpdater lu, String user) throws ManagerException {
+    public String updateLexiconLanguage(String id, LanguageUpdater lu) throws ManagerException {
         validateLexiconLanguageAttribute(lu.getRelation());
         if (lu.getRelation().equals(OntoLexEntity.LanguageAttributes.Lexvo.toString())) {
             validateURL(lu.getValue(), lexvoPrefix, libraryOfCongressPrefix, lexvoPrefixWWW, libraryOfCongressPrefixWWW);
@@ -209,7 +209,7 @@ public final class LexiconUpdateManager implements Manager, Cached {
         return lastupdate;
     }
 
-    public String updateLexicalEntry(String id, LexicalEntryUpdater leu, String user, String... type) throws ManagerException {
+    public String updateLexicalEntry(String id, LexicalEntryUpdater leu, String user, String type) throws ManagerException {
         validateLexicalEntryAttribute(leu.getRelation());
         if (leu.getRelation().equals(OntoLexEntity.LexicalEntryAttributes.Label.toString())) {
             String lang = ManagerFactory.getManager(UtilityManager.class).getLanguage(id);
@@ -217,7 +217,7 @@ public final class LexiconUpdateManager implements Manager, Cached {
                     (lang != null) ? ("\"" + leu.getValue() + "\"@" + lang) : "\"" + leu.getValue() + "\"", "?" + SparqlVariable.TARGET);
         } else if (leu.getRelation().equals(OntoLexEntity.LexicalEntryAttributes.Type.toString())) {
             validateLexicalEntryType(leu.getValue());
-            return updateLexicalEntry(id, leu.getRelation(), "<" + leu.getValue() + ">", "<" + type[0].toString() + ">");
+            return updateLexicalEntry(id, leu.getRelation(), "<" + leu.getValue() + ">", "<" + type + ">");
         } else if (leu.getRelation().equals(OntoLexEntity.LexicalEntryAttributes.Status.toString())) {
             validateLexicalEntryStatus(leu.getValue());
             if (leu.getValue().isEmpty()) {
@@ -383,7 +383,7 @@ public final class LexiconUpdateManager implements Manager, Cached {
         return 0;
     }
 
-    public String updateForm(String id, FormUpdater fu, String user) throws ManagerException {
+    public String updateForm(String id, FormUpdater fu) throws ManagerException {
         UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
         validateFormAttribute(fu.getRelation());
         if (fu.getRelation().equals(OntoLexEntity.FormAttributes.Type.toString())) {
@@ -447,7 +447,7 @@ public final class LexiconUpdateManager implements Manager, Cached {
         return lastupdate;
     }
 
-    public String updateLexicalSense(String id, LexicalSenseUpdater lsu, String user) throws ManagerException {
+    public String updateLexicalSense(String id, LexicalSenseUpdater lsu) throws ManagerException {
         validateLexicalSenseAttribute(lsu.getRelation());
         if (lsu.getRelation().equals(OntoLexEntity.LexicalSenseAttributes.Note.toString())) {
             return updateLexicalSense(id, lsu.getRelation(), "\"" + lsu.getValue() + "\"");
@@ -492,7 +492,7 @@ public final class LexiconUpdateManager implements Manager, Cached {
         return lastupdate;
     }
 
-    public String updateEtymology(String id, EtymologyUpdater eu, String user) throws ManagerException {
+    public String updateEtymology(String id, EtymologyUpdater eu) throws ManagerException {
         validateEtymologyAttribute(eu.getRelation());
         if (eu.getRelation().equals(OntoLexEntity.EtymologyAttributes.Note.toString())) {
             return updateEtymology(id, eu.getRelation(), "\"" + eu.getValue() + "\"");
@@ -508,7 +508,7 @@ public final class LexiconUpdateManager implements Manager, Cached {
         }
     }
 
-    public String updateEtymologicalLink(String id, EtymologicalLinkUpdater elu, String user) throws ManagerException {
+    public String updateEtymologicalLink(String id, EtymologicalLinkUpdater elu) throws ManagerException {
         validateEtymologicalLinkAttribute(elu.getRelation());
         if (elu.getRelation().equals(OntoLexEntity.EtymologicalLinkAttributes.Note.toString())) {
             return updateEtymologicalLink(id, elu.getRelation(), "\"" + elu.getValue() + "\"");
@@ -587,7 +587,7 @@ public final class LexiconUpdateManager implements Manager, Cached {
                     throw new ManagerException(lru.getValue() + " is not a valid Lexical Entry");
                 }
             } else if (lru.getRelation().equals(OntoLexEntity.Decomp.CorrespondsTo.toString())) {
-                if (StringUtil.existsTypedIRI(lru.getValue(), SparqlPrefix.ONTOLEX.getUri() + OntoLexEntity.LexicalEntryTypes.LexicalEntry.toString())) {
+                if (StringUtil.existsTypedIRI(lru.getValue(), OntoLexEntity.LexicalEntryTypes.LexicalEntry.toString())) {
                 } else {
                     throw new ManagerException(lru.getValue() + " is not a valid Lexical Entry");
                 }
@@ -595,22 +595,22 @@ public final class LexiconUpdateManager implements Manager, Cached {
         } else if (lru.getType().equals(EnumUtil.LinguisticRelation.ConceptRel.toString())) {
             validateConceptRelRelation(lru.getRelation());
             if (lru.getRelation().equals(OntoLexEntity.LexicalConceptsRelations.evokes.toString())) {
-                if (StringUtil.existsTypedIRI(lru.getValue(), SparqlPrefix.ONTOLEX.getUri() + OntoLexEntity.LexicalConcepts.LexicalConcept.toString())) {
+                if (StringUtil.existsTypedIRI(lru.getValue(), OntoLexEntity.LexicalConcepts.LexicalConcept.toString())) {
                 } else {
                     throw new ManagerException(lru.getValue() + " is not a valid Lexical Concept");
                 }
             } else if (lru.getRelation().equals(OntoLexEntity.LexicalConceptsRelations.isEvokedBy.toString())) {
-                if (StringUtil.existsTypedIRI(lru.getValue(), SparqlPrefix.ONTOLEX.getUri() + OntoLexEntity.LexicalEntryTypes.LexicalEntry.toString())) {
+                if (StringUtil.existsTypedIRI(lru.getValue(), OntoLexEntity.LexicalEntryTypes.LexicalEntry.toString())) {
                 } else {
                     throw new ManagerException(lru.getValue() + " is not a valid Lexical entry");
                 }
             } else if (lru.getRelation().equals(OntoLexEntity.LexicalConceptsRelations.lexicalizedSense.toString())) {
-                if (StringUtil.existsTypedIRI(lru.getValue(), SparqlPrefix.ONTOLEX.getUri() + OntoLexEntity.CoreClasses.LexicalSense.toString())) {
+                if (StringUtil.existsTypedIRI(lru.getValue(), OntoLexEntity.CoreClasses.LexicalSense.toString())) {
                 } else {
                     throw new ManagerException(lru.getValue() + " is not a valid Lexical sense");
                 }
             } else if (lru.getRelation().equals(OntoLexEntity.LexicalConceptsRelations.isLexicalizedSenseOf.toString())) {
-                if (StringUtil.existsTypedIRI(lru.getValue(), SparqlPrefix.ONTOLEX.getUri() + OntoLexEntity.LexicalConcepts.LexicalConcept.toString())) {
+                if (StringUtil.existsTypedIRI(lru.getValue(), OntoLexEntity.LexicalConcepts.LexicalConcept.toString())) {
                 } else {
                     throw new ManagerException(lru.getValue() + " is not a valid Lexical concept");
                 }
@@ -639,7 +639,7 @@ public final class LexiconUpdateManager implements Manager, Cached {
 
     public String createLinguisticRelation(String id, String relation, String valueToInsert) throws ManagerException, UpdateExecutionException {
         // TODO: it should be verified if the relation can be applied to the id type (for example, denotes requires the id type to be LexicalEntry
-        if (relation.contains(SparqlPrefix.ETY.getUri() + OntoLexEntity.LexicalRel.Cognate.toString())) {
+        if (relation.contains(OntoLexEntity.LexicalRel.Cognate.toString())) {
             createCognate(valueToInsert);
         }
         return updateLinguisticRelation(SparqlInsertData.CREATE_LINGUISTIC_RELATION, id, relation,
@@ -656,7 +656,7 @@ public final class LexiconUpdateManager implements Manager, Cached {
     }
 
     public String updateLinguisticRelation(String id, String relation, String valueToInsert, String currentValue) throws ManagerException, UpdateExecutionException {
-        if (relation.contains(SparqlPrefix.ETY.getUri() + OntoLexEntity.LexicalRel.Cognate.toString())) {
+        if (relation.contains(OntoLexEntity.LexicalRel.Cognate.toString())) {
             updateCognate(valueToInsert, currentValue);
         }
         if (ManagerFactory.getManager(UtilityManager.class).existsLinguisticRelation(id, relation, currentValue)) {
@@ -719,9 +719,9 @@ public final class LexiconUpdateManager implements Manager, Cached {
             } else {
                 throw new ManagerException("Extension not supported");
             }
-        } else if (gru.getType().equals(EnumUtil.GenericRelation.Confidence.toString())) {
-            if (gru.getRelation().contains(EnumUtil.GenericRelationConfidence.confidence.toString())) {
-            }
+//        } else if (gru.getType().equals(EnumUtil.GenericRelation.Confidence.toString())) {
+//            if (gru.getRelation().contains(EnumUtil.GenericRelationConfidence.confidence.toString())) {
+//            }
         } else {
             throw new ManagerException(gru.getType() + " is not a valid relation type");
         }
@@ -745,15 +745,18 @@ public final class LexiconUpdateManager implements Manager, Cached {
         // TODO: it should be verified if the relation can be applied to the id type (for example, sameAs must link same types)
         return updateGenericRelation(SparqlInsertData.CREATE_GENERIC_RELATION, id,
                 relation,
-                relation.equals(EnumUtil.GenericRelationConfidence.confidence.toString()) ? Float.toString(Float.parseFloat(valueToInsert)) : valueToInsert, "?" + SparqlVariable.TARGET);
+//                relation.equals(EnumUtil.GenericRelationConfidence.confidence.toString()) ? Float.toString(Float.parseFloat(valueToInsert)) : valueToInsert, "?" + SparqlVariable.TARGET);
+        valueToInsert, "?" + SparqlVariable.TARGET);
     }
 
     public String updateGenericRelation(String id, String relation, String valueToInsert, String currentValue) throws ManagerException, UpdateExecutionException {
         if (ManagerFactory.getManager(UtilityManager.class).existsGenericRelation(id, relation, currentValue)) {
             return updateGenericRelation(SparqlUpdateData.UPDATE_GENERIC_RELATION, id,
                     relation,
-                    relation.equals(EnumUtil.GenericRelationConfidence.confidence.toString()) ? Float.toString(Float.parseFloat(valueToInsert)) : valueToInsert,
-                    relation.equals(EnumUtil.GenericRelationConfidence.confidence.toString()) ? Float.toString(Float.parseFloat(currentValue)) : currentValue);
+//                    relation.equals(EnumUtil.GenericRelationConfidence.confidence.toString()) ? Float.toString(Float.parseFloat(valueToInsert)) : valueToInsert,
+//                    relation.equals(EnumUtil.GenericRelationConfidence.confidence.toString()) ? Float.toString(Float.parseFloat(currentValue)) : currentValue);
+                    valueToInsert,
+                    currentValue);
         } else {
             throw new ManagerException("IRI " + id + " does not exist or <" + id + ", " + relation + ", " + currentValue + "> does not exist");
         }

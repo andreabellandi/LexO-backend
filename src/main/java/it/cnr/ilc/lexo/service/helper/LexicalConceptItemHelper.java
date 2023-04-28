@@ -17,6 +17,7 @@ public class LexicalConceptItemHelper extends TripleStoreDataHelper<LexicalConce
 
     @Override
     public void fillData(LexicalConceptItem data, BindingSet bs) {
+        setTotalHits(getIntegerNumber(bs, SparqlVariable.TOTAL_HITS));
        data.setHasChildren(getIntegerNumber(bs, SparqlVariable.NGCHILD) > 0);
        data.setChildren(getIntegerNumber(bs, SparqlVariable.NGCHILD));
        data.setLexicalConcept(getStringValue(bs, SparqlVariable.CHILD));

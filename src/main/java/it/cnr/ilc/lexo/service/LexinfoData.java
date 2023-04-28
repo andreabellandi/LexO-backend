@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiOperation;
 import it.cnr.ilc.lexo.manager.LexinfoManager;
 import it.cnr.ilc.lexo.manager.ManagerFactory;
 import it.cnr.ilc.lexo.service.helper.LexinfoMorphoHelper;
+import it.cnr.ilc.lexo.service.helper.PropertyHierachyHelper;
 import it.cnr.ilc.lexo.service.helper.VocabularyValuesHelper;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -30,7 +31,8 @@ public class LexinfoData extends Service {
     private final LexinfoManager lexiconManager = ManagerFactory.getManager(LexinfoManager.class);
     private final LexinfoMorphoHelper lexinfoMorphoHelper = new LexinfoMorphoHelper();
     private final VocabularyValuesHelper vocabularyValuesHelper = new VocabularyValuesHelper();
- 
+    private final PropertyHierachyHelper propertyHierachyHelper = new PropertyHierachyHelper();
+
     @GET
     @Path("morphology")
     @Produces(MediaType.APPLICATION_JSON)
@@ -48,7 +50,7 @@ public class LexinfoData extends Service {
                 .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                 .build();
     }
-    
+
     @GET
     @Path("representation")
     @Produces(MediaType.APPLICATION_JSON)
@@ -66,7 +68,7 @@ public class LexinfoData extends Service {
                 .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                 .build();
     }
-    
+
     @GET
     @Path("senseDefinition")
     @Produces(MediaType.APPLICATION_JSON)
@@ -84,39 +86,131 @@ public class LexinfoData extends Service {
                 .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                 .build();
     }
+
+    @GET
+    @Path("lexicalRelations")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "lexicalRelations",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Lexical relations",
+            notes = "This method returns the lexical relations of the vartrans module definied in the Lexinfo vocabulary")
+    public Response lexicalRel() {
+        String json = propertyHierachyHelper.toJson(lexiconManager.getLexicalRel());
+        return Response.ok(json)
+                .type(MediaType.TEXT_PLAIN)
+                .header("Access-Control-Allow-Headers", "content-type")
+                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                .build();
+    }
+
+    @GET
+    @Path("senseRelations")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "senseRelations",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Sense relations",
+            notes = "This method returns the sense relations of the vartrans module definied in the Lexinfo vocabulary")
+    public Response senseRel() {
+        String json = propertyHierachyHelper.toJson(lexiconManager.getSenseRel());
+        return Response.ok(json)
+                .type(MediaType.TEXT_PLAIN)
+                .header("Access-Control-Allow-Headers", "content-type")
+                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                .build();
+    }
     
-//    @GET
-//    @Path("lexicalRelations")
-//    @Produces(MediaType.APPLICATION_JSON)
-//    @RequestMapping(
-//            method = RequestMethod.GET,
-//            value = "variation and translation",
-//            produces = "application/json; charset=UTF-8")
-//    @ApiOperation(value = "Lexical relations",
-//            notes = "This method returns the lexical relations of the vartrans module definied in the Lexinfo vocabulary")
-//    public Response lexiclRel() {
-////        log(Level.INFO, "get lexicon entries types");
-//        PropertyHierarchy ph = new PropertyHierarchy();
-//        ph.setPropertyId("prop1ID");
-//        ph.setPropertyLabel("propLabel1");
-//        PropertyHierarchy ph12 = new PropertyHierarchy();
-//        ph12.setPropertyId("sss");
-//        ph12.setPropertyLabel("fff");
-//        PropertyHierarchy ph121 = new PropertyHierarchy();
-//        ph121.setPropertyId("ww");
-//        ph121.setPropertyLabel("ll");
-//        ArrayList<Object> a = new ArrayList();
-//        ArrayList<Object> b = new ArrayList();
-//        a.add(ph121);
-//        ph12.setChildren(a);
-//        b.add(ph12);
-//        ph.setChildren(b);
-//        String json = lexinfoPropertyHierarchyHelper.toJson(ph);
-//        return Response.ok(json)
-//                .type(MediaType.TEXT_PLAIN)
-//                .header("Access-Control-Allow-Headers", "content-type")
-//                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-//                .build();
-//    }
+    @GET
+    @Path("formRelations")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "formRelations",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Form relations",
+            notes = "This method returns the form relations of the vartrans module definied in the Lexinfo vocabulary")
+    public Response formRel() {
+        String json = propertyHierachyHelper.toJson(lexiconManager.getFormRel());
+        return Response.ok(json)
+                .type(MediaType.TEXT_PLAIN)
+                .header("Access-Control-Allow-Headers", "content-type")
+                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                .build();
+    }
+
+    @GET
+    @Path("usage")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "usage",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Usage relations",
+            notes = "This method returns the usage relations to be associated with senses")
+    public Response usageRel() {
+        String json = lexinfoMorphoHelper.toJson(lexiconManager.getUsage());
+        return Response.ok(json)
+                .type(MediaType.TEXT_PLAIN)
+                .header("Access-Control-Allow-Headers", "content-type")
+                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                .build();
+    }
+
+    @GET
+    @Path("lexicalCategories")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "lexicalCategories",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Lexical categories for vartrans reified lexico-semantic relations",
+            notes = "This method returns the category types for vartrans reified lexical relations")
+    public Response lexicalCategories() {
+        String json = lexinfoMorphoHelper.toJson(lexiconManager.getLexicalCategory());
+        return Response.ok(json)
+                .type(MediaType.TEXT_PLAIN)
+                .header("Access-Control-Allow-Headers", "content-type")
+                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                .build();
+    }
+    
+    @GET
+    @Path("semanticCategories")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "semanticCategories",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Semantic categories for vartrans reified lexico-semantic relations",
+            notes = "This method returns the category types for vartrans reified semantic relations")
+    public Response semanticCategories() {
+        String json = lexinfoMorphoHelper.toJson(lexiconManager.getSemanticCategory());
+        return Response.ok(json)
+                .type(MediaType.TEXT_PLAIN)
+                .header("Access-Control-Allow-Headers", "content-type")
+                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                .build();
+    }
+    
+    @GET
+    @Path("formCategories")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "formCategories",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Form categories for vartrans reified form relations",
+            notes = "This method returns the category types for vartrans reified form relations")
+    public Response formCategories() {
+        String json = lexinfoMorphoHelper.toJson(lexiconManager.getFormCategory());
+        return Response.ok(json)
+                .type(MediaType.TEXT_PLAIN)
+                .header("Access-Control-Allow-Headers", "content-type")
+                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                .build();
+    }
 
 }

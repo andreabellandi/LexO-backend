@@ -5,22 +5,22 @@
  */
 package it.cnr.ilc.lexo.service.helper;
 
-import it.cnr.ilc.lexo.service.data.vocabulary.MorphologicalProperty;
+import it.cnr.ilc.lexo.service.data.vocabulary.RangedProperty;
 import org.eclipse.rdf4j.query.BindingSet;
 
 /**
  *
  * @author andreabellandi
  */
-public class LexinfoMorphoHelper extends TripleStoreDataHelper<MorphologicalProperty> {
+public class LexinfoMorphoHelper extends TripleStoreDataHelper<RangedProperty> {
 
     @Override
-    public Class<MorphologicalProperty> getDataClass() {
-        return MorphologicalProperty.class;
+    public Class<RangedProperty> getDataClass() {
+        return RangedProperty.class;
     }
 
     @Override
-    public void fillData(MorphologicalProperty data, BindingSet bs) {
+    public void fillData(RangedProperty data, BindingSet bs) {
     }
 
 }

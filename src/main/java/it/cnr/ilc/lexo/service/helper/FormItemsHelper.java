@@ -29,7 +29,7 @@ public class FormItemsHelper extends TripleStoreDataHelper<FormItem> {
         data.setLastUpdate(getStringValue(bs, SparqlVariable.LAST_UPDATE));
         data.setCreationDate(getStringValue(bs, SparqlVariable.CREATION_DATE));
         data.setLexicalEntry(getStringValue(bs, SparqlVariable.LEXICAL_ENTRY));
-        data.setTargetSense(getStringValue(bs, SparqlVariable.TARGET));
+//        data.setTargetSense(getStringValue(bs, SparqlVariable.TARGET));
         data.setConfidence(getDoubleNumber(bs, "confidence"));
     }
 

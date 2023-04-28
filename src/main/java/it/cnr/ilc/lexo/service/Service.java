@@ -10,6 +10,7 @@ import it.cnr.ilc.lexo.hibernate.entity.Account;
 import it.cnr.ilc.lexo.hibernate.entity.SuperEntity.Status;
 import it.cnr.ilc.lexo.manager.ManagerFactory;
 import it.cnr.ilc.lexo.manager.UserManager;
+import it.cnr.ilc.lexo.manager.UserRightManager;
 import it.cnr.ilc.lexo.service.data.AuthenticationData;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -49,36 +50,67 @@ abstract class Service {
     protected Map<String, Object> session;
     private final String ANONYMOUS_USER = "ANONYMOUS";
 
-    private final UserManager userManager = ManagerFactory.getManager(UserManager.class);
+    private UserManager userManager = null;
+    private final UserRightManager userRightManager = ManagerFactory.getManager(UserRightManager.class);
 
     protected void putkKey(AuthenticationData authenticationData) {
         this.authenticationData = authenticationData;
         KEY_MANAGER.put(authenticationData);
     }
 
-    protected void checkKey(String key) throws AuthorizationException {
+    protected void checkKey(String key) throws AuthorizationException, ServiceException {
         if (LexOProperties.getProperty("keycloack.url") != null) {
+            if (userManager == null) {
+                userManager = ManagerFactory.getManager(UserManager.class);
+            }
             try {
                 // LexO-server server was configured with Keycloack
-                authenticationData = userManager.authorize(key);
+                if (null != key) {
+                    authenticationData = userManager.authorize(key.substring(7));
+                } else {
+                    throw new ServiceException("authorization key is null");
+                }
             } catch (Exception ex) {
                 throw new AuthorizationException(ex.getMessage());
             }
         } else {
             // LexO-server server was configured with the internal user management
-            authenticationData = KEY_MANAGER.get(key);
-            if (authenticationData != null) {
-                account = HibernateUtil.getSession().get(Account.class, authenticationData.getId());
-                if (account == null || !account.getStatus().equals(Status.VALID) || !account.getEnabled()) {
-                    KEY_MANAGER.remove(key);
-                    authenticationData = null;
-                    account = null;
-                }
-            }
-            session = KEY_MANAGER.getSession(key);
+//            authenticationData = KEY_MANAGER.get(key);
+//            if (authenticationData != null) {
+//                account = HibernateUtil.getSession().get(Account.class, authenticationData.getId());
+//                if (account == null || !account.getStatus().equals(Status.VALID) || !account.getEnabled()) {
+//                    KEY_MANAGER.remove(key);
+//                    authenticationData = null;
+//                    account = null;
+//                }
+//            }
+//            session = KEY_MANAGER.getSession(key);
         }
     }
 
+    protected boolean checkPermissions(UserRightManager.Operation op) throws AuthorizationException, ServiceException {
+        if (authenticationData != null) {
+            if (userRightManager.checkPermission(op, authenticationData.getType())) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    protected String getUser(String author) {
+        if (authenticationData != null) {
+            return authenticationData.getUsername();
+        } else {
+            if (author != null) {
+                return author;
+            } else {
+                return "anonymous";
+            }
+        }
+    }
+    
     protected List<AuthenticationData> list() {
         return KEY_MANAGER.list();
     }

@@ -29,7 +29,7 @@ public class LexicalEntryItem extends Entity implements Data {
     private ArrayList<Morphology> morphology;
     private String completionDate;
     private String revisionDate;
-    
+    private ArrayList<String> images;
 
     public LexicalEntryItem() {
     }
@@ -41,6 +41,7 @@ public class LexicalEntryItem extends Entity implements Data {
     public void setHasChildren(boolean hasChildren) {
         this.hasChildren = hasChildren;
     }
+
     public String getLanguage() {
         return language;
     }
@@ -135,6 +136,14 @@ public class LexicalEntryItem extends Entity implements Data {
 
     public void setRevisionDate(String revisionDate) {
         this.revisionDate = revisionDate;
+    }
+
+    public ArrayList<String> getImages() {
+        return images;
+    }
+
+    public void setImages(ArrayList<String> images) {
+        this.images = images;
     }
 
 }

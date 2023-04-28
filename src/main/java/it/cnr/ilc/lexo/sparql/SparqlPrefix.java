@@ -26,6 +26,7 @@ public class SparqlPrefix {
     public static Namespace DCT = new Namespace("dct:", "http://purl.org/dc/terms/");
     public static Namespace LOC = new Namespace("loc:", "http://id.loc.gov/vocabulary/relators/");
     public static Namespace VS = new Namespace("vs:", "http://www.w3.org/2003/06/sw-vocab-status/ns#");
+    public static Namespace FOAF = new Namespace("foaf:", "http://xmlns.com/foaf/0.1/");
     
 
     // linguistic categories

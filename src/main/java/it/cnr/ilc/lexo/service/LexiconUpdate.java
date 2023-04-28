@@ -25,17 +25,16 @@ import it.cnr.ilc.lexo.service.data.lexicon.input.LinguisticRelationUpdater;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.apache.log4j.Level;
 import org.eclipse.rdf4j.query.UpdateExecutionException;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -60,29 +59,29 @@ public class LexiconUpdate extends Service {
             produces = "application/json; charset=UTF-8")
     @ApiOperation(value = "Lexicon language update",
             notes = "This method updates the lexicon language according to the input updater")
-    public Response language(@QueryParam("key") String key, @QueryParam("user") String user, @QueryParam("id") String id, LanguageUpdater lu) {
-        if (key.equals("PRINitant19")) {
+    public Response language(
+            @HeaderParam("Authorization") String key, @QueryParam("id") String id, LanguageUpdater lu) {
             try {
+                checkKey(key);
                 String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
                 try {
                     UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
                     if (!utilityManager.isLexiconLanguage(_id)) {
                         return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " does not exist").build();
                     }
-                    return Response.ok(lexiconManager.updateLexiconLanguage(_id, lu, user))
+                    return Response.ok(lexiconManager.updateLexiconLanguage(_id, lu))
                             .type(MediaType.TEXT_PLAIN)
                             .header("Access-Control-Allow-Headers", "content-type")
                             .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                             .build();
                 } catch (ManagerException | UpdateExecutionException ex) {
-                    Logger.getLogger(LexiconUpdate.class.getName()).log(Level.SEVERE, null, ex);
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
                 }
             } catch (UnsupportedEncodingException ex) {
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
-            }
-        } else {
-            return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Insertion denied, wrong key").build();
+            } catch (AuthorizationException | ServiceException ex) {
+            log(Level.ERROR, "lexicon/creation/language: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
 
@@ -95,26 +94,33 @@ public class LexiconUpdate extends Service {
             produces = "application/json; charset=UTF-8")
     @ApiOperation(value = "Lexical entry update",
             notes = "This method updates the lexical entry according to the input updater")
-    public Response lexicalEntry(@QueryParam("key") String key, @QueryParam("user") String user, @QueryParam("id") String id, LexicalEntryUpdater leu) {
-        if (key.equals("PRINitant19")) {
+    public Response lexicalEntry(
+            @HeaderParam("Authorization") String key, @QueryParam("id") String id, 
+            @ApiParam(
+                    name = "author",
+                    value = "if LexO user management is disabled, the account that is updating the status of the lexical entry",
+                    example = "user7",
+                    required = true)
+            @QueryParam("author") String author,
+            LexicalEntryUpdater leu) {
             try {
+                checkKey(key);
                 String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
                 UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
                 String type = utilityManager.getLexicalEntryType(_id);
                 if (type == null) {
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " does not exist").build();
                 } 
-                return Response.ok(lexiconManager.updateLexicalEntry(_id, leu, user, type))
+                return Response.ok(lexiconManager.updateLexicalEntry(_id, leu, author, type))
                         .type(MediaType.TEXT_PLAIN)
                         .header("Access-Control-Allow-Headers", "content-type")
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
             } catch (ManagerException | UpdateExecutionException | UnsupportedEncodingException ex) {
-                Logger.getLogger(LexiconUpdate.class.getName()).log(Level.SEVERE, null, ex);
                 return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
-            }
-        } else {
-            return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Insertion denied, wrong key").build();
+            } catch (AuthorizationException | ServiceException ex) {
+            log(Level.ERROR, "lexicon/creation/lexicalEntry: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
 
@@ -127,25 +133,24 @@ public class LexiconUpdate extends Service {
             produces = "application/json; charset=UTF-8")
     @ApiOperation(value = "Form update",
             notes = "This method updates the form according to the input updater")
-    public Response form(@QueryParam("key") String key, @QueryParam("user") String user, @QueryParam("id") String id, FormUpdater fu) {
-        if (key.equals("PRINitant19")) {
+    public Response form(@HeaderParam("Authorization") String key, @QueryParam("id") String id, FormUpdater fu) {
             try {
+                checkKey(key);
                 String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
                 UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
                 if (!utilityManager.isForm(_id)) {
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " does not exist").build();
                 }
-                return Response.ok(lexiconManager.updateForm(_id, fu, user))
+                return Response.ok(lexiconManager.updateForm(_id, fu))
                         .type(MediaType.TEXT_PLAIN)
                         .header("Access-Control-Allow-Headers", "content-type")
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
             } catch (ManagerException | UpdateExecutionException | UnsupportedEncodingException ex) {
-                Logger.getLogger(LexiconUpdate.class.getName()).log(Level.SEVERE, null, ex);
                 return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
-            }
-        } else {
-            return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Insertion denied, wrong key").build();
+            } catch (AuthorizationException | ServiceException ex) {
+           log(Level.ERROR, "lexicon/creation/form: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
 
@@ -158,25 +163,24 @@ public class LexiconUpdate extends Service {
             produces = "application/json; charset=UTF-8")
     @ApiOperation(value = "Lexical Sense update",
             notes = "This method updates the sense according to the input updater")
-    public Response lexicalSense(@QueryParam("key") String key, @QueryParam("user") String user, @QueryParam("id") String id, LexicalSenseUpdater lsu) {
-        if (key.equals("PRINitant19")) {
+    public Response lexicalSense(@HeaderParam("Authorization") String key, @QueryParam("id") String id, LexicalSenseUpdater lsu) {
             try {
+                checkKey(key);
                 String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
                 UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
                 if (!utilityManager.isLexicalSense(_id)) {
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " does not exist").build();
                 }
-                return Response.ok(lexiconManager.updateLexicalSense(_id, lsu, user))
+                return Response.ok(lexiconManager.updateLexicalSense(_id, lsu))
                         .type(MediaType.TEXT_PLAIN)
                         .header("Access-Control-Allow-Headers", "content-type")
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
             } catch (ManagerException | UpdateExecutionException | UnsupportedEncodingException ex) {
-                Logger.getLogger(LexiconUpdate.class.getName()).log(Level.SEVERE, null, ex);
                 return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
-            }
-        } else {
-            return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Insertion denied, wrong key").build();
+            } catch (AuthorizationException | ServiceException ex) {
+            log(Level.ERROR, "lexicon/creation/lexicalSense: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
 
@@ -189,29 +193,28 @@ public class LexiconUpdate extends Service {
             produces = "application/json; charset=UTF-8")
     @ApiOperation(value = "Etymology update",
             notes = "This method updates the etymology according to the input updater")
-    public Response etymology(@QueryParam("key") String key, @QueryParam("user") String user, @QueryParam("id") String id, EtymologyUpdater eu) {
-        if (key.equals("PRINitant19")) {
+    public Response etymology(@HeaderParam("Authorization") String key, @QueryParam("id") String id, EtymologyUpdater eu) {
             try {
+                checkKey(key);
                 String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
                 try {
                     UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
                     if (!utilityManager.isEtymology(_id)) {
                         return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " does not exist").build();
                     }
-                    return Response.ok(lexiconManager.updateEtymology(_id, eu, user))
+                    return Response.ok(lexiconManager.updateEtymology(_id, eu))
                             .type(MediaType.TEXT_PLAIN)
                             .header("Access-Control-Allow-Headers", "content-type")
                             .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                             .build();
                 } catch (ManagerException | UpdateExecutionException ex) {
-                    Logger.getLogger(LexiconUpdate.class.getName()).log(Level.SEVERE, null, ex);
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
                 }
             } catch (UnsupportedEncodingException ex) {
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
-            }
-        } else {
-            return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Insertion denied, wrong key").build();
+            } catch (AuthorizationException | ServiceException ex) {
+            log(Level.ERROR, "lexicon/creation/etymology: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
 
@@ -224,30 +227,29 @@ public class LexiconUpdate extends Service {
             produces = "application/json; charset=UTF-8")
     @ApiOperation(value = "Etymological link update",
             notes = "This method updates the etymological link according to the input updater")
-    public Response etymologicalLink(@QueryParam("key") String key, @QueryParam("user") String user,
+    public Response etymologicalLink(@HeaderParam("Authorization") String key,
             @QueryParam("id") String id, EtymologicalLinkUpdater elu) {
-        if (key.equals("PRINitant19")) {
             try {
+                checkKey(key);
                 String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
                 try {
                     UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
                     if (!utilityManager.isEtymologicalLink(_id)) {
                         return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " does not exist").build();
                     }
-                    return Response.ok(lexiconManager.updateEtymologicalLink(_id, elu, user))
+                    return Response.ok(lexiconManager.updateEtymologicalLink(_id, elu))
                             .type(MediaType.TEXT_PLAIN)
                             .header("Access-Control-Allow-Headers", "content-type")
                             .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                             .build();
                 } catch (ManagerException | UpdateExecutionException ex) {
-                    Logger.getLogger(LexiconUpdate.class.getName()).log(Level.SEVERE, null, ex);
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
                 }
             } catch (UnsupportedEncodingException ex) {
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
-            }
-        } else {
-            return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Insertion denied, wrong key").build();
+            } catch (AuthorizationException | ServiceException ex) {
+            log(Level.ERROR, "lexicon/creation/etymologicalLink: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
 
@@ -260,9 +262,9 @@ public class LexiconUpdate extends Service {
             produces = "application/json; charset=UTF-8")
     @ApiOperation(value = "Linguistic relation update",
             notes = "This method updates a linguistic relation according to the input updater")
-    public Response linguisticRelation(@QueryParam("key") String key, @QueryParam("id") String id, LinguisticRelationUpdater lru) {
-        if (key.equals("PRINitant19")) {
+    public Response linguisticRelation(@HeaderParam("Authorization") String key, @QueryParam("id") String id, LinguisticRelationUpdater lru) {
             try {
+                checkKey(key);
                 String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
                 try {
                     String json = lexiconManager.updateLinguisticRelation(_id, lru);
@@ -273,14 +275,13 @@ public class LexiconUpdate extends Service {
                             .build();
                     
                 } catch (ManagerException | UpdateExecutionException ex) {
-                    Logger.getLogger(LexiconUpdate.class.getName()).log(Level.SEVERE, null, ex);
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
                 }
             } catch (UnsupportedEncodingException ex) {
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
-            }
-        } else {
-            return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Insertion denied, wrong key").build();
+            } catch (AuthorizationException | ServiceException ex) {
+            log(Level.ERROR, "lexicon/creation/linguisticRelation: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
 
@@ -293,9 +294,9 @@ public class LexiconUpdate extends Service {
             produces = "application/json; charset=UTF-8")
     @ApiOperation(value = "Generic relation update",
             notes = "This method updates a generic relation according to the input updater")
-    public Response genericRelation(@QueryParam("key") String key, @QueryParam("id") String id, GenericRelationUpdater gru) {
-        if (key.equals("PRINitant19")) {
+    public Response genericRelation(@HeaderParam("Authorization") String key, @QueryParam("id") String id, GenericRelationUpdater gru) {
             try {
+                checkKey(key);
                 String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
                 try {
                     return Response.ok(lexiconManager.updateGenericRelation(_id, gru))
@@ -304,14 +305,13 @@ public class LexiconUpdate extends Service {
                             .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                             .build();
                 } catch (ManagerException | UpdateExecutionException ex) {
-                    Logger.getLogger(LexiconUpdate.class.getName()).log(Level.SEVERE, null, ex);
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
                 }
             } catch (UnsupportedEncodingException ex) {
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
-            }
-        } else {
-            return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Insertion denied, wrong key").build();
+            } catch (AuthorizationException | ServiceException ex) {
+            log(Level.ERROR, "lexicon/creation/genericRelation: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
 
@@ -324,9 +324,9 @@ public class LexiconUpdate extends Service {
             produces = "application/json; charset=UTF-8")
     @ApiOperation(value = "Component position update",
             notes = "This method updates the position of a multiword component according to the input updater")
-    public Response componentPosition(@QueryParam("key") String key, @QueryParam("id") String id, ComponentPositionUpdater cpu) {
-        if (key.equals("PRINitant19")) {
+    public Response componentPosition(@HeaderParam("Authorization") String key, @QueryParam("id") String id, ComponentPositionUpdater cpu) {
             try {
+                checkKey(key);
                 String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
                 try {
                     return Response.ok(lexiconManager.updateComponentPosition(_id, cpu))
@@ -335,14 +335,13 @@ public class LexiconUpdate extends Service {
                             .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                             .build();
                 } catch (ManagerException | UpdateExecutionException ex) {
-                    Logger.getLogger(LexiconUpdate.class.getName()).log(Level.SEVERE, null, ex);
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
                 }
             } catch (UnsupportedEncodingException ex) {
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
-            }
-        } else {
-            return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Insertion denied, wrong key").build();
+            } catch (AuthorizationException | ServiceException ex) {
+            log(Level.ERROR, "lexicon/creation/componentPosition: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
 
@@ -362,15 +361,10 @@ public class LexiconUpdate extends Service {
                     value = "the lexical entity id, the bibliography refers to",
                     required = true)
             @QueryParam("id") String id,
-            @ApiParam(
-                    name = "key",
-                    value = "authentication token",
-                    example = "lexodemo",
-                    required = true)
-            @QueryParam("key") String key,
+            @HeaderParam("Authorization") String key,
             @ApiParam(
                     name = "author",
-                    value = "the account is being creating the bibliographic link",
+                    value = "the account that is creating the bibliographic link (if LexO user management disabled)",
                     example = "user7",
                     required = true)
             @QueryParam("author") String author,
@@ -380,8 +374,8 @@ public class LexiconUpdate extends Service {
                     example = "AXZSXE45",
                     required = true)
             @QueryParam("itemKey") String itemKey) {
-        if (key.equals("PRINitant19")) {
             try {
+                checkKey(key);
                 String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
                 String lastUpdate = "";
                 if ((itemKey == null || itemKey.isEmpty())) {
@@ -408,9 +402,9 @@ public class LexiconUpdate extends Service {
                         .build();
             } catch (UnsupportedEncodingException ex) {
                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
-            }
-        } else {
-            return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Insertion denied, wrong key").build();
+            } catch (AuthorizationException | ServiceException ex) {
+            log(Level.ERROR, "lexicon/creation/synchronizeBibliography: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
 

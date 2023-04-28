@@ -71,22 +71,23 @@ public class LexiconCreationManager implements Manager, Cached {
         String id = idInstancePrefix + tm.toString();
         String created = timestampFormat.format(tm);
         String sparqlPrefix = "PREFIX " + prefix + ": <" + baseIRI + ">";
-        String _id = baseIRI + id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
+        String idLabel = id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
+        String _id = baseIRI + idLabel;
         RDFQueryUtil.update(SparqlInsertData.CREATE_LEXICAL_ENTRY.replace("[ID]", _id)
-                .replace("[LABEL]", _id)
+                .replace("[LABEL]", idLabel)
                 .replace("_PREFIX_", sparqlPrefix)
                 .replace("[AUTHOR]", author)
                 .replace("[CREATED]", created)
                 .replace("[MODIFIED]", created));
-        return setLexicalEntry(_id, created, author);
+        return setLexicalEntry(_id, idLabel, created, author);
     }
 
-    private LexicalEntryCore setLexicalEntry(String id, String created, String author) {
+    private LexicalEntryCore setLexicalEntry(String id, String label, String created, String author) {
         ArrayList<String> types = new ArrayList<>();
         types.add("LexicalEntry");
         LexicalEntryCore lec = new LexicalEntryCore();
         lec.setAuthor(author);
-        lec.setLabel(id);
+        lec.setLabel(label);
         lec.setConfidence(-1);
         lec.setType(types);
         lec.setLexicalEntry(id);
@@ -101,21 +102,22 @@ public class LexiconCreationManager implements Manager, Cached {
         String id = idInstancePrefix + tm.toString();
         String created = timestampFormat.format(tm);
         String sparqlPrefix = "PREFIX " + prefix + ": <" + baseIRI + ">";
-        String _id = baseIRI + id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
+        String idLabel = id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
+        String _id = baseIRI + idLabel;
         RDFQueryUtil.update(SparqlInsertData.CREATE_FORM.replaceAll("_ID_", _id)
-                .replace("_LABEL_", _id)
+                .replace("_LABEL_", idLabel)
                 .replace("_LANG_", lang)
                 .replace("_PREFIX_", sparqlPrefix)
                 .replace("_AUTHOR_", author)
                 .replace("_CREATED_", created)
                 .replace("_MODIFIED_", created)
                 .replaceAll("_LEID_", leID));
-        return setForm(_id, created, author);
+        return setForm(_id, idLabel, created, author);
     }
 
-    private FormCore setForm(String id, String created, String author) {
+    private FormCore setForm(String id, String label, String created, String author) {
         List<Property> pl = new ArrayList();
-        Property p = new Property("writtenRep", id);
+        Property p = new Property("writtenRep", label);
         pl.add(p);
         FormCore fc = new FormCore();
         fc.setCreator(author);
@@ -192,7 +194,6 @@ public class LexiconCreationManager implements Manager, Cached {
         String sparqlPrefix = "PREFIX " + prefix + ": <" + baseIRI + ">";
         String _id = baseIRI + id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
         RDFQueryUtil.update(SparqlInsertData.CREATE_LEXICAL_SENSE.replaceAll("_ID_", _id)
-                .replace("_LABEL_", _id)
                 .replace("_AUTHOR_", author)
                 .replace("_PREFIX_", sparqlPrefix)
                 .replace("_CREATED_", created)

@@ -38,6 +38,7 @@ public class LexicalEntryFilterHelper extends TripleStoreDataHelper<LexicalEntry
         data.setCreator(getStringValue(bs, SparqlVariable.LEXICAL_ENTRY_CREATION_AUTHOR));
         data.setNote(getStringValue(bs, SparqlVariable.NOTE));
         data.setMorphology(getMorphology(bs, getStringValue(bs, SparqlVariable.MORPHOLOGY)));
+        data.setImages(getImages(getStringValue(bs, SparqlVariable.IMAGE)));
         data.setCompletionDate(getStringValue(bs, SparqlVariable.COMPLETION_DATE));
         data.setCreationDate(getStringValue(bs, SparqlVariable.CREATION_DATE));
         data.setLastUpdate(getStringValue(bs, SparqlVariable.LAST_UPDATE));

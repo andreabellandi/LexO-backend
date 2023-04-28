@@ -6,7 +6,6 @@
 package it.cnr.ilc.lexo.service.data.vocabulary;
 
 import it.cnr.ilc.lexo.service.data.Data;
-import java.util.List;
 
 /**
  *
@@ -16,7 +15,8 @@ public class PropertyHierarchy implements Data {
 
     private String propertyId;
     private String propertyLabel;
-    private List<Object> children;
+    private String propertyDescription;
+    private String parentID;
 
     public String getPropertyId() {
         return propertyId;
@@ -34,13 +34,20 @@ public class PropertyHierarchy implements Data {
         this.propertyLabel = propertyLabel;
     }
 
-    public List<Object> getChildren() {
-        return children;
+    public String getPropertyDescription() {
+        return propertyDescription;
     }
 
-    public void setChildren(List<Object> children) {
-        this.children = children;
+    public void setPropertyDescription(String propertyDescription) {
+        this.propertyDescription = propertyDescription;
     }
-    
-    
+
+    public String getParentID() {
+        return parentID;
+    }
+
+    public void setParentID(String parentID) {
+        this.parentID = parentID;
+    }
+
 }

@@ -23,7 +23,7 @@ public class LinkedEntityHelper extends TripleStoreDataHelper<LinkedEntity> {
                 ? (getStringValue(bs, SparqlVariable.TYPE).isEmpty() ? new ArrayList() : getType(getStringValue(bs, SparqlVariable.TYPE)))
                 : getTypes(bs, getStringValue(bs, SparqlVariable.TYPE)));
         data.setInferred(getStringValue(bs, SparqlVariable.GRAPH).contains("implicit"));
-        data.setLabel(isExternalUri(getStringValue(bs, SparqlVariable.TARGET)) ? "" : getStringValue(bs, SparqlVariable.LABEL));
+        data.setLabel(getStringValue(bs, SparqlVariable.LABEL));
         data.setEntity(getStringValue(bs, SparqlVariable.TARGET));
         data.setLink(getStringValue(bs, SparqlVariable.LINK));
     }

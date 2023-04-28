@@ -21,7 +21,7 @@ public class LexicalConceptItem extends SKOSClass implements Data {
     private String lexicalConcept;
     private boolean hasChildren;
     private int children;
-    private String defaultLabel;
+//    private String defaultLabel;
 
     public String getLexicalConcept() {
         return lexicalConcept;
@@ -47,12 +47,12 @@ public class LexicalConceptItem extends SKOSClass implements Data {
         this.children = children;
     }
 
-    public String getDefaultLabel() {
-        return defaultLabel;
-    }
-
-    public void setDefaultLabel(String defaultLabel) {
-        this.defaultLabel = defaultLabel;
-    }
+//    public String getDefaultLabel() {
+//        return defaultLabel;
+//    }
+//
+//    public void setDefaultLabel(String defaultLabel) {
+//        this.defaultLabel = defaultLabel;
+//    }
 
 }

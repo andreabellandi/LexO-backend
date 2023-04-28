@@ -7,6 +7,7 @@ package it.cnr.ilc.lexo.service.data.lexicon.output;
 
 import it.cnr.ilc.lexo.service.data.output.Entity;
 import it.cnr.ilc.lexo.service.data.Data;
+import java.util.ArrayList;
 
 /**
  *
@@ -29,6 +30,7 @@ public class LexicalSenseItem extends Entity implements Data {
     private String gloss;
     private String senseExample;
     private String senseTranslation;
+//    private ArrayList<String> images;
 
 
     public String getSense() {
@@ -142,5 +144,13 @@ public class LexicalSenseItem extends Entity implements Data {
     public void setSenseTranslation(String senseTranslation) {
         this.senseTranslation = senseTranslation;
     }
+
+//    public ArrayList<String> getImages() {
+//        return images;
+//    }
+//
+//    public void setImages(ArrayList<String> images) {
+//        this.images = images;
+//    }
 
 }

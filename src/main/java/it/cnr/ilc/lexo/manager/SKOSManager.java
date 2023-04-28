@@ -15,6 +15,7 @@ import it.cnr.ilc.lexo.sparql.SparqlDeleteData;
 import it.cnr.ilc.lexo.sparql.SparqlInsertData;
 import it.cnr.ilc.lexo.sparql.SparqlPrefix;
 import it.cnr.ilc.lexo.sparql.SparqlSelectData;
+import it.cnr.ilc.lexo.sparql.SparqlVariable;
 import it.cnr.ilc.lexo.sparql.skos.SparqlSKOSData;
 import it.cnr.ilc.lexo.sparql.skos.SparqlSKOSDelete;
 import it.cnr.ilc.lexo.sparql.skos.SparqlSKOSInsert;
@@ -31,6 +32,8 @@ import javax.ws.rs.core.Response;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
+import org.eclipse.rdf4j.query.BindingSet;
+import org.eclipse.rdf4j.query.QueryEvaluationException;
 import org.eclipse.rdf4j.query.TupleQueryResult;
 
 /**
@@ -124,6 +127,7 @@ public class SKOSManager implements Manager, Cached {
         String id = idInstancePrefix + tm.toString();
         String created = timestampFormat.format(tm);
         String sparqlPrefix = "PREFIX " + prefix + ": <" + baseIRI + ">";
+        String idLabel = id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
         String _id = baseIRI + id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
         String label = lexicalizationModel.equals("label") ? "rdfs:label" : (lexicalizationModel.equals("skos") ? "skos:prefLabel" : "skos:prefLabel");
         RDFQueryUtil.update(SparqlInsertData.CREATE_LEXICAL_CONCEPT.replaceAll("_ID_", _id)
@@ -131,8 +135,8 @@ public class SKOSManager implements Manager, Cached {
                 .replace("_CREATED_", created)
                 .replace("_PREFIX_", sparqlPrefix)
                 .replace("_MODIFIED_", created)
-                .replace("_LABEL_", label + " \"" + _id + "\"@" + defaultLanguageLabel));
-        return setLexicalConcept(_id, created, author);
+                .replace("_LABEL_", label + " \"" + idLabel + "\"@" + defaultLanguageLabel));
+        return setLexicalConcept(_id, idLabel, created, author);
     }
 
     public ConceptSet createConceptSet(String author, String prefix, String baseIRI) throws ManagerException {
@@ -140,6 +144,7 @@ public class SKOSManager implements Manager, Cached {
         String id = idInstancePrefix + tm.toString();
         String created = timestampFormat.format(tm);
         String sparqlPrefix = "PREFIX " + prefix + ": <" + baseIRI + ">";
+        String idLabel = id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
         String _id = baseIRI + id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
         String label = lexicalizationModel.equals("label") ? "rdfs:label" : (lexicalizationModel.equals("skos") ? "skos:prefLabel" : "label");
         RDFQueryUtil.update(SparqlInsertData.CREATE_CONCEPT_SET.replaceAll("_ID_", _id)
@@ -147,36 +152,51 @@ public class SKOSManager implements Manager, Cached {
                 .replace("_PREFIX_", sparqlPrefix)
                 .replace("_CREATED_", created)
                 .replace("_MODIFIED_", created)
-                .replace("_LABEL_", label + " \"" + _id + "\"@" + defaultLanguageLabel));
-        return setConceptSet(_id, created, author);
+                .replace("_LABEL_", label + " \"" + idLabel + "\"@" + defaultLanguageLabel));
+        return setConceptSet(_id, idLabel, created, author);
     }
 
-    private LexicalConcept setLexicalConcept(String id, String created, String author) {
+    private LexicalConcept setLexicalConcept(String id, String label, String created, String author) {
         LexicalConcept lc = new LexicalConcept();
         lc.setCreator(author);
         lc.setLexicalConcept(id);
         lc.setLastUpdate(created);
         lc.setConfidence(-1.0);
         lc.setCreationDate(created);
-        lc.setDefaultLabel(id);
+        lc.setDefaultLabel(label);
         lc.setLanguage(defaultLanguageLabel);
         return lc;
     }
 
-    private ConceptSet setConceptSet(String id, String created, String author) {
+    private ConceptSet setConceptSet(String id, String label, String created, String author) {
         ConceptSet cs = new ConceptSet();
         cs.setCreator(author);
         cs.setConceptSet(id);
         cs.setLastUpdate(created);
         cs.setCreationDate(created);
         cs.setConfidence(-1.0);
-        cs.setDefaultLabel(id);
+        cs.setDefaultLabel(label);
         cs.setLanguage(defaultLanguageLabel);
         return cs;
     }
 
-    public String deleteLexicalConcept(String id) throws ManagerException {
-        RDFQueryUtil.update(SparqlDeleteData.DELETE_LEXICAL_CONCEPT.replaceAll("_ID_", id));
+    public String deleteLexicalConcept(String id, boolean recursive) throws ManagerException {
+        if (recursive) {
+            try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(SparqlSKOSData.DATA_SKOS_CONCEPT_SUBTREE.replace("_LEXICALCONCEPT_", id))) {
+                ArrayList<String> ids = new ArrayList();
+                while (result.hasNext()) {
+                    BindingSet bs = result.next();
+                    ids.add(bs.getBinding(SparqlVariable.TARGET).getValue().stringValue());
+                }
+                ids.forEach(_id -> {
+                    RDFQueryUtil.update(SparqlDeleteData.DELETE_LEXICAL_CONCEPT.replaceAll("_ID_", _id));
+                });
+            } catch (QueryEvaluationException qee) {
+                throw new ManagerException(qee.getMessage());
+            }
+        } else {
+            RDFQueryUtil.update(SparqlDeleteData.DELETE_LEXICAL_CONCEPT.replaceAll("_ID_", id));
+        }
         return timestampFormat.format(new Timestamp(System.currentTimeMillis()));
     }
 
@@ -501,11 +521,10 @@ public class SKOSManager implements Manager, Cached {
                 .replace("_LABELPROPERTY_", lexicalizationModel.equals("label") ? SparqlPrefix.RDFS.getUri() + "label" : SparqlPrefix.SKOS.getUri() + "prefLabel");
         return RDFQueryUtil.evaluateTQuery(query);
     }
-    
+
     public TupleQueryResult getLexicalConcept(String id) throws ManagerException {
         String query = SparqlSelectData.DATA_LEXICAL_CONCEPT.replaceAll("_ID_", id);
         return RDFQueryUtil.evaluateTQuery(query);
     }
-
 
 }

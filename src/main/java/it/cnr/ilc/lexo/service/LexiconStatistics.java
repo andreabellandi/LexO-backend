@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import it.cnr.ilc.lexo.LexOProperties;
 import it.cnr.ilc.lexo.manager.LexiconStatisticsManager;
 import it.cnr.ilc.lexo.manager.ManagerFactory;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Counting;
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -45,6 +47,14 @@ public class LexiconStatistics extends Service {
     private final LexiconStatisticsManager lexiconManager = ManagerFactory.getManager(LexiconStatisticsManager.class);
     private final CountingHelper countingHelper = new CountingHelper();
 
+    private void userCheck(String key) throws AuthorizationException, ServiceException {
+        if (LexOProperties.getProperty("keycloack.freeViewer") != null) {
+            if (!LexOProperties.getProperty("keycloack.freeViewer").equals("true")) {
+                checkKey(key);
+            }
+        }
+    }
+    
     @GET
     @Path("types")
     @Produces(MediaType.APPLICATION_JSON)
@@ -54,27 +64,23 @@ public class LexiconStatistics extends Service {
             produces = "application/json; charset=UTF-8")
     @ApiOperation(value = "Lexical entry types",
             notes = "This method returns the lexical entry types and their counting")
-//    @ApiResponses(value = {
-//        @ApiResponse(code = 200, message = "OK", response = Counting.class),
-//        @ApiResponse(code = 201, message = ""),
-//        @ApiResponse(code = 400, message = "")
-//    })
-    public Response types(
-            @ApiParam(
-                    name = "key",
-                    value = "authentication token",
-                    example = "lexodemo",
-                    required = true)
-            @QueryParam("key") String key) {
-//        log(Level.INFO, "get lexicon entries types");
-        TupleQueryResult lexicalEntryTypes = lexiconManager.getTypes();
-        List<Counting> types = countingHelper.newDataList(lexicalEntryTypes);
-        String json = countingHelper.toJson(types);
-        return Response.ok(json)
-                .type(MediaType.TEXT_PLAIN)
-                .header("Access-Control-Allow-Headers", "content-type")
-                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                .build();
+        
+    public Response types(@HeaderParam("Authorization") String key) {
+        try {
+            userCheck(key);
+            log(org.apache.log4j.Level.INFO, "lexicon/statistics/types");
+            TupleQueryResult lexicalEntryTypes = lexiconManager.getTypes();
+            List<Counting> types = countingHelper.newDataList(lexicalEntryTypes);
+            String json = countingHelper.toJson(types);
+            return Response.ok(json)
+                    .type(MediaType.TEXT_PLAIN)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
+        } catch (AuthorizationException | ServiceException ex) {
+            log(org.apache.log4j.Level.ERROR, ex.getMessage());
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        }
     }
 
     @GET
@@ -88,22 +94,22 @@ public class LexiconStatistics extends Service {
     @ResponseBody
     @ApiOperation(value = "Lexical entry status",
             notes = "This method returns lexical entry status (verified or not)")
-    public Response status(
-            @ApiParam(
-                    name = "key",
-                    value = "authentication token",
-                    example = "lexodemo",
-                    required = true)
-            @QueryParam("key") String key) {
-//        log(Level.INFO, "get lexicon entries types");
-        TupleQueryResult lexicalEntryStates = lexiconManager.getStates();
-        List<Counting> status = countingHelper.newDataList(lexicalEntryStates);
-        String json = countingHelper.toJson(status);
-        return Response.ok(json)
-                .type(MediaType.TEXT_PLAIN)
-                .header("Access-Control-Allow-Headers", "content-type")
-                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                .build();
+    public Response status(@HeaderParam("Authorization") String key) {
+        try {
+            userCheck(key);
+            log(org.apache.log4j.Level.INFO, "lexicon/statistics/status");
+            TupleQueryResult lexicalEntryStates = lexiconManager.getStates();
+            List<Counting> status = countingHelper.newDataList(lexicalEntryStates);
+            String json = countingHelper.toJson(status);
+            return Response.ok(json)
+                    .type(MediaType.TEXT_PLAIN)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
+        } catch (AuthorizationException | ServiceException ex) {
+            log(org.apache.log4j.Level.ERROR, ex.getMessage());
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        }
     }
 
     @GET
@@ -117,22 +123,22 @@ public class LexiconStatistics extends Service {
     @ResponseBody
     @ApiOperation(value = "Lexical entry author",
             notes = "This method returns the authors of each lexical entry")
-    public Response authors(
-            @ApiParam(
-                    name = "key",
-                    value = "authentication token",
-                    example = "lexodemo",
-                    required = true)
-            @QueryParam("key") String key) {
-//        log(Level.INFO, "get lexicon entries types");
-        TupleQueryResult lexicalEntryAuthors = lexiconManager.getAuthors();
-        List<Counting> authors = countingHelper.newDataList(lexicalEntryAuthors);
-        String json = countingHelper.toJson(authors);
-        return Response.ok(json)
-                .type(MediaType.TEXT_PLAIN)
-                .header("Access-Control-Allow-Headers", "content-type")
-                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                .build();
+    public Response authors(@HeaderParam("Authorization") String key) {
+        try {
+            userCheck(key);
+            log(org.apache.log4j.Level.INFO, "lexicon/statistics/authors");
+            TupleQueryResult lexicalEntryAuthors = lexiconManager.getAuthors();
+            List<Counting> authors = countingHelper.newDataList(lexicalEntryAuthors);
+            String json = countingHelper.toJson(authors);
+            return Response.ok(json)
+                    .type(MediaType.TEXT_PLAIN)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
+        } catch (AuthorizationException | ServiceException ex) {
+            log(org.apache.log4j.Level.ERROR, ex.getMessage());
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        }
     }
 
     @GET
@@ -146,22 +152,22 @@ public class LexiconStatistics extends Service {
     @ResponseBody
     @ApiOperation(value = "Lexical dataset language(s)",
             notes = "This method returns the language(s) of the lexical dataset")
-    public Response languages(
-            @ApiParam(
-                    name = "key",
-                    value = "authentication token",
-                    example = "lexodemo",
-                    required = true)
-            @QueryParam("key") String key) {
-//        log(Level.INFO, "get lexicon entries types");
-        TupleQueryResult languages = lexiconManager.getLanguages();
-        List<Counting> langs = countingHelper.newDataList(languages);
-        String json = countingHelper.toJson(langs);
-        return Response.ok(json)
-                .type(MediaType.TEXT_PLAIN)
-                .header("Access-Control-Allow-Headers", "content-type")
-                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                .build();
+    public Response languages(@HeaderParam("Authorization") String key) {
+        try {
+            userCheck(key);
+            log(org.apache.log4j.Level.INFO, "lexicon/statistics/languages");
+            TupleQueryResult languages = lexiconManager.getLanguages();
+            List<Counting> langs = countingHelper.newDataList(languages);
+            String json = countingHelper.toJson(langs);
+            return Response.ok(json)
+                    .type(MediaType.TEXT_PLAIN)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
+        } catch (AuthorizationException | ServiceException ex) {
+            log(org.apache.log4j.Level.ERROR, ex.getMessage());
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        }
     }
 
     @GET
@@ -175,22 +181,22 @@ public class LexiconStatistics extends Service {
     @ResponseBody
     @ApiOperation(value = "Part of Speech tags",
             notes = "This method returns pos and their counting")
-    public Response pos(
-            @ApiParam(
-                    name = "key",
-                    value = "authentication token",
-                    example = "lexodemo",
-                    required = true)
-            @QueryParam("key") String key) {
-//        log(Level.INFO, "get lexicon entries types");
-        TupleQueryResult _pos = lexiconManager.getPos();
-        List<Counting> pos = countingHelper.newDataList(_pos);
-        String json = countingHelper.toJson(pos);
-        return Response.ok(json)
-                .type(MediaType.TEXT_PLAIN)
-                .header("Access-Control-Allow-Headers", "content-type")
-                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                .build();
+    public Response pos(@HeaderParam("Authorization") String key) {
+        try {
+            userCheck(key);
+            log(org.apache.log4j.Level.INFO, "lexicon/statistics/pos");
+            TupleQueryResult _pos = lexiconManager.getPos();
+            List<Counting> pos = countingHelper.newDataList(_pos);
+            String json = countingHelper.toJson(pos);
+            return Response.ok(json)
+                    .type(MediaType.TEXT_PLAIN)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
+        } catch (AuthorizationException | ServiceException ex) {
+            log(org.apache.log4j.Level.ERROR, ex.getMessage());
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        }
     }
 
     @GET
@@ -204,32 +210,34 @@ public class LexiconStatistics extends Service {
     @ResponseBody
     @ApiOperation(value = "Namepsaces repository",
             notes = "This method returns all the namespaces definined in the repository")
-    public Response namespaces(
-            @ApiParam(
-                    name = "key",
-                    value = "authentication token",
-                    example = "lexodemo",
-                    required = true)
-            @QueryParam("key") String key) {
-        String json = "";
+    public Response namespaces(@HeaderParam("Authorization") String key) {
         try {
-            Iterator<Namespace> nsit = RDFQueryUtil.getNamespaces().iterator();
-            ArrayList<it.cnr.ilc.lexo.service.data.lexicon.output.Namespace> nsList = new ArrayList();
-            while (nsit.hasNext()) {
-                Namespace ns = nsit.next();
-                it.cnr.ilc.lexo.service.data.lexicon.output.Namespace _ns = new it.cnr.ilc.lexo.service.data.lexicon.output.Namespace();
-                _ns.setBase(ns.getName());
-                _ns.setPrefix(ns.getPrefix());
-                nsList.add(_ns);
+            userCheck(key);
+            log(org.apache.log4j.Level.INFO, "lexicon/statistics/namespaces");
+            String json = "";
+            try {
+                Iterator<Namespace> nsit = RDFQueryUtil.getNamespaces().iterator();
+                ArrayList<it.cnr.ilc.lexo.service.data.lexicon.output.Namespace> nsList = new ArrayList();
+                while (nsit.hasNext()) {
+                    Namespace ns = nsit.next();
+                    it.cnr.ilc.lexo.service.data.lexicon.output.Namespace _ns = new it.cnr.ilc.lexo.service.data.lexicon.output.Namespace();
+                    _ns.setBase(ns.getName());
+                    _ns.setPrefix(ns.getPrefix());
+                    nsList.add(_ns);
+                }
+                json = new ObjectMapper().writeValueAsString(nsList);
+            } catch (JsonProcessingException ex) {
+                log(org.apache.log4j.Level.ERROR, "lexicon/statistics/namespaces: " + ex.getMessage());
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
             }
-            json = new ObjectMapper().writeValueAsString(nsList);
-        } catch (JsonProcessingException ex) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
-        }
-        return Response.ok(json)
+            return Response.ok(json)
                     .type(MediaType.TEXT_PLAIN)
                     .header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
+        } catch (AuthorizationException | ServiceException ex) {
+            log(org.apache.log4j.Level.ERROR, ex.getMessage());
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        }
     }
 }

@@ -16,6 +16,7 @@ import it.cnr.ilc.lexo.manager.ManagerFactory;
 import it.cnr.ilc.lexo.manager.SKOSManager;
 import it.cnr.ilc.lexo.manager.UtilityManager;
 import it.cnr.ilc.lexo.service.data.lexicon.input.FormFilter;
+import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalConceptFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.output.FormItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryElementItem;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalEntryFilter;
@@ -31,6 +32,7 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.EtymologyTree;
 import it.cnr.ilc.lexo.service.data.lexicon.output.FormCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.GroupedLinkedEntity;
 import it.cnr.ilc.lexo.service.data.lexicon.output.HitsDataList;
+import it.cnr.ilc.lexo.service.data.lexicon.output.ImageDetail;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Language;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalConcept;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalConceptItem;
@@ -52,6 +54,7 @@ import it.cnr.ilc.lexo.service.helper.EtymologyTreeHelper;
 import it.cnr.ilc.lexo.service.helper.FormCoreHelper;
 import it.cnr.ilc.lexo.service.helper.FormItemsHelper;
 import it.cnr.ilc.lexo.service.helper.HelperException;
+import it.cnr.ilc.lexo.service.helper.ImageHelper;
 import it.cnr.ilc.lexo.service.helper.LanguageHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalConceptHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalConceptItemHelper;
@@ -118,10 +121,19 @@ public class LexiconData extends Service {
     private final EtymologyFilterHelper etymologyFilterHelper = new EtymologyFilterHelper();
     private final EtymologyTreeHelper etymologyTreeHelper = new EtymologyTreeHelper();
     private final EtymologicalLinkHelper etymologicalLinkHelper = new EtymologicalLinkHelper();
+    private final ImageHelper imageHelper = new ImageHelper();
     private final ComponentFilterHelper componentFilterHelper = new ComponentFilterHelper();
     private final ComponentHelper componentHelper = new ComponentHelper();
     private final ConceptSetHelper conceptSetHelper = new ConceptSetHelper();
     private final SKOSManager skosManager = ManagerFactory.getManager(SKOSManager.class);
+
+    private void userCheck(String key) throws AuthorizationException, ServiceException {
+        if (LexOProperties.getProperty("keycloack.freeViewer") != null) {
+            if (!LexOProperties.getProperty("keycloack.freeViewer").equals("true")) {
+                checkKey(key);
+            }
+        }
+    }
 
     @GET
     @Path("lexicalEntry")
@@ -131,15 +143,15 @@ public class LexiconData extends Service {
             value = "lexicalEntry",
             produces = "application/json; charset=UTF-8")
     @ApiOperation(value = "Lexical entry",
-            notes = "This method returns the data related to a specific aspect (morphology, syntax, ...) associated with a given lexical entry")
+            notes = "This method returns the data related to a specific module (morphology, syntax, ...) associated with a given lexical entry")
     public Response lexicalEntry(
             @HeaderParam("Authorization") String key,
             @ApiParam(
-                    name = "aspect",
+                    name = "module",
                     allowableValues = "core, decomposition, variation and translation, syntax and semantics",
                     example = "core",
                     required = true)
-            @QueryParam("aspect") String aspect,
+            @QueryParam("module") String module,
             @ApiParam(
                     name = "id",
                     value = "lexical entry ID",
@@ -147,13 +159,11 @@ public class LexiconData extends Service {
                     required = true)
             @QueryParam("id") String id) {
         try {
-            if (!LexOProperties.getProperty("keycloack.freeViewer").equals("true")) {
-                checkKey(key.substring(7));
-            }
+            userCheck(key);
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
-            log(Level.INFO, "lexicon/data/lexicalEntry <" + _id + "> with aspect: " + aspect);
-            TupleQueryResult lexicalEntry = lexiconManager.getLexicalEntry(_id, aspect);
-            if (aspect.equals(EnumUtil.LexicalAspects.Core.toString())) {
+            if (module.equals(EnumUtil.LexicalAspects.Core.toString())) {
+                log(Level.INFO, "lexicon/data/lexicalEntry <" + _id + "> with module: " + module);
+                TupleQueryResult lexicalEntry = lexiconManager.getLexicalEntry(_id, module);
                 List<LexicalEntryCore> _lec = lexicalEntryCoreHelper.newDataList(lexicalEntry);
                 LexicalEntryCore lec = lexiconManager.getLexicalEntityTypes(_lec);
                 TupleQueryResult lexicalEntityLinks = lexiconManager.getLexicalEntityLinks(_id);
@@ -166,12 +176,12 @@ public class LexiconData extends Service {
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
             }
-            log(Level.ERROR, "lexical aspect " + aspect + " not available");
-            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("lexical aspect not available").build();
-        } catch (ManagerException | UnsupportedEncodingException | AuthorizationException ex) {
+            log(Level.ERROR, "lexical module " + module + " not available");
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("lexical module not available").build();
+        } catch (ManagerException | UnsupportedEncodingException | AuthorizationException | ServiceException ex) {
             log(Level.ERROR, ex.getMessage());
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
-        }  
+        }
     }
 
     @GET
@@ -186,25 +196,23 @@ public class LexiconData extends Service {
     public Response form(
             @HeaderParam("Authorization") String key,
             @ApiParam(
-                    name = "aspect",
+                    name = "module",
                     allowableValues = "core, variation and translation",
                     example = "core",
                     required = true)
-            @QueryParam("aspect") String aspect,
+            @QueryParam("module") String module,
             @ApiParam(
                     name = "id",
                     value = "form ID",
                     required = true)
             @QueryParam("id") String id) {
         try {
-            if (!LexOProperties.getProperty("keycloack.freeViewer").equals("true")) {
-                checkKey(key.substring(7));
-            }
+            userCheck(key);
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
-            log(Level.INFO, "lexicon/data/form <" + _id + "> with aspect: " + aspect);
+            log(Level.INFO, "lexicon/data/form <" + _id + "> with module: " + module);
             long start = System.currentTimeMillis();
-            TupleQueryResult form = lexiconManager.getForm(_id, aspect);
-            if (aspect.equals(EnumUtil.LexicalAspects.Core.toString())) {
+            TupleQueryResult form = lexiconManager.getForm(_id, module);
+            if (module.equals(EnumUtil.LexicalAspects.Core.toString())) {
                 List<FormCore> fc = formCoreHelper.newDataList(form);
                 FormCore _fc = lexiconManager.getMorphologyInheritance(fc);
                 TupleQueryResult lexicalEntityLinks = lexiconManager.getLexicalEntityLinks(_id);
@@ -218,8 +226,8 @@ public class LexiconData extends Service {
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
             }
-            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("lexical aspect not available").build();
-        } catch (ManagerException | UnsupportedEncodingException | AuthorizationException ex) {
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("lexical module not available").build();
+        } catch (ManagerException | UnsupportedEncodingException | AuthorizationException | ServiceException ex) {
             log(Level.ERROR, ex.getMessage());
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }
@@ -237,24 +245,22 @@ public class LexiconData extends Service {
     public Response lexicalSense(
             @HeaderParam("Authorization") String key,
             @ApiParam(
-                    name = "aspect",
+                    name = "module",
                     allowableValues = "core, variation and translation, syntax and semantics",
                     example = "core",
                     required = true)
-            @QueryParam("aspect") String aspect,
+            @QueryParam("module") String module,
             @ApiParam(
                     name = "id",
                     value = "sense ID",
                     required = true)
             @QueryParam("id") String id) {
         try {
-            if (!LexOProperties.getProperty("keycloack.freeViewer").equals("true")) {
-                checkKey(key.substring(7));
-            }
+            userCheck(key);
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
-            log(Level.INFO, "lexicon/data/lexicalSense <" + _id + "> with aspect: " + aspect);
-            TupleQueryResult sense = lexiconManager.getLexicalSense(_id, aspect);
-            if (aspect.equals(EnumUtil.LexicalAspects.Core.toString())) {
+            log(Level.INFO, "lexicon/data/lexicalSense <" + _id + "> with module: " + module);
+            TupleQueryResult sense = lexiconManager.getLexicalSense(_id, module);
+            if (module.equals(EnumUtil.LexicalAspects.Core.toString())) {
                 LexicalSenseCore lsc = lexicalSenseCoreHelper.newData(sense);
                 TupleQueryResult lexicalEntityLinks = lexiconManager.getLexicalEntityLinks(_id);
                 LexicalEntityLinksItem links = lexicalEntityLinksItemHelper.newData(lexicalEntityLinks);
@@ -266,8 +272,8 @@ public class LexiconData extends Service {
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
             }
-            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("lexical aspect not available").build();
-        } catch (ManagerException | UnsupportedEncodingException | AuthorizationException ex) {
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("lexical module not available").build();
+        } catch (ManagerException | UnsupportedEncodingException | AuthorizationException | ServiceException ex) {
             log(Level.ERROR, ex.getMessage());
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }
@@ -290,9 +296,7 @@ public class LexiconData extends Service {
                     required = true)
             @QueryParam("id") String id) {
         try {
-            if (!LexOProperties.getProperty("keycloack.freeViewer").equals("true")) {
-                checkKey(key.substring(7));
-            }
+            userCheck(key);
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
             log(Level.INFO, "lexicon/data/etymology <" + _id + ">");
             String json = "";
@@ -312,7 +316,7 @@ public class LexiconData extends Service {
                     .header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
-        } catch (ManagerException | UnsupportedEncodingException | AuthorizationException ex) {
+        } catch (ManagerException | UnsupportedEncodingException | AuthorizationException | ServiceException ex) {
             log(Level.ERROR, ex.getMessage());
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }
@@ -335,9 +339,7 @@ public class LexiconData extends Service {
                     required = true)
             @QueryParam("id") String id) {
         try {
-            if (!LexOProperties.getProperty("keycloack.freeViewer").equals("true")) {
-                checkKey(key.substring(7));
-            }
+            userCheck(key);
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
             log(Level.INFO, "lexicon/data/component <" + _id + ">");
             TupleQueryResult _comp = lexiconManager.getComponent(_id);
@@ -348,7 +350,7 @@ public class LexiconData extends Service {
                     .header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
-        } catch (ManagerException | UnsupportedEncodingException | AuthorizationException ex) {
+        } catch (ManagerException | UnsupportedEncodingException | AuthorizationException | ServiceException ex) {
             log(Level.ERROR, ex.getMessage());
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }
@@ -371,9 +373,7 @@ public class LexiconData extends Service {
                     required = true)
             @QueryParam("id") String id) {
         try {
-            if (!LexOProperties.getProperty("keycloack.freeViewer").equals("true")) {
-                checkKey(key.substring(7));
-            }
+            userCheck(key);
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
             log(Level.INFO, "lexicon/data/lexicalConcept <" + _id + ">");
             TupleQueryResult _lc = skosManager.getLexicalConcept(_id);
@@ -393,7 +393,7 @@ public class LexiconData extends Service {
                     .header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
-        } catch (ManagerException | UnsupportedEncodingException | AuthorizationException ex) {
+        } catch (ManagerException | UnsupportedEncodingException | AuthorizationException | ServiceException ex) {
             log(Level.ERROR, ex.getMessage());
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }
@@ -411,9 +411,7 @@ public class LexiconData extends Service {
             notes = "This method returns a list of lexicon languages according to the input filter")
     public Response languages(@HeaderParam("Authorization") String key) throws HelperException {
         try {
-            if (!LexOProperties.getProperty("keycloack.freeViewer").equals("true")) {
-                checkKey(key.substring(7));
-            }
+            userCheck(key);
             log(Level.INFO, "lexicon/data/languages");
             TupleQueryResult languages = lexiconManager.getLexiconLanguages();
             List<Language> entries = languageHelper.newDataList(languages);
@@ -423,7 +421,7 @@ public class LexiconData extends Service {
                     .header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
-        } catch (ManagerException | AuthorizationException ex) {
+        } catch (ManagerException | AuthorizationException | ServiceException ex) {
             log(Level.ERROR, ex.getMessage());
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }
@@ -441,9 +439,7 @@ public class LexiconData extends Service {
             notes = "This method returns a list of lexical senses according to the input filter")
     public Response sensesList(@HeaderParam("Authorization") String key, LexicalSenseFilter lsf) throws HelperException {
         try {
-            if (!LexOProperties.getProperty("keycloack.freeViewer").equals("true")) {
-                checkKey(key.substring(7));
-            }
+            userCheck(key);
             log(Level.INFO, "lexicon/data/filteredSenses\n" + LogUtil.getLogFormPayload(lsf));
             TupleQueryResult lexicalSenses = lexiconManager.getFilterdLexicalSenses(lsf);
             List<LexicalSenseItem> senses = lexicalSenseFilterHelper.newDataList(lexicalSenses);
@@ -454,7 +450,7 @@ public class LexiconData extends Service {
                     .header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
-        } catch (ManagerException | AuthorizationException ex) {
+        } catch (ManagerException | AuthorizationException | ServiceException ex) {
             log(Level.ERROR, ex.getMessage());
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }
@@ -472,9 +468,7 @@ public class LexiconData extends Service {
             notes = "This method returns a list of lexical entries according to the input filter")
     public Response entriesList(@HeaderParam("Authorization") String key, LexicalEntryFilter lef) throws HelperException {
         try {
-             if (!LexOProperties.getProperty("keycloack.freeViewer").equals("true")) {
-                checkKey(key.substring(7));
-            }
+            userCheck(key);
             log(Level.INFO, "lexicon/data/lexicalEntries\n" + LogUtil.getLogFormPayload(lef));
             TupleQueryResult lexicalEnties = lexiconManager.getFilterdLexicalEntries(lef);
             List<LexicalEntryItem> entries = lexicalEntryFilterHelper.newDataList(lexicalEnties);
@@ -485,7 +479,7 @@ public class LexiconData extends Service {
                     .header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
-        } catch (ManagerException | AuthorizationException ex) {
+        } catch (ManagerException | AuthorizationException | ServiceException ex) {
             log(Level.ERROR, ex.getMessage());
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }
@@ -503,9 +497,7 @@ public class LexiconData extends Service {
             notes = "This method returns a list of forms according to the input filter")
     public Response forms(@HeaderParam("Authorization") String key, FormFilter ff) throws HelperException {
         try {
-            if (!LexOProperties.getProperty("keycloack.freeViewer").equals("true")) {
-                checkKey(key.substring(7));
-            }
+            userCheck(key);
             log(Level.INFO, "lexicon/data/filteredForms\n" + LogUtil.getLogFormPayload(ff));
             TupleQueryResult forms = lexiconManager.getFilterdForms(ff);
             List<FormItem> fi = formItemsHelper.newDataList(forms);
@@ -516,7 +508,7 @@ public class LexiconData extends Service {
                     .header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
-        } catch (ManagerException | AuthorizationException ex) {
+        } catch (ManagerException | AuthorizationException | ServiceException ex) {
             log(Level.ERROR, ex.getMessage());
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }
@@ -541,9 +533,7 @@ public class LexiconData extends Service {
             @QueryParam("id") String id) {
 
         try {
-            if (!LexOProperties.getProperty("keycloack.freeViewer").equals("true")) {
-                checkKey(key.substring(7));
-            }
+            userCheck(key);
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
             log(Level.INFO, "lexicon/data/forms <" + _id + ">");
             TupleQueryResult _forms = lexiconManager.getForms(_id);
@@ -554,7 +544,7 @@ public class LexiconData extends Service {
                     .header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
-        } catch (UnsupportedEncodingException | AuthorizationException ex) {
+        } catch (UnsupportedEncodingException | AuthorizationException | ServiceException ex) {
             log(Level.ERROR, ex.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }
@@ -578,9 +568,7 @@ public class LexiconData extends Service {
             @QueryParam("id") String id) {
 
         try {
-            if (!LexOProperties.getProperty("keycloack.freeViewer").equals("true")) {
-                checkKey(key.substring(7));
-            }
+            userCheck(key);
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
             log(Level.INFO, "lexicon/data/lexicalConcepts <" + _id + ">");
             TupleQueryResult _lc = skosManager.getLexicalConceptChildren(_id);
@@ -592,7 +580,36 @@ public class LexiconData extends Service {
                     .header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
-        } catch (ManagerException | UnsupportedEncodingException | AuthorizationException ex) {
+        } catch (ManagerException | UnsupportedEncodingException | AuthorizationException | ServiceException ex) {
+            log(Level.ERROR, ex.getMessage());
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        }
+    }
+
+    @POST
+    @Path("filteredLexicalConcepts")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.POST,
+            value = "filteredLexicalConcepts",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Lexical concepts list",
+            notes = "This method returns a list of lexical concepts according to the input filter")
+    public Response lexicalConceptsList(@HeaderParam("Authorization") String key, LexicalConceptFilter lcf) throws HelperException {
+        try {
+            userCheck(key);
+            log(Level.INFO, "lexicon/data/filteredLexicalConcepts\n" + LogUtil.getLogFormPayload(lcf));
+            TupleQueryResult lexicalConcepts = lexiconManager.getFilterdLexicalConcepts(lcf);
+            List<LexicalConceptItem> lcs = lexicalConceptItemHelper.newDataList(lexicalConcepts);
+            HitsDataList hdl = new HitsDataList(lexicalConceptItemHelper.getTotalHits(), lcs);
+            String json = lexicalConceptItemHelper.toJson(hdl);
+            return Response.ok(json)
+                    .type(MediaType.TEXT_PLAIN)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
+        } catch (ManagerException | AuthorizationException | ServiceException ex) {
             log(Level.ERROR, ex.getMessage());
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }
@@ -610,9 +627,7 @@ public class LexiconData extends Service {
     public Response conceptSets(
             @HeaderParam("Authorization") String key) {
         try {
-            if (!LexOProperties.getProperty("keycloack.freeViewer").equals("true")) {
-                checkKey(key.substring(7));
-            }
+            userCheck(key);
             log(Level.INFO, "lexicon/data/conceptSets");
             TupleQueryResult _cs = skosManager.getConceptSets();
             List<ConceptSetItem> cs = conceptSetItemHelper.newDataList(_cs);
@@ -623,7 +638,7 @@ public class LexiconData extends Service {
                     .header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
-        } catch (ManagerException | AuthorizationException ex) {
+        } catch (ManagerException | AuthorizationException | ServiceException ex) {
             log(Level.ERROR, ex.getMessage());
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }
@@ -647,9 +662,7 @@ public class LexiconData extends Service {
                     required = true)
             @QueryParam("id") String id) {
         try {
-            if (!LexOProperties.getProperty("keycloack.freeViewer").equals("true")) {
-                checkKey(key.substring(7));
-            }
+            userCheck(key);
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
             log(Level.INFO, "lexicon/data/senses <" + _id + ">");
             TupleQueryResult _forms = lexiconManager.getLexicalSenses(_id);
@@ -660,7 +673,7 @@ public class LexiconData extends Service {
                     .header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
-        } catch (UnsupportedEncodingException | AuthorizationException ex) {
+        } catch (UnsupportedEncodingException | AuthorizationException | ServiceException ex) {
             log(Level.ERROR, ex.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }
@@ -683,9 +696,7 @@ public class LexiconData extends Service {
                     required = true)
             @QueryParam("id") String id) {
         try {
-             if (!LexOProperties.getProperty("keycloack.freeViewer").equals("true")) {
-                checkKey(key.substring(7));
-            }
+            userCheck(key);
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
             log(Level.INFO, "lexicon/data/etymologies <" + _id + ">");
             TupleQueryResult _etys = lexiconManager.getEtymologies(_id);
@@ -696,7 +707,7 @@ public class LexiconData extends Service {
                     .header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
-        } catch (UnsupportedEncodingException | AuthorizationException ex) {
+        } catch (UnsupportedEncodingException | AuthorizationException | ServiceException ex) {
             log(Level.ERROR, ex.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }
@@ -720,9 +731,7 @@ public class LexiconData extends Service {
                     required = true)
             @QueryParam("id") String id) {
         try {
-             if (!LexOProperties.getProperty("keycloack.freeViewer").equals("true")) {
-                checkKey(key.substring(7));
-            }
+            userCheck(key);
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
             log(Level.INFO, "lexicon/data/sensesByConcept <" + _id + ">");
             TupleQueryResult _forms = lexiconManager.getLexicalSensesByConcept(_id);
@@ -733,7 +742,7 @@ public class LexiconData extends Service {
                     .header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
-        } catch (UnsupportedEncodingException | AuthorizationException ex) {
+        } catch (UnsupportedEncodingException | AuthorizationException | ServiceException ex) {
             log(Level.ERROR, ex.getMessage());
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }
@@ -756,9 +765,7 @@ public class LexiconData extends Service {
                     required = true)
             @QueryParam("id") String id) {
         try {
-             if (!LexOProperties.getProperty("keycloack.freeViewer").equals("true")) {
-                checkKey(key.substring(7));
-            }
+            userCheck(key);
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
             log(Level.INFO, "lexicon/data/elements <" + _id + ">");
             TupleQueryResult _elements = lexiconManager.getElements(_id);
@@ -769,7 +776,7 @@ public class LexiconData extends Service {
                     .header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
-        } catch (UnsupportedEncodingException | AuthorizationException ex) {
+        } catch (UnsupportedEncodingException | AuthorizationException | ServiceException ex) {
             log(Level.ERROR, ex.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }
@@ -797,9 +804,7 @@ public class LexiconData extends Service {
                     required = true)
             @QueryParam("id") String id) {
         try {
-            if (!LexOProperties.getProperty("keycloack.freeViewer").equals("true")) {
-                checkKey(key.substring(7));
-            }
+            userCheck(key);
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
             log(Level.INFO, "lexicon/data/linguisticRelation <" + _id + ">");
             TupleQueryResult lingRel = lexiconManager.getLinguisticRelation(_id, property);
@@ -813,7 +818,7 @@ public class LexiconData extends Service {
                     .header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
-        } catch (ManagerException | UnsupportedEncodingException | AuthorizationException ex) {
+        } catch (ManagerException | UnsupportedEncodingException | AuthorizationException | ServiceException ex) {
             log(Level.ERROR, ex.getMessage());
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }
@@ -841,9 +846,7 @@ public class LexiconData extends Service {
                     required = true)
             @QueryParam("id") String id) {
         try {
-            if (!LexOProperties.getProperty("keycloack.freeViewer").equals("true")) {
-                checkKey(key.substring(7));
-            }
+            userCheck(key);
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
             log(Level.INFO, "lexicon/data/genericRelation <" + _id + ">");
             TupleQueryResult genRel = lexiconManager.getGenericRelation(_id, property);
@@ -857,7 +860,7 @@ public class LexiconData extends Service {
                     .header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
-        } catch (ManagerException | UnsupportedEncodingException | AuthorizationException ex) {
+        } catch (ManagerException | UnsupportedEncodingException | AuthorizationException | ServiceException ex) {
             log(Level.ERROR, ex.getMessage());
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }
@@ -880,9 +883,7 @@ public class LexiconData extends Service {
                     required = true)
             @QueryParam("id") String id) {
         try {
-            if (!LexOProperties.getProperty("keycloack.freeViewer").equals("true")) {
-                checkKey(key.substring(7));
-            }
+            userCheck(key);
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
             log(Level.INFO, "lexicon/data/bilbiography <" + _id + ">");
             TupleQueryResult bib = bibliographyManager.getBibliography(_id);
@@ -893,7 +894,7 @@ public class LexiconData extends Service {
                     .header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
-        } catch (UnsupportedEncodingException | AuthorizationException ex) {
+        } catch (UnsupportedEncodingException | AuthorizationException | ServiceException ex) {
             log(Level.ERROR, ex.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }
@@ -916,9 +917,7 @@ public class LexiconData extends Service {
                     required = true)
             @QueryParam("id") String id) {
         try {
-            if (!LexOProperties.getProperty("keycloack.freeViewer").equals("true")) {
-                checkKey(key.substring(7));
-            }
+            userCheck(key);
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
             log(Level.INFO, "lexicon/data/subTerms <" + _id + ">");
             String json = "";
@@ -932,8 +931,8 @@ public class LexiconData extends Service {
                     .header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
-        } catch (UnsupportedEncodingException | AuthorizationException ex) {
-             log(Level.ERROR, ex.getMessage());
+        } catch (UnsupportedEncodingException | AuthorizationException | ServiceException ex) {
+            log(Level.ERROR, ex.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }
     }
@@ -955,9 +954,7 @@ public class LexiconData extends Service {
                     required = true)
             @QueryParam("id") String id) {
         try {
-             if (!LexOProperties.getProperty("keycloack.freeViewer").equals("true")) {
-                checkKey(key.substring(7));
-            }
+            userCheck(key);
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
             log(Level.INFO, "lexicon/data/correspondsTo <" + _id + ">");
             String json = "";
@@ -971,7 +968,7 @@ public class LexiconData extends Service {
                     .header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
-        } catch (UnsupportedEncodingException | AuthorizationException ex) {
+        } catch (UnsupportedEncodingException | AuthorizationException | ServiceException ex) {
             log(Level.ERROR, ex.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }
@@ -994,14 +991,13 @@ public class LexiconData extends Service {
                     required = true)
             @QueryParam("id") String id) {
         try {
-             if (!LexOProperties.getProperty("keycloack.freeViewer").equals("true")) {
-                checkKey(key.substring(7));
-            }
+            userCheck(key);
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
             log(Level.INFO, "lexicon/data/constituents <" + _id + ">");
             TupleQueryResult _comps = null;
             String json = "";
-            UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+            UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class
+            );
             if (utilityManager.isLexicalEntry(_id)) {
                 _comps = lexiconManager.getComponents(_id, SparqlVariable.LEXICAL_ENTRY_INDEX, "lexicalEntryLabel");
             } else if (utilityManager.isLexicalEntry(_id)) {
@@ -1009,16 +1005,52 @@ public class LexiconData extends Service {
             } else {
                 return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + id + " is not neither a lexical entry or a component").build();
             }
+
             if (_comps.hasNext()) {
                 List<ComponentItem> comps = componentFilterHelper.newDataList(_comps);
                 json = componentFilterHelper.toJson(comps);
             }
+
             return Response.ok(json)
                     .type(MediaType.TEXT_PLAIN)
                     .header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
-        } catch (UnsupportedEncodingException | AuthorizationException ex) {
+        } catch (UnsupportedEncodingException | AuthorizationException | ServiceException ex) {
+            log(Level.ERROR, ex.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        }
+    }
+
+    @GET
+    @Path("images")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "images",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Image(s) of lexical entity",
+            notes = "This method returns all the images associted to a lexical entity")
+    public Response images(
+            @HeaderParam("Authorization") String key,
+            @ApiParam(
+                    name = "id",
+                    value = "lexical entity ID",
+                    required = true)
+            @QueryParam("id") String id) {
+        try {
+            userCheck(key);
+            String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
+            log(Level.INFO, "lexicon/data/images <" + _id + ">");
+            TupleQueryResult _imgs = lexiconManager.getImages(_id);
+            List<ImageDetail> images = imageHelper.newDataList(_imgs);
+            String json = imageHelper.toJson(images);
+            return Response.ok(json)
+                    .type(MediaType.TEXT_PLAIN)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
+        } catch (UnsupportedEncodingException | AuthorizationException | ServiceException ex) {
             log(Level.ERROR, ex.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }

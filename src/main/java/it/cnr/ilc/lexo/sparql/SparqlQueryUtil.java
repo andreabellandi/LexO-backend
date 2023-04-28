@@ -45,7 +45,8 @@ public class SparqlQueryUtil {
             = SparqlPrefix.SESAME.getSparqlPrefix() + "\n"
             + "SELECT ?"+ SparqlVariable.LEXICAL_ENTRY_TYPE + "\n"
             + "WHERE { <_ID_> sesame:directType ?" + SparqlVariable.LEXICAL_ENTRY_TYPE + " .\n"
-            + "FILTER(regex(str(?" + SparqlVariable.LEXICAL_ENTRY_TYPE + "),\"" + SparqlPrefix.ONTOLEX.getUri() + "\")) }";
+            + "FILTER(regex(str(?" + SparqlVariable.LEXICAL_ENTRY_TYPE + "),\"" 
+            + SparqlPrefix.ONTOLEX.getUri() + "|" + SparqlPrefix.ETY.getUri() + "\")) }";
 
     public static final String IS_COMPONENT_ID
             = SparqlPrefix.DECOMP.getSparqlPrefix() + "\n"
@@ -135,4 +136,9 @@ public class SparqlQueryUtil {
             + "  }\n"
             + "  FILTER( ?" + SparqlVariable.LABEL_COUNT + " > _COG_NUMBER_ )\n"
             + "}";
+    
+    public static final String IMAGE_URL
+            = SparqlPrefix.FOAF.getSparqlPrefix() + "\n"
+            + "SELECT ?" + SparqlVariable.IDENTIFIER + " \n"
+            + "WHERE { <_ID_> foaf:depiction ?" + SparqlVariable.IDENTIFIER + " }";
 }

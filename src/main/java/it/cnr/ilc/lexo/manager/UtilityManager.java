@@ -92,7 +92,7 @@ public final class UtilityManager implements Manager, Cached {
         }
         return null;
     }
-    
+
     public String getLexicalEntryType(String id) throws QueryEvaluationException {
         String query = SparqlQueryUtil.LEXICALENTRY_TYPE.replaceAll("_ID_", id);
         ArrayList<String> types = new ArrayList();
@@ -114,6 +114,18 @@ public final class UtilityManager implements Manager, Cached {
                 BindingSet bs = result.next();
                 return (bs.getBinding(SparqlVariable.BIBLIOGRAPHY_ID) != null)
                         ? (bs.getBinding(SparqlVariable.BIBLIOGRAPHY_ID).getValue().toString()) : null;
+            }
+        } catch (QueryEvaluationException qee) {
+        }
+        return null;
+    }
+
+    public String getImageUrl(String imgID) {
+        String query = SparqlQueryUtil.IMAGE_URL.replaceAll("_ID_", imgID);
+        try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {
+            while (result.hasNext()) {
+                BindingSet bs = result.next();
+                return (bs.getBinding(SparqlVariable.IDENTIFIER).getValue().toString());
             }
         } catch (QueryEvaluationException qee) {
         }
@@ -242,7 +254,7 @@ public final class UtilityManager implements Manager, Cached {
     public boolean existsNamespace(String baseIRI) throws ManagerException {
         Iterator<Namespace> nsit = RDFQueryUtil.getNamespaces().iterator();
         while (nsit.hasNext()) {
-            if (nsit.next().getName().equals(baseIRI)) {
+            if (baseIRI.contains(nsit.next().getName())) {
                 return true;
             }
         }

@@ -12,12 +12,12 @@ import java.util.List;
  *
  * @author andreabellandi
  */
-public class MorphologicalProperty implements Data {
+public class RangedProperty implements Data {
 
     private String propertyId;
     private String propertyLabel;
     private String propertyDescription;
-    private List<MorphologicalValue> propertyValues;
+    private List<RangedValue> propertyValues;
 
     public String getPropertyId() {
         return propertyId;
@@ -43,15 +43,15 @@ public class MorphologicalProperty implements Data {
         this.propertyLabel = propertyLabel;
     }
 
-    public List<MorphologicalValue> getPropertyValues() {
+    public List<RangedValue> getPropertyValues() {
         return propertyValues;
     }
 
-    public void setPropertyValues(List<MorphologicalValue> propertyValues) {
+    public void setPropertyValues(List<RangedValue> propertyValues) {
         this.propertyValues = propertyValues;
     }
 
-    public static class MorphologicalValue {
+    public static class RangedValue {
 
         private String valueId;
         private String valueLabel;
@@ -81,7 +81,7 @@ public class MorphologicalProperty implements Data {
             this.valueDescription = valueDescription;
         }
 
-        public MorphologicalValue(String valueId, String valueLabel, String valueDescription) {
+        public RangedValue(String valueId, String valueLabel, String valueDescription) {
             this.valueId = valueId;
             this.valueLabel = valueLabel;
             this.valueDescription = valueDescription;

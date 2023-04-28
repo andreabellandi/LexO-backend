@@ -17,7 +17,7 @@ import it.cnr.ilc.lexo.service.data.Data;
 public class FormUpdater implements Data {
 
     @ApiModelProperty(value = "form relation/attribute", example = "writtenRep", allowEmptyValue = false,
-            allowableValues = "type, note, writtenRep, phoneticRep, pronunciation, romanization, segmentation, transliteration")
+            allowableValues = "type, note, writtenRep, phoneticRep, pronunciation, romanization, segmentation, transliteration, confidence")
     private String relation;
     @ApiModelProperty(value = "realtion/attribute value", example = "test", allowEmptyValue = false)
     private String value;

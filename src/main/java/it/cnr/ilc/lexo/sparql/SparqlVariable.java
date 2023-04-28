@@ -18,6 +18,8 @@ public class SparqlVariable {
     public static final String ETYMOLOGY_INDEX = "etymologyIndex";
     public static final String CONCEPT_REFERENCE_INDEX = "conceptReferenceIndex";
     public static final String COMPONENT_INDEX = "componentIndex";
+    public static final String LEXICAL_CONCEPT_INDEX = "lexicalConceptIndex";
+    public static final String CONCEPT_SET_INDEX = "conceptSetIndex";
 
     // varibale names
     public static final String TOTAL_HITS = "totalHits";
@@ -95,6 +97,16 @@ public class SparqlVariable {
 
     public static final String FRAME = "frame";
 
+    public static final String IMAGE = "image";
+    public static final String TITLE = "title";
+    public static final String DESCRIPTION = "description";
+    public static final String PUBLISHER = "publisher";
+    public static final String RIGHTS = "rights";
+    public static final String IDENTIFIER = "identifier";
+    public static final String FORMAT = "format";
+    public static final String IMAGE_CREATOR = "imageCreator";
+    public static final String LEXICAL_ENTITY = "lexicalEntity";
+    
     public static final String LEXICAL_FORM = "lexicalForm";
 
     public static final String LEXICAL_CONCEPT = "lexicalConcept";
@@ -176,6 +188,10 @@ public class SparqlVariable {
     public static final String EDGE_INDEX = "edgeIndex";
     public static final String EDGE = "edge";
 
+    
+     public static final String PARENT = "parent";
+     public static final String USAGE_VALUES = "usageValues";
+     
     // skos variables
     public static final String CHILD = "child";
     public static final String GCHILD = "grandchild";

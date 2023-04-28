@@ -17,7 +17,7 @@ import it.cnr.ilc.lexo.service.data.Data;
 public class LexicalSenseUpdater implements Data {
     
     @ApiModelProperty(value = "sense relation/attribute", example = "definition", allowEmptyValue = false, 
-            allowableValues = "note, usage, reference, subject, definition, description, explanation, gloss, senseExample, senseTranslation")
+            allowableValues = "note, usage, reference, subject, definition, description, explanation, gloss, senseExample, senseTranslation, confidence")
     private String relation;
     @ApiModelProperty(value = "realtion/attribute value", example = "test", allowEmptyValue = false)
     private String value;

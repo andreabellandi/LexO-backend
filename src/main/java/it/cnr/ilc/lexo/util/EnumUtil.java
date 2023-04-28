@@ -117,15 +117,15 @@ public class EnumUtil {
         VarTrans("variation and translation"),
         SynSem("syntax and semantics");
 
-        private final String aspect;
+        private final String module;
 
-        private LexicalAspects(String aspect) {
-            this.aspect = aspect;
+        private LexicalAspects(String module) {
+            this.module = module;
         }
 
         @Override
         public String toString() {
-            return this.aspect;
+            return this.module;
         }
 
     }
@@ -184,6 +184,24 @@ public class EnumUtil {
         }
 
     }
+    
+    public static enum LexicalConceptSearchFilter {
+        prefLabel("prefLabel"),
+        altLabel("altLabel"),
+        hiddenLabel("hiddentLabel");
+
+        private final String lexicalConceptSearchFilter;
+
+        private LexicalConceptSearchFilter(String lexicalConceptSearchFilter) {
+            this.lexicalConceptSearchFilter = lexicalConceptSearchFilter;
+        }
+
+        @Override
+        public String toString() {
+            return this.lexicalConceptSearchFilter;
+        }
+
+    }
 
     public static enum LinguisticRelation {
         Morphology("morphology"),
@@ -214,7 +232,7 @@ public class EnumUtil {
         Reference("reference"),
         Bibliography("bibliography"),
         Multimedia("multimedia"),
-        Confidence("confidence"),
+//        Confidence("confidence"),
         Extension("extension"),
         Attestation("attestation"),
         ConceptRel("conceptRel"),
@@ -250,22 +268,22 @@ public class EnumUtil {
 
     }
 
-    public static enum GenericRelationConfidence {
-        confidence(SparqlPrefix.LEXINFO.getUri() + "confidence"),
-        translationConfidence(SparqlPrefix.LEXINFO.getUri() + "translationConfidence");
-
-        private final String genericRelationConfidence;
-
-        private GenericRelationConfidence(String genericRelationConfidence) {
-            this.genericRelationConfidence = genericRelationConfidence;
-        }
-
-        @Override
-        public String toString() {
-            return this.genericRelationConfidence;
-        }
-
-    }
+//    public static enum GenericRelationConfidence {
+//        confidence(SparqlPrefix.LEXINFO.getUri() + "confidence"),
+//        translationConfidence(SparqlPrefix.LEXINFO.getUri() + "translationConfidence");
+//
+//        private final String genericRelationConfidence;
+//
+//        private GenericRelationConfidence(String genericRelationConfidence) {
+//            this.genericRelationConfidence = genericRelationConfidence;
+//        }
+//
+//        @Override
+//        public String toString() {
+//            return this.genericRelationConfidence;
+//        }
+//
+//    }
 
     public static enum PositionRelation {
         rdfListPosition(SparqlPrefix.RDF.getUri() + "_n");

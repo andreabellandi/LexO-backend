@@ -31,8 +31,11 @@ public class LexOFilter implements Filter {
     public static String CONTEXT;
     public static String VERSION;
 
+    public static String fileSystemPath;
+    
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
+        fileSystemPath = filterConfig.getServletContext().getRealPath("/");
         CONTEXT = filterConfig.getServletContext().getContextPath().substring(1);
         VERSION = LexOProperties.getProperty("application.version");
         File logFile = new File(filterConfig.getServletContext().getRealPath("/"));

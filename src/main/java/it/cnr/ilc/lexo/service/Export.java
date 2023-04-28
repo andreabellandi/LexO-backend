@@ -12,6 +12,7 @@ import it.cnr.ilc.lexo.manager.ManagerException;
 import it.cnr.ilc.lexo.manager.ManagerFactory;
 import it.cnr.ilc.lexo.service.data.lexicon.input.ExportSetting;
 import it.cnr.ilc.lexo.service.helper.HelperException;
+import it.cnr.ilc.lexo.util.LogUtil;
 import java.io.File;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -20,6 +21,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.apache.log4j.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -50,6 +52,7 @@ public class Export extends Service {
             notes = "This method exports the lexicon according to the input settings")
     public Response export(@QueryParam("key") String key, ExportSetting set) throws HelperException {
         try {
+            log(Level.INFO, "export/lexicon\n" + LogUtil.getLogFormPayload(set));
             File export = exportManager.export(set);
             return Response.ok(export)
                     .type(MediaType.APPLICATION_OCTET_STREAM)
@@ -58,7 +61,7 @@ public class Export extends Service {
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
         } catch (ManagerException ex) {
-            logger.error(ex.getMessage(), ex);
+             log(Level.ERROR, "export/lexicon: " + ex.getMessage());
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }
     }

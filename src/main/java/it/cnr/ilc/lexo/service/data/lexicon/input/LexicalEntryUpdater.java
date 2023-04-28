@@ -17,7 +17,7 @@ import it.cnr.ilc.lexo.service.data.Data;
 public class LexicalEntryUpdater implements Data {
 
     @ApiModelProperty(value = "lexical entry relation/attribute", example = "label", allowEmptyValue = false,
-            allowableValues = "label, type, language, status, note")
+            allowableValues = "label, type, language, status, note, confidence")
     private String relation;
     @ApiModelProperty(value = "realtion/attribute value", example = "test", allowEmptyValue = false)
     private String value;

@@ -10,8 +10,6 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import it.cnr.ilc.lexo.LexOProperties;
-import it.cnr.ilc.lexo.manager.Cached;
-import it.cnr.ilc.lexo.manager.Manager;
 import it.cnr.ilc.lexo.service.data.AuthenticationData;
 import it.cnr.ilc.lexo.service.zotero.ZoteroClient;
 import java.io.BufferedReader;
@@ -23,8 +21,6 @@ import java.net.URL;
 import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -60,24 +56,24 @@ public class UserManager implements Manager, Cached {
     }
 
     UserManager() {
-        if (publicKey == null) {
-            try {
-                JsonNode rootNode = null;
-                setUrl();
-                setConn();
-                if (conn.getResponseCode() != 200) {
-                    throw new RuntimeException("Failed : HTTP error code : "
-                            + conn.getResponseCode());
+            if (publicKey == null) {
+                try {
+                    JsonNode rootNode = null;
+                    setUrl();
+                    setConn();
+                    if (conn.getResponseCode() != 200) {
+                        throw new RuntimeException("Failed : HTTP error code : "
+                                + conn.getResponseCode());
+                    }
+                    BufferedReader br = new BufferedReader(new InputStreamReader(
+                            (conn.getInputStream())));
+                    ObjectMapper mapper = new ObjectMapper();
+                    rootNode = mapper.readTree(br.lines().collect(Collectors.joining()));
+                    publicKey = rootNode.get("public_key").textValue();
+                } catch (IOException ex) {
+                    Logger.getLogger(UserManager.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                BufferedReader br = new BufferedReader(new InputStreamReader(
-                        (conn.getInputStream())));
-                ObjectMapper mapper = new ObjectMapper();
-                rootNode = mapper.readTree(br.lines().collect(Collectors.joining()));
-                publicKey = rootNode.get("public_key").textValue();
-            } catch (IOException ex) {
-                Logger.getLogger(UserManager.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }
     }
 
     @Override
@@ -98,7 +94,7 @@ public class UserManager implements Manager, Cached {
                     .parseClaimsJws(token);
             Claims cl = jwt.getBody();
             ad.setUsername(cl.get("preferred_username").toString());
-            ad.setType(((Map) ((Map) cl.get("resource_access")).get("princlient")).get("roles").toString());
+            ad.setType(((Map) ((Map) cl.get("resource_access")).get(LexOProperties.getProperty("keycloack.client"))).get("roles").toString());
         } catch (ExpiredJwtException | MalformedJwtException | UnsupportedJwtException | SignatureException | IllegalArgumentException e) {
             // if you get error, that means token is invalid. 
             throw new Exception(e);

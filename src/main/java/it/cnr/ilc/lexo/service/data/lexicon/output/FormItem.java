@@ -34,7 +34,7 @@ public class FormItem extends Entity implements Data {
     private String form;
     @ApiModelProperty(value = "lexical entry IRI", example = "namespace:MUSaccedereVERB")
     private String lexicalEntry;
-    private String targetSense;
+//    private String targetSense;
 
     public FormItem() {
     }
@@ -96,13 +96,13 @@ public class FormItem extends Entity implements Data {
     public void setPhoneticRep(String phoneticRep) {
         this.phoneticRep = phoneticRep;
     }
-
-    public String getTargetSense() {
-        return targetSense;
-    }
-
-    public void setTargetSense(String targetSense) {
-        this.targetSense = targetSense;
-    }
+//
+//    public String getTargetSense() {
+//        return targetSense;
+//    }
+//
+//    public void setTargetSense(String targetSense) {
+//        this.targetSense = targetSense;
+//    }
 
 }

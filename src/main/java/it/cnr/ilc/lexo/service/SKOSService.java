@@ -17,8 +17,8 @@ import it.cnr.ilc.lexo.service.data.lexicon.input.skos.SKOSUpdater;
 import it.cnr.ilc.lexo.service.data.lexicon.output.skos.ConceptScheme;
 import it.cnr.ilc.lexo.service.helper.ConceptSchemeHelper;
 import java.util.List;
-import java.util.logging.Level;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -28,8 +28,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.eclipse.rdf4j.query.TupleQueryResult;
 import org.eclipse.rdf4j.query.UpdateExecutionException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -41,8 +39,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Api("SKOS Management")
 public class SKOSService extends Service {
 
-    private static final Logger logger = LoggerFactory.getLogger(SKOSService.class);
-    Logger statLog = LoggerFactory.getLogger("statistics");
     private final ConceptSchemeHelper conceptSchemeHelper = new ConceptSchemeHelper();
     private final SKOSManager skosManager = ManagerFactory.getManager(SKOSManager.class);
 
@@ -58,16 +54,15 @@ public class SKOSService extends Service {
     public Response createConcept(
             @ApiParam(
                     name = "author",
-                    value = "the account is being creating the skos concept",
+                    value = "the account that is creating the skos concept (if LexO user management disabled)",
                     example = "user7",
                     required = true)
             @QueryParam("author") String author,
             @ApiParam(
                     name = "key",
                     value = "authentication token",
-                    example = "lexodemo",
                     required = true)
-            @QueryParam("key") String key,
+            @HeaderParam("Authorization") String key,
             @ApiParam(
                     name = "prefix",
                     value = "prefix of the namespace",
@@ -95,16 +90,15 @@ public class SKOSService extends Service {
     public Response createConceptScheme(
             @ApiParam(
                     name = "author",
-                    value = "the account is being creating the skos concept scheme",
+                    value = "the account that is creating the skos concept scheme (if LexO user management disabled)",
                     example = "user7",
                     required = true)
             @QueryParam("author") String author,
             @ApiParam(
                     name = "key",
                     value = "authentication token",
-                    example = "lexodemo",
                     required = true)
-            @QueryParam("key") String key,
+            @HeaderParam("Authorization") String key,
             @ApiParam(
                     name = "prefix",
                     value = "prefix of the namespace",
@@ -132,7 +126,7 @@ public class SKOSService extends Service {
     public Response createCollection(
             @ApiParam(
                     name = "author",
-                    value = "the account is being creating the skos collection",
+                    value = "the account that is creating the skos collection (if LexO user management disabled)",
                     example = "user7",
                     required = true)
             @QueryParam("author") String author,
@@ -145,9 +139,8 @@ public class SKOSService extends Service {
             @ApiParam(
                     name = "key",
                     value = "authentication token",
-                    example = "lexodemo",
                     required = true)
-            @QueryParam("key") String key) {
+            @HeaderParam("Authorization") String key) {
         return Response.status(Response.Status.NOT_IMPLEMENTED).build();
     }
 
@@ -164,23 +157,20 @@ public class SKOSService extends Service {
             @ApiParam(
                     name = "key",
                     value = "authentication token",
-                    example = "lexodemo",
                     required = true)
-            @QueryParam("key") String key, SKOSDeleter sd) {
-        if (key.equals("PRINitant19")) {
-            try {
-                skosManager.deleteRelation(sd);
-                return Response.ok()
-                        .type(MediaType.TEXT_PLAIN)
-                        .header("Access-Control-Allow-Headers", "content-type")
-                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                        .build();
-            } catch (ManagerException ex) {
-                java.util.logging.Logger.getLogger(LexiconDeletion.class.getName()).log(Level.SEVERE, null, ex);
-                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
-            }
-        } else {
-            return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Deletion denied, wrong key").build();
+            @HeaderParam("Authorization") String key, SKOSDeleter sd) {
+        try {
+            checkKey(key);
+            skosManager.deleteRelation(sd);
+            return Response.ok()
+                    .type(MediaType.TEXT_PLAIN)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
+        } catch (ManagerException ex) {
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        } catch (AuthorizationException | ServiceException ex) {
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
 
@@ -197,24 +187,21 @@ public class SKOSService extends Service {
             @ApiParam(
                     name = "key",
                     value = "authentication token",
-                    example = "lexodemo",
                     required = true)
-            @QueryParam("key") String key, SKOSUpdater su) {
-        if (key.equals("PRINitant19")) {
-            try {
-                String json = skosManager.updateSemanticRelation(su);
-                return Response.ok(json)
-                        .type(MediaType.TEXT_PLAIN)
-                        .header("Access-Control-Allow-Headers", "content-type")
-                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                        .build();
-
-            } catch (ManagerException | UpdateExecutionException ex) {
-                java.util.logging.Logger.getLogger(LexiconUpdate.class.getName()).log(Level.SEVERE, null, ex);
-                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
-            }
-        } else {
-            return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Insertion denied, wrong key").build();
+            @HeaderParam("Authorization") String key, SKOSUpdater su) {
+        try {
+            checkKey(key);
+            String json = skosManager.updateSemanticRelation(su);
+            return Response.ok(json)
+                    .type(MediaType.TEXT_PLAIN)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
+        } catch (ManagerException | UpdateExecutionException ex) {
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        } 
+        catch (AuthorizationException | ServiceException ex) {
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
 
@@ -231,24 +218,21 @@ public class SKOSService extends Service {
             @ApiParam(
                     name = "key",
                     value = "authentication token",
-                    example = "lexodemo",
                     required = true)
-            @QueryParam("key") String key, SKOSUpdater su) {
-        if (key.equals("PRINitant19")) {
-            try {
-                String json = skosManager.updateLexicalProperty(su);
-                return Response.ok(json)
-                        .type(MediaType.TEXT_PLAIN)
-                        .header("Access-Control-Allow-Headers", "content-type")
-                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                        .build();
+            @HeaderParam("Authorization") String key, SKOSUpdater su) {
+        try {
+            checkKey(key);
+            String json = skosManager.updateLexicalProperty(su);
+            return Response.ok(json)
+                    .type(MediaType.TEXT_PLAIN)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
 
-            } catch (ManagerException | UpdateExecutionException | IllegalArgumentException ex) {
-                java.util.logging.Logger.getLogger(LexiconUpdate.class.getName()).log(Level.SEVERE, null, ex);
-                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
-            }
-        } else {
-            return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Insertion denied, wrong key").build();
+        } catch (ManagerException | UpdateExecutionException | IllegalArgumentException ex) {
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        } catch (AuthorizationException | ServiceException ex) {
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
 
@@ -265,24 +249,20 @@ public class SKOSService extends Service {
             @ApiParam(
                     name = "key",
                     value = "authentication token",
-                    example = "lexodemo",
                     required = true)
-            @QueryParam("key") String key, SKOSUpdater su) {
-        if (key.equals("PRINitant19")) {
-            try {
-                String json = skosManager.updateNotation(su);
-                return Response.ok(json)
-                        .type(MediaType.TEXT_PLAIN)
-                        .header("Access-Control-Allow-Headers", "content-type")
-                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                        .build();
-
-            } catch (ManagerException | UpdateExecutionException ex) {
-                java.util.logging.Logger.getLogger(LexiconUpdate.class.getName()).log(Level.SEVERE, null, ex);
-                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
-            }
-        } else {
-            return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Insertion denied, wrong key").build();
+            @HeaderParam("Authorization") String key, SKOSUpdater su) {
+        try {
+            checkKey(key);
+            String json = skosManager.updateNotation(su);
+            return Response.ok(json)
+                    .type(MediaType.TEXT_PLAIN)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
+        } catch (ManagerException | UpdateExecutionException ex) {
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        } catch (AuthorizationException | ServiceException ex) {
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
 
@@ -299,24 +279,20 @@ public class SKOSService extends Service {
             @ApiParam(
                     name = "key",
                     value = "authentication token",
-                    example = "lexodemo",
                     required = true)
-            @QueryParam("key") String key, SKOSUpdater su) {
-        if (key.equals("PRINitant19")) {
-            try {
-                String json = skosManager.updateSchemeProperty(su);
-                return Response.ok(json)
-                        .type(MediaType.TEXT_PLAIN)
-                        .header("Access-Control-Allow-Headers", "content-type")
-                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                        .build();
-
-            } catch (ManagerException | UpdateExecutionException ex) {
-                java.util.logging.Logger.getLogger(LexiconUpdate.class.getName()).log(Level.SEVERE, null, ex);
-                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
-            }
-        } else {
-            return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Insertion denied, wrong key").build();
+            @HeaderParam("Authorization") String key, SKOSUpdater su) {
+        try {
+            checkKey(key);
+            String json = skosManager.updateSchemeProperty(su);
+            return Response.ok(json)
+                    .type(MediaType.TEXT_PLAIN)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
+        } catch (ManagerException | UpdateExecutionException ex) {
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        } catch (AuthorizationException | ServiceException ex) {
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
 
@@ -333,24 +309,20 @@ public class SKOSService extends Service {
             @ApiParam(
                     name = "key",
                     value = "authentication token",
-                    example = "lexodemo",
                     required = true)
-            @QueryParam("key") String key, SKOSUpdater su) {
-        if (key.equals("PRINitant19")) {
-            try {
-                String json = skosManager.updateNoteProperty(su);
-                return Response.ok(json)
-                        .type(MediaType.TEXT_PLAIN)
-                        .header("Access-Control-Allow-Headers", "content-type")
-                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                        .build();
-
-            } catch (ManagerException | UpdateExecutionException ex) {
-                java.util.logging.Logger.getLogger(LexiconUpdate.class.getName()).log(Level.SEVERE, null, ex);
-                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
-            }
-        } else {
-            return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Insertion denied, wrong key").build();
+            @HeaderParam("Authorization") String key, SKOSUpdater su) {
+        try {
+            checkKey(key);
+            String json = skosManager.updateNoteProperty(su);
+            return Response.ok(json)
+                    .type(MediaType.TEXT_PLAIN)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
+        } catch (ManagerException | UpdateExecutionException ex) {
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        } catch (AuthorizationException | ServiceException ex) {
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
 
@@ -367,24 +339,21 @@ public class SKOSService extends Service {
             @ApiParam(
                     name = "key",
                     value = "authentication token",
-                    example = "lexodemo",
                     required = true)
-            @QueryParam("key") String key, SKOSUpdater su) {
-        if (key.equals("PRINitant19")) {
-            try {
-                String json = skosManager.updateMappingProperty(su);
-                return Response.ok(json)
-                        .type(MediaType.TEXT_PLAIN)
-                        .header("Access-Control-Allow-Headers", "content-type")
-                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                        .build();
+            @HeaderParam("Authorization") String key, SKOSUpdater su) {
+        try {
+            checkKey(key);
+            String json = skosManager.updateMappingProperty(su);
+            return Response.ok(json)
+                    .type(MediaType.TEXT_PLAIN)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
 
-            } catch (ManagerException | UpdateExecutionException ex) {
-                java.util.logging.Logger.getLogger(LexiconUpdate.class.getName()).log(Level.SEVERE, null, ex);
-                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
-            }
-        } else {
-            return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Insertion denied, wrong key").build();
+        } catch (ManagerException | UpdateExecutionException ex) {
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        } catch (AuthorizationException | ServiceException ex) {
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
 
@@ -401,9 +370,8 @@ public class SKOSService extends Service {
             @ApiParam(
                     name = "key",
                     value = "authentication token",
-                    example = "lexodemo",
                     required = true)
-            @QueryParam("key") String key, SKOSUpdater su) {
+            @HeaderParam("Authorization") String key, SKOSUpdater su) {
         return Response.status(Response.Status.NOT_IMPLEMENTED).build();
     }
 
@@ -420,9 +388,8 @@ public class SKOSService extends Service {
             @ApiParam(
                     name = "key",
                     value = "authentication token",
-                    example = "lexodemo",
                     required = true)
-            @QueryParam("key") String key,
+            @HeaderParam("Authorization") String key,
             @ApiParam(
                     name = "id",
                     value = "concept IRI",
@@ -444,9 +411,8 @@ public class SKOSService extends Service {
             @ApiParam(
                     name = "key",
                     value = "authentication token",
-                    example = "lexodemo",
                     required = true)
-            @QueryParam("key") String key,
+            @HeaderParam("Authorization") String key,
             @ApiParam(
                     name = "id",
                     value = "entity IRI",
@@ -468,11 +434,11 @@ public class SKOSService extends Service {
             @ApiParam(
                     name = "key",
                     value = "authentication token",
-                    example = "lexodemo",
                     required = true)
-            @QueryParam("key") String key, ConceptSchemeFilter csf) {
+            @HeaderParam("Authorization") String key, ConceptSchemeFilter csf) {
 
         try {
+            checkKey(key);
             TupleQueryResult cs = skosManager.getConceptSchemes("skos:ConceptScheme");
             List<ConceptScheme> lcs = conceptSchemeHelper.newDataList(cs);
             String json = conceptSchemeHelper.toJson(lcs);
@@ -482,8 +448,9 @@ public class SKOSService extends Service {
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
         } catch (ManagerException ex) {
-            logger.error(ex.getMessage(), ex);
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        } catch (AuthorizationException | ServiceException ex) {
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
 

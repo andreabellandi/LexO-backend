@@ -1,9 +1,11 @@
 package it.cnr.ilc.lexo.util;
 
+import it.cnr.ilc.lexo.service.data.lexicon.input.ExportSetting;
 import it.cnr.ilc.lexo.service.data.lexicon.input.FormFilter;
+import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalConceptFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalEntryFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalSenseFilter;
-import java.util.regex.Pattern;
+import java.util.Arrays;
 
 /**
  *
@@ -22,6 +24,12 @@ public class LogUtil {
         } else if (payload.getClass().getName().contains("FormFilter")) {
             FormFilter ff = (FormFilter) payload;
             log = getLog(ff);
+        } else if (payload.getClass().getName().contains("LexicalConceptFilter")) {
+            LexicalConceptFilter lcf = (LexicalConceptFilter) payload;
+            log = getLog(lcf);
+        } else if (payload.getClass().getName().contains("ExportSetting")) {
+            ExportSetting es = (ExportSetting) payload;
+            log = getLog(es);
         }
         return log;
     }
@@ -65,6 +73,28 @@ public class LogUtil {
                 + "   author: " + ff.getAuthor() + "\n"
                 + "   limit: " + ff.getLimit() + "\n"
                 + "   offset: " + ff.getOffset() + "\n"
+                + "}";
+    }
+    
+    private static String getLog(LexicalConceptFilter lcf) {
+        return "{\n"
+                + "   text: " + lcf.getText() + "\n"
+                + "   search mode: " + lcf.getSearchMode() + "\n"
+                + "   label: " + lcf.getLabelType() + "\n"
+                + "   author: " + lcf.getAuthor() + "\n"
+                + "   limit: " + lcf.getLimit() + "\n"
+                + "   offset: " + lcf.getOffset() + "\n"
+                + "}";
+    }
+    
+    private static String getLog(ExportSetting es) {
+        return "{\n"
+                + "   file name: " + es.getFileName() + "\n"
+                + "   format: " + es.getFormat() + "\n"
+                + "   subject: " + es.getSubject() + "\n"
+                + "   predicate: " + es.getPredicate() + "\n"
+                + "   object: " + es.getObject() + "\n"
+                + "   context: " + Arrays.toString(es.getContext().toArray()) + "\n"
                 + "}";
     }
 

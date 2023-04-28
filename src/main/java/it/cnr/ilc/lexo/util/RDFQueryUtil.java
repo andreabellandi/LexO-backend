@@ -133,7 +133,7 @@ public class RDFQueryUtil {
                         set.getPredicate() != null ? Values.iri(set.getPredicate()) : null,
                         set.isInferred(),
                         writer,
-                        getContexts(set.getContext() != null ? set.getContext() : null));
+                        getContexts(set.getContext() != null ? (set.getContext().get(0).isEmpty() ? null : set.getContext()) : null));
                 IOUtils.closeQuietly(outputStream);
                 return _export;
             }

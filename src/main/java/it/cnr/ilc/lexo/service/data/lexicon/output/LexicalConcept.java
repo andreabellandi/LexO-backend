@@ -21,8 +21,12 @@ public class LexicalConcept extends SKOSClass implements Data {
 
     @ApiModelProperty(value = "IRI")
     private String lexicalConcept;
-     @ApiModelProperty(value = "Concept scheme it belongs to")
+    @ApiModelProperty(value = "Concept scheme it belongs to")
     private String inScheme;
+    @ApiModelProperty(value = "definition")
+    private String definition;
+    @ApiModelProperty(value = "note")
+    private String note;
     @ApiModelProperty(value = "the list of relations the lexical concept is involved in")
     private List<GroupedLinkedEntity> entities;
     private List<Label> labels;
@@ -57,6 +61,23 @@ public class LexicalConcept extends SKOSClass implements Data {
 
     public void setInScheme(String inScheme) {
         this.inScheme = inScheme;
+    }
+
+    public String getDefinition() {
+        return definition;
+    }
+
+    public void setDefinition(String definition) {
+        this.definition = definition;
+    }
+
+  
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
     }
 
 }

@@ -36,4 +36,16 @@ public class SparqlSKOSData {
             + "    OPTIONAL { ?" + SparqlVariable.CONCEPT_SCHEME + " vs:term_status ?" + SparqlVariable.CONCEPT_SCHEME_STATUS + " . } \n"
             + "} ORDER BY " + SparqlVariable.LABEL;
 
+    public static final String DATA_SKOS_CONCEPT_SUBTREE
+            = SparqlPrefix.SKOS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.INST.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LUC.getSparqlPrefix() + "\n"
+            + "SELECT ?" + SparqlVariable.TARGET + "\n"
+            + "WHERE {\n"
+            + "      ?search a inst:lexicalConceptIndex ;\n"
+            + "      luc:query \"lexicalConceptIRI:\\\"_LEXICALCONCEPT_\\\"\" ;\n"
+            + "      luc:entities ?lexicalConcept .\n"
+            + "    OPTIONAL { ?lexicalConcept skos:broader* ?" + SparqlVariable.TARGET + " }\n"
+            + "}";
+
 }

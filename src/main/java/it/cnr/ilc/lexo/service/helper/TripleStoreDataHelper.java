@@ -147,6 +147,14 @@ public abstract class TripleStoreDataHelper<D extends Data> extends Helper<D> {
         }
         return target;
     }
+    
+    public ArrayList<String> getImages(String t) {
+        ArrayList<String> imgs = new ArrayList();
+        for (String _t : t.split(";")) {
+            imgs.add(_t);
+        }
+        return imgs;
+    }
 
     public ArrayList<Morphology> getMorphologyWithPoS(BindingSet bs, String morpho, String pos) {
         ArrayList<Morphology> morphos = new ArrayList();

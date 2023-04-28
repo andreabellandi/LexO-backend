@@ -5,7 +5,7 @@
  */
 package it.cnr.ilc.lexo.service.helper;
 
-import it.cnr.ilc.lexo.service.data.vocabulary.MorphologicalProperty;
+import it.cnr.ilc.lexo.service.data.vocabulary.RangedProperty;
 import it.cnr.ilc.lexo.service.data.vocabulary.PropertyHierarchy;
 import org.eclipse.rdf4j.query.BindingSet;
 
