@@ -118,7 +118,7 @@ public final class LexiconUpdateManager implements Manager, Cached {
     }
 
     public void validateConceptRel(String rel) throws ManagerException {
-        Manager.validateWithEnum("rel", OntoLexEntity.ConceptRel.class, rel);
+        Manager.validateWithEnum("rel", OntoLexEntity.LexicalConceptRel.class, rel);
     }
 
     public void validateFormRel(String rel) throws ManagerException {
@@ -135,10 +135,6 @@ public final class LexiconUpdateManager implements Manager, Cached {
 
     public void validateDecomp(String rel) throws ManagerException {
         Manager.validateWithEnum("rel", OntoLexEntity.Decomp.class, rel);
-    }
-
-    public void validateConceptRelRelation(String relation) throws ManagerException {
-        Manager.validateWithEnum("relation", OntoLexEntity.ConceptRel.class, relation);
     }
 
     public void validateLexicalEntryStatus(String status) throws ManagerException {
@@ -644,11 +640,6 @@ public final class LexiconUpdateManager implements Manager, Cached {
             if (!StringUtil.existsIRI(lru.getValue())) {
                 validateURL(lru.getValue());
             }
-        } else if (lru.getType().equals(EnumUtil.LinguisticRelation.ConceptRel.toString())) {
-            validateConceptRel(lru.getRelation());
-            if (!StringUtil.existsIRI(lru.getValue())) {
-                validateURL(lru.getValue());
-            }
         } else if (lru.getType().equals(EnumUtil.LinguisticRelation.Decomp.toString())) {
             validateDecomp(lru.getRelation());
             // currently external IRIs are not considered
@@ -669,7 +660,7 @@ public final class LexiconUpdateManager implements Manager, Cached {
                 }
             }
         } else if (lru.getType().equals(EnumUtil.LinguisticRelation.ConceptRel.toString())) {
-            validateConceptRelRelation(lru.getRelation());
+            validateConceptRel(lru.getRelation());
             if (lru.getRelation().equals(OntoLexEntity.LexicalConceptRel.evokes.toString())) {
                 if (StringUtil.existsTypedIRI(lru.getValue(), OntoLexEntity.LexicalConcepts.LexicalConcept.toString())) {
                 } else {
@@ -699,6 +690,11 @@ public final class LexiconUpdateManager implements Manager, Cached {
                 }
             } else if (lru.getRelation().equals(OntoLexEntity.LexicalConceptRel.isConceptOf.toString())) {
                 throw new ManagerException("still to implement");
+            } else if (lru.getRelation().equals(OntoLexEntity.LexicalConceptRel.conceptRel.toString())) {
+                throw new ManagerException("still to implement");
+//                if (!StringUtil.existsIRI(lru.getValue())) {
+//                validateURL(lru.getValue());
+//            }
             }
         } else if (lru.getType().equals(EnumUtil.LinguisticRelation.Lexicon.toString())) {
             validateLexicon(lru.getRelation());

@@ -106,21 +106,6 @@ public class OntoLexEntity {
         }
     }
 
-    public static enum ConceptRel {
-        conceptRel(SparqlPrefix.VARTRANS.getUri() + "conceptRel");
-
-        private final String type;
-
-        private ConceptRel(String type) {
-            this.type = type;
-        }
-
-        @Override
-        public String toString() {
-            return this.type;
-        }
-    }
-
     public static enum LexicalConceptRel {
         evokes(SparqlPrefix.ONTOLEX.getUri() + "evokes"),
         isEvokedBy(SparqlPrefix.ONTOLEX.getUri() + "isEvokedBy"),
