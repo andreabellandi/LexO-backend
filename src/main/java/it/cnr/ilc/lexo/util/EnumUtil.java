@@ -202,16 +202,21 @@ public class EnumUtil {
         }
 
     }
-
+    
+     
     public static enum LinguisticRelation {
         Morphology("morphology"),
         LexicalRel("lexicalRel"),
         SenseRel("senseRel"),
+        FormRel("formRel"),
         ConceptRef("conceptRef"),
         EtymologicalLink("etyLink"),
         Decomp("decomp"),
         Extension("extension"),
         Lexicon("lexicon"),
+        Translation("translation"),
+        TranslationSet("translationSet"),
+        LexicoSemanticRel("LexicosemanticRel"),
         //        Cognate("cognate"),
         ConceptRel("conceptRel");
 
@@ -236,6 +241,7 @@ public class EnumUtil {
         Extension("extension"),
         Attestation("attestation"),
         ConceptRel("conceptRel"),
+        Metadata("metadata"),
         Decomp("decomp");
 
         private final String genericRelation;
@@ -389,6 +395,25 @@ public class EnumUtil {
         @Override
         public String toString() {
             return this.acceptedSearchFormExtensionDegree;
+        }
+
+    }
+    
+    public static enum MetadataTypes {
+        note(SparqlPrefix.SKOS.getUri() + "note"),
+        label(SparqlPrefix.RDFS.getUri() + "label"),
+        confidence(SparqlPrefix.LEXINFO.getUri() + "confidence"),
+        comment(SparqlPrefix.RDFS.getUri() + "comment");
+
+        private final String metadataTypes;
+
+        private MetadataTypes(String metadataTypes) {
+            this.metadataTypes = metadataTypes;
+        }
+
+        @Override
+        public String toString() {
+            return this.metadataTypes;
         }
 
     }

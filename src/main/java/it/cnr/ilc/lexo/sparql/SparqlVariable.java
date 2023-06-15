@@ -192,6 +192,12 @@ public class SparqlVariable {
      public static final String PARENT = "parent";
      public static final String USAGE_VALUES = "usageValues";
      
+     public static final String REIFIED_RELATION = "reifiedRelation";
+     public static final String REIFIED_RELATION_PREDICATE = "reifiedRelationPredicate";
+     public static final String REIFIED_RELATION_OBJECT = "reifiedRelationObject";
+     public static final String CATEGORY = "category";
+     public static final String EXTRA = "extra";
+     
     // skos variables
     public static final String CHILD = "child";
     public static final String GCHILD = "grandchild";

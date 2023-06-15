@@ -22,6 +22,7 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryElementItem;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalEntryFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalSenseFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.output.BibliographicItem;
+import it.cnr.ilc.lexo.service.data.lexicon.output.Bibliography;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Component;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ComponentItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ConceptSetItem;
@@ -42,11 +43,16 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalSenseCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalSenseItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LinkedEntity;
+import it.cnr.ilc.lexo.service.data.lexicon.output.LinkedEntityByBibliography;
+import it.cnr.ilc.lexo.service.data.lexicon.output.ReifiedRelation;
+import it.cnr.ilc.lexo.service.data.lexicon.output.VarTransData;
 import it.cnr.ilc.lexo.service.helper.BibliographyHelper;
+import it.cnr.ilc.lexo.service.helper.BibliographyListHelper;
 import it.cnr.ilc.lexo.service.helper.ComponentFilterHelper;
 import it.cnr.ilc.lexo.service.helper.ComponentHelper;
 import it.cnr.ilc.lexo.service.helper.ConceptSetHelper;
 import it.cnr.ilc.lexo.service.helper.ConceptSetItemHelper;
+import it.cnr.ilc.lexo.service.helper.DirectLexicalRelationHelper;
 import it.cnr.ilc.lexo.service.helper.EtymologicalLinkHelper;
 import it.cnr.ilc.lexo.service.helper.EtymologyFilterHelper;
 import it.cnr.ilc.lexo.service.helper.EtymologyHelper;
@@ -55,6 +61,7 @@ import it.cnr.ilc.lexo.service.helper.FormCoreHelper;
 import it.cnr.ilc.lexo.service.helper.FormItemsHelper;
 import it.cnr.ilc.lexo.service.helper.HelperException;
 import it.cnr.ilc.lexo.service.helper.ImageHelper;
+import it.cnr.ilc.lexo.service.helper.IndirectLexicalRelationHelper;
 import it.cnr.ilc.lexo.service.helper.LanguageHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalConceptHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalConceptItemHelper;
@@ -64,7 +71,9 @@ import it.cnr.ilc.lexo.service.helper.LexicalEntryFilterHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalEntryElementHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalSenseCoreHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalSenseFilterHelper;
+import it.cnr.ilc.lexo.service.helper.LinkedEntityByBibliographyHelper;
 import it.cnr.ilc.lexo.service.helper.LinkedEntityHelper;
+import it.cnr.ilc.lexo.service.helper.VarTransDataHelper;
 import it.cnr.ilc.lexo.sparql.SparqlVariable;
 import it.cnr.ilc.lexo.util.EnumUtil;
 import it.cnr.ilc.lexo.util.LogUtil;
@@ -105,6 +114,8 @@ public class LexiconData extends Service {
     private final LexicalEntryFilterHelper lexicalEntryFilterHelper = new LexicalEntryFilterHelper();
     private final LexicalSenseFilterHelper lexicalSenseFilterHelper = new LexicalSenseFilterHelper();
     private final FormItemsHelper formItemsHelper = new FormItemsHelper();
+    private final DirectLexicalRelationHelper directLexicalRelationHelper = new DirectLexicalRelationHelper();
+    private final IndirectLexicalRelationHelper indirectLexicalRelationHelper = new IndirectLexicalRelationHelper();
     private final LanguageHelper languageHelper = new LanguageHelper();
     private final LexicalEntryElementHelper lexicalEntryElementHelper = new LexicalEntryElementHelper();
     private final LexicalEntryCoreHelper lexicalEntryCoreHelper = new LexicalEntryCoreHelper();
@@ -113,6 +124,8 @@ public class LexiconData extends Service {
     private final LexicalSenseCoreHelper lexicalSenseCoreHelper = new LexicalSenseCoreHelper();
     private final LinkedEntityHelper linkedEntityHelper = new LinkedEntityHelper();
     private final BibliographyHelper bibliographyHelper = new BibliographyHelper();
+    private final BibliographyListHelper bibliographyListHelper = new BibliographyListHelper();
+    private final LinkedEntityByBibliographyHelper linkedEntityByBibliographyHelper = new LinkedEntityByBibliographyHelper();
     private final BibliographyManager bibliographyManager = ManagerFactory.getManager(BibliographyManager.class);
     private final EtymologyHelper etymologyHelper = new EtymologyHelper();
     private final LexicalConceptItemHelper lexicalConceptItemHelper = new LexicalConceptItemHelper();
@@ -126,6 +139,7 @@ public class LexiconData extends Service {
     private final ComponentHelper componentHelper = new ComponentHelper();
     private final ConceptSetHelper conceptSetHelper = new ConceptSetHelper();
     private final SKOSManager skosManager = ManagerFactory.getManager(SKOSManager.class);
+    private final VarTransDataHelper varTransDataHelper = new VarTransDataHelper();
 
     private void userCheck(String key) throws AuthorizationException, ServiceException {
         if (LexOProperties.getProperty("keycloack.freeViewer") != null) {
@@ -155,29 +169,37 @@ public class LexiconData extends Service {
             @ApiParam(
                     name = "id",
                     value = "lexical entry ID",
-                    example = "MUSaccedereVERB",
                     required = true)
             @QueryParam("id") String id) {
         try {
             userCheck(key);
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
+            String json = "";
             if (module.equals(EnumUtil.LexicalAspects.Core.toString())) {
                 log(Level.INFO, "lexicon/data/lexicalEntry <" + _id + "> with module: " + module);
-                TupleQueryResult lexicalEntry = lexiconManager.getLexicalEntry(_id, module);
+                TupleQueryResult lexicalEntry = lexiconManager.getLexicalEntry(_id);
                 List<LexicalEntryCore> _lec = lexicalEntryCoreHelper.newDataList(lexicalEntry);
                 LexicalEntryCore lec = lexiconManager.getLexicalEntityTypes(_lec);
                 TupleQueryResult lexicalEntityLinks = lexiconManager.getLexicalEntityLinks(_id);
                 LexicalEntityLinksItem links = lexicalEntityLinksItemHelper.newData(lexicalEntityLinks);
                 lexiconManager.addLexicalEntityLink(lec, links);
-                String json = lexicalEntryCoreHelper.toJson(lec);
-                return Response.ok(json)
-                        .type(MediaType.TEXT_PLAIN)
-                        .header("Access-Control-Allow-Headers", "content-type")
-                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                        .build();
+                json = lexicalEntryCoreHelper.toJson(lec);
+            } else if (module.equals(EnumUtil.LexicalAspects.VarTrans.toString())) {
+                log(Level.INFO, "lexicon/data/lexicalEntry <" + _id + "> with module: " + module);
+                TupleQueryResult directRel = lexiconManager.getLexicalEntryVarTrans(_id, true);
+                List<LinkedEntity> le = directLexicalRelationHelper.newDataList(directRel);
+                TupleQueryResult indirectRel = lexiconManager.getLexicalEntryVarTrans(_id, false);
+                List<ReifiedRelation> rr = indirectLexicalRelationHelper.newDataList(indirectRel);
+                json = varTransDataHelper.toJson(lexiconManager.addLexicalRelations(le, rr));
+            } else {
+                log(Level.ERROR, "lexical module " + module + " not available");
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("lexical module not available").build();
             }
-            log(Level.ERROR, "lexical module " + module + " not available");
-            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("lexical module not available").build();
+            return Response.ok(json)
+                    .type(MediaType.TEXT_PLAIN)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
         } catch (ManagerException | UnsupportedEncodingException | AuthorizationException | ServiceException ex) {
             log(Level.ERROR, ex.getMessage());
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
@@ -874,30 +896,72 @@ public class LexiconData extends Service {
             value = "bibliography",
             produces = "application/json; charset=UTF-8")
     @ApiOperation(value = "Lexical entity bibliography",
-            notes = "This method returns the bibliography of a given lexical entity")
+            notes = "This method returns the bibliography of a given lexical entity (or the complete bibliography list)")
     public Response bibliography(
             @HeaderParam("Authorization") String key,
             @ApiParam(
                     name = "id",
-                    value = "lexical entity ID",
-                    required = true)
+                    value = "lexical entity ID (empty ID means all bibliography)",
+                    required = false)
             @QueryParam("id") String id) {
+        String json = "";
         try {
             userCheck(key);
-            String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
-            log(Level.INFO, "lexicon/data/bilbiography <" + _id + ">");
-            TupleQueryResult bib = bibliographyManager.getBibliography(_id);
-            List<BibliographicItem> bibs = bibliographyHelper.newDataList(bib);
-            String json = bibliographyHelper.toJson(bibs);
-            return Response.ok(json)
-                    .type(MediaType.TEXT_PLAIN)
-                    .header("Access-Control-Allow-Headers", "content-type")
-                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                    .build();
+            if (id != null) {
+                String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
+                log(Level.INFO, "lexicon/data/bilbiography <" + _id + ">");
+                TupleQueryResult bib = bibliographyManager.getBibliography(_id);
+                List<BibliographicItem> bibs = bibliographyHelper.newDataList(bib);
+                json = bibliographyHelper.toJson(bibs);
+            } else {
+                log(Level.INFO, "lexicon/data/bilbiography of all entities");
+                TupleQueryResult bib = bibliographyManager.getBibliography(null);
+                List<Bibliography> bibs = bibliographyListHelper.newDataList(bib);
+                json = bibliographyListHelper.toJson(bibs);
+            }
         } catch (UnsupportedEncodingException | AuthorizationException | ServiceException ex) {
             log(Level.ERROR, ex.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }
+        return Response.ok(json)
+                .type(MediaType.TEXT_PLAIN)
+                .header("Access-Control-Allow-Headers", "content-type")
+                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                .build();
+    }
+
+    @GET
+    @Path("entitiesByBibliography")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "entitiesByBibliography",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Lexical entities by bibliography",
+            notes = "This method returns the lexical entities referenced by the given bibliography")
+    public Response entitiesByBibliography(
+            @HeaderParam("Authorization") String key,
+            @ApiParam(
+                    name = "id",
+                    value = "bibliography ID",
+                    required = false)
+            @QueryParam("id") String id) {
+        String json = "";
+        try {
+            userCheck(key);
+            log(Level.INFO, "lexicon/data/entitiesByBibliography <" + id + ">");
+            TupleQueryResult bib = bibliographyManager.getLexicalEntitiesByBibliography(id);
+            List<LinkedEntityByBibliography> bibs = linkedEntityByBibliographyHelper.newDataList(bib);
+            json = linkedEntityByBibliographyHelper.toJson(bibs);
+        } catch (AuthorizationException | ServiceException ex) {
+            log(Level.ERROR, ex.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        }
+        return Response.ok(json)
+                .type(MediaType.TEXT_PLAIN)
+                .header("Access-Control-Allow-Headers", "content-type")
+                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                .build();
     }
 
     @GET

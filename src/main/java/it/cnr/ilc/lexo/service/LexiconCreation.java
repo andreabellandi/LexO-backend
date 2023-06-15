@@ -13,7 +13,6 @@ import it.cnr.ilc.lexo.manager.LexiconCreationManager;
 import it.cnr.ilc.lexo.manager.ManagerException;
 import it.cnr.ilc.lexo.manager.ManagerFactory;
 import it.cnr.ilc.lexo.manager.SKOSManager;
-import it.cnr.ilc.lexo.manager.UserRightManager;
 import it.cnr.ilc.lexo.manager.UtilityManager;
 import it.cnr.ilc.lexo.service.data.lexicon.input.Bibliography;
 import it.cnr.ilc.lexo.service.data.lexicon.output.BibliographicItem;
@@ -26,6 +25,8 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.Language;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalConcept;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalSenseCore;
+import it.cnr.ilc.lexo.service.data.lexicon.output.ReifiedRelation;
+import it.cnr.ilc.lexo.service.data.lexicon.output.TranslationSet;
 import it.cnr.ilc.lexo.service.helper.BibliographyHelper;
 import it.cnr.ilc.lexo.service.helper.ComponentHelper;
 import it.cnr.ilc.lexo.service.helper.ConceptSetHelper;
@@ -36,6 +37,9 @@ import it.cnr.ilc.lexo.service.helper.LanguageHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalConceptHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalEntryCoreHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalSenseCoreHelper;
+import it.cnr.ilc.lexo.service.helper.DirectLexicalRelationHelper;
+import it.cnr.ilc.lexo.service.helper.IndirectLexicalRelationHelper;
+import it.cnr.ilc.lexo.service.helper.TranslationSetHelper;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -72,6 +76,8 @@ public class LexiconCreation extends Service {
     private final BibliographyHelper bibliographyHelper = new BibliographyHelper();
     private final LexicalSenseCoreHelper lexicalSenseCoreHelper = new LexicalSenseCoreHelper();
     private final ComponentHelper componentHelper = new ComponentHelper();
+    private final IndirectLexicalRelationHelper indirectLexicalRelationHelper = new IndirectLexicalRelationHelper();
+    private final TranslationSetHelper translationSetHelper = new TranslationSetHelper();
     private final LexicalConceptHelper lexicalConceptHelper = new LexicalConceptHelper();
     private final ConceptSetHelper conceptSetHelper = new ConceptSetHelper();
 
@@ -97,7 +103,7 @@ public class LexiconCreation extends Service {
                     name = "author",
                     value = "the account that is creating the language (if LexO user management disabled)",
                     example = "user7",
-                    required = true)
+                    required = false)
             @QueryParam("author") String author,
             @ApiParam(
                     name = "prefix",
@@ -107,7 +113,7 @@ public class LexiconCreation extends Service {
             @QueryParam("prefix") String prefix,
             @ApiParam(
                     name = "baseIRI",
-                    value = "base IRI of the language",
+                    value = "base IRI of the entity",
                     example = "http://mydata.com#",
                     required = true)
             @QueryParam("baseIRI") String baseIRI) {
@@ -153,7 +159,7 @@ public class LexiconCreation extends Service {
                     name = "author",
                     value = "the account that is creating the lexical entry (if LexO user management disabled)",
                     example = "user7",
-                    required = true)
+                    required = false)
             @QueryParam("author") String author,
             @ApiParam(
                     name = "prefix",
@@ -163,7 +169,7 @@ public class LexiconCreation extends Service {
             @QueryParam("prefix") String prefix,
             @ApiParam(
                     name = "baseIRI",
-                    value = "base IRI of the language",
+                    value = "base IRI of the entity",
                     example = "http://mydata.com#",
                     required = true)
             @QueryParam("baseIRI") String baseIRI) {
@@ -218,7 +224,7 @@ public class LexiconCreation extends Service {
             @QueryParam("prefix") String prefix,
             @ApiParam(
                     name = "baseIRI",
-                    value = "base IRI of the language",
+                    value = "base IRI of the entity",
                     example = "http://mydata.com#",
                     required = true)
             @QueryParam("baseIRI") String baseIRI) {
@@ -285,7 +291,7 @@ public class LexiconCreation extends Service {
                     name = "author",
                     value = "the account that is creating the sense (if LexO user management disabled)",
                     example = "user7",
-                    required = true)
+                    required = false)
             @QueryParam("author") String author,
             @ApiParam(
                     name = "prefix",
@@ -295,7 +301,7 @@ public class LexiconCreation extends Service {
             @QueryParam("prefix") String prefix,
             @ApiParam(
                     name = "baseIRI",
-                    value = "base IRI of the language",
+                    value = "base IRI of the entity",
                     example = "http://mydata.com#",
                     required = true)
             @QueryParam("baseIRI") String baseIRI) {
@@ -350,7 +356,7 @@ public class LexiconCreation extends Service {
                     name = "author",
                     value = "the account that is creating the component (if LexO user management disabled)",
                     example = "user7",
-                    required = true)
+                    required = false)
             @QueryParam("author") String author,
             @ApiParam(
                     name = "prefix",
@@ -360,7 +366,7 @@ public class LexiconCreation extends Service {
             @QueryParam("prefix") String prefix,
             @ApiParam(
                     name = "baseIRI",
-                    value = "base IRI of the language",
+                    value = "base IRI of the entity",
                     example = "http://mydata.com#",
                     required = true)
             @QueryParam("baseIRI") String baseIRI) {
@@ -417,7 +423,7 @@ public class LexiconCreation extends Service {
                     name = "author",
                     value = "the account that is creating the etymology (if LexO user management disabled)",
                     example = "user7",
-                    required = true)
+                    required = false)
             @QueryParam("author") String author,
             @ApiParam(
                     name = "prefix",
@@ -427,7 +433,7 @@ public class LexiconCreation extends Service {
             @QueryParam("prefix") String prefix,
             @ApiParam(
                     name = "baseIRI",
-                    value = "base IRI of the language",
+                    value = "base IRI of the entity",
                     example = "http://mydata.com#",
                     required = true)
             @QueryParam("baseIRI") String baseIRI) {
@@ -494,7 +500,7 @@ public class LexiconCreation extends Service {
                     name = "author",
                     value = "the account that is creating the etymological link (if LexO user management disabled)",
                     example = "user7",
-                    required = true)
+                    required = false)
             @QueryParam("author") String author,
             @ApiParam(
                     name = "prefix",
@@ -504,7 +510,7 @@ public class LexiconCreation extends Service {
             @QueryParam("prefix") String prefix,
             @ApiParam(
                     name = "baseIRI",
-                    value = "base IRI of the language",
+                    value = "base IRI of the entity",
                     example = "http://mydata.com#",
                     required = true)
             @QueryParam("baseIRI") String baseIRI) {
@@ -571,7 +577,7 @@ public class LexiconCreation extends Service {
                     name = "author",
                     value = "the account that is creating the bibliographic link (if LexO user management disabled)",
                     example = "user7",
-                    required = true)
+                    required = false)
             @QueryParam("author") String author,
             Bibliography bibliography,
             @ApiParam(
@@ -582,7 +588,7 @@ public class LexiconCreation extends Service {
             @QueryParam("prefix") String prefix,
             @ApiParam(
                     name = "baseIRI",
-                    value = "base IRI of the language",
+                    value = "base IRI of the entity",
                     example = "http://mydata.com#",
                     required = true)
             @QueryParam("baseIRI") String baseIRI) {
@@ -635,7 +641,7 @@ public class LexiconCreation extends Service {
                     name = "author",
                     value = "the account that is creating the lexical concept (if LexO user management disabled)",
                     example = "user7",
-                    required = true)
+                    required = false)
             @QueryParam("author") String author,
             @ApiParam(
                     name = "prefix",
@@ -645,7 +651,7 @@ public class LexiconCreation extends Service {
             @QueryParam("prefix") String prefix,
             @ApiParam(
                     name = "baseIRI",
-                    value = "base IRI of the language",
+                    value = "base IRI of the entity",
                     example = "http://mydata.com#",
                     required = true)
             @QueryParam("baseIRI") String baseIRI) {
@@ -687,7 +693,7 @@ public class LexiconCreation extends Service {
                     name = "author",
                     value = "the account that is creating the concept set (if LexO user management disabled)",
                     example = "user7",
-                    required = true)
+                    required = false)
             @QueryParam("author") String author,
             @ApiParam(
                     name = "prefix",
@@ -697,7 +703,7 @@ public class LexiconCreation extends Service {
             @QueryParam("prefix") String prefix,
             @ApiParam(
                     name = "baseIRI",
-                    value = "base IRI of the language",
+                    value = "base IRI of the entity",
                     example = "http://mydata.com#",
                     required = true)
             @QueryParam("baseIRI") String baseIRI) {
@@ -723,4 +729,123 @@ public class LexiconCreation extends Service {
         }
     }
 
+    @GET
+    @Path("lexicoSemanticRelation")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "lexicoSemanticRelation",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Creation of a reified Lexico-Semantic Relation",
+            notes = "This method creates a reified Lexico-Semantic Relation according to the vartrans ontolex module")
+    public Response lexicoSemanticRelation(
+            @ApiParam(
+                    name = "id",
+                    value = "the lexical entity that is the source of the relation",
+                    required = true)
+            @QueryParam("id") String id,
+            @HeaderParam("Authorization") String key,
+            @ApiParam(
+                    name = "author",
+                    value = "the account that is creating the relation (if LexO user management disabled)",
+                    example = "user7",
+                    required = false)
+            @QueryParam("author") String author,
+            @ApiParam(
+                    name = "type",
+                    value = "the full IRI of the relation type",
+                    example = "http://www.w3.org/ns/lemon/vartrans#LexicalRelation",
+                    required = true)
+            @QueryParam("type") String type,
+            @ApiParam(
+                    name = "prefix",
+                    value = "prefix of the namespace",
+                    example = "myprefix",
+                    required = true)
+            @QueryParam("prefix") String prefix,
+            @ApiParam(
+                    name = "baseIRI",
+                    value = "base IRI of the relation",
+                    example = "http://mydata.com#",
+                    required = true)
+            @QueryParam("baseIRI") String baseIRI) {
+        try {
+            checkKey(key);
+            log(Level.INFO, "lexicon/creation/lexicoSemanticRelation of the lexical entity: " + URLDecoder.decode(id, StandardCharsets.UTF_8.name()));
+            String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
+            String _type = URLDecoder.decode(type, StandardCharsets.UTF_8.name());
+            try {
+                UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+                utilityManager.validateNamespace(prefix, baseIRI);
+                ReifiedRelation rr = lexiconManager.createLexicoSemanticRelation(_id, _type, author, prefix, baseIRI);
+                String json = indirectLexicalRelationHelper.toJson(rr);
+                log(Level.INFO, "lexicoSemanticRelation " + rr.getRelation() + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
+                return Response.ok(json)
+                        .type(MediaType.TEXT_PLAIN)
+                        .header("Access-Control-Allow-Headers", "content-type")
+                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                        .build();
+            } catch (ManagerException ex) {
+                log(Level.ERROR, "lexicon/creation/lexicoSemanticRelation: " + ex.getMessage());
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            }
+        } catch (UnsupportedEncodingException ex) {
+            log(Level.ERROR, "lexicon/creation/lexicoSemanticRelation: " + ex.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        } catch (AuthorizationException | ServiceException ex) {
+            log(Level.ERROR, "lexicon/creation/lexicoSemanticRelation: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
+        }
+    }
+    
+    @GET
+    @Path("translationSet")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "translationSet",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Creation of a translation set",
+            notes = "This method creates a translation set according to the vartrans ontolex module")
+    public Response translationSet(
+            @HeaderParam("Authorization") String key,
+            @ApiParam(
+                    name = "author",
+                    value = "the account that is creating the translation set (if LexO user management disabled)",
+                    example = "user7",
+                    required = false)
+            @QueryParam("author") String author,
+            @ApiParam(
+                    name = "prefix",
+                    value = "prefix of the namespace",
+                    example = "myprefix",
+                    required = true)
+            @QueryParam("prefix") String prefix,
+            @ApiParam(
+                    name = "baseIRI",
+                    value = "base IRI of the relation",
+                    example = "http://mydata.com#",
+                    required = true)
+            @QueryParam("baseIRI") String baseIRI) {
+        try {
+            checkKey(key);
+            log(Level.INFO, "lexicon/creation/translationSet");
+            try {
+                TranslationSet ts = lexiconManager.createTranslationSet(author, prefix, baseIRI);
+                String json = translationSetHelper.toJson(ts);
+                log(Level.INFO, "translationSet " + ts.getTranslationSet() + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
+                return Response.ok(json)
+                        .type(MediaType.TEXT_PLAIN)
+                        .header("Access-Control-Allow-Headers", "content-type")
+                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                        .build();
+            } catch (ManagerException ex) {
+                log(Level.ERROR, "lexicon/creation/translationSet: " + ex.getMessage());
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            }
+        } catch (AuthorizationException | ServiceException ex) {
+            log(Level.ERROR, "lexicon/creation/translationSet: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
+        }
+    }
 }

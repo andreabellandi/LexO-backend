@@ -5,18 +5,17 @@
  */
 package it.cnr.ilc.lexo.service.helper;
 
-import it.cnr.ilc.lexo.LexOProperties;
 import it.cnr.ilc.lexo.manager.ManagerException;
 import it.cnr.ilc.lexo.manager.ManagerFactory;
 import it.cnr.ilc.lexo.manager.UtilityManager;
 import it.cnr.ilc.lexo.service.data.Data;
+import it.cnr.ilc.lexo.service.data.lexicon.output.LinkedEntity;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Morphology;
 import it.cnr.ilc.lexo.service.data.lexicon.output.graphViz.NodeLinks;
 import it.cnr.ilc.lexo.util.StringUtil;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Literal;
@@ -200,6 +199,22 @@ public abstract class TripleStoreDataHelper<D extends Data> extends Helper<D> {
         } else {
             return -1;
         }
+    }
+    
+    public ArrayList<LinkedEntity> getLinkedEntities(BindingSet bs, String entities) {
+        ArrayList<LinkedEntity> _entities = new ArrayList();
+        if (!entities.isEmpty()) {
+            for (String e : entities.split("---")) {
+                LinkedEntity le = new LinkedEntity();
+                String[] _e = e.split("<>");
+                le.setEntity(_e[1]);
+                le.setInferred(_e[2].contains("explicit"));
+                le.setLink(_e[0]);
+                le.setLinkType(isExternalUri(_e[1]) ? "external" : "internal");
+                _entities.add(le);
+            }
+        }
+        return _entities;
     }
 
 }

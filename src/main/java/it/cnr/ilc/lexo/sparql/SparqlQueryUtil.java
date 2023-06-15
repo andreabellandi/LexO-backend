@@ -51,6 +51,14 @@ public class SparqlQueryUtil {
     public static final String IS_COMPONENT_ID
             = SparqlPrefix.DECOMP.getSparqlPrefix() + "\n"
             + "ASK { <_ID_> a " + SparqlPrefix.DECOMP.getPrefix() + "Component }";
+    
+    public static final String IS_LEXICOSEMANTIC_RELATION_ID
+            = SparqlPrefix.VARTRANS.getSparqlPrefix() + "\n"
+            + "ASK { <_ID_> a " + SparqlPrefix.VARTRANS.getPrefix() + "LexicoSemanticRelation }";
+    
+    public static final String IS_TRANSLATIONSET_ID
+            = SparqlPrefix.VARTRANS.getSparqlPrefix() + "\n"
+            + "ASK { <_ID_> a " + SparqlPrefix.VARTRANS.getPrefix() + "TranslationSet }";
 
     public static final String IS_LEXICAL_CONCEPT_ID
             = SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"

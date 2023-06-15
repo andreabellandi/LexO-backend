@@ -1,6 +1,8 @@
 package it.cnr.ilc.lexo.manager;
 
+import it.cnr.ilc.lexo.service.data.vocabulary.PropertyHierarchy;
 import it.cnr.ilc.lexo.service.data.vocabulary.RangedProperty;
+import it.cnr.ilc.lexo.service.data.vocabulary.Value;
 import it.cnr.ilc.lexo.util.EnumUtil;
 import java.util.Arrays;
 
@@ -10,6 +12,94 @@ import java.util.Arrays;
  */
 public interface Manager {
 
+    public final LexinfoManager lexinfoManager = ManagerFactory.getManager(LexinfoManager.class);
+
+    public static boolean validateLexinfo(String type, String value) throws ManagerException {
+        boolean found = false;
+        switch (type) {
+            case "lexicalRel":
+                for (PropertyHierarchy ph : lexinfoManager.getLexicalRel()) {
+                    if (ph.getPropertyId().equals(value)) {
+                        found = true;
+                        break;
+                    }
+                }
+                break;
+            case "senseRel":
+                for (PropertyHierarchy ph : lexinfoManager.getSenseRel()) {
+                    if (ph.getPropertyId().equals(value)) {
+                        found = true;
+                        break;
+                    }
+                }
+                break;
+            case "formRel":
+                for (PropertyHierarchy ph : lexinfoManager.getFormRel()) {
+                    if (ph.getPropertyId().equals(value)) {
+                        found = true;
+                        break;
+                    }
+                }
+                break;
+            case "representation":
+                for (Value v : lexinfoManager.getRepresentationProperties()) {
+                    if (v.getValueId().equals(value)) {
+                        found = true;
+                        break;
+                    }
+                }
+                break;
+            case "senseDefinition":
+                for (Value v : lexinfoManager.getSenseProperties()) {
+                    if (v.getValueId().equals(value)) {
+                        found = true;
+                        break;
+                    }
+                }
+                break;
+            case "usage":
+                for (RangedProperty rp : lexinfoManager.getUsage()) {
+                    for (RangedProperty.RangedValue rv : rp.getPropertyValues()) {
+                        if (rv.getValueId().equals(value)) {
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+                break;
+            case "lexicalCategory":
+                for (RangedProperty rp : lexinfoManager.getLexicalCategory()) {
+                    for (RangedProperty.RangedValue rv : rp.getPropertyValues()) {
+                        if (rv.getValueId().equals(value)) {
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+                break;
+            case "formCategory":
+                for (RangedProperty rp : lexinfoManager.getFormCategory()) {
+                    for (RangedProperty.RangedValue rv : rp.getPropertyValues()) {
+                        if (rv.getValueId().equals(value)) {
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+                break;
+            case "semanticCategory":
+                for (RangedProperty rp : lexinfoManager.getSemanticCategory()) {
+                    for (RangedProperty.RangedValue rv : rp.getPropertyValues()) {
+                        if (rv.getValueId().equals(value)) {
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+                break;
+        }
+        return found;
+    }
 
     public static void validateWithEnum(String parameterName, Class<? extends Enum> enumClass, String parameterValue) throws ManagerException {
         if (!EnumUtil.containsString(enumClass, parameterValue)) {
@@ -18,7 +108,6 @@ public interface Manager {
     }
 
     public static void validateMorphology(String trait, String value) throws ManagerException {
-        LexinfoManager lexinfoManager = ManagerFactory.getManager(LexinfoManager.class);
         RangedProperty mp = lexinfoManager.getMorphoHash().get(trait);
         if (null != mp) {
             boolean found = false;

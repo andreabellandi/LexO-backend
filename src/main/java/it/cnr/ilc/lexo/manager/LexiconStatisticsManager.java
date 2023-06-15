@@ -35,7 +35,7 @@ public final class LexiconStatisticsManager implements Manager, Cached {
         languages.clear();
 //        TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL, SparqlSelectStatistics.STATISTICS_LANGUAGES_LIST);
 //        try (TupleQueryResult result = tupleQuery.evaluate()) {
-        try (TupleQueryResult result = RDFQueryUtil.evaluateTQuery(SparqlSelectStatistics.STATISTICS_LANGUAGES_LIST)) {
+        try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(SparqlSelectStatistics.STATISTICS_LANGUAGES_LIST)) {
             while (result.hasNext()) {
                 BindingSet bs = result.next();
                 if (bs.getBinding(SparqlVariable.LEXICON_LANGUAGE) != null) {
@@ -49,6 +49,10 @@ public final class LexiconStatisticsManager implements Manager, Cached {
     public TupleQueryResult getTypes() {
 //        TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL, SparqlSelectStatistics.STATISTICS_TYPES);
         return RDFQueryUtil.evaluateTQuery(SparqlSelectStatistics.STATISTICS_TYPES);
+    }
+
+    public TupleQueryResult getMetadata(String id) {
+        return RDFQueryUtil.evaluateTQuery(SparqlSelectStatistics.METADATA.replace("_ID_", id));
     }
 
     public TupleQueryResult getPos() {

@@ -96,4 +96,29 @@ public class SparqlSelectStatistics {
             + "WHERE { ?" + SparqlVariable.LEXICON + " a " + SparqlPrefix.LIME.getPrefix() + "Lexicon ;\n"
             + "                 " + SparqlPrefix.LIME.getPrefix() + "language ?" + SparqlVariable.LEXICON_LANGUAGE + " . }\n"
             + "ORDER BY ?" + SparqlVariable.LEXICON_LANGUAGE + "";
+
+    public static final String METADATA
+            = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+            + SparqlPrefix.SKOS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.VS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LOC.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
+            + "SELECT ?" + SparqlVariable.CREATION_DATE + " ?" + SparqlVariable.COMPLETION_DATE + " ?" + SparqlVariable.REVISION_DATE
+            + " ?" + SparqlVariable.LAST_UPDATE + " ?" + SparqlVariable.NOTE + " ?" + SparqlVariable.CONFIDENCE
+            + " ?" + SparqlVariable.LEXICAL_ENTRY_STATUS + " ?" + SparqlVariable.LEXICAL_ENTRY_CREATION_AUTHOR + " ?" + SparqlVariable.LEXICAL_ENTRY_COMPLETING_AUTHOR
+            + " ?" + SparqlVariable.LEXICAL_ENTRY_REVISOR + " ?" + SparqlVariable.SOURCE
+            + "WHERE {\n"
+            + "    BIND (<_ID_> AS ?" + SparqlVariable.LEXICAL_ENTITY + ")  .\n"
+            + "    OPTIONAL {?" + SparqlVariable.LEXICAL_ENTITY + " dct:created ?" + SparqlVariable.CREATION_DATE + "} .\n"
+            + "    OPTIONAL {?" + SparqlVariable.LEXICAL_ENTITY + " lexinfo:confidence ?confidence . }\n"
+            + "    OPTIONAL {?" + SparqlVariable.LEXICAL_ENTITY + " dct:dateSubmitted ?" + SparqlVariable.COMPLETION_DATE + "} .\n"
+            + "    OPTIONAL {?" + SparqlVariable.LEXICAL_ENTITY + " dct:dateAccepted ?" + SparqlVariable.REVISION_DATE + "} .\n"
+            + "    OPTIONAL {?" + SparqlVariable.LEXICAL_ENTITY + " dct:modified ?" + SparqlVariable.LAST_UPDATE + "} .\n"
+            + "    OPTIONAL {?" + SparqlVariable.LEXICAL_ENTITY + " skos:note ?" + SparqlVariable.NOTE + " . }\n"
+            + "    OPTIONAL {?" + SparqlVariable.LEXICAL_ENTITY + " vs:term_status ?" + SparqlVariable.LEXICAL_ENTRY_STATUS + " . }\n"
+            + "    OPTIONAL {?" + SparqlVariable.LEXICAL_ENTITY + " dct:source ?" + SparqlVariable.SOURCE + " . }\n"
+            + "    OPTIONAL {?" + SparqlVariable.LEXICAL_ENTITY + " dct:creator ?" + SparqlVariable.LEXICAL_ENTRY_CREATION_AUTHOR + " . }\n"
+            + "    OPTIONAL {?" + SparqlVariable.LEXICAL_ENTITY + " dct:author ?" + SparqlVariable.LEXICAL_ENTRY_COMPLETING_AUTHOR + " . }\n"
+            + "    OPTIONAL {?" + SparqlVariable.LEXICAL_ENTITY + " loc:rev ?" + SparqlVariable.LEXICAL_ENTRY_REVISOR + " . }\n"
+            + "}";
 }

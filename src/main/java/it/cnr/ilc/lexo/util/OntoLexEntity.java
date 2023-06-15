@@ -87,18 +87,82 @@ public class OntoLexEntity {
             return this.type;
         }
     }
-    
-    public static enum LexicalConceptsRelations {
+
+    public static enum VartransRelationClasses {
+        LexicalRelation(SparqlPrefix.VARTRANS.getUri() + "LexicalRelation"),
+        SenseRelation(SparqlPrefix.VARTRANS.getUri() + "SenseRelation"),
+        Translation(SparqlPrefix.VARTRANS.getUri() + "Translation"),
+        TerminologicalRelation(SparqlPrefix.VARTRANS.getUri() + "TerminologicalRelation");
+
+        private final String type;
+
+        private VartransRelationClasses(String type) {
+            this.type = type;
+        }
+
+        @Override
+        public String toString() {
+            return this.type;
+        }
+    }
+
+    public static enum ConceptRel {
+        conceptRel(SparqlPrefix.VARTRANS.getUri() + "conceptRel");
+
+        private final String type;
+
+        private ConceptRel(String type) {
+            this.type = type;
+        }
+
+        @Override
+        public String toString() {
+            return this.type;
+        }
+    }
+
+    public static enum LexicalConceptRel {
         evokes(SparqlPrefix.ONTOLEX.getUri() + "evokes"),
         isEvokedBy(SparqlPrefix.ONTOLEX.getUri() + "isEvokedBy"),
         isConceptOf(SparqlPrefix.ONTOLEX.getUri() + "isConceptOf"),
         lexicalizedSense(SparqlPrefix.ONTOLEX.getUri() + "lexicalizedSense"),
         isLexicalizedSenseOf(SparqlPrefix.ONTOLEX.getUri() + "isLexicalizedSenseOf"),
+        conceptRel(SparqlPrefix.VARTRANS.getUri() + "conceptRel"),
         concept(SparqlPrefix.ONTOLEX.getUri() + "concept");
 
         private final String type;
 
-        private LexicalConceptsRelations(String type) {
+        private LexicalConceptRel(String type) {
+            this.type = type;
+        }
+
+        @Override
+        public String toString() {
+            return this.type;
+        }
+    }
+
+    public static enum Translation {
+        translation(SparqlPrefix.VARTRANS.getUri() + "translation");
+
+        private final String type;
+
+        private Translation(String type) {
+            this.type = type;
+        }
+
+        @Override
+        public String toString() {
+            return this.type;
+        }
+    }
+    
+    public static enum TranslationSet {
+        trans(SparqlPrefix.VARTRANS.getUri() + "trans");
+
+        private final String type;
+
+        private TranslationSet(String type) {
             this.type = type;
         }
 
@@ -141,6 +205,23 @@ public class OntoLexEntity {
         }
     }
 
+    public static enum LexicoSemanticProperty {
+        Category(SparqlPrefix.VARTRANS.getUri() + "category"),
+        Source(SparqlPrefix.VARTRANS.getUri() + "source"),
+        Target(SparqlPrefix.VARTRANS.getUri() + "target");
+
+        private final String type;
+
+        private LexicoSemanticProperty(String type) {
+            this.type = type;
+        }
+
+        @Override
+        public String toString() {
+            return this.type;
+        }
+    }
+
     public static enum EtyLinkTypes {
         EtySource(SparqlPrefix.ETY.getUri() + "etySource");
 
@@ -155,9 +236,10 @@ public class OntoLexEntity {
             return this.type;
         }
     }
-    
+
     public static enum LexicalRel {
-        Cognate(SparqlPrefix.ETY.getUri() + "cognate");
+        Cognate(SparqlPrefix.ETY.getUri() + "cognate"),
+        TranslatableAs(SparqlPrefix.VARTRANS.getUri() + "translatableAs");
 
         private final String lexicalRel;
 
@@ -168,6 +250,22 @@ public class OntoLexEntity {
         @Override
         public String toString() {
             return this.lexicalRel;
+        }
+
+    }
+
+    public static enum SenseRel {
+        Translation(SparqlPrefix.VARTRANS.getUri() + "translation");
+
+        private final String senseRel;
+
+        private SenseRel(String senseRel) {
+            this.senseRel = senseRel;
+        }
+
+        @Override
+        public String toString() {
+            return this.senseRel;
         }
 
     }
@@ -225,7 +323,6 @@ public class OntoLexEntity {
 
     }
 
-    
     public static enum LexicalEntryAttributes {
         Label(SparqlPrefix.RDFS.getUri() + "label"),
         Type(SparqlPrefix.RDF.getUri() + "type"),
@@ -285,7 +382,6 @@ public class OntoLexEntity {
         SenseTranslation(SparqlPrefix.LEXINFO.getUri() + "senseTranslation"),
         Confidence(SparqlPrefix.LEXINFO.getUri() + "confidence");
 
-
         private final String senseAttributes;
 
         private LexicalSenseAttributes(String senseAttributes) {
@@ -304,7 +400,6 @@ public class OntoLexEntity {
         HypothesisOf(SparqlPrefix.RDFS.getUri() + "comment"),
         Label(SparqlPrefix.RDFS.getUri() + "label"),
         Confidence(SparqlPrefix.LEXINFO.getUri() + "confidence");
-
 
         private final String etymologyAttributes;
 
@@ -325,7 +420,6 @@ public class OntoLexEntity {
         Label(SparqlPrefix.RDFS.getUri() + "label"),
         Confidence(SparqlPrefix.LEXINFO.getUri() + "confidence");
 
-
         private final String etyLinkAttributes;
 
         private EtymologicalLinkAttributes(String etyLinkAttributes) {
@@ -338,8 +432,8 @@ public class OntoLexEntity {
         }
 
     }
-    
-     public static enum GenericRelationDecomp {
+
+    public static enum GenericRelationDecomp {
         label(SparqlPrefix.RDFS.getUri() + "label"),
         note(SparqlPrefix.SKOS.getUri() + "note"),
         Confidence(SparqlPrefix.LEXINFO.getUri() + "confidence");
@@ -356,6 +450,5 @@ public class OntoLexEntity {
         }
 
     }
-
 
 }

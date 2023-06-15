@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import it.cnr.ilc.lexo.LexOProperties;
 import it.cnr.ilc.lexo.service.data.lexicon.input.Bibliography;
 import it.cnr.ilc.lexo.service.data.lexicon.output.BibliographicItem;
+import it.cnr.ilc.lexo.service.data.lexicon.output.LinkedEntity;
 import it.cnr.ilc.lexo.service.zotero.ZoteroClient;
 import it.cnr.ilc.lexo.sparql.SparqlDeleteData;
 import it.cnr.ilc.lexo.sparql.SparqlInsertData;
@@ -20,7 +21,9 @@ import it.cnr.ilc.lexo.sparql.SparqlUpdateData;
 import it.cnr.ilc.lexo.util.RDFQueryUtil;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import org.eclipse.rdf4j.query.TupleQueryResult;
 
@@ -82,6 +85,7 @@ public class BibliographyManager implements Manager, Cached {
     private BibliographicItem setBibliographicItem(String id, String created, String author, Bibliography bibliography) {
         BibliographicItem b = new BibliographicItem();
         b.setAuthor(bibliography.getAuthor());
+        b.setConfidence(-1);
 //        b.setBibliography(SparqlPrefix.LEXBIB.getUri() + id);
         b.setBibliography(id);
 //        b.setBibliographyInstanceName(id);
@@ -99,8 +103,18 @@ public class BibliographyManager implements Manager, Cached {
     }
 
     public TupleQueryResult getBibliography(String id) {
-        String query = SparqlSelectData.LEXICAL_ENTITY_BIBLIOGRAPHY.replaceAll("_ID_", id);
-        return RDFQueryUtil.evaluateTQuery(query);
+        if (id != null) {
+            String query = SparqlSelectData.LEXICAL_ENTITY_BIBLIOGRAPHY.replaceAll("_ID_", id);
+            return RDFQueryUtil.evaluateTQuery(query);
+        } else {
+            String query = SparqlSelectData.BIBLIOGRAPHY_LIST;
+            return RDFQueryUtil.evaluateTQuery(query);
+        }
+    }
+    
+     public TupleQueryResult getLexicalEntitiesByBibliography(String id) {
+            String query = SparqlSelectData.LEXICAL_ENTITIES_BY_BIBLIOGRAPHY.replaceAll("_ID_", id);
+            return RDFQueryUtil.evaluateTQuery(query);
     }
 
     public String deleteBibliography(String id) throws ManagerException {

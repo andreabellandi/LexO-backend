@@ -57,6 +57,16 @@ public class LexiconDeletionManager implements Manager, Cached {
         return timestampFormat.format(new Timestamp(System.currentTimeMillis()));
     }
     
+    public String deleteLexicoSemanticRelation(String id) throws ManagerException {
+        RDFQueryUtil.update(SparqlDeleteData.DELETE_LEXICOSEMANTIC_RELATION.replaceAll("_ID_", id));
+        return timestampFormat.format(new Timestamp(System.currentTimeMillis()));
+    }
+    
+    public String deleteTranslationSet(String id) throws ManagerException {
+        RDFQueryUtil.update(SparqlDeleteData.DELETE_TRANSLATION_SET.replaceAll("_ID_", id));
+        return timestampFormat.format(new Timestamp(System.currentTimeMillis()));
+    }
+    
     public String deleteImage(String id) throws ManagerException {
         RDFQueryUtil.update(SparqlDeleteData.DELETE_IMAGE.replaceAll("_ID_", id));
         return timestampFormat.format(new Timestamp(System.currentTimeMillis()));

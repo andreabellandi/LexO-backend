@@ -174,6 +174,16 @@ public final class UtilityManager implements Manager, Cached {
         String query = SparqlQueryUtil.IS_COMPONENT_ID.replaceAll("_ID_", id);
         return RDFQueryUtil.evaluateBQuery(query);
     }
+    
+    public boolean isLexicoSemanticRelation(String id) throws QueryEvaluationException {
+        String query = SparqlQueryUtil.IS_LEXICOSEMANTIC_RELATION_ID.replaceAll("_ID_", id);
+        return RDFQueryUtil.evaluateBQuery(query);
+    }
+    
+    public boolean isTranslationSet(String id) throws QueryEvaluationException {
+        String query = SparqlQueryUtil.IS_TRANSLATIONSET_ID.replaceAll("_ID_", id);
+        return RDFQueryUtil.evaluateBQuery(query);
+    }
 
     public boolean isLexicalConcept(String id) throws QueryEvaluationException {
         String query = SparqlQueryUtil.IS_LEXICAL_CONCEPT_ID.replaceAll("_ID_", id);

@@ -14,13 +14,16 @@ import it.cnr.ilc.lexo.LexOProperties;
 import it.cnr.ilc.lexo.manager.LexiconStatisticsManager;
 import it.cnr.ilc.lexo.manager.ManagerFactory;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Counting;
+import it.cnr.ilc.lexo.service.data.lexicon.output.Metadata;
 import it.cnr.ilc.lexo.service.helper.CountingHelper;
+import it.cnr.ilc.lexo.service.helper.MetadataHelper;
 import it.cnr.ilc.lexo.util.RDFQueryUtil;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
@@ -46,6 +49,7 @@ public class LexiconStatistics extends Service {
 
     private final LexiconStatisticsManager lexiconManager = ManagerFactory.getManager(LexiconStatisticsManager.class);
     private final CountingHelper countingHelper = new CountingHelper();
+    private final MetadataHelper metadataHelper = new MetadataHelper();
 
     private void userCheck(String key) throws AuthorizationException, ServiceException {
         if (LexOProperties.getProperty("keycloack.freeViewer") != null) {
@@ -236,6 +240,40 @@ public class LexiconStatistics extends Service {
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
         } catch (AuthorizationException | ServiceException ex) {
+            log(org.apache.log4j.Level.ERROR, ex.getMessage());
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        }
+    }
+    
+    @GET
+    @Path("metadata")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "/metadata",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Lexical entity metadata",
+            notes = "This method returns the lexical entity metadata")
+        
+    public Response metadata(@HeaderParam("Authorization") String key,
+            @ApiParam(
+                    name = "id",
+                    value = "lexical entity ID",
+                    required = true)
+            @QueryParam("id") String id) {
+        try {
+            userCheck(key);
+            String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
+            log(org.apache.log4j.Level.INFO, "lexicon/statistics/metadata of " + _id);
+            TupleQueryResult _metadata = lexiconManager.getMetadata(_id);
+            Metadata metadata = metadataHelper.newData(_metadata);
+            String json = metadataHelper.toJson(metadata);
+            return Response.ok(json)
+                    .type(MediaType.TEXT_PLAIN)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
+        } catch (AuthorizationException | ServiceException | UnsupportedEncodingException ex) {
             log(org.apache.log4j.Level.ERROR, ex.getMessage());
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }

@@ -412,6 +412,86 @@ public class LexiconDeletion extends Service {
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
+    
+    @GET
+    @Path("lexicoSemanticRelation")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "lexicoSemanticRelation",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Lexico semantic relation deletion",
+            notes = "This method deletes a lexico semntic relation according to the vartrans module")
+    public Response lexicoSemanticRelation(
+            @HeaderParam("Authorization") String key,
+            @ApiParam(
+                    name = "id",
+                    value = "lexico semantic relation ID",
+                    required = true)
+            @QueryParam("id") String id) {
+        try {
+            checkKey(key);
+            String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
+            try {
+                UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+                if (!utilityManager.isLexicoSemanticRelation(_id)) {
+                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " does not exist or it is not a lexico semantic relation").build();
+                }
+                return Response.ok(lexiconManager.deleteLexicoSemanticRelation(_id))
+                        .type(MediaType.TEXT_PLAIN)
+                        .header("Access-Control-Allow-Headers", "content-type")
+                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                        .build();
+            } catch (ManagerException ex) {
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            }
+        } catch (UnsupportedEncodingException ex) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        } catch (AuthorizationException | ServiceException ex) {
+            log(Level.ERROR, "lexicon/creation/lexicoSemanticRelation: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
+        }
+    }
+    
+    @GET
+    @Path("translationSet")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "translationSet",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Translation set deletion",
+            notes = "This method deletes a translation set according to the vartrans module")
+    public Response translationSet(
+            @HeaderParam("Authorization") String key,
+            @ApiParam(
+                    name = "id",
+                    value = "translation set ID",
+                    required = true)
+            @QueryParam("id") String id) {
+        try {
+            checkKey(key);
+            String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
+            try {
+                UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+                if (!utilityManager.isTranslationSet(_id)) {
+                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " does not exist or it is not a translation set").build();
+                }
+                return Response.ok(lexiconManager.deleteTranslationSet(_id))
+                        .type(MediaType.TEXT_PLAIN)
+                        .header("Access-Control-Allow-Headers", "content-type")
+                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                        .build();
+            } catch (ManagerException ex) {
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            }
+        } catch (UnsupportedEncodingException ex) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        } catch (AuthorizationException | ServiceException ex) {
+            log(Level.ERROR, "lexicon/creation/translationSet: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
+        }
+    }
 
     @GET
     @Path("lexicalConcept")

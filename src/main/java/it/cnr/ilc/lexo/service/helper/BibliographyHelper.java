@@ -29,6 +29,7 @@ public class BibliographyHelper extends TripleStoreDataHelper<BibliographicItem>
         data.setTitle(getStringValue(bs, SparqlVariable.BIBLIOGRAPHY_TITLE));
         data.setUrl(getStringValue(bs, SparqlVariable.BIBLIOGRAPHY_URL));
         data.setBibliography(getStringValue(bs, SparqlVariable.BIBLIOGRAPHY));
+        data.setConfidence(getDoubleNumber(bs, SparqlVariable.CONFIDENCE));
 //        data.setBibliographyInstanceName(getLocalName(bs, SparqlVariable.BIBLIOGRAPHY));
     }
 

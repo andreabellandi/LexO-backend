@@ -25,6 +25,7 @@ import it.cnr.ilc.lexo.util.EnumUtil;
 import it.cnr.ilc.lexo.util.OntoLexEntity;
 import it.cnr.ilc.lexo.util.RDFQueryUtil;
 import it.cnr.ilc.lexo.util.StringUtil;
+import it.cnr.ilc.lexo.util.RelationCategory;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.regex.Pattern;
@@ -82,8 +83,50 @@ public final class LexiconUpdateManager implements Manager, Cached {
         Manager.validateWithEnum("type", OntoLexEntity.ReferenceTypes.class, type);
     }
 
+    public void validateLexicoSemanticRel(String type) throws ManagerException {
+        Manager.validateWithEnum("type", OntoLexEntity.LexicoSemanticProperty.class, type);
+    }
+    
+    public void validateTranslationSet(String type) throws ManagerException {
+        Manager.validateWithEnum("type", OntoLexEntity.TranslationSet.class, type);
+    }
+
+    public void validateLexicoSemanticValue(String type, String value) throws ManagerException {
+        if (!Manager.validateLexinfo(type, value)) {
+            throw new ManagerException("value " + value + " is not valid");
+        }
+    }
+
     public void validateLexicalRel(String rel) throws ManagerException {
-        Manager.validateWithEnum("rel", OntoLexEntity.LexicalRel.class, rel);
+        if (rel.contains(SparqlPrefix.LEXINFO.getUri())) {
+            if (!Manager.validateLexinfo(RelationCategory.LEXICAL_RELATION, rel)) {
+                throw new ManagerException("relation " + rel + " is not valid");
+            }
+        } else {
+            Manager.validateWithEnum("rel", OntoLexEntity.LexicalRel.class, rel);
+        }
+    }
+
+    public void validateSenseRel(String rel) throws ManagerException {
+        if (rel.contains(SparqlPrefix.LEXINFO.getUri())) {
+            if (!Manager.validateLexinfo(RelationCategory.SENSE_RELATION, rel)) {
+                throw new ManagerException("lexinfo relation is not valid");
+            }
+        } else {
+            Manager.validateWithEnum("rel", OntoLexEntity.SenseRel.class, rel);
+        }
+    }
+
+    public void validateConceptRel(String rel) throws ManagerException {
+        Manager.validateWithEnum("rel", OntoLexEntity.ConceptRel.class, rel);
+    }
+
+    public void validateFormRel(String rel) throws ManagerException {
+        if (rel.contains(SparqlPrefix.LEXINFO.getUri())) {
+            if (!Manager.validateLexinfo(RelationCategory.FORM_RELATION, rel)) {
+                throw new ManagerException("lexinfo relation is not valid");
+            }
+        }
     }
 
     public void validateLexicon(String rel) throws ManagerException {
@@ -95,7 +138,7 @@ public final class LexiconUpdateManager implements Manager, Cached {
     }
 
     public void validateConceptRelRelation(String relation) throws ManagerException {
-        Manager.validateWithEnum("relation", OntoLexEntity.LexicalConceptsRelations.class, relation);
+        Manager.validateWithEnum("relation", OntoLexEntity.ConceptRel.class, relation);
     }
 
     public void validateLexicalEntryStatus(String status) throws ManagerException {
@@ -120,6 +163,10 @@ public final class LexiconUpdateManager implements Manager, Cached {
 
     public void validateGenericDecompRelation(String relation) throws ManagerException {
         Manager.validateWithEnum("relation", OntoLexEntity.GenericRelationDecomp.class, relation);
+    }
+    
+    public void validateMetadataTypes(String type) throws ManagerException {
+        Manager.validateWithEnum("type", EnumUtil.MetadataTypes.class, type);
     }
 
     public void validateEtyLink(String type) throws ManagerException {
@@ -560,17 +607,46 @@ public final class LexiconUpdateManager implements Manager, Cached {
             if (ManagerFactory.getManager(UtilityManager.class).existsNamespace(SimpleValueFactory.getInstance().createIRI(lru.getValue()).getNamespace())) {
                 throw new ManagerException("External links supported only");
             }
+        } else if (lru.getType().equals(EnumUtil.LinguisticRelation.LexicoSemanticRel.toString())) {
+            // vartrans reified relation
+            validateLexicoSemanticRel(lru.getRelation());
+            if (lru.getType().contains(OntoLexEntity.LexicoSemanticProperty.Category.toString())) {
+                validateLexicoSemanticValue(RelationCategory.LEXICAL_CATEGORY, lru.getValue());
+                validateLexicoSemanticValue(RelationCategory.SEMANTIC_CATEGORY, lru.getValue());
+                validateLexicoSemanticValue(RelationCategory.FORM_CATEGORY, lru.getValue());
+            } else {
+                if (!StringUtil.existsIRI(lru.getValue())) {
+                    validateURL(lru.getValue());
+                }
+            }
         } else if (lru.getType().equals(EnumUtil.LinguisticRelation.EtymologicalLink.toString())) {
             validateEtyLink(lru.getRelation());
-            if (StringUtil.existsIRI(lru.getValue())) {
-            } else {
+            if (!StringUtil.existsIRI(lru.getValue())) {
+                validateURL(lru.getValue());
+            }
+        } else if (lru.getType().equals(EnumUtil.LinguisticRelation.TranslationSet.toString())) {
+            validateTranslationSet(lru.getRelation());
+            if (!StringUtil.existsIRI(lru.getValue())) {
                 validateURL(lru.getValue());
             }
         } else if (lru.getType().equals(EnumUtil.LinguisticRelation.LexicalRel.toString())) {
-            // currently only cognate
             validateLexicalRel(lru.getRelation());
-            if (StringUtil.existsIRI(lru.getValue())) {
-            } else {
+            if (!StringUtil.existsIRI(lru.getValue())) {
+                validateURL(lru.getValue());
+            }
+        } else if (lru.getType().equals(EnumUtil.LinguisticRelation.SenseRel.toString())) {
+            validateSenseRel(lru.getRelation());
+            if (!StringUtil.existsIRI(lru.getValue())) {
+                validateURL(lru.getValue());
+            }
+        } else if (lru.getType().equals(EnumUtil.LinguisticRelation.FormRel.toString())) {
+            validateFormRel(lru.getRelation());
+            if (!StringUtil.existsIRI(lru.getValue())) {
+                validateURL(lru.getValue());
+            }
+        } else if (lru.getType().equals(EnumUtil.LinguisticRelation.ConceptRel.toString())) {
+            validateConceptRel(lru.getRelation());
+            if (!StringUtil.existsIRI(lru.getValue())) {
                 validateURL(lru.getValue());
             }
         } else if (lru.getType().equals(EnumUtil.LinguisticRelation.Decomp.toString())) {
@@ -594,34 +670,34 @@ public final class LexiconUpdateManager implements Manager, Cached {
             }
         } else if (lru.getType().equals(EnumUtil.LinguisticRelation.ConceptRel.toString())) {
             validateConceptRelRelation(lru.getRelation());
-            if (lru.getRelation().equals(OntoLexEntity.LexicalConceptsRelations.evokes.toString())) {
+            if (lru.getRelation().equals(OntoLexEntity.LexicalConceptRel.evokes.toString())) {
                 if (StringUtil.existsTypedIRI(lru.getValue(), OntoLexEntity.LexicalConcepts.LexicalConcept.toString())) {
                 } else {
                     throw new ManagerException(lru.getValue() + " is not a valid Lexical Concept");
                 }
-            } else if (lru.getRelation().equals(OntoLexEntity.LexicalConceptsRelations.isEvokedBy.toString())) {
+            } else if (lru.getRelation().equals(OntoLexEntity.LexicalConceptRel.isEvokedBy.toString())) {
                 if (StringUtil.existsTypedIRI(lru.getValue(), OntoLexEntity.LexicalEntryTypes.LexicalEntry.toString())) {
                 } else {
                     throw new ManagerException(lru.getValue() + " is not a valid Lexical entry");
                 }
-            } else if (lru.getRelation().equals(OntoLexEntity.LexicalConceptsRelations.lexicalizedSense.toString())) {
+            } else if (lru.getRelation().equals(OntoLexEntity.LexicalConceptRel.lexicalizedSense.toString())) {
                 if (StringUtil.existsTypedIRI(lru.getValue(), OntoLexEntity.CoreClasses.LexicalSense.toString())) {
                 } else {
                     throw new ManagerException(lru.getValue() + " is not a valid Lexical sense");
                 }
-            } else if (lru.getRelation().equals(OntoLexEntity.LexicalConceptsRelations.isLexicalizedSenseOf.toString())) {
+            } else if (lru.getRelation().equals(OntoLexEntity.LexicalConceptRel.isLexicalizedSenseOf.toString())) {
                 if (StringUtil.existsTypedIRI(lru.getValue(), OntoLexEntity.LexicalConcepts.LexicalConcept.toString())) {
                 } else {
                     throw new ManagerException(lru.getValue() + " is not a valid Lexical concept");
                 }
-            } else if (lru.getRelation().equals(OntoLexEntity.LexicalConceptsRelations.concept.toString())) {
+            } else if (lru.getRelation().equals(OntoLexEntity.LexicalConceptRel.concept.toString())) {
                 // currently the property ranges over an external url only 
                 validateURL(lru.getValue());
                 if (ManagerFactory.getManager(UtilityManager.class).existsNamespace(SimpleValueFactory.getInstance().createIRI(lru.getValue()).getNamespace())) {
                     throw new ManagerException("External links supported only");
                 } else {
                 }
-            } else if (lru.getRelation().equals(OntoLexEntity.LexicalConceptsRelations.isConceptOf.toString())) {
+            } else if (lru.getRelation().equals(OntoLexEntity.LexicalConceptRel.isConceptOf.toString())) {
                 throw new ManagerException("still to implement");
             }
         } else if (lru.getType().equals(EnumUtil.LinguisticRelation.Lexicon.toString())) {
@@ -712,6 +788,9 @@ public final class LexiconUpdateManager implements Manager, Cached {
         } else if (gru.getType().equals(EnumUtil.GenericRelation.Decomp.toString())) {
             validateGenericDecompRelation(gru.getRelation());
             setTargetValue(gru, true);
+        } else if (gru.getType().equals(EnumUtil.GenericRelation.Metadata.toString())) {
+            validateMetadataTypes(gru.getRelation());
+            setTargetValue(gru, true);
         } else if (gru.getType().equals(EnumUtil.GenericRelation.Extension.toString())) {
             // TEMPORARY SOLUTION: extensions manager will be developed
             if (gru.getRelation().contains("stemType")) {
@@ -745,16 +824,16 @@ public final class LexiconUpdateManager implements Manager, Cached {
         // TODO: it should be verified if the relation can be applied to the id type (for example, sameAs must link same types)
         return updateGenericRelation(SparqlInsertData.CREATE_GENERIC_RELATION, id,
                 relation,
-//                relation.equals(EnumUtil.GenericRelationConfidence.confidence.toString()) ? Float.toString(Float.parseFloat(valueToInsert)) : valueToInsert, "?" + SparqlVariable.TARGET);
-        valueToInsert, "?" + SparqlVariable.TARGET);
+                //                relation.equals(EnumUtil.GenericRelationConfidence.confidence.toString()) ? Float.toString(Float.parseFloat(valueToInsert)) : valueToInsert, "?" + SparqlVariable.TARGET);
+                valueToInsert, "?" + SparqlVariable.TARGET);
     }
 
     public String updateGenericRelation(String id, String relation, String valueToInsert, String currentValue) throws ManagerException, UpdateExecutionException {
         if (ManagerFactory.getManager(UtilityManager.class).existsGenericRelation(id, relation, currentValue)) {
             return updateGenericRelation(SparqlUpdateData.UPDATE_GENERIC_RELATION, id,
                     relation,
-//                    relation.equals(EnumUtil.GenericRelationConfidence.confidence.toString()) ? Float.toString(Float.parseFloat(valueToInsert)) : valueToInsert,
-//                    relation.equals(EnumUtil.GenericRelationConfidence.confidence.toString()) ? Float.toString(Float.parseFloat(currentValue)) : currentValue);
+                    //                    relation.equals(EnumUtil.GenericRelationConfidence.confidence.toString()) ? Float.toString(Float.parseFloat(valueToInsert)) : valueToInsert,
+                    //                    relation.equals(EnumUtil.GenericRelationConfidence.confidence.toString()) ? Float.toString(Float.parseFloat(currentValue)) : currentValue);
                     valueToInsert,
                     currentValue);
         } else {

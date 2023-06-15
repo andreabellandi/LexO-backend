@@ -519,7 +519,7 @@ public class SparqlSelectData {
             //            + " ?" + SparqlVariable.CONCEPT_SCHEME 
             + "\n"
             + "(GROUP_CONCAT(concat(str(?morphoTrait),\"<>\",str(?morphoValue));SEPARATOR=\";\") AS ?" + SparqlVariable.MORPHOLOGY + ")\n"
-                        + "FROM onto:explicit\n"
+            + "FROM onto:explicit\n"
             + "WHERE {\n"
             + "  ?search a inst:" + SparqlVariable.LEXICAL_ENTRY_INDEX + " ;\n"
             + "      luc:query \"lexicalEntryIRI:[IRI]\" ;\n"
@@ -571,6 +571,75 @@ public class SparqlSelectData {
             + " ?" + SparqlVariable.LAST_UPDATE
             + " ?confidence"
             + " ?stemType";
+
+    public static final String DATA_LEXICAL_ENTRY_DIRECT_VARTRANS
+            = SparqlPrefix.INST.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTO.getSparqlPrefix() + "\n"
+            + SparqlPrefix.VARTRANS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LUC.getSparqlPrefix() + "\n"
+            + SparqlPrefix.SESAME.getSparqlPrefix() + "\n"
+            + "SELECT ?" + SparqlVariable.PROPERTY_NAME + " ?" + SparqlVariable.LEXICAL_ENTITY + " \n"
+            + "(GROUP_CONCAT(?_type;SEPARATOR=\";\") as ?" + SparqlVariable.TYPE + ")\n"
+            + "?" + SparqlVariable.LABEL + " ?" + SparqlVariable.GRAPH + "\n"
+            + "FROM NAMED onto:implicit\n"
+            + "FROM NAMED onto:explicit\n"
+            + "WHERE {\n"
+            + "  ?search a inst:lexicalEntryIndex ;\n"
+            + "      luc:query \"lexicalEntryIRI:[IRI]\" ;\n"
+            + "      luc:entities ?" + SparqlVariable.LEXICAL_ENTRY + " .\n"
+            + "    OPTIONAL { GRAPH ?" + SparqlVariable.GRAPH + " { ?" + SparqlVariable.LEXICAL_ENTRY + " ?" + SparqlVariable.PROPERTY_NAME + " ?" + SparqlVariable.LEXICAL_ENTITY + " } .\n"
+            + "               ?" + SparqlVariable.PROPERTY_NAME + " rdfs:subPropertyOf vartrans:lexicalRel . \n"
+            + "               ?" + SparqlVariable.LEXICAL_ENTITY + " rdfs:label ?" + SparqlVariable.LABEL + " ;\n"
+            + "                              sesame:directType ?_type .\n"
+            + "               FILTER(!STRSTARTS(STR(?" + SparqlVariable.PROPERTY_NAME + "), \"http://www.w3.org/ns/lemon/vartrans#lexicalRel\"))\n"
+            + "    }\n"
+            + "} \n"
+            + "GROUP BY ?" + SparqlVariable.PROPERTY_NAME + " ?" + SparqlVariable.LEXICAL_ENTITY + " ?" + SparqlVariable.LABEL + " ?" + SparqlVariable.GRAPH + "\n"
+            + "ORDER BY ?" + SparqlVariable.PROPERTY_NAME;
+
+    public static final String DATA_LEXICAL_ENTRY_INDIRECT_VARTRANS
+            = SparqlPrefix.INST.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTO.getSparqlPrefix() + "\n"
+            + SparqlPrefix.VARTRANS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LUC.getSparqlPrefix() + "\n"
+            + SparqlPrefix.SESAME.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDF.getSparqlPrefix() + "\n"
+            + SparqlPrefix.SKOS.getSparqlPrefix() + "\n"
+            + "SELECT ?" + SparqlVariable.REIFIED_RELATION + " ?" + SparqlVariable.CATEGORY + " ?" + SparqlVariable.TYPE
+            + " ?" + SparqlVariable.SOURCE + " ?" + SparqlVariable.TARGET + " ?" + SparqlVariable.TARGET_LABEL + " ?" + SparqlVariable.DEFINITION
+            + " ?" + SparqlVariable.NOTE + " ?" + SparqlVariable.LABEL + "\n"
+            + "(GROUP_CONCAT(concat(str(?" + SparqlVariable.REIFIED_RELATION_PREDICATE
+            + "),\"<>\",str(?" + SparqlVariable.REIFIED_RELATION_OBJECT + "),\"<>\",str(?" + SparqlVariable.GRAPH + "));SEPARATOR=\"---\") AS ?" + SparqlVariable.EXTRA + ")\n"
+            + "FROM NAMED onto:implicit\n"
+            + "FROM NAMED onto:explicit\n"
+            + "WHERE {\n"
+            + "  ?search a inst:lexicalEntryIndex ;\n"
+            + "      luc:query \"lexicalEntryIRI:[IRI]\" ;\n"
+            + "      luc:entities ?" + SparqlVariable.SOURCE + " .\n"
+            + "    OPTIONAL { ?" + SparqlVariable.REIFIED_RELATION + " vartrans:source ?" + SparqlVariable.SOURCE + " } .\n"
+            + "    OPTIONAL { ?" + SparqlVariable.REIFIED_RELATION + " vartrans:category ?" + SparqlVariable.CATEGORY + " } .\n"
+            + "    OPTIONAL { ?" + SparqlVariable.REIFIED_RELATION + " skos:note ?" + SparqlVariable.NOTE + " } .\n"
+            + "    OPTIONAL { ?" + SparqlVariable.REIFIED_RELATION + " rdfs:label ?" + SparqlVariable.LABEL + " } .\n"
+            + "    OPTIONAL { ?" + SparqlVariable.REIFIED_RELATION + " sesame:directType ?" + SparqlVariable.TYPE + " } .\n"
+            + "    OPTIONAL { ?" + SparqlVariable.REIFIED_RELATION + " vartrans:target ?" + SparqlVariable.TARGET + "  \n"
+            + "         OPTIONAL { ?" + SparqlVariable.TARGET + " rdfs:label ?" + SparqlVariable.TARGET_LABEL + "  }\n"
+            + "         OPTIONAL { ?" + SparqlVariable.TARGET + " skos:definition ?" + SparqlVariable.DEFINITION + "  }\n"
+            + "    }\n"
+            + "    OPTIONAL { \n"
+            + "        GRAPH ?" + SparqlVariable.GRAPH + " { ?" + SparqlVariable.REIFIED_RELATION + " ?" + SparqlVariable.REIFIED_RELATION_PREDICATE
+            + " ?" + SparqlVariable.REIFIED_RELATION_OBJECT + " . } \n"
+            + "        FILTER(!STRSTARTS(STR(?" + SparqlVariable.REIFIED_RELATION_PREDICATE + "), \"http://www.w3.org/ns/lemon/vartrans#\"))\n"
+            + "        FILTER(!STRSTARTS(STR(?" + SparqlVariable.REIFIED_RELATION_PREDICATE + "), \"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\"))\n"
+            + "    }\n"
+            + "}\n"
+            + "GROUP BY ?" + SparqlVariable.REIFIED_RELATION + " ?" + SparqlVariable.CATEGORY + " ?" + SparqlVariable.TYPE
+            + " ?" + SparqlVariable.SOURCE + " ?" + SparqlVariable.TARGET + " ?" + SparqlVariable.TARGET_LABEL + " ?" + SparqlVariable.DEFINITION
+            + " ?" + SparqlVariable.NOTE + " ?" + SparqlVariable.LABEL + "\n"
+            + "ORDER BY ?" + SparqlVariable.REIFIED_RELATION;
 
     public static final String DATA_FORM_CORE
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
@@ -1109,6 +1178,7 @@ public class SparqlSelectData {
     public static final String LEXICAL_ENTITY_BIBLIOGRAPHY
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
             + SparqlPrefix.SKOS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
             + "SELECT"
             + " ?" + SparqlVariable.BIBLIOGRAPHY
             + " ?" + SparqlVariable.BIBLIOGRAPHY_AUTHOR
@@ -1122,6 +1192,7 @@ public class SparqlSelectData {
             + " ?" + SparqlVariable.CREATION_DATE
             + " ?" + SparqlVariable.BIBLIOGRAPHY_CREATOR
             + " ?" + SparqlVariable.LAST_UPDATE
+            + " ?" + SparqlVariable.CONFIDENCE
             + "WHERE {\n"
             + "    <_ID_> dct:references ?" + SparqlVariable.BIBLIOGRAPHY + " .\n"
             + "   ?" + SparqlVariable.BIBLIOGRAPHY + " dct:publisher ?" + SparqlVariable.BIBLIOGRAPHY_ID + " .\n"
@@ -1135,7 +1206,54 @@ public class SparqlSelectData {
             + "   OPTIONAL { ?" + SparqlVariable.BIBLIOGRAPHY + " dct:created ?" + SparqlVariable.CREATION_DATE + " } . \n"
             + "   OPTIONAL { ?" + SparqlVariable.BIBLIOGRAPHY + " dct:creator ?" + SparqlVariable.BIBLIOGRAPHY_CREATOR + " } . \n"
             + "   OPTIONAL { ?" + SparqlVariable.BIBLIOGRAPHY + " dct:modified ?" + SparqlVariable.LAST_UPDATE + " } . \n"
+            + "   OPTIONAL { ?" + SparqlVariable.BIBLIOGRAPHY + " lexinfo:confidence ?" + SparqlVariable.CONFIDENCE + " } . \n"
             + "}";
+
+    public static final String LEXICAL_ENTITIES_BY_BIBLIOGRAPHY
+            = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
+            + SparqlPrefix.SESAME.getSparqlPrefix() + "\n"
+            + SparqlPrefix.SKOS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTO.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDF.getSparqlPrefix() + "\n"
+            + SparqlPrefix.OWL.getSparqlPrefix() + "\n"
+            + "SELECT ?" + SparqlVariable.LEXICAL_ENTITY + " ?" + SparqlVariable.LABEL + 
+            " ?" + SparqlVariable.BIBLIOGRAPHY_CREATOR + " ?" + SparqlVariable.BIBLIOGRAPHY_DATE + " ?" + SparqlVariable.LAST_UPDATE 
+            + " ?" + SparqlVariable.CONFIDENCE + "\n"
+            + "(GROUP_CONCAT(str(?_type);SEPARATOR=\";\") AS ?" + SparqlVariable.TYPE + ")\n"
+            + "FROM onto:explicit\n"
+            + "WHERE { ?" + SparqlVariable.LEXICAL_ENTITY + " dct:references ?" + SparqlVariable.BIBLIOGRAPHY + " ;\n"
+            + "                       rdf:type ?_type ;\n"
+            + "                       rdfs:label|ontolex:writtenRep|skos:definition ?" + SparqlVariable.LABEL + " .\n"
+            + "    OPTIONAL { ?" + SparqlVariable.BIBLIOGRAPHY + "  dct:publisher ?" + SparqlVariable.BIBLIOGRAPHY_ID + "  } .\n"
+            + "    OPTIONAL { ?" + SparqlVariable.BIBLIOGRAPHY + "  dct:creator ?" + SparqlVariable.BIBLIOGRAPHY_CREATOR + "  } .\n"
+            + "    OPTIONAL { ?" + SparqlVariable.BIBLIOGRAPHY + "  dct:created ?" + SparqlVariable.BIBLIOGRAPHY_DATE + "  } .\n"
+            + "    OPTIONAL { ?" + SparqlVariable.BIBLIOGRAPHY + "  dct:modified ?" + SparqlVariable.LAST_UPDATE + "  } .\n"
+            + "    OPTIONAL { ?" + SparqlVariable.BIBLIOGRAPHY + "  lexinfo:confidence ?" + SparqlVariable.CONFIDENCE + "  } .\n"
+            + "    FILTER(!STRSTARTS(str(?_type), str(owl:)))\n"
+            + "    FILTER(regex(str(?" + SparqlVariable.BIBLIOGRAPHY_ID + " ), \"_ID_\"))\n"
+            + "}\n"
+            + "GROUP BY ?" + SparqlVariable.LEXICAL_ENTITY + "  ?" + SparqlVariable.LABEL + 
+            "  ?" + SparqlVariable.BIBLIOGRAPHY_CREATOR + "  ?" + SparqlVariable.BIBLIOGRAPHY_DATE + 
+            "  ?" + SparqlVariable.LAST_UPDATE + "  ?" + SparqlVariable.CONFIDENCE + " ";
+
+    public static final String BIBLIOGRAPHY_LIST
+            = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
+            + "SELECT ?" + SparqlVariable.BIBLIOGRAPHY_TITLE + " ?" + SparqlVariable.BIBLIOGRAPHY_AUTHOR
+            + " ?" + SparqlVariable.BIBLIOGRAPHY_DATE + " ?" + SparqlVariable.BIBLIOGRAPHY_ID
+            + " (count(distinct ?" + SparqlVariable.BIBLIOGRAPHY + ") as ?" + SparqlVariable.LABEL_COUNT + ")\n"
+            + "WHERE { ?lexicalEntity dct:references ?" + SparqlVariable.BIBLIOGRAPHY + " .\n"
+            + "    OPTIONAL { ?" + SparqlVariable.BIBLIOGRAPHY + " dct:title ?" + SparqlVariable.BIBLIOGRAPHY_TITLE + "}\n"
+            + "    OPTIONAL { ?" + SparqlVariable.BIBLIOGRAPHY + " dct:date ?" + SparqlVariable.BIBLIOGRAPHY_DATE + "}\n"
+            + "    OPTIONAL { ?" + SparqlVariable.BIBLIOGRAPHY + " dct:contributor ?" + SparqlVariable.BIBLIOGRAPHY_AUTHOR + "}\n"
+            + "    OPTIONAL { ?" + SparqlVariable.BIBLIOGRAPHY + " dct:publisher ?" + SparqlVariable.BIBLIOGRAPHY_ID + "}\n"
+            + "}\n"
+            + "GROUP BY ?" + SparqlVariable.BIBLIOGRAPHY_TITLE + " ?" + SparqlVariable.BIBLIOGRAPHY_AUTHOR
+            + " ?" + SparqlVariable.BIBLIOGRAPHY_DATE + " ?" + SparqlVariable.BIBLIOGRAPHY_ID + "\n"
+            + "ORDER BY ?" + SparqlVariable.BIBLIOGRAPHY_TITLE;
 
     public static final String DATA_SUBTERMS
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"

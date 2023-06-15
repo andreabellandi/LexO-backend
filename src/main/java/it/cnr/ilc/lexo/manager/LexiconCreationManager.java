@@ -14,7 +14,10 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.Language;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Property;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalSenseCore;
+import it.cnr.ilc.lexo.service.data.lexicon.output.ReifiedRelation;
+import it.cnr.ilc.lexo.service.data.lexicon.output.TranslationSet;
 import it.cnr.ilc.lexo.sparql.SparqlInsertData;
+import it.cnr.ilc.lexo.util.OntoLexEntity;
 import it.cnr.ilc.lexo.util.RDFQueryUtil;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -145,7 +148,7 @@ public class LexiconCreationManager implements Manager, Cached {
                 .replaceAll("_LEID_", leID));
         return setEtymology(_id, created, author, label);
     }
-    
+
     private Etymology setEtymology(String id, String created, String author, String label) {
         Etymology e = new Etymology();
         e.setCreator(author);
@@ -156,7 +159,7 @@ public class LexiconCreationManager implements Manager, Cached {
         e.setCreationDate(created);
         return e;
     }
-    
+
     public EtymologicalLink createEtymologicalLink(String leID, String author, String etymologyID, String prefix, String baseIRI) throws ManagerException {
         Timestamp tm = new Timestamp(System.currentTimeMillis());
         String id = idInstancePrefix + tm.toString();
@@ -172,7 +175,7 @@ public class LexiconCreationManager implements Manager, Cached {
                 .replaceAll("_LEID_", leID));
         return setEtymologicalLink(_id, created, author, leID);
     }
-    
+
     private EtymologicalLink setEtymologicalLink(String id, String created, String author, String leID) {
         EtymologicalLink el = new EtymologicalLink();
         el.setEtyLinkType("inheritance");
@@ -186,7 +189,7 @@ public class LexiconCreationManager implements Manager, Cached {
         el.setCreationDate(created);
         return el;
     }
-    
+
     public LexicalSenseCore createLexicalSense(String leID, String author, String prefix, String baseIRI) throws ManagerException {
         Timestamp tm = new Timestamp(System.currentTimeMillis());
         String id = idInstancePrefix + tm.toString();
@@ -201,8 +204,8 @@ public class LexiconCreationManager implements Manager, Cached {
                 .replaceAll("_LEID_", leID));
         return setSense(_id, created, author);
     }
-    
-     public Component createComponent(String leID, String author, String prefix, String baseIRI) throws ManagerException {
+
+    public Component createComponent(String leID, String author, String prefix, String baseIRI) throws ManagerException {
         Timestamp tm = new Timestamp(System.currentTimeMillis());
         String id = idInstancePrefix + tm.toString();
         String created = timestampFormat.format(tm);
@@ -216,7 +219,64 @@ public class LexiconCreationManager implements Manager, Cached {
                 .replace("_MODIFIED_", created));
         return setComponent(_id, created, author);
     }
-     
+
+    public ReifiedRelation createLexicoSemanticRelation(String leID, String type, String author, String prefix, String baseIRI) throws ManagerException {
+        Manager.validateWithEnum("type", OntoLexEntity.VartransRelationClasses.class, type);
+        Timestamp tm = new Timestamp(System.currentTimeMillis());
+        String id = idInstancePrefix + tm.toString();
+        String created = timestampFormat.format(tm);
+        String sparqlPrefix = "PREFIX " + prefix + ": <" + baseIRI + ">";
+        String _id = baseIRI + id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
+        RDFQueryUtil.update(SparqlInsertData.CREATE_LEXICOSEMANTIC_RELATION.replaceAll("_ID_", _id)
+                .replace("_AUTHOR_", author)
+                .replace("_CREATED_", created)
+                .replace("_PREFIX_", sparqlPrefix)
+                .replace("_LABEL_", type)
+                .replace("_LEID_", leID)
+                .replace("_TYPE_", type)
+                .replace("_MODIFIED_", created));
+        return setLexicoSemanticRelation(_id, created, author, type, leID);
+    }
+
+    public TranslationSet createTranslationSet(String author, String prefix, String baseIRI) throws ManagerException {
+        Timestamp tm = new Timestamp(System.currentTimeMillis());
+        String id = idInstancePrefix + tm.toString();
+        String created = timestampFormat.format(tm);
+        String sparqlPrefix = "PREFIX " + prefix + ": <" + baseIRI + ">";
+        String _id = baseIRI + id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
+        RDFQueryUtil.update(SparqlInsertData.CREATE_TRANSLATIONSET.replaceAll("_ID_", _id)
+                .replace("_AUTHOR_", author)
+                .replace("_CREATED_", created)
+                .replace("_PREFIX_", sparqlPrefix)
+                .replace("_LABEL_", _id)
+                .replace("_MODIFIED_", created));
+        return setTranslationSet(_id, created, author);
+    }
+
+    private TranslationSet setTranslationSet(String id, String created, String author) {
+        TranslationSet ts = new TranslationSet();
+        ts.setCreator(author);
+        ts.setTranslationSet(id);
+        ts.setLabel(id);
+        ts.setConfidence(-1);
+        ts.setLastUpdate(created);
+        ts.setCreationDate(created);
+        return ts;
+    }
+    
+    private ReifiedRelation setLexicoSemanticRelation(String id, String created, String author, String type, String leID) {
+        ReifiedRelation rr = new ReifiedRelation();
+        rr.setCreator(author);
+        rr.setConfidence(-1);
+        rr.setRelation(id);
+        rr.setSource(leID);
+        rr.setType(type);
+        rr.setLabel(type);
+        rr.setLastUpdate(created);
+        rr.setCreationDate(created);
+        return rr;
+    }
+
     private LexicalSenseCore setSense(String id, String created, String author) {
         LexicalSenseCore sc = new LexicalSenseCore();
         sc.setCreator(author);
@@ -226,7 +286,7 @@ public class LexiconCreationManager implements Manager, Cached {
         sc.setCreationDate(created);
         return sc;
     }
-    
+
     private Component setComponent(String id, String created, String author) {
         Component sc = new Component();
         sc.setCreator(author);
@@ -237,6 +297,5 @@ public class LexiconCreationManager implements Manager, Cached {
         sc.setCreationDate(created);
         return sc;
     }
-    
 
 }
