@@ -34,6 +34,8 @@ public class ReifiedRelation extends Entity implements Data {
     private String note;
     @ApiModelProperty(value = "a label of the relation")
     private String label;
+    @ApiModelProperty(value = "the category of the relation")
+    private String category;
     @ApiModelProperty(value = "list of relations associated with the reification")
     private ArrayList<LinkedEntity> properties;
 
@@ -43,6 +45,14 @@ public class ReifiedRelation extends Entity implements Data {
 
     public void setRelation(String relation) {
         this.relation = relation;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public String getType() {

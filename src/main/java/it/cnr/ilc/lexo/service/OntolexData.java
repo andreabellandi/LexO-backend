@@ -87,6 +87,24 @@ public class OntolexData extends Service {
     }
     
     @GET
+    @Path("translationType")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "translationType",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Translation types from the OntoLex vocabulary",
+            notes = "This method returns the translation types from the OntoLex vocabulary")
+    public Response translationType() {
+        String json = ontolexValuesHelper.toJson(lexiconManager.getTranslationTypes());
+        return Response.ok(json)
+                .type(MediaType.TEXT_PLAIN)
+                .header("Access-Control-Allow-Headers", "content-type")
+                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                .build();
+    }
+    
+    @GET
     @Path("representation")
     @Produces(MediaType.APPLICATION_JSON)
     @RequestMapping(
@@ -103,5 +121,6 @@ public class OntolexData extends Service {
                 .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                 .build();
     }
+    
     
 }

@@ -237,7 +237,7 @@ public class EnumUtil {
         Reference("reference"),
         Bibliography("bibliography"),
         Multimedia("multimedia"),
-//        Confidence("confidence"),
+        Confidence("confidence"),
         Extension("extension"),
         Attestation("attestation"),
         ConceptRel("conceptRel"),
@@ -274,22 +274,22 @@ public class EnumUtil {
 
     }
 
-//    public static enum GenericRelationConfidence {
-//        confidence(SparqlPrefix.LEXINFO.getUri() + "confidence"),
-//        translationConfidence(SparqlPrefix.LEXINFO.getUri() + "translationConfidence");
-//
-//        private final String genericRelationConfidence;
-//
-//        private GenericRelationConfidence(String genericRelationConfidence) {
-//            this.genericRelationConfidence = genericRelationConfidence;
-//        }
-//
-//        @Override
-//        public String toString() {
-//            return this.genericRelationConfidence;
-//        }
-//
-//    }
+    public static enum GenericRelationConfidence {
+        confidence(SparqlPrefix.LEXINFO.getUri() + "confidence"),
+        translationConfidence(SparqlPrefix.LEXINFO.getUri() + "translationConfidence");
+
+        private final String genericRelationConfidence;
+
+        private GenericRelationConfidence(String genericRelationConfidence) {
+            this.genericRelationConfidence = genericRelationConfidence;
+        }
+
+        @Override
+        public String toString() {
+            return this.genericRelationConfidence;
+        }
+
+    }
 
     public static enum PositionRelation {
         rdfListPosition(SparqlPrefix.RDF.getUri() + "_n");

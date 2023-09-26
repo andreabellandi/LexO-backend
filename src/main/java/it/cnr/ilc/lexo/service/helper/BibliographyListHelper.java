@@ -24,7 +24,7 @@ public class BibliographyListHelper extends TripleStoreDataHelper<Bibliography> 
     public void fillData(Bibliography data, BindingSet bs) {
         data.setAuthor(getStringValue(bs, SparqlVariable.BIBLIOGRAPHY_AUTHOR));
         data.setDate(getStringValue(bs, SparqlVariable.BIBLIOGRAPHY_DATE));
-        data.setPublisher(getStringValue(bs, SparqlVariable.BIBLIOGRAPHY_ID));
+        data.setKey(getStringValue(bs, SparqlVariable.BIBLIOGRAPHY_ID));
         data.setReferences(getIntegerNumber(bs, SparqlVariable.LABEL_COUNT));
         data.setTitle(getStringValue(bs, SparqlVariable.BIBLIOGRAPHY_TITLE));
         

@@ -13,7 +13,7 @@ import org.eclipse.rdf4j.query.BindingSet;
  *
  * @author andreabellandi
  */
-public class IndirectLexicalRelationHelper extends TripleStoreDataHelper<ReifiedRelation> {
+public class IndirectRelationHelper extends TripleStoreDataHelper<ReifiedRelation> {
 
     @Override
     public void fillData(ReifiedRelation data, BindingSet bs) {
@@ -30,6 +30,7 @@ public class IndirectLexicalRelationHelper extends TripleStoreDataHelper<Reified
         data.setCreationDate(getStringValue(bs, SparqlVariable.CREATION_DATE));
         data.setCreator(getStringValue(bs, SparqlVariable.COMPONENT_CREATION_AUTHOR));
         data.setLastUpdate(getStringValue(bs, SparqlVariable.LAST_UPDATE));
+        data.setCategory(getStringValue(bs, SparqlVariable.CATEGORY));
     }
 
     @Override

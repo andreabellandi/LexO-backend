@@ -13,14 +13,16 @@ import org.eclipse.rdf4j.query.BindingSet;
  *
  * @author andreabellandi
  */
-public class DirectLexicalRelationHelper extends TripleStoreDataHelper<LinkedEntity> {
+public class DirectRelationHelper extends TripleStoreDataHelper<LinkedEntity> {
 
     @Override
     public void fillData(LinkedEntity data, BindingSet bs) {
         data.setEntity(getStringValue(bs, SparqlVariable.LEXICAL_ENTITY));
         data.setEntityType(getTypes(bs, getStringValue(bs, SparqlVariable.TYPE)));
         data.setInferred(getStringValue(bs, SparqlVariable.GRAPH).contains("implicit"));
-        data.setLabel(getLiteralLabel(bs, SparqlVariable.LABEL) + "@" + getLiteralLanguage(bs, SparqlVariable.LABEL));
+        String label = getLiteralLabel(bs, SparqlVariable.LABEL);
+        String lang = getLiteralLanguage(bs, SparqlVariable.LABEL);
+        data.setLabel(label.isEmpty() ? "" : label + (lang.isEmpty() ? "" : "@" + lang));
         data.setEntity(getStringValue(bs, SparqlVariable.LEXICAL_ENTITY));
         data.setLink(getStringValue(bs, SparqlVariable.PROPERTY_NAME));
     }

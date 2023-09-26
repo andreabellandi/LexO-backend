@@ -75,6 +75,7 @@ public class SparqlVariable {
     public static final String SENSE_GLOSS = "gloss";
     public static final String SENSE_EXAMPLE = "senseExample";
     public static final String SENSE_TRANSLATION = "senseTranslation";
+    public static final String TRANSLATION_TYPE = "translationType";
     public static final String SENSE_CREATION_AUTHOR = "creator";
     public static final String SENSE_TOPIC = "topic";
 

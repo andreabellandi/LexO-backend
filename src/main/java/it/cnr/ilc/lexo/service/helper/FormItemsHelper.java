@@ -20,7 +20,7 @@ public class FormItemsHelper extends TripleStoreDataHelper<FormItem> {
         setTotalHits(getIntegerNumber(bs, SparqlVariable.TOTAL_HITS));
         data.setCreator(getStringValue(bs, SparqlVariable.LEXICAL_ENTRY_CREATION_AUTHOR));
         data.setForm(getStringValue(bs, SparqlVariable.FORM));
-        data.setLabel(getStringValue(bs, SparqlVariable.WRITTEN_REPRESENTATION));
+        data.setLabel(getLiteralLabel(bs, SparqlVariable.WRITTEN_REPRESENTATION) + "@" + getLiteralLanguage(bs, SparqlVariable.WRITTEN_REPRESENTATION));
         data.setNote(getStringValue(bs, SparqlVariable.NOTE));
         data.setPhoneticRep(getStringValue(bs, SparqlVariable.PHONETIC_REPRESENTATION));
         data.setType(getLocalName(bs, SparqlVariable.FORM_TYPE));

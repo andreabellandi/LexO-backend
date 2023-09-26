@@ -25,6 +25,7 @@ public final class OntolexManager implements Manager, Cached {
 
     private final List<Value> lexicalEntryTypes = new ArrayList<>();
     private final List<Value> formTypes = new ArrayList<>();
+    private final List<Value> translationTypes = new ArrayList<>();
     private final List<Value> etymologicalEntryTypes = new ArrayList<>();
     private final List<Value> representations = new ArrayList<>();
 
@@ -45,6 +46,10 @@ public final class OntolexManager implements Manager, Cached {
         return etymologicalEntryTypes;
     }
 
+    public List<Value> getTranslationTypes() {
+        return translationTypes;
+    }
+
     OntolexManager() {
         reloadCache();
     }
@@ -55,6 +60,7 @@ public final class OntolexManager implements Manager, Cached {
         reloadFormTypeCache();
         reloadEtymologicalEntryTypeCache();
         reloadRepresentationCache();
+        reloadTranslationTypeCache();
     }
 
     private void reloadLexicalEntryTypeCache() {
@@ -102,6 +108,21 @@ public final class OntolexManager implements Manager, Cached {
                 value.setValueId((bs.getBinding(SparqlVariable.FORM_TYPE) != null) ? ((IRI) bs.getBinding(SparqlVariable.FORM_TYPE).getValue()).stringValue() : "");
                 value.setValueLabel((bs.getBinding(SparqlVariable.LABEL) != null) ? ((Literal) bs.getBinding(SparqlVariable.LABEL).getValue()).getLabel() : "");
                 formTypes.add(value);
+            }
+        } catch (QueryEvaluationException qee) {
+        }
+    }
+    
+    private void reloadTranslationTypeCache() {
+        translationTypes.clear();
+        try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(SparqlSelectOntolexData.TRANSLATION_TYPE)) {
+            while (result.hasNext()) {
+                BindingSet bs = result.next();
+                Value value = new Value();
+                value.setValueDescription((bs.getBinding(SparqlVariable.PROPERTY_COMMENT) != null) ? ((Literal) bs.getBinding(SparqlVariable.PROPERTY_COMMENT).getValue()).getLabel() : "");
+                value.setValueId((bs.getBinding(SparqlVariable.TRANSLATION_TYPE) != null) ? ((IRI) bs.getBinding(SparqlVariable.TRANSLATION_TYPE).getValue()).stringValue() : "");
+                value.setValueLabel((bs.getBinding(SparqlVariable.LABEL) != null) ? ((Literal) bs.getBinding(SparqlVariable.LABEL).getValue()).getLabel() : "");
+                translationTypes.add(value);
             }
         } catch (QueryEvaluationException qee) {
         }

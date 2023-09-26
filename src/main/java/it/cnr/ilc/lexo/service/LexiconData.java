@@ -45,14 +45,13 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalSenseItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LinkedEntity;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LinkedEntityByBibliography;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ReifiedRelation;
-import it.cnr.ilc.lexo.service.data.lexicon.output.VarTransData;
 import it.cnr.ilc.lexo.service.helper.BibliographyHelper;
 import it.cnr.ilc.lexo.service.helper.BibliographyListHelper;
 import it.cnr.ilc.lexo.service.helper.ComponentFilterHelper;
 import it.cnr.ilc.lexo.service.helper.ComponentHelper;
 import it.cnr.ilc.lexo.service.helper.ConceptSetHelper;
 import it.cnr.ilc.lexo.service.helper.ConceptSetItemHelper;
-import it.cnr.ilc.lexo.service.helper.DirectLexicalRelationHelper;
+import it.cnr.ilc.lexo.service.helper.DirectRelationHelper;
 import it.cnr.ilc.lexo.service.helper.EtymologicalLinkHelper;
 import it.cnr.ilc.lexo.service.helper.EtymologyFilterHelper;
 import it.cnr.ilc.lexo.service.helper.EtymologyHelper;
@@ -61,7 +60,7 @@ import it.cnr.ilc.lexo.service.helper.FormCoreHelper;
 import it.cnr.ilc.lexo.service.helper.FormItemsHelper;
 import it.cnr.ilc.lexo.service.helper.HelperException;
 import it.cnr.ilc.lexo.service.helper.ImageHelper;
-import it.cnr.ilc.lexo.service.helper.IndirectLexicalRelationHelper;
+import it.cnr.ilc.lexo.service.helper.IndirectRelationHelper;
 import it.cnr.ilc.lexo.service.helper.LanguageHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalConceptHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalConceptItemHelper;
@@ -114,8 +113,8 @@ public class LexiconData extends Service {
     private final LexicalEntryFilterHelper lexicalEntryFilterHelper = new LexicalEntryFilterHelper();
     private final LexicalSenseFilterHelper lexicalSenseFilterHelper = new LexicalSenseFilterHelper();
     private final FormItemsHelper formItemsHelper = new FormItemsHelper();
-    private final DirectLexicalRelationHelper directLexicalRelationHelper = new DirectLexicalRelationHelper();
-    private final IndirectLexicalRelationHelper indirectLexicalRelationHelper = new IndirectLexicalRelationHelper();
+    private final DirectRelationHelper directRelationHelper = new DirectRelationHelper();
+    private final IndirectRelationHelper indirectRelationHelper = new IndirectRelationHelper();
     private final LanguageHelper languageHelper = new LanguageHelper();
     private final LexicalEntryElementHelper lexicalEntryElementHelper = new LexicalEntryElementHelper();
     private final LexicalEntryCoreHelper lexicalEntryCoreHelper = new LexicalEntryCoreHelper();
@@ -187,10 +186,10 @@ public class LexiconData extends Service {
             } else if (module.equals(EnumUtil.LexicalAspects.VarTrans.toString())) {
                 log(Level.INFO, "lexicon/data/lexicalEntry <" + _id + "> with module: " + module);
                 TupleQueryResult directRel = lexiconManager.getLexicalEntryVarTrans(_id, true);
-                List<LinkedEntity> le = directLexicalRelationHelper.newDataList(directRel);
+                List<LinkedEntity> le = directRelationHelper.newDataList(directRel);
                 TupleQueryResult indirectRel = lexiconManager.getLexicalEntryVarTrans(_id, false);
-                List<ReifiedRelation> rr = indirectLexicalRelationHelper.newDataList(indirectRel);
-                json = varTransDataHelper.toJson(lexiconManager.addLexicalRelations(le, rr));
+                List<ReifiedRelation> rr = indirectRelationHelper.newDataList(indirectRel);
+                json = varTransDataHelper.toJson(lexiconManager.addRelations(le, rr));
             } else {
                 log(Level.ERROR, "lexical module " + module + " not available");
                 return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("lexical module not available").build();
@@ -231,28 +230,61 @@ public class LexiconData extends Service {
         try {
             userCheck(key);
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
-            log(Level.INFO, "lexicon/data/form <" + _id + "> with module: " + module);
-            long start = System.currentTimeMillis();
-            TupleQueryResult form = lexiconManager.getForm(_id, module);
+            String json = "";
             if (module.equals(EnumUtil.LexicalAspects.Core.toString())) {
+                log(Level.INFO, "lexicon/data/form <" + _id + "> with module: " + module);
+                TupleQueryResult form = lexiconManager.getForm(_id, module);
                 List<FormCore> fc = formCoreHelper.newDataList(form);
                 FormCore _fc = lexiconManager.getMorphologyInheritance(fc);
                 TupleQueryResult lexicalEntityLinks = lexiconManager.getLexicalEntityLinks(_id);
                 LexicalEntityLinksItem links = lexicalEntityLinksItemHelper.newData(lexicalEntityLinks);
                 lexiconManager.addLexicalEntityLink(_fc, links);
-                String json = formCoreHelper.toJson(_fc);
-                statLog.info("response in: {}ms", System.currentTimeMillis() - start);
-                return Response.ok(json)
-                        .type(MediaType.TEXT_PLAIN)
-                        .header("Access-Control-Allow-Headers", "content-type")
-                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                        .build();
+                json = formCoreHelper.toJson(_fc);
+            } else if (module.equals(EnumUtil.LexicalAspects.VarTrans.toString())) {
+                log(Level.INFO, "lexicon/data/form <" + _id + "> with module: " + module);
+                TupleQueryResult directRel = lexiconManager.getFormVarTrans(_id, true);
+                List<LinkedEntity> le = directRelationHelper.newDataList(directRel);
+                TupleQueryResult indirectRel = lexiconManager.getFormVarTrans(_id, false);
+                List<ReifiedRelation> rr = indirectRelationHelper.newDataList(indirectRel);
+                json = varTransDataHelper.toJson(lexiconManager.addRelations(le, rr));
+            } else {
+                log(Level.ERROR, "lexical module " + module + " not available");
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("lexical module not available").build();
             }
-            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("lexical module not available").build();
+            return Response.ok(json)
+                    .type(MediaType.TEXT_PLAIN)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
         } catch (ManagerException | UnsupportedEncodingException | AuthorizationException | ServiceException ex) {
             log(Level.ERROR, ex.getMessage());
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }
+//        try { 
+//            userCheck(key);
+//            String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
+//            log(Level.INFO, "lexicon/data/form <" + _id + "> with module: " + module);
+//            long start = System.currentTimeMillis();
+//            TupleQueryResult form = lexiconManager.getForm(_id, module);
+//            if (module.equals(EnumUtil.LexicalAspects.Core.toString())) {
+//                List<FormCore> fc = formCoreHelper.newDataList(form);
+//                FormCore _fc = lexiconManager.getMorphologyInheritance(fc);
+//                TupleQueryResult lexicalEntityLinks = lexiconManager.getLexicalEntityLinks(_id);
+//                LexicalEntityLinksItem links = lexicalEntityLinksItemHelper.newData(lexicalEntityLinks);
+//                lexiconManager.addLexicalEntityLink(_fc, links);
+//                String json = formCoreHelper.toJson(_fc);
+//                statLog.info("response in: {}ms", System.currentTimeMillis() - start);
+//                return Response.ok(json)
+//                        .type(MediaType.TEXT_PLAIN)
+//                        .header("Access-Control-Allow-Headers", "content-type")
+//                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+//                        .build();
+//            }
+//            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("lexical module not available").build();
+//        } catch (ManagerException | UnsupportedEncodingException | AuthorizationException | ServiceException ex) {
+//            log(Level.ERROR, ex.getMessage());
+//            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+//        }
     }
 
     @GET
@@ -280,25 +312,39 @@ public class LexiconData extends Service {
         try {
             userCheck(key);
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
-            log(Level.INFO, "lexicon/data/lexicalSense <" + _id + "> with module: " + module);
-            TupleQueryResult sense = lexiconManager.getLexicalSense(_id, module);
+            String json = "";
             if (module.equals(EnumUtil.LexicalAspects.Core.toString())) {
-                LexicalSenseCore lsc = lexicalSenseCoreHelper.newData(sense);
+                log(Level.INFO, "lexicon/data/lexicalSense <" + _id + "> with module: " + module);
+                TupleQueryResult lexicalSense = lexiconManager.getLexicalSense(_id);
+                LexicalSenseCore lsc = lexicalSenseCoreHelper.newData(lexicalSense);
                 TupleQueryResult lexicalEntityLinks = lexiconManager.getLexicalEntityLinks(_id);
                 LexicalEntityLinksItem links = lexicalEntityLinksItemHelper.newData(lexicalEntityLinks);
                 lexiconManager.addLexicalEntityLink(lsc, links);
-                String json = lexicalSenseCoreHelper.toJson(lsc);
-                return Response.ok(json)
-                        .type(MediaType.TEXT_PLAIN)
-                        .header("Access-Control-Allow-Headers", "content-type")
-                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                        .build();
+                json = lexicalSenseCoreHelper.toJson(lsc);
+            } else if (module.equals(EnumUtil.LexicalAspects.VarTrans.toString())) {
+                log(Level.INFO, "lexicon/data/lexicalSense <" + _id + "> with module: " + module);
+                TupleQueryResult directRel = lexiconManager.getLexicalSenseVarTrans(_id, true);
+                List<LinkedEntity> le = directRelationHelper.newDataList(directRel);
+                TupleQueryResult indirectRel = lexiconManager.getLexicalSenseVarTrans(_id, false);
+                List<ReifiedRelation> rr = indirectRelationHelper.newDataList(indirectRel);
+                json = varTransDataHelper.toJson(lexiconManager.addRelations(le, rr));
+            } else {
+                log(Level.ERROR, "lexical module " + module + " not available");
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("lexical module not available").build();
             }
-            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("lexical module not available").build();
+            return Response.ok(json)
+                    .type(MediaType.TEXT_PLAIN)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
         } catch (ManagerException | UnsupportedEncodingException | AuthorizationException | ServiceException ex) {
             log(Level.ERROR, ex.getMessage());
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }
+        
+        
+        
+        
     }
 
     @GET

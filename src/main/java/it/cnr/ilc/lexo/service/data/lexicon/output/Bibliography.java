@@ -25,7 +25,7 @@ public class Bibliography implements Data {
     @ApiModelProperty(value = "date")
     private String date;
     @ApiModelProperty(value = "id")
-    private String publisher;
+    private String key;
     @ApiModelProperty(value = "the number of lexical entities referenced by the bibliography record")
     private int references;
 
@@ -53,12 +53,12 @@ public class Bibliography implements Data {
         this.date = date;
     }
 
-    public String getPublisher() {
-        return publisher;
+    public String getKey() {
+        return key;
     }
 
-    public void setPublisher(String publisher) {
-        this.publisher = publisher;
+    public void setKey(String key) {
+        this.key = key;
     }
 
     public int getReferences() {

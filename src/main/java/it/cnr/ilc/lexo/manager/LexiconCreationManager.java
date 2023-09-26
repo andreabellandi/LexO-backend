@@ -274,6 +274,7 @@ public class LexiconCreationManager implements Manager, Cached {
         rr.setLabel(type);
         rr.setLastUpdate(created);
         rr.setCreationDate(created);
+        rr.setCategory(null);
         return rr;
     }
 

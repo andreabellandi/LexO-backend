@@ -45,7 +45,25 @@ public class SparqlSelectOntolexData {
             + "       OPTIONAL { ?" + SparqlVariable.FORM_TYPE + " " + SparqlPrefix.RDFS.getPrefix() + "comment ?" + SparqlVariable.PROPERTY_COMMENT + " }\n"
             //        c   + "    FILTER(STRSTARTS(str(?" + SparqlVariable.LEXICAL_ENTRY_TYPE + "), str(" + SparqlPrefix.ONTOLEX.getPrefix() + ") ))\n"
             + "}";
-    
+
+    public static final String TRANSLATION_TYPE
+            = SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
+            + "SELECT ?" + SparqlVariable.TRANSLATION_TYPE + " ?" + SparqlVariable.LABEL + " ?" + SparqlVariable.PROPERTY_COMMENT + " \n"
+            + "{ \n"
+            + "    { ?" + SparqlVariable.TRANSLATION_TYPE + " rdfs:label \"direct equivalent\"@en ;\n"
+            + "    	rdfs:label ?" + SparqlVariable.LABEL + " ;\n"
+            + "        rdfs:comment ?" + SparqlVariable.PROPERTY_COMMENT + " . }\n"
+            + "    UNION\n"
+            + "    { ?" + SparqlVariable.TRANSLATION_TYPE + " rdfs:label \"cultural equivalent\"@en ;\n"
+            + "    	rdfs:label ?" + SparqlVariable.LABEL + " ;\n"
+            + "        rdfs:comment ?" + SparqlVariable.PROPERTY_COMMENT + " . }\n"
+            + "    UNION\n"
+            + "    { ?" + SparqlVariable.TRANSLATION_TYPE + " rdfs:label \"lexical equivalent\"@en ;\n"
+            + "    	rdfs:label ?" + SparqlVariable.LABEL + " ;\n"
+            + "        rdfs:comment ?" + SparqlVariable.PROPERTY_COMMENT + " . }\n"
+            + "}\n"
+            + "";
+
     public static final String REPRESENTATION
             = SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
             + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"

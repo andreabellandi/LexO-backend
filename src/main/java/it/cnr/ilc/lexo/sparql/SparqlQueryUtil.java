@@ -44,7 +44,7 @@ public class SparqlQueryUtil {
     public static final String LEXICALENTRY_TYPE
             = SparqlPrefix.SESAME.getSparqlPrefix() + "\n"
             + "SELECT ?"+ SparqlVariable.LEXICAL_ENTRY_TYPE + "\n"
-            + "WHERE { <_ID_> sesame:directType ?" + SparqlVariable.LEXICAL_ENTRY_TYPE + " .\n"
+            + "WHERE { <_ID_> rdf:type ?" + SparqlVariable.LEXICAL_ENTRY_TYPE + " .\n"
             + "FILTER(regex(str(?" + SparqlVariable.LEXICAL_ENTRY_TYPE + "),\"" 
             + SparqlPrefix.ONTOLEX.getUri() + "|" + SparqlPrefix.ETY.getUri() + "\")) }";
 

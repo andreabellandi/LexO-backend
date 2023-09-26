@@ -86,7 +86,7 @@ public final class LexiconUpdateManager implements Manager, Cached {
     public void validateLexicoSemanticRel(String type) throws ManagerException {
         Manager.validateWithEnum("type", OntoLexEntity.LexicoSemanticProperty.class, type);
     }
-    
+
     public void validateTranslationSet(String type) throws ManagerException {
         Manager.validateWithEnum("type", OntoLexEntity.TranslationSet.class, type);
     }
@@ -160,7 +160,7 @@ public final class LexiconUpdateManager implements Manager, Cached {
     public void validateGenericDecompRelation(String relation) throws ManagerException {
         Manager.validateWithEnum("relation", OntoLexEntity.GenericRelationDecomp.class, relation);
     }
-    
+
     public void validateMetadataTypes(String type) throws ManagerException {
         Manager.validateWithEnum("type", EnumUtil.MetadataTypes.class, type);
     }
@@ -794,9 +794,17 @@ public final class LexiconUpdateManager implements Manager, Cached {
             } else {
                 throw new ManagerException("Extension not supported");
             }
-//        } else if (gru.getType().equals(EnumUtil.GenericRelation.Confidence.toString())) {
-//            if (gru.getRelation().contains(EnumUtil.GenericRelationConfidence.confidence.toString())) {
-//            }
+        } else if (gru.getType().equals(EnumUtil.GenericRelation.Confidence.toString())) {
+            if (gru.getRelation().contains(EnumUtil.GenericRelationConfidence.translationConfidence.toString())) {
+                if (gru.getValue() != null) {
+                    validateConfidenceValue(gru.getValue());
+                }
+                if (gru.getCurrentValue() != null) {
+                    validateConfidenceValue(gru.getCurrentValue());
+                }
+            } else {
+                throw new ManagerException(gru.getType() + " is not a valid relation type");
+            }
         } else {
             throw new ManagerException(gru.getType() + " is not a valid relation type");
         }

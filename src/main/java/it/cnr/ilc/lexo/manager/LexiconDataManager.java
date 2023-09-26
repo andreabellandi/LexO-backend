@@ -36,6 +36,7 @@ import it.cnr.ilc.lexo.util.EnumUtil.LexicalEntryStatus;
 import it.cnr.ilc.lexo.util.EnumUtil.LexicalEntryTypes;
 import it.cnr.ilc.lexo.util.EnumUtil.LexicalSenseSearchFilter;
 import it.cnr.ilc.lexo.util.RDFQueryUtil;
+import it.cnr.ilc.lexo.util.StringUtil;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.rdf4j.query.TupleQueryResult;
@@ -80,8 +81,9 @@ public class LexiconDataManager implements Manager, Cached {
 
         return RDFQueryUtil.evaluateTQuery(query);
     }
-
+    
     private String createFilter(LexicalEntryFilter lef) {
+        lef.setText(StringUtil.escapeMetaCharacters(lef.getText()));
         String text = lef.getText().isEmpty() ? "*" : lef.getText();
         String filter = "(" + (lef.getSearchMode().equals(EnumUtil.SearchModes.Equals.toString()) ? getSearchField(lef.getFormType(), text)
                 : (lef.getSearchMode().equals(EnumUtil.SearchModes.StartsWith.toString()) ? getSearchField(lef.getFormType(), text + "*")
@@ -96,6 +98,7 @@ public class LexiconDataManager implements Manager, Cached {
     }
 
     private String createFilterByForm(LexicalSenseFilter lsf) {
+        lsf.setText(StringUtil.escapeMetaCharacters(lsf.getText()));
         String text = lsf.getText().isEmpty() ? "*" : lsf.getText();
         String filter = "(" + (lsf.getSearchMode().equals(EnumUtil.SearchModes.Equals.toString()) ? getSearchField(lsf.getFormType(), text)
                 : (lsf.getSearchMode().equals(EnumUtil.SearchModes.StartsWith.toString()) ? getSearchField(lsf.getFormType(), text + "*")
@@ -110,6 +113,7 @@ public class LexiconDataManager implements Manager, Cached {
     }
 
     private String createFilter(LexicalSenseFilter lsf) {
+        lsf.setText(StringUtil.escapeMetaCharacters(lsf.getText()));
         String text = lsf.getText().isEmpty() ? "*" : lsf.getText();
         String filter = "(" + (lsf.getSearchMode().equals(EnumUtil.SearchModes.Equals.toString()) ? getSearchLexicalSenseField(lsf.getField(), text)
                 : (lsf.getSearchMode().equals(EnumUtil.SearchModes.StartsWith.toString()) ? getSearchLexicalSenseField(lsf.getField(), text + "*")
@@ -124,6 +128,7 @@ public class LexiconDataManager implements Manager, Cached {
     }
 
     private String createFilter(FormFilter ff) {
+        ff.setText(StringUtil.escapeMetaCharacters(ff.getText()));
         String text = ff.getText().isEmpty() ? "*" : ff.getText();
         String filter = "(" + (ff.getSearchMode().equals(EnumUtil.SearchModes.Equals.toString()) ? getSearchFormField(ff.getRepresentationType(), text)
                 : (ff.getSearchMode().equals(EnumUtil.SearchModes.StartsWith.toString()) ? getSearchFormField(ff.getRepresentationType(), text + "*")
@@ -135,6 +140,7 @@ public class LexiconDataManager implements Manager, Cached {
     }
 
     private String createFilter(LexicalConceptFilter lcf) {
+        lcf.setText(StringUtil.escapeMetaCharacters(lcf.getText()));
         String text = lcf.getText().isEmpty() ? "*" : lcf.getText();
         String filter = "(" + (lcf.getSearchMode().equals(EnumUtil.SearchModes.Equals.toString()) ? getSearchLexicalConceptField(lcf.getLabelType(), text)
                 : (lcf.getSearchMode().equals(EnumUtil.SearchModes.StartsWith.toString()) ? getSearchLexicalConceptField(lcf.getLabelType(), text + "*")
@@ -341,7 +347,25 @@ public class LexiconDataManager implements Manager, Cached {
         return RDFQueryUtil.evaluateTQuery(query);
     }
     
-    public VarTransData addLexicalRelations(List<LinkedEntity> les, List<ReifiedRelation> rrs) {
+    public TupleQueryResult getFormVarTrans(String formID, boolean directRelations) throws ManagerException {
+        String query = "";
+        if (directRelations) {
+            query = SparqlSelectData.DATA_FORM_DIRECT_VARTRANS.replace("[IRI]", "\\\"" + formID + "\\\"");
+        } else
+            query = SparqlSelectData.DATA_FORM_INDIRECT_VARTRANS.replace("[IRI]", "\\\"" + formID + "\\\"");;
+        return RDFQueryUtil.evaluateTQuery(query);
+    }
+    
+    public TupleQueryResult getLexicalSenseVarTrans(String lexicalSenseID, boolean directRelations) throws ManagerException {
+        String query = "";
+        if (directRelations) {
+            query = SparqlSelectData.DATA_LEXICAL_SENSE_DIRECT_VARTRANS.replace("[IRI]", "\\\"" + lexicalSenseID + "\\\"");
+        } else
+            query = SparqlSelectData.DATA_LEXICAL_SENSE_INDIRECT_VARTRANS.replace("[IRI]", "\\\"" + lexicalSenseID + "\\\"");;
+        return RDFQueryUtil.evaluateTQuery(query);
+    }
+    
+    public VarTransData addRelations(List<LinkedEntity> les, List<ReifiedRelation> rrs) {
         VarTransData vtd = new VarTransData();
         vtd.setDirectRelations(les);
         vtd.setIndirectRelations(rrs);
@@ -457,12 +481,12 @@ public class LexiconDataManager implements Manager, Cached {
         return fc.get(0);
     }
 
-    public TupleQueryResult getLexicalSense(String senseID, String module) throws ManagerException {
-        if (!module.equals(EnumUtil.LexicalAspects.Core.toString())
-                && !module.equals(EnumUtil.LexicalAspects.VarTrans.toString())
-                && !module.equals(EnumUtil.LexicalAspects.SynSem.toString())) {
-            throw new ManagerException(module + " does not allowed for lexical senses");
-        }
+    public TupleQueryResult getLexicalSense(String senseID) throws ManagerException {
+//        if (!module.equals(EnumUtil.LexicalAspects.Core.toString())
+//                && !module.equals(EnumUtil.LexicalAspects.VarTrans.toString())
+//                && !module.equals(EnumUtil.LexicalAspects.SynSem.toString())) {
+//            throw new ManagerException(module + " does not allowed for lexical senses");
+//        }
 //        TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL,
 //                SparqlSelectData.DATA_LEXICAL_SENSE_CORE.replace("[IRI]", "\\\"" + namespace + senseID + "\\\""));
         String query = SparqlSelectData.DATA_LEXICAL_SENSE_CORE.replace("[IRI]", "\\\"" + senseID + "\\\"");

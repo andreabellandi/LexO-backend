@@ -63,7 +63,10 @@ public class SparqlSelectLexinfoData {
 
     public static final String LEXICAL_REL
             = SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
-            + "SELECT ?" + SparqlVariable.PARENT + " ?" + SparqlVariable.PROPERTY_NAME + " ?" + SparqlVariable.LABEL + " ?" + SparqlVariable.PROPERTY_COMMENT + " where { \n"
+            + SparqlPrefix.ONTO.getSparqlPrefix() + "\n"
+            + "SELECT ?" + SparqlVariable.PARENT + " ?" + SparqlVariable.PROPERTY_NAME + " ?" + SparqlVariable.LABEL + " ?" + SparqlVariable.PROPERTY_COMMENT 
+            + "\n FROM onto:explicit\n"
+            + " where { \n"
             + "  VALUES ?rootProperty { <_PROPERTY_> } \n"
             + "  ?rootProperty ^rdfs:subPropertyOf* ?" + SparqlVariable.PARENT + " .\n"
             + "  ?" + SparqlVariable.PARENT + " ^rdfs:subPropertyOf ?" + SparqlVariable.PROPERTY_NAME + " .\n"
@@ -73,7 +76,10 @@ public class SparqlSelectLexinfoData {
 
     public static final String SENSE_REL
             = SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
-            + "SELECT ?" + SparqlVariable.PARENT + " ?" + SparqlVariable.PROPERTY_NAME + " ?" + SparqlVariable.LABEL + " ?" + SparqlVariable.PROPERTY_COMMENT + " where { \n"
+            + SparqlPrefix.ONTO.getSparqlPrefix() + "\n"
+            + "SELECT ?" + SparqlVariable.PARENT + " ?" + SparqlVariable.PROPERTY_NAME + " ?" + SparqlVariable.LABEL + " ?" + SparqlVariable.PROPERTY_COMMENT 
+            + "\n FROM onto:explicit\n"
+            + " where { \n"
             + "  VALUES ?rootProperty { <_PROPERTY_> } \n"
             + "  ?rootProperty ^rdfs:subPropertyOf* ?" + SparqlVariable.PARENT + " .\n"
             + "  ?" + SparqlVariable.PARENT + " ^rdfs:subPropertyOf ?" + SparqlVariable.PROPERTY_NAME + " .\n"

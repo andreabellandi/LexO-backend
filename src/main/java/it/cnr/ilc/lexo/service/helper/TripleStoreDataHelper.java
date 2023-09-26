@@ -208,7 +208,7 @@ public abstract class TripleStoreDataHelper<D extends Data> extends Helper<D> {
                 LinkedEntity le = new LinkedEntity();
                 String[] _e = e.split("<>");
                 le.setEntity(_e[1]);
-                le.setInferred(_e[2].contains("explicit"));
+                le.setInferred(_e[2].contains("implicit"));
                 le.setLink(_e[0]);
                 le.setLinkType(isExternalUri(_e[1]) ? "external" : "internal");
                 _entities.add(le);

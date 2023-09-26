@@ -6,12 +6,10 @@
 package it.cnr.ilc.lexo.service.data.lexicon.output;
 
 import it.cnr.ilc.lexo.service.data.output.Entity;
-import it.cnr.ilc.lexo.service.data.lexicon.output.Morphology;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import it.cnr.ilc.lexo.service.data.Data;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
@@ -38,7 +36,6 @@ public class FormItem extends Entity implements Data {
 
     public FormItem() {
     }
-
 
     public ArrayList<Morphology> getMorphology() {
         return morphology;
@@ -79,7 +76,6 @@ public class FormItem extends Entity implements Data {
     public void setLabel(String label) {
         this.label = label;
     }
-
 
     public String getNote() {
         return note;
