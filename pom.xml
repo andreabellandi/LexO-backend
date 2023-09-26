@@ -19,6 +19,11 @@
             <version>2.33</version>
         </dependency>
         <dependency>
+            <groupId>org.glassfish.jersey.media</groupId>
+            <artifactId>jersey-media-multipart</artifactId>
+            <version>2.33</version>
+        </dependency>
+        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <version>4.0.1</version>
@@ -30,6 +35,18 @@
             <version>1.7.30</version>
         </dependency>
         <dependency>
+            <groupId>com.opencsv</groupId>
+            <artifactId>opencsv</artifactId>
+            <version>5.3</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.12.0</version>
+        </dependency>
+
+        <!--        <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
             <version>1.2.3</version>
@@ -38,7 +55,12 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>1.2.3</version>
-        </dependency>       
+        </dependency>       -->
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.17</version>
+        </dependency>
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
@@ -114,6 +136,30 @@
             <artifactId>graphdb-free-runtime</artifactId>
             <version>9.11.1</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.auth0/java-jwt -->
+        <dependency>
+            <groupId>com.auth0</groupId>
+            <artifactId>java-jwt</artifactId>
+            <version>3.11.0</version>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
+            <version>0.11.2</version>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+            <version>0.11.2</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId>
+            <version>0.11.2</version>
+            <scope>runtime</scope>
+        </dependency>
+
     </dependencies>
     
     <build>
@@ -181,6 +227,7 @@
                 <graphdb.url>https://lexo-datasets.ilc.cnr.it:7200</graphdb.url>
                 <graphdb.repository>Simple</graphdb.repository>
                 <graphdb.poolSize>5</graphdb.poolSize>
+                <graphDb.namedGraph></graphDb.namedGraph>
             </properties>
         </profile>
         <profile>
@@ -194,6 +241,21 @@
                 <graphdb.url>https://lexo-datasets.ilc.cnr.it:7200</graphdb.url>
                 <graphdb.repository>Simple_beta</graphdb.repository>
                 <graphdb.poolSize>5</graphdb.poolSize>
+                <graphDb.namedGraph></graphDb.namedGraph>
+            </properties>
+        </profile>   
+        <profile>
+            <id>maia-release</id> 
+            <properties>
+                <db.jdbcUrl>jdbc:mysql://localhost/lexo_server</db.jdbcUrl>
+                <envClassifier>maia</envClassifier>
+                <postfix>maia</postfix>
+                <db.user>lexo</db.user>
+                <db.password>LexOServer12</db.password>
+                <graphdb.url>https://lexo-datasets.ilc.cnr.it:7200</graphdb.url>
+                <graphdb.repository>Ferrandi</graphdb.repository>
+                <graphdb.poolSize>5</graphdb.poolSize>
+                <graphDb.namedGraph></graphDb.namedGraph>
             </properties>
         </profile>       
         <profile>
@@ -203,8 +265,24 @@
                 <db.user>root</db.user>
                 <db.password>root</db.password>
                 <graphdb.url>http://localhost:7200</graphdb.url>
-                <graphdb.repository>SIMPLE</graphdb.repository>
+                <graphdb.repository>ItAnt</graphdb.repository>
+                <!--<graphdb.repository>SKOS_TEST</graphdb.repository>-->
+                <!--<graphdb.repository>TEST_NEW_SERVICES</graphdb.repository>-->
                 <graphdb.poolSize>5</graphdb.poolSize>
+            </properties>
+        </profile>
+        <profile>
+            <id>devel-michele</id> 
+            <properties>
+                <db.jdbcUrl>jdbc:mysql://localhost/lexo_server</db.jdbcUrl>
+                <db.user>root</db.user>
+                <db.password>root</db.password>
+                <envClassifier>itant</envClassifier>
+                <postfix>-itant</postfix>
+                <graphdb.url>http://localhost:7200</graphdb.url>
+                <graphdb.repository>ExportedItAnt</graphdb.repository>
+                <graphdb.poolSize>5</graphdb.poolSize>
+                <graphDb.namedGraph>http://itantLexicon</graphDb.namedGraph>
             </properties>
         </profile>
         <profile>
@@ -218,6 +296,21 @@
                 <graphdb.url>https://lari2.ilc.cnr.it/graphdb</graphdb.url>
                 <graphdb.repository>ExportedItAnt</graphdb.repository>
                 <graphdb.poolSize>2</graphdb.poolSize>
+                <graphDb.namedGraph></graphDb.namedGraph>
+            </properties>
+        </profile>
+        <profile>
+            <id>itant_demo_nuovo</id> 
+            <properties>
+                <db.jdbcUrl>jdbc:mysql://localhost/lexo_server</db.jdbcUrl>
+                <envClassifier>itant</envClassifier>
+                <postfix>-itant</postfix>
+                <db.user>lexo</db.user>
+                <db.password>LexOServer12</db.password>
+                <graphdb.url>https://digitant.ilc.cnr.it/graphdb10_demo/</graphdb.url>
+                <graphdb.repository>ItAnt</graphdb.repository>
+                <graphdb.poolSize>2</graphdb.poolSize>
+                <graphDb.namedGraph></graphDb.namedGraph>
             </properties>
         </profile>
         <profile>
@@ -229,6 +322,7 @@
                 <graphdb.url>https://lexo-datasets.ilc.cnr.it:7200</graphdb.url>
                 <graphdb.repository>Simple</graphdb.repository>
                 <graphdb.poolSize>5</graphdb.poolSize>
+                <graphDb.namedGraph></graphDb.namedGraph>
             </properties>
         </profile>
     </profiles>
