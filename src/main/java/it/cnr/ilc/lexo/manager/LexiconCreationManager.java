@@ -6,6 +6,7 @@
 package it.cnr.ilc.lexo.manager;
 
 import it.cnr.ilc.lexo.LexOProperties;
+import it.cnr.ilc.lexo.service.data.lexicon.output.Collocation;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Component;
 import it.cnr.ilc.lexo.service.data.lexicon.output.EtymologicalLink;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Etymology;
@@ -219,6 +220,21 @@ public class LexiconCreationManager implements Manager, Cached {
                 .replace("_MODIFIED_", created));
         return setComponent(_id, created, author);
     }
+    
+    public Collocation createCollocation(String leID, String author, String prefix, String baseIRI) throws ManagerException {
+        Timestamp tm = new Timestamp(System.currentTimeMillis());
+        String id = idInstancePrefix + tm.toString();
+        String created = timestampFormat.format(tm);
+        String sparqlPrefix = "PREFIX " + prefix + ": <" + baseIRI + ">";
+        String _id = baseIRI + id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
+        RDFQueryUtil.update(SparqlInsertData.CREATE_COLLOCATION.replaceAll("_ID_", _id)
+                .replace("_AUTHOR_", author)
+                .replace("_CREATED_", created)
+                .replace("_PREFIX_", sparqlPrefix)
+                .replace("_LEID_", leID)
+                .replace("_MODIFIED_", created));
+        return setCollocation(_id, leID, created, author);
+    }
 
     public ReifiedRelation createLexicoSemanticRelation(String leID, String type, String author, String prefix, String baseIRI) throws ManagerException {
         Manager.validateWithEnum("type", OntoLexEntity.VartransRelationClasses.class, type);
@@ -297,6 +313,17 @@ public class LexiconCreationManager implements Manager, Cached {
         sc.setLastUpdate(created);
         sc.setCreationDate(created);
         return sc;
+    }
+    
+    private Collocation setCollocation(String id, String leID, String created, String author) {
+        Collocation col = new Collocation();
+        col.setCreator(author);
+        col.setConfidence(-1);
+        col.setCollocation(id);
+        col.setHead(leID);
+        col.setLastUpdate(created);
+        col.setCreationDate(created);
+        return col;
     }
 
 }

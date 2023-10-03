@@ -221,6 +221,21 @@ public class OntoLexEntity {
             return this.type;
         }
     }
+    
+    public static enum FrequencyRel {
+        EtySource(SparqlPrefix.FRAC.getUri() + "frequency");
+
+        private final String type;
+
+        private FrequencyRel(String type) {
+            this.type = type;
+        }
+
+        @Override
+        public String toString() {
+            return this.type;
+        }
+    }
 
     public static enum LexicalRel {
         Cognate(SparqlPrefix.ETY.getUri() + "cognate"),

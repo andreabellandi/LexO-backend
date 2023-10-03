@@ -732,7 +732,6 @@ public class SparqlSelectData {
             + " ?" + SparqlVariable.LEXICAL_ENTRY
             + " ?" + SparqlVariable.LABEL;
 
-    
     public static final String DATA_FORM_DIRECT_VARTRANS
             = SparqlPrefix.INST.getSparqlPrefix() + "\n"
             + SparqlPrefix.ONTO.getSparqlPrefix() + "\n"
@@ -760,7 +759,7 @@ public class SparqlSelectData {
             + "} \n"
             + "GROUP BY ?" + SparqlVariable.PROPERTY_NAME + " ?" + SparqlVariable.LEXICAL_ENTITY + " ?" + SparqlVariable.LABEL + " ?" + SparqlVariable.GRAPH + "\n"
             + "ORDER BY ?" + SparqlVariable.PROPERTY_NAME;
-    
+
     public static final String DATA_FORM_INDIRECT_VARTRANS
             = SparqlPrefix.INST.getSparqlPrefix() + "\n"
             + SparqlPrefix.ONTO.getSparqlPrefix() + "\n"
@@ -801,7 +800,7 @@ public class SparqlSelectData {
             + "GROUP BY ?" + SparqlVariable.REIFIED_RELATION + " ?" + SparqlVariable.CATEGORY + " ?" + SparqlVariable.TYPE + " ?" + SparqlVariable.SOURCE
             + " ?" + SparqlVariable.TARGET + " ?" + SparqlVariable.TARGET_LABEL + " ?" + SparqlVariable.NOTE + " ?" + SparqlVariable.LABEL + "\n"
             + "ORDER BY ?" + SparqlVariable.REIFIED_RELATION;
-    
+
     public static final String DATA_LEXICAL_SENSE_CORE
             = SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
             + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
@@ -1087,6 +1086,44 @@ public class SparqlSelectData {
             + SparqlVariable.LABEL + " ?"
             + SparqlVariable.NOTE + " ?confidence";
 
+    public static final String DATA_COLLOCATIONS = 
+            SparqlPrefix.FRAC.getSparqlPrefix() + "\n"
+            + SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTO.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.SKOS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDF.getSparqlPrefix() + "\n"
+            + "SELECT ?" + SparqlVariable.COLLOCATION + " ?" + SparqlVariable.DESCRIPTION + " ?" + SparqlVariable.EXAMPLE
+            + " ?" + SparqlVariable.LABEL + " ?" + SparqlVariable.CREATION_DATE + " ?" + SparqlVariable.LAST_UPDATE + " ?" + SparqlVariable.CREATOR 
+            + " ?" + SparqlVariable.NOTE + " ?" + SparqlVariable.CONFIDENCE + " ?" + SparqlVariable.HEAD +  " ?" + SparqlVariable.FREQUENCY + "\n"
+            + "(GROUP_CONCAT(concat(str(?entity), \";\", str(?entityLabel), \"@\", lang(?entityLabel), "
+            + "\";\", str(?type), \";\", REPLACE(str(?positionRelation), \"http://www.w3.org/1999/02/22-rdf-syntax-ns#_\", \"\"));SEPARATOR=\"---\") AS ?components)\n"
+            + "FROM onto:explicit\n"
+            + "WHERE {\n"
+            + "    BIND (<_ID_> AS ?" + SparqlVariable.HEAD + ")\n"
+            + "    ?" + SparqlVariable.COLLOCATION + " a frac:Collocation ; \n"
+            + "          frac:head ?" + SparqlVariable.HEAD + " ;\n"
+            + "          ?positionRelation ?entity .\n"
+            + "    ?entity rdfs:label|skos:definition|ontolex:writtenRep ?entityLabel ;\n"
+            + "            rdf:type ?type .\n"
+            + "    OPTIONAL { ?" + SparqlVariable.COLLOCATION + " dct:description ?" + SparqlVariable.DESCRIPTION + " . }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.COLLOCATION + " lexinfo:example ?" + SparqlVariable.EXAMPLE + " . }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.COLLOCATION + " rdfs:label ?" + SparqlVariable.LABEL + " . }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.COLLOCATION + " dct:creator ?" + SparqlVariable.CREATOR + " }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.COLLOCATION + " dct:modified ?" + SparqlVariable.LAST_UPDATE + " }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.COLLOCATION + " dct:created ?" + SparqlVariable.CREATION_DATE + " }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.COLLOCATION + " skos:note ?" + SparqlVariable.NOTE + " }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.COLLOCATION + " lexinfo:confidence ?" + SparqlVariable.CONFIDENCE + " }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.COLLOCATION + " frac:frequency [ rdf:value ?" + SparqlVariable.FREQUENCY + " ] }"
+            + "    FILTER (strstarts(str(?positionRelation), \"http://www.w3.org/1999/02/22-rdf-syntax-ns#_\"))\n"
+            + "    FILTER (strstarts(str(?type), \"http://www.w3.org/ns/lemon/ontolex#\"))\n"
+            + "} GROUP BY ?" + SparqlVariable.COLLOCATION + " ?" + SparqlVariable.DESCRIPTION + " ?" + SparqlVariable.EXAMPLE 
+            + " ?" + SparqlVariable.LABEL + " ?" + SparqlVariable.CREATOR + " ?" + SparqlVariable.CREATION_DATE 
+            + " ?" + SparqlVariable.LAST_UPDATE + " ?" + SparqlVariable.NOTE + " ?" + SparqlVariable.CONFIDENCE + " ?" + SparqlVariable.HEAD + " ?" + SparqlVariable.FREQUENCY;
+    
+    
     public static final String DATA_LINGUISTIC_RELATION
             = SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
             + SparqlPrefix.ONTO.getSparqlPrefix() + "\n"

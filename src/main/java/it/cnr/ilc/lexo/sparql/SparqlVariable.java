@@ -97,6 +97,9 @@ public class SparqlVariable {
     public static final String COMPONENT_POSITION = "position";
 
     public static final String FRAME = "frame";
+    public static final String COLLOCATION = "collocation";
+    public static final String HEAD = "head";
+    public static final String FREQUENCY = "frequency";
 
     public static final String IMAGE = "image";
     public static final String TITLE = "title";
@@ -137,6 +140,7 @@ public class SparqlVariable {
     public static final String COMPLETION_DATE = "dateAccepted";
     public static final String REVISION_DATE = "dateSubmitted";
     public static final String LAST_UPDATE = "modified";
+    public static final String CREATOR = "creator";
 
     public static final String NOTE = "note";
 

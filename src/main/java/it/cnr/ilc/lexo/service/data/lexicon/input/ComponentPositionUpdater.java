@@ -18,13 +18,13 @@ public class ComponentPositionUpdater {
     @ApiModelProperty(value = "the type of relation", allowEmptyValue = false,
             allowableValues = "decomp")
     private String type;
-    @ApiModelProperty(value = "type of position relation", example= "rdf:_n", allowEmptyValue = false)
+    @ApiModelProperty(value = "position relation", allowEmptyValue = false)
     private String relation;
     @ApiModelProperty(value = "component id", allowEmptyValue = false)
     private String component;
     @ApiModelProperty(value = "position as integer", allowEmptyValue = false)
     private int position;
-    @ApiModelProperty(value = "current position as integer (empty for component position creation)", example = "seeAlso", allowEmptyValue = false)
+    @ApiModelProperty(value = "current position as integer (empty for component position creation)", allowEmptyValue = true)
     private int currentPosition;
 
     public String getComponent() {

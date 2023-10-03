@@ -52,6 +52,10 @@ public class SparqlQueryUtil {
             = SparqlPrefix.DECOMP.getSparqlPrefix() + "\n"
             + "ASK { <_ID_> a " + SparqlPrefix.DECOMP.getPrefix() + "Component }";
     
+    public static final String IS_COLLOCATION_ID
+            = SparqlPrefix.FRAC.getSparqlPrefix() + "\n"
+            + "ASK { <_ID_> a " + SparqlPrefix.FRAC.getPrefix() + "Collocation }";
+    
     public static final String IS_LEXICOSEMANTIC_RELATION_ID
             = SparqlPrefix.VARTRANS.getSparqlPrefix() + "\n"
             + "ASK { <_ID_> a " + SparqlPrefix.VARTRANS.getPrefix() + "LexicoSemanticRelation }";
@@ -75,6 +79,19 @@ public class SparqlQueryUtil {
             + "{ <_ID_> a " + SparqlPrefix.ONTOLEX.getPrefix() + "LexicalEntry }\n"
             + " UNION \n"
             + "{ <_ID_> a " + SparqlPrefix.DECOMP.getPrefix() + "Component }\n"
+            + "}";
+    
+    public static final String IS_ADMISSIBLE_HEAD_OF_COLLOCATION_ID
+            = SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.FRAC.getSparqlPrefix() + "\n"
+            + "ASK { \n"
+            + "{ <_ID_> a " + SparqlPrefix.ONTOLEX.getPrefix() + "LexicalEntry }\n"
+            + " UNION \n"
+            + "{ <_ID_> a " + SparqlPrefix.FRAC.getPrefix() + "Collocation }\n"
+            + " UNION \n"
+            + "{ <_ID_> a " + SparqlPrefix.ONTOLEX.getPrefix() + "Form }\n"
+            + " UNION \n"
+            + "{ <_ID_> a " + SparqlPrefix.ONTOLEX.getPrefix() + "LexicalSense }\n"
             + "}";
 
     public static final String IS_ETYMON_ID

@@ -376,6 +376,11 @@ public class LexiconDataManager implements Manager, Cached {
         String query = SparqlSelectData.DATA_COMPONENT.replace("[IRI]", "\\\"" + componentID + "\\\"");
         return RDFQueryUtil.evaluateTQuery(query);
     }
+    
+     public TupleQueryResult getCollocations(String id) throws ManagerException {
+        String query = SparqlSelectData.DATA_COLLOCATIONS.replace("_ID_", id);
+        return RDFQueryUtil.evaluateTQuery(query);
+    }
 
     public TupleQueryResult getLinguisticRelation(String lexicalEntryID, String property) throws ManagerException {
         String query = SparqlSelectData.DATA_LINGUISTIC_RELATION

@@ -323,7 +323,7 @@ public class LexiconUpdate extends Service {
             value = "componentPosition",
             produces = "application/json; charset=UTF-8")
     @ApiOperation(value = "Component position update",
-            notes = "This method updates the position of a multiword component according to the input updater")
+            notes = "This method updates the position of a multiword or a collocation component according to the input updater")
     public Response componentPosition(@HeaderParam("Authorization") String key, @QueryParam("id") String id, ComponentPositionUpdater cpu) {
             try {
                 checkKey(key);

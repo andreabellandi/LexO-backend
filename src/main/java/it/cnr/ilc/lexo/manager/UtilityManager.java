@@ -10,7 +10,6 @@ import it.cnr.ilc.lexo.sparql.SparqlVariable;
 import it.cnr.ilc.lexo.util.RDFQueryUtil;
 import java.util.ArrayList;
 import java.util.Iterator;
-import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Literal;
 import org.eclipse.rdf4j.model.Namespace;
 import org.eclipse.rdf4j.query.BindingSet;
@@ -169,9 +168,19 @@ public final class UtilityManager implements Manager, Cached {
         String query = SparqlQueryUtil.IS_LEXICALENTRY_ID_OR_COMPONENT_ID.replaceAll("_ID_", id);
         return RDFQueryUtil.evaluateBQuery(query);
     }
+    
+    public boolean isAdmissibleHeadOfCollocation(String id) throws QueryEvaluationException {
+        String query = SparqlQueryUtil.IS_ADMISSIBLE_HEAD_OF_COLLOCATION_ID.replaceAll("_ID_", id);
+        return RDFQueryUtil.evaluateBQuery(query);
+    }
 
     public boolean isComponent(String id) throws QueryEvaluationException {
         String query = SparqlQueryUtil.IS_COMPONENT_ID.replaceAll("_ID_", id);
+        return RDFQueryUtil.evaluateBQuery(query);
+    }
+    
+    public boolean isCollocation(String id) throws QueryEvaluationException {
+        String query = SparqlQueryUtil.IS_COLLOCATION_ID.replaceAll("_ID_", id);
         return RDFQueryUtil.evaluateBQuery(query);
     }
     

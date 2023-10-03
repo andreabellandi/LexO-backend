@@ -204,11 +204,11 @@ public class SparqlUpdateData {
             + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
             + SparqlPrefix.SKOS.getSparqlPrefix() + "\n"
             + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
-            + "DELETE { <_ID_> rdf:_CURR_POSITION lex:_IDCOMPONENT_ ;\n "
+            + "DELETE { <_ID_> rdf:_CURR_POS <_IDCOMPONENT_> ;\n "
             + "                  dct:modified ?modified . } \n"
-            + "INSERT { <_ID_> rdf:_POSITION lex:_IDCOMPONENT_ ;\n"
+            + "INSERT { <_ID_> rdf:_POSITION <_IDCOMPONENT_> ;\n"
             + "                  dct:modified _LAST_UPDATE_ . }\n"
             + "WHERE {  OPTIONAL { <_ID_> dct:modified ?modified . }\n"
-            + "         OPTIONAL { <_ID_> rdf:_CURR_POSITION lex:_IDCOMPONENT_ . } }";
+            + "         OPTIONAL { <_ID_> rdf:_CURR_POS <_IDCOMPONENT_> . } }";
 
 }

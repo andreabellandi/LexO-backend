@@ -242,6 +242,7 @@ public class EnumUtil {
         Attestation("attestation"),
         ConceptRel("conceptRel"),
         Metadata("metadata"),
+        FrequencyRel("frequencyRel"),
         Decomp("decomp");
 
         private final String genericRelation;
@@ -403,6 +404,8 @@ public class EnumUtil {
         note(SparqlPrefix.SKOS.getUri() + "note"),
         label(SparqlPrefix.RDFS.getUri() + "label"),
         confidence(SparqlPrefix.LEXINFO.getUri() + "confidence"),
+        description(SparqlPrefix.DCT.getUri() + "description"),
+        example(SparqlPrefix.LEXINFO.getUri() + "example"),
         comment(SparqlPrefix.RDFS.getUri() + "comment");
 
         private final String metadataTypes;
