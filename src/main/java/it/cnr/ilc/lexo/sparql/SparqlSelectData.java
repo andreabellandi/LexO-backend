@@ -889,7 +889,8 @@ public class SparqlSelectData {
             + SparqlPrefix.SKOS.getSparqlPrefix() + "\n"
             + "SELECT \n"
             + "?" + SparqlVariable.REIFIED_RELATION + " ?" + SparqlVariable.CATEGORY + " ?" + SparqlVariable.TYPE + " ?" + SparqlVariable.SOURCE
-            + " ?" + SparqlVariable.TARGET + " ?" + SparqlVariable.TARGET_LABEL + " ?" + SparqlVariable.DEFINITION + " ?" + SparqlVariable.NOTE + " ?" + SparqlVariable.LABEL + "\n"
+            + " ?" + SparqlVariable.SOURCE_LEXICAL_ENTRY + " ?" + SparqlVariable.SOURCE_LABEL + " ?" + SparqlVariable.TARGET + " ?" + SparqlVariable.TARGET_LABEL
+            + " ?" + SparqlVariable.TARGET_LEXICAL_ENTRY + " ?" + SparqlVariable.NOTE + " ?" + SparqlVariable.LABEL + "\n"
             + "(GROUP_CONCAT(concat(str(?reifiedRelationPredicate),\"<>\",str(?reifiedRelationObject),\"<>\",str(?graph));SEPARATOR=\"---\") AS ?extra)\n"
             + "FROM NAMED onto:implicit\n"
             + "FROM NAMED onto:explicit\n"
@@ -903,10 +904,12 @@ public class SparqlSelectData {
             + "        OPTIONAL { ?" + SparqlVariable.REIFIED_RELATION + " rdfs:label ?" + SparqlVariable.LABEL + " }\n"
             + "        OPTIONAL { ?" + SparqlVariable.REIFIED_RELATION + " sesame:directType ?" + SparqlVariable.TYPE + " .\n"
             + "        FILTER(!STRSTARTS(STR(?" + SparqlVariable.TYPE + "), \"http://www.w3.org/ns/lemon/lexicog#\")) }\n"
-            + "    	OPTIONAL { ?" + SparqlVariable.REIFIED_RELATION + " vartrans:target ?" + SparqlVariable.TARGET + " }\n"
-            + "    	OPTIONAL { ?" + SparqlVariable.TARGET + " rdfs:label ?" + SparqlVariable.TARGET_LABEL + " ;\n"
-            + "    					skos:definition ?" + SparqlVariable.DEFINITION + " .\n"
-            + "    	}\n"
+            + "    	OPTIONAL { ?" + SparqlVariable.REIFIED_RELATION + " vartrans:target ?" + SparqlVariable.TARGET + " .\n"
+            + "    	         OPTIONAL { ?" + SparqlVariable.TARGET + " rdfs:label|skos:definition ?" + SparqlVariable.TARGET_LABEL + " ;\n"
+            + "                                                            ontolex:isSenseOf [ rdfs:label ?" + SparqlVariable.TARGET_LEXICAL_ENTRY + "] } "
+            + "         }\n"
+            + "    	OPTIONAL { ?" + SparqlVariable.SOURCE + " rdfs:label|skos:definition ?" + SparqlVariable.SOURCE_LABEL + " ;\n"
+            + "                                                   ontolex:isSenseOf [ rdfs:label ?" + SparqlVariable.SOURCE_LEXICAL_ENTRY + "] }\n"
             + "    	OPTIONAL { \n"
             + "        	GRAPH ?graph { ?" + SparqlVariable.REIFIED_RELATION + " ?reifiedRelationPredicate ?reifiedRelationObject . } \n"
             + "        	FILTER(!STRSTARTS(STR(?reifiedRelationPredicate), \"http://www.w3.org/ns/lemon/vartrans#\"))\n"
@@ -916,7 +919,8 @@ public class SparqlSelectData {
             + "    FILTER(BOUND(?" + SparqlVariable.REIFIED_RELATION + "))\n"
             + "}\n"
             + "GROUP BY ?" + SparqlVariable.REIFIED_RELATION + " ?" + SparqlVariable.CATEGORY + " ?" + SparqlVariable.TYPE + " ?" + SparqlVariable.SOURCE
-            + " ?" + SparqlVariable.TARGET + " ?" + SparqlVariable.TARGET_LABEL + " ?" + SparqlVariable.DEFINITION + " ?" + SparqlVariable.NOTE + " ?" + SparqlVariable.LABEL + "\n"
+            + " ?" + SparqlVariable.TARGET + " ?" + SparqlVariable.TARGET_LABEL + " ?" + SparqlVariable.TARGET_LEXICAL_ENTRY
+            + " ?" + SparqlVariable.SOURCE_LEXICAL_ENTRY + " ?" + SparqlVariable.SOURCE_LABEL + " ?" + SparqlVariable.NOTE + " ?" + SparqlVariable.LABEL + "\n"
             + "ORDER BY ?" + SparqlVariable.REIFIED_RELATION;
 
     public static final String DATA_ETYMOLOGY
@@ -1086,8 +1090,8 @@ public class SparqlSelectData {
             + SparqlVariable.LABEL + " ?"
             + SparqlVariable.NOTE + " ?confidence";
 
-    public static final String DATA_COLLOCATIONS = 
-            SparqlPrefix.FRAC.getSparqlPrefix() + "\n"
+    public static final String DATA_COLLOCATIONS
+            = SparqlPrefix.FRAC.getSparqlPrefix() + "\n"
             + SparqlPrefix.DCT.getSparqlPrefix() + "\n"
             + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
             + SparqlPrefix.ONTO.getSparqlPrefix() + "\n"
@@ -1096,8 +1100,8 @@ public class SparqlSelectData {
             + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
             + SparqlPrefix.RDF.getSparqlPrefix() + "\n"
             + "SELECT ?" + SparqlVariable.COLLOCATION + " ?" + SparqlVariable.DESCRIPTION + " ?" + SparqlVariable.EXAMPLE
-            + " ?" + SparqlVariable.LABEL + " ?" + SparqlVariable.CREATION_DATE + " ?" + SparqlVariable.LAST_UPDATE + " ?" + SparqlVariable.CREATOR 
-            + " ?" + SparqlVariable.NOTE + " ?" + SparqlVariable.CONFIDENCE + " ?" + SparqlVariable.HEAD +  " ?" + SparqlVariable.FREQUENCY + "\n"
+            + " ?" + SparqlVariable.LABEL + " ?" + SparqlVariable.CREATION_DATE + " ?" + SparqlVariable.LAST_UPDATE + " ?" + SparqlVariable.CREATOR
+            + " ?" + SparqlVariable.NOTE + " ?" + SparqlVariable.CONFIDENCE + " ?" + SparqlVariable.HEAD + " ?" + SparqlVariable.FREQUENCY + "\n"
             + "(GROUP_CONCAT(concat(str(?entity), \";\", str(?entityLabel), \"@\", lang(?entityLabel), "
             + "\";\", str(?type), \";\", REPLACE(str(?positionRelation), \"http://www.w3.org/1999/02/22-rdf-syntax-ns#_\", \"\"));SEPARATOR=\"---\") AS ?components)\n"
             + "FROM onto:explicit\n"
@@ -1119,11 +1123,10 @@ public class SparqlSelectData {
             + "    OPTIONAL { ?" + SparqlVariable.COLLOCATION + " frac:frequency [ rdf:value ?" + SparqlVariable.FREQUENCY + " ] }"
             + "    FILTER (strstarts(str(?positionRelation), \"http://www.w3.org/1999/02/22-rdf-syntax-ns#_\"))\n"
             + "    FILTER (strstarts(str(?type), \"http://www.w3.org/ns/lemon/ontolex#\"))\n"
-            + "} GROUP BY ?" + SparqlVariable.COLLOCATION + " ?" + SparqlVariable.DESCRIPTION + " ?" + SparqlVariable.EXAMPLE 
-            + " ?" + SparqlVariable.LABEL + " ?" + SparqlVariable.CREATOR + " ?" + SparqlVariable.CREATION_DATE 
+            + "} GROUP BY ?" + SparqlVariable.COLLOCATION + " ?" + SparqlVariable.DESCRIPTION + " ?" + SparqlVariable.EXAMPLE
+            + " ?" + SparqlVariable.LABEL + " ?" + SparqlVariable.CREATOR + " ?" + SparqlVariable.CREATION_DATE
             + " ?" + SparqlVariable.LAST_UPDATE + " ?" + SparqlVariable.NOTE + " ?" + SparqlVariable.CONFIDENCE + " ?" + SparqlVariable.HEAD + " ?" + SparqlVariable.FREQUENCY;
-    
-    
+
     public static final String DATA_LINGUISTIC_RELATION
             = SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
             + SparqlPrefix.ONTO.getSparqlPrefix() + "\n"

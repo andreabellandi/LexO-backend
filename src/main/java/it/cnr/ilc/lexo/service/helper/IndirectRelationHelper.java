@@ -21,16 +21,20 @@ public class IndirectRelationHelper extends TripleStoreDataHelper<ReifiedRelatio
         data.setNote(getStringValue(bs, SparqlVariable.NOTE));
         data.setProperties(getLinkedEntities(bs, getStringValue(bs, SparqlVariable.EXTRA)));
         data.setRelation(getStringValue(bs, SparqlVariable.REIFIED_RELATION));
-        data.setSource(getStringValue(bs, SparqlVariable.LEXICAL_ENTRY));
+        data.setSource(getStringValue(bs, SparqlVariable.SOURCE));
         data.setTarget(getStringValue(bs, SparqlVariable.TARGET));
-        data.setTargetDefinition(getStringValue(bs, SparqlVariable.DEFINITION));
         data.setTargetLabel(getStringValue(bs, SparqlVariable.TARGET_LABEL));
+        data.setSourceLabel(getStringValue(bs, SparqlVariable.SOURCE_LABEL));
         data.setType(getStringValue(bs, SparqlVariable.CATEGORY));
         data.setConfidence(getDoubleNumber(bs, SparqlVariable.CONFIDENCE));
         data.setCreationDate(getStringValue(bs, SparqlVariable.CREATION_DATE));
         data.setCreator(getStringValue(bs, SparqlVariable.COMPONENT_CREATION_AUTHOR));
         data.setLastUpdate(getStringValue(bs, SparqlVariable.LAST_UPDATE));
         data.setCategory(getStringValue(bs, SparqlVariable.CATEGORY));
+        data.setSourceLexicalEntry(!getStringValue(bs, SparqlVariable.SOURCE_LEXICAL_ENTRY).isEmpty() ?
+                getLiteralLabel(bs, SparqlVariable.SOURCE_LEXICAL_ENTRY) + "@" + getLiteralLanguage(bs, SparqlVariable.SOURCE_LEXICAL_ENTRY) : "");
+        data.setTargetLexicalEntry(!getStringValue(bs, SparqlVariable.TARGET_LEXICAL_ENTRY).isEmpty() ?
+                getLiteralLabel(bs, SparqlVariable.TARGET_LEXICAL_ENTRY) + "@" + getLiteralLanguage(bs, SparqlVariable.TARGET_LEXICAL_ENTRY)  : "");
     }
 
     @Override

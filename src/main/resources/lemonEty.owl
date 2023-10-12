@@ -1,0 +1,307 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://lari-datasets.ilc.cnr.it/lemonEty#"
+     xml:base="http://lari-datasets.ilc.cnr.it/lemonEty"
+     xmlns:dc="http://purl.org/dc/elements/1.1/"
+     xmlns:ns="http://creativecommons.org/ns#"
+     xmlns:dct="http://purl.org/dc/terms/"
+     xmlns:ns1="http://www.w3.org/2003/06/sw-vocab-status/ns#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:vann="http://purl.org/vocab/vann/">
+    <owl:Ontology rdf:about="http://lari-datasets.ilc.cnr.it/lemonEty#">
+        <owl:imports rdf:resource="http://www.w3.org/ns/lemon/all"/>
+        <owl:imports rdf:resource="http://www.w3.org/ns/lemon/ontolex"/>
+        <dct:contributor rdf:resource="http://www.ilc.cnr.it/en/content/anas_fahad_khan"/>
+        <dct:description xml:lang="en">lemonEty is an extension of the ontolex-lemon model that provides concepts and properties that are useful in representing etymological information.</dct:description>
+        <dct:issued>2018-05-04</dct:issued>
+        <dct:rights>CC-BY</dct:rights>
+        <dct:title xml:lang="en">lemonEty</dct:title>
+        <owl:versionInfo>Version 0.1.0</owl:versionInfo>
+    </owl:Ontology>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Annotation properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://purl.org/dc/terms/contributor -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.org/dc/terms/contributor"/>
+    
+
+
+    <!-- http://purl.org/dc/terms/description -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.org/dc/terms/description"/>
+    
+
+
+    <!-- http://purl.org/dc/terms/issued -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.org/dc/terms/issued"/>
+    
+
+
+    <!-- http://purl.org/dc/terms/rights -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.org/dc/terms/rights"/>
+    
+
+
+    <!-- http://purl.org/dc/terms/title -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.org/dc/terms/title"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://lari-datasets.ilc.cnr.it/lemonEty#cognate -->
+
+    <owl:ObjectProperty rdf:about="http://lari-datasets.ilc.cnr.it/lemonEty#cognate">
+        <rdfs:range rdf:resource="http://lari-datasets.ilc.cnr.it/lemonEty#Cognate"/>
+        <rdfs:comment xml:lang="en">&apos;cognate&apos; is an object property linking a linguistic entity with a Cognate.</rdfs:comment>
+        <rdfs:label xml:lang="en">cognate</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://lari-datasets.ilc.cnr.it/lemonEty#etyLinkType -->
+
+    <owl:ObjectProperty rdf:about="http://lari-datasets.ilc.cnr.it/lemonEty#etyLinkType">
+        <rdfs:range rdf:resource="http://lari-datasets.ilc.cnr.it/lemonEty#EtyLink"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://lari-datasets.ilc.cnr.it/lemonEty#etySource -->
+
+    <owl:ObjectProperty rdf:about="http://lari-datasets.ilc.cnr.it/lemonEty#etySource">
+        <rdfs:domain rdf:resource="http://lari-datasets.ilc.cnr.it/lemonEty#EtyLink"/>
+        <rdfs:comment xml:lang="en">&apos;etymological source&apos; is an object property that links an EtyLink with a linguistic entity which is the source of the relationship which the former represents.</rdfs:comment>
+        <rdfs:label xml:lang="en">etymological source</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://lari-datasets.ilc.cnr.it/lemonEty#etySubSource -->
+
+    <owl:ObjectProperty rdf:about="http://lari-datasets.ilc.cnr.it/lemonEty#etySubSource">
+        <rdfs:domain rdf:resource="http://lari-datasets.ilc.cnr.it/lemonEty#EtyLink"/>
+        <rdfs:comment xml:lang="en">&apos;etymological sub-source&apos; is an object property that further specifies the etymological source of an EtyLink (assuming a prior use of etySource).</rdfs:comment>
+        <rdfs:label xml:lang="en">etymological sub-source</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://lari-datasets.ilc.cnr.it/lemonEty#etySubTarget -->
+
+    <owl:ObjectProperty rdf:about="http://lari-datasets.ilc.cnr.it/lemonEty#etySubTarget">
+        <rdfs:domain rdf:resource="http://lari-datasets.ilc.cnr.it/lemonEty#EtyLink"/>
+        <rdfs:comment xml:lang="en">&apos;etymological sub-target&apos; is an object property that further specifies the etymological target of an EtyLink (assuming a prior use of etyTarget).</rdfs:comment>
+        <rdfs:label xml:lang="en">etymological sub-target</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://lari-datasets.ilc.cnr.it/lemonEty#etyTarget -->
+
+    <owl:ObjectProperty rdf:about="http://lari-datasets.ilc.cnr.it/lemonEty#etyTarget">
+        <rdfs:domain rdf:resource="http://lari-datasets.ilc.cnr.it/lemonEty#EtyLink"/>
+        <rdfs:comment xml:lang="en">&apos;etymological target&apos; is an object property that links an EtyLink with a linguistic entity which is the target of the relationship which the former represents.</rdfs:comment>
+        <rdfs:label xml:lang="en">etymological target</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://lari-datasets.ilc.cnr.it/lemonEty#etymology -->
+
+    <owl:ObjectProperty rdf:about="http://lari-datasets.ilc.cnr.it/lemonEty#etymology">
+        <rdfs:range rdf:resource="http://lari-datasets.ilc.cnr.it/lemonEty#Etymology"/>
+        <rdfs:comment xml:lang="en">&apos;etymology&apos; is  an object property linking a linguistic entity with an Etymology.</rdfs:comment>
+        <rdfs:label xml:lang="en">etymology</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://lari-datasets.ilc.cnr.it/lemonEty#etymon -->
+
+    <owl:ObjectProperty rdf:about="http://lari-datasets.ilc.cnr.it/lemonEty#etymon">
+        <rdfs:domain rdf:resource="http://lari-datasets.ilc.cnr.it/lemonEty#Etymology"/>
+        <rdfs:range rdf:resource="http://lari-datasets.ilc.cnr.it/lemonEty#Etymon"/>
+        <rdfs:comment xml:lang="en">&apos;etymon&apos; is  an object property that relates an Etymology with its related etymons.</rdfs:comment>
+        <rdfs:label xml:lang="en">etymon</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://lari-datasets.ilc.cnr.it/lemonEty#hasEtyLink -->
+
+    <owl:ObjectProperty rdf:about="http://lari-datasets.ilc.cnr.it/lemonEty#hasEtyLink">
+        <rdfs:domain rdf:resource="http://lari-datasets.ilc.cnr.it/lemonEty#Etymology"/>
+        <rdfs:range rdf:resource="http://lari-datasets.ilc.cnr.it/lemonEty#EtyLink"/>
+        <rdfs:comment xml:lang="en">&apos;has etymological link&apos; is an object property that relates an Etymology with one of its constituent Etymological Link objects.</rdfs:comment>
+        <rdfs:label xml:lang="en">has etymological link</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://lari-datasets.ilc.cnr.it/lemonEty#isCognateOf -->
+
+    <owl:ObjectProperty rdf:about="http://lari-datasets.ilc.cnr.it/lemonEty#isCognateOf">
+        <rdfs:domain rdf:resource="http://lari-datasets.ilc.cnr.it/lemonEty#Cognate"/>
+        <rdfs:comment xml:lang="en">&apos;is cognate of&apos; is an object property linking a Cognate with some linguistic entity.</rdfs:comment>
+        <rdfs:label xml:lang="en">isCognateOf</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://lari-datasets.ilc.cnr.it/lemonEty#isEtyLinkOf -->
+
+    <owl:ObjectProperty rdf:about="http://lari-datasets.ilc.cnr.it/lemonEty#isEtyLinkOf">
+        <rdfs:domain rdf:resource="http://lari-datasets.ilc.cnr.it/lemonEty#EtyLink"/>
+        <rdfs:range rdf:resource="http://lari-datasets.ilc.cnr.it/lemonEty#Etymology"/>
+        <rdfs:comment xml:lang="en">&apos;is etymological link of&apos; is an object property that relates an Etymology with an Etymological Link.</rdfs:comment>
+        <rdfs:label xml:lang="en">is etymological link of</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://lari-datasets.ilc.cnr.it/lemonEty#isEtymologyOf -->
+
+    <owl:ObjectProperty rdf:about="http://lari-datasets.ilc.cnr.it/lemonEty#isEtymologyOf">
+        <rdfs:domain rdf:resource="http://lari-datasets.ilc.cnr.it/lemonEty#Etymology"/>
+        <rdfs:comment xml:lang="en">&apos;is etymology of&apos; is an object property linking an Etymology with a linguistic entity.</rdfs:comment>
+        <rdfs:label xml:lang="en">is etymology of</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://lari-datasets.ilc.cnr.it/lemonEty#isEtymonOf -->
+
+    <owl:ObjectProperty rdf:about="http://lari-datasets.ilc.cnr.it/lemonEty#isEtymonOf">
+        <rdfs:domain rdf:resource="http://lari-datasets.ilc.cnr.it/lemonEty#Etymon"/>
+        <rdfs:range rdf:resource="http://lari-datasets.ilc.cnr.it/lemonEty#Etymology"/>
+        <rdfs:comment xml:lang="en">&apos;is etymon of&apos; is an object property that relates an Etymon with the etymologies it is a part of.</rdfs:comment>
+        <rdfs:label xml:lang="en">is etymon of</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://lari-datasets.ilc.cnr.it/lemonEty#startingLink -->
+
+    <owl:ObjectProperty rdf:about="http://lari-datasets.ilc.cnr.it/lemonEty#startingLink">
+        <rdfs:subPropertyOf rdf:resource="http://lari-datasets.ilc.cnr.it/lemonEty#hasEtyLink"/>
+        <rdfs:domain rdf:resource="http://lari-datasets.ilc.cnr.it/lemonEty#Etymology"/>
+        <rdfs:range rdf:resource="http://lari-datasets.ilc.cnr.it/lemonEty#EtyLink"/>
+        <rdfs:comment xml:lang="en">&apos;starting link&apos; is  an object property that relates an Etymology with its first Etymological Link.</rdfs:comment>
+        <rdfs:label xml:lang="en">starting link</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://lari-datasets.ilc.cnr.it/lemonEty#etyLinkType -->
+
+    <owl:DatatypeProperty rdf:about="http://lari-datasets.ilc.cnr.it/lemonEty#etyLinkType"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://lari-datasets.ilc.cnr.it/lemonEty#Cognate -->
+
+    <owl:Class rdf:about="http://lari-datasets.ilc.cnr.it/lemonEty#Cognate">
+        <rdfs:subClassOf rdf:resource="http://www.w3.org/ns/lemon/ontolex#LexicalEntry"/>
+        <rdfs:comment xml:lang="en">&apos;Cognate&apos; is a subclass of Lexical Entry that consists of lexemes which are cognates of another Lexical Entry.</rdfs:comment>
+        <rdfs:label xml:lang="en">cognate</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://lari-datasets.ilc.cnr.it/lemonEty#EtyLink -->
+
+    <owl:Class rdf:about="http://lari-datasets.ilc.cnr.it/lemonEty#EtyLink">
+        <rdfs:comment xml:lang="en">&apos;Etymological Link&apos; is a class that consists of individuals that represent the etymological relationship between two linguistic entities.</rdfs:comment>
+        <rdfs:label xml:lang="en">Etymological Link</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://lari-datasets.ilc.cnr.it/lemonEty#Etymology -->
+
+    <owl:Class rdf:about="http://lari-datasets.ilc.cnr.it/lemonEty#Etymology">
+        <rdfs:comment xml:lang="en">&apos;Etymology&apos; is a class that consists of individuals that describe the history of a Lexical Entry.</rdfs:comment>
+        <rdfs:label xml:lang="en">Etymology</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://lari-datasets.ilc.cnr.it/lemonEty#Etymon -->
+
+    <owl:Class rdf:about="http://lari-datasets.ilc.cnr.it/lemonEty#Etymon">
+        <rdfs:subClassOf rdf:resource="http://www.w3.org/ns/lemon/ontolex#LexicalEntry"/>
+        <rdfs:comment xml:lang="en">&apos;Etymon&apos; is a subclass of Lexical Entry that consists of invidividuals whose role is to describe the origin and history of another Lexical Entry.</rdfs:comment>
+        <rdfs:label xml:lang="en">etymon</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Annotations
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    <rdf:Description rdf:about="http://lari-datasets.ilc.cnr.it/lemonEty#etyLinkType">
+        <rdfs:comment xml:lang="en">&apos;etymological link type&apos; specifies the type of a Etymological Link.</rdfs:comment>
+        <rdfs:label xml:lang="en">etymological link type</rdfs:label>
+    </rdf:Description>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 4.5.9.2019-02-01T07:24:44Z) https://github.com/owlcs/owlapi -->
+
+

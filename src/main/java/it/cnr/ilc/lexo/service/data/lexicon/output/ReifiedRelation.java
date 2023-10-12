@@ -28,8 +28,14 @@ public class ReifiedRelation extends Entity implements Data {
     private String target;
     @ApiModelProperty(value = "label of the target IRI")
     private String targetLabel;
-    @ApiModelProperty(value = "definition of the target IRI")
-    private String targetDefinition;
+    @ApiModelProperty(value = "label of the source IRI")
+    private String sourceLabel;
+
+    @ApiModelProperty(value = "source lexical entry if the source is a sense")
+    private String sourceLexicalEntry;
+    @ApiModelProperty(value = "target lexical entry if the source is a sense")
+    private String targetLexicalEntry;
+
     @ApiModelProperty(value = "a note of the relation")
     private String note;
     @ApiModelProperty(value = "a label of the relation")
@@ -65,6 +71,22 @@ public class ReifiedRelation extends Entity implements Data {
 
     public String getSource() {
         return source;
+    }
+
+    public String getSourceLexicalEntry() {
+        return sourceLexicalEntry;
+    }
+
+    public void setSourceLexicalEntry(String sourceLexicalEntry) {
+        this.sourceLexicalEntry = sourceLexicalEntry;
+    }
+
+    public String getTargetLexicalEntry() {
+        return targetLexicalEntry;
+    }
+
+    public void setTargetLexicalEntry(String targetLexicalEntry) {
+        this.targetLexicalEntry = targetLexicalEntry;
     }
 
     public void setSource(String source) {
@@ -111,12 +133,12 @@ public class ReifiedRelation extends Entity implements Data {
         this.targetLabel = targetLabel;
     }
 
-    public String getTargetDefinition() {
-        return targetDefinition;
+    public String getSourceLabel() {
+        return sourceLabel;
     }
 
-    public void setTargetDefinition(String targetDefinition) {
-        this.targetDefinition = targetDefinition;
+    public void setSourceLabel(String sourceLabel) {
+        this.sourceLabel = sourceLabel;
     }
 
 }

@@ -173,6 +173,10 @@ public final class LexiconUpdateManager implements Manager, Cached {
         Manager.validateWithEnum("type", OntoLexEntity.FrequencyRel.class, type);
     }
 
+    public void validateConfidence(String type) throws ManagerException {
+        Manager.validateWithEnum("type", EnumUtil.GenericRelationConfidence.class, type);
+    }
+
     public void validateURL(String url, String... urlPrefix) throws ManagerException {
         if (!StringUtil.validateURL(url)) {
             throw new ManagerException(url + " is not a valid url");
@@ -804,15 +808,12 @@ public final class LexiconUpdateManager implements Manager, Cached {
                 gru.setCurrentValue(" ?x . ?x rdf:value " + gru.getCurrentValue());
             }
         } else if (gru.getType().equals(EnumUtil.GenericRelation.Confidence.toString())) {
-            if (gru.getRelation().contains(EnumUtil.GenericRelationConfidence.translationConfidence.toString())) {
-                if (gru.getValue() != null) {
-                    validateConfidenceValue(gru.getValue());
-                }
-                if (gru.getCurrentValue() != null) {
-                    validateConfidenceValue(gru.getCurrentValue());
-                }
-            } else {
-                throw new ManagerException(gru.getType() + " is not a valid relation type");
+            validateConfidence(gru.getRelation());
+            if (gru.getValue() != null) {
+                validateConfidenceValue(gru.getValue());
+            }
+            if (gru.getCurrentValue() != null) {
+                validateConfidenceValue(gru.getCurrentValue());
             }
         } else {
             throw new ManagerException(gru.getType() + " is not a valid relation type");

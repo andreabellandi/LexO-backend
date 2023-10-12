@@ -48,6 +48,9 @@ public class SparqlVariable {
     public static final String LEXICAL_ENTRY_CONSTITUENT = "constituent";
     public static final String LEXICAL_ENTRY_ETYMOLOGY = "etymology";
 
+    public static final String SOURCE_LEXICAL_ENTRY = "sourceLexicalEntry";
+    public static final String TARGET_LEXICAL_ENTRY = "targetLexicalEntry";
+
     public static final String FORM = "form";
 //    public static final String FORM_INSTANCE_NAME = "formInstanceName";
     public static final String FORM_TYPE = "formType";
@@ -110,7 +113,7 @@ public class SparqlVariable {
     public static final String FORMAT = "format";
     public static final String IMAGE_CREATOR = "imageCreator";
     public static final String LEXICAL_ENTITY = "lexicalEntity";
-    
+
     public static final String LEXICAL_FORM = "lexicalForm";
 
     public static final String LEXICAL_CONCEPT = "lexicalConcept";
@@ -151,8 +154,11 @@ public class SparqlVariable {
     public static final String SAMEAS = "sameAs";
 
     public static final String SOURCE = "source";
+    public static final String SOURCE_DEFINITION = "sourceDefinition";
 
     public static final String TARGET = "target";
+    public static final String TARGET_DEFINITION = "targetDefinition";
+
     public static final String IRI = "IRI";
     public static final String LENGHT = "lenght";
 
@@ -193,16 +199,15 @@ public class SparqlVariable {
     public static final String EDGE_INDEX = "edgeIndex";
     public static final String EDGE = "edge";
 
-    
-     public static final String PARENT = "parent";
-     public static final String USAGE_VALUES = "usageValues";
-     
-     public static final String REIFIED_RELATION = "reifiedRelation";
-     public static final String REIFIED_RELATION_PREDICATE = "reifiedRelationPredicate";
-     public static final String REIFIED_RELATION_OBJECT = "reifiedRelationObject";
-     public static final String CATEGORY = "category";
-     public static final String EXTRA = "extra";
-     
+    public static final String PARENT = "parent";
+    public static final String USAGE_VALUES = "usageValues";
+
+    public static final String REIFIED_RELATION = "reifiedRelation";
+    public static final String REIFIED_RELATION_PREDICATE = "reifiedRelationPredicate";
+    public static final String REIFIED_RELATION_OBJECT = "reifiedRelationObject";
+    public static final String CATEGORY = "category";
+    public static final String EXTRA = "extra";
+
     // skos variables
     public static final String CHILD = "child";
     public static final String GCHILD = "grandchild";
