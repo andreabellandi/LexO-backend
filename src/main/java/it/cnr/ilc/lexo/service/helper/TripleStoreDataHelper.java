@@ -36,15 +36,14 @@ public abstract class TripleStoreDataHelper<D extends Data> extends Helper<D> {
 //    private final Pattern typePattern = Pattern.compile(TYPE_PATTERN);
 //
 //    private final String namespace = LexOProperties.getProperty("repository.lexicon.namespace");
-
     public abstract void fillData(D data, BindingSet bs);
-
+    
     public List<D> newDataList(TupleQueryResult res) {
         return res.stream().
                 map(bs -> newData(bs)).
                 collect(Collectors.toList());
     }
-
+    
     public D newData(TupleQueryResult res) {
         try {// if res.next == null ?????? //java.util.NoSuchElementException
             D data = getDataClass().getDeclaredConstructor().newInstance();
@@ -54,7 +53,7 @@ public abstract class TripleStoreDataHelper<D extends Data> extends Helper<D> {
             throw new RuntimeException(ex);
         }
     }
-
+    
     public D newData(BindingSet bs) {
         try {
             D data = getDataClass().getDeclaredConstructor().newInstance();
@@ -64,37 +63,37 @@ public abstract class TripleStoreDataHelper<D extends Data> extends Helper<D> {
             throw new RuntimeException(ex);
         }
     }
-
+    
     public String getStringValue(BindingSet bs, String variable) {
         return (((bs.getBinding(variable) != null) ? bs.getBinding(variable).getValue().stringValue() : ""));
     }
-
+    
     public String getLocalName(BindingSet bs, String variable) {
         return (bs.getBinding(variable) != null) ? ((IRI) bs.getBinding(variable).getValue()).getLocalName() : "";
     }
-
+    
     public String getLiteralLabel(BindingSet bs, String variable) {
         return (bs.getBinding(variable) != null) ? ((Literal) bs.getBinding(variable).getValue()).getLabel() : "";
     }
-
+    
     public String getLiteralLanguage(BindingSet bs, String variable) {
         return (bs.getBinding(variable) != null) ? ((((Literal) bs.getBinding(variable).getValue()).getLanguage().isPresent())
                 ? ((Literal) bs.getBinding(variable).getValue()).getLanguage().get() : "")
                 : "";
     }
-
+    
     public int getIntegerNumber(BindingSet bs, String variable) {
         return (bs.getBinding(variable) != null) ? Integer.parseInt(bs.getBinding(variable).getValue().stringValue()) : -1;
     }
-
+    
     public double getDoubleNumber(BindingSet bs, String variable) {
         return (bs.getBinding(variable) != null) ? Double.parseDouble(bs.getBinding(variable).getValue().stringValue()) : -1;
     }
-
+    
     public boolean isInferred(BindingSet bs, String variable) {
         return (bs.getBinding(variable) != null) ? bs.getBinding(variable).getValue().stringValue().contains("implicit") : false;
     }
-
+    
     public ArrayList<String> getTypes(BindingSet bs, String _types) {
         ArrayList<String> types = new ArrayList();
         if (!_types.isEmpty()) {
@@ -103,12 +102,14 @@ public abstract class TripleStoreDataHelper<D extends Data> extends Helper<D> {
 //                types.add(matcher.group(1));
 //            }
             for (String t : _types.split(";")) {
-                types.add(t.split("#")[1].trim());
+                if (t.contains("#")) {
+                    types.add(t.split("#")[1].trim());
+                }
             }
         }
         return types;
     }
-
+    
     public ArrayList<String> getCatalogs(BindingSet bs, String _cats) {
         ArrayList<String> types = new ArrayList();
         if (!_cats.isEmpty()) {
@@ -118,7 +119,7 @@ public abstract class TripleStoreDataHelper<D extends Data> extends Helper<D> {
         }
         return types;
     }
-
+    
     public ArrayList<Morphology> getMorphology(BindingSet bs, String morpho) {
         ArrayList<Morphology> morphos = new ArrayList();
         if (!morpho.isEmpty()) {
@@ -133,7 +134,7 @@ public abstract class TripleStoreDataHelper<D extends Data> extends Helper<D> {
         }
         return morphos;
     }
-
+    
     public ArrayList<NodeLinks._Target> getLinkTargets(String t) {
         ArrayList<NodeLinks._Target> target = new ArrayList();
         for (String _t : t.split(";")) {
@@ -154,7 +155,7 @@ public abstract class TripleStoreDataHelper<D extends Data> extends Helper<D> {
         }
         return imgs;
     }
-
+    
     public ArrayList<Morphology> getMorphologyWithPoS(BindingSet bs, String morpho, String pos) {
         ArrayList<Morphology> morphos = new ArrayList();
         if (!pos.isEmpty()) {
@@ -172,7 +173,7 @@ public abstract class TripleStoreDataHelper<D extends Data> extends Helper<D> {
         }
         return morphos;
     }
-
+    
     public boolean isExternalUri(String uri) {
         if (StringUtil.validateURL(uri)) {
             try {
@@ -216,5 +217,5 @@ public abstract class TripleStoreDataHelper<D extends Data> extends Helper<D> {
         }
         return _entities;
     }
-
+    
 }
