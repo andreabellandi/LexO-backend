@@ -5,17 +5,27 @@
  */
 package it.cnr.ilc.lexo.manager;
 
-import com.fasterxml.jackson.core.JacksonException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import it.cnr.ilc.lexo.HibernateUtil;
-import it.cnr.ilc.lexo.hibernate.entity.ConfigurationParameter;
-import it.cnr.ilc.lexo.service.data.lexicon.input.Config;
-import it.cnr.ilc.lexo.service.data.lexicon.input.ConfigUpdater;
-import java.util.Date;
-import java.util.List;
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Restrictions;
+import com.github.jsonldjava.shaded.com.google.common.io.Files;
+import it.cnr.ilc.lexo.LexOProperties;
+import it.cnr.ilc.lexo.service.Configuration;
+import it.cnr.ilc.lexo.service.data.RepositoryData;
+import it.cnr.ilc.lexo.sparql.SparqlRepositoryConfiguration;
+import it.cnr.ilc.lexo.util.EnumUtil;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import org.glassfish.jersey.media.multipart.MultiPart;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 
 /**
  *
@@ -30,49 +40,55 @@ public class ConfigurationManager implements Manager, Cached {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    public List<ConfigurationParameter> loadConfigurations() {
-        return HibernateUtil.getSession().createCriteria(ConfigurationParameter.class).list();
-    }
+    public Response restCall(String restUrl, String restType, RepositoryData rd) throws URISyntaxException, IOException, ManagerException {
+        Client client = ClientBuilder.newClient();
+        WebTarget wt = client.target(restUrl);
+        switch (restType) {
+            case "GET": {
+                return wt.request().get();
+            }
+            case "POST": {
+                if (rd == null) {
+                    return wt.request().post(null);
+                } else {
+                    File file = getAttachedFile(rd);
+                    try {
+                        MultiPart multiPart = new MultiPart();
+//                    multiPart.setMediaType(MediaType.MULTIPART_FORM_DATA_TYPE);
+                        FileDataBodyPart fileDataBodyPart = new FileDataBodyPart("file", file, MediaType.TEXT_PLAIN_TYPE);
+                        multiPart.bodyPart(fileDataBodyPart);
+                        return wt.register(MultiPartFeature.class)
+                                .request(MediaType.APPLICATION_JSON_TYPE)
+                                .post(Entity.entity(multiPart, multiPart.getMediaType()));
+                    } finally {
+                        file.delete();
+                    }
+                }
+            }
+            case "PUT": {
 
-    public ConfigurationParameter loadConfigParameter(String key) {
-        Criteria criteria = HibernateUtil.getSession().createCriteria(ConfigurationParameter.class);
-        criteria.add(Restrictions.eq("key", key));
-        List<ConfigurationParameter> list = criteria.list();
-        return list.isEmpty() ? null : list.get(0);
-    }
-
-    public Date updateConfiguration(ConfigUpdater cu) throws ManagerException {
-        ConfigurationParameter cp = loadConfigParameter(cu.getParam());
-        if (cp == null) {
-            throw new ManagerException(cu.getParam() + " is not a valid configuration parameter");
-        } else {
-            ConfigurationParameter _cp = new ConfigurationParameter(cu.getParam(), cu.getValue());
-            domainManager.update(_cp);
-            return _cp.getTime();
+            }
+            case "DELETE": {
+                return wt.request().delete();
+            }
+            default:
         }
-    }
-
-    public List<Config> getConfigurations() {
-        // TODO
         return null;
     }
 
-    public void initConfigurations(String json) throws ManagerException {
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode config = getJsonNode(mapper, json);
-        if (config != null) {
-            
-        } else {
-            throw new ManagerException("Input Json syntax error");
-        }
-    }
-    
-    private JsonNode getJsonNode(ObjectMapper mapper, String json) {
-        try {
-            return mapper.readTree(json);
-        } catch (JacksonException e) {
-            return null;
-        }
+    private File getAttachedFile(RepositoryData rd) throws ManagerException, IOException {
+        validateRuleset(rd.getRuleset());
+        String content = SparqlRepositoryConfiguration.REPOSITORY_CONFIGURATION.replace("_REPO_ID_", rd.getRepoID())
+                .replace("_REPO_LABEL_", rd.getLabelID())
+                .replace("_BASE_URL_", rd.getBaseUrl())
+                .replace("_RULESET_", rd.getRuleset());
+//        InputStream stream = new ByteArrayInputStream(file.getBytes(StandardCharsets.UTF_8));
+        File file = new File("pippo.ttl");
+        Files.write(content.getBytes(), file);
+        return file;
     }
 
+    public void validateRuleset(String rs) throws ManagerException {
+        Manager.validateWithEnum("rel", EnumUtil.RulesetRepositoryConfiguration.class, rs);
+    }
 }

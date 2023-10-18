@@ -52,7 +52,7 @@ public class Export extends Service {
             notes = "This method exports the lexicon according to the input settings")
     public Response export(@QueryParam("key") String key, ExportSetting set) throws HelperException {
         try {
-            log(Level.INFO, "export/lexicon\n" + LogUtil.getLogFormPayload(set));
+            log(Level.INFO, "export/lexicon\n" + LogUtil.getLogFromPayload(set));
             File export = exportManager.export(set);
             return Response.ok(export)
                     .type(MediaType.APPLICATION_OCTET_STREAM)

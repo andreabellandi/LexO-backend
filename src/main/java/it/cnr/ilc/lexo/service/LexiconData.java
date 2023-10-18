@@ -545,7 +545,7 @@ public class LexiconData extends Service {
     public Response sensesList(@HeaderParam("Authorization") String key, LexicalSenseFilter lsf) throws HelperException {
         try {
             userCheck(key);
-            log(Level.INFO, "lexicon/data/filteredSenses\n" + LogUtil.getLogFormPayload(lsf));
+            log(Level.INFO, "lexicon/data/filteredSenses\n" + LogUtil.getLogFromPayload(lsf));
             TupleQueryResult lexicalSenses = lexiconManager.getFilterdLexicalSenses(lsf);
             List<LexicalSenseItem> senses = lexicalSenseFilterHelper.newDataList(lexicalSenses);
             HitsDataList hdl = new HitsDataList(lexicalSenseFilterHelper.getTotalHits(), senses);
@@ -574,7 +574,7 @@ public class LexiconData extends Service {
     public Response entriesList(@HeaderParam("Authorization") String key, LexicalEntryFilter lef) throws HelperException {
         try {
             userCheck(key);
-            log(Level.INFO, "lexicon/data/lexicalEntries\n" + LogUtil.getLogFormPayload(lef));
+            log(Level.INFO, "lexicon/data/lexicalEntries\n" + LogUtil.getLogFromPayload(lef));
             TupleQueryResult lexicalEnties = lexiconManager.getFilterdLexicalEntries(lef);
             List<LexicalEntryItem> entries = lexicalEntryFilterHelper.newDataList(lexicalEnties);
             HitsDataList hdl = new HitsDataList(lexicalEntryFilterHelper.getTotalHits(), entries);
@@ -603,7 +603,7 @@ public class LexiconData extends Service {
     public Response forms(@HeaderParam("Authorization") String key, FormFilter ff) throws HelperException {
         try {
             userCheck(key);
-            log(Level.INFO, "lexicon/data/filteredForms\n" + LogUtil.getLogFormPayload(ff));
+            log(Level.INFO, "lexicon/data/filteredForms\n" + LogUtil.getLogFromPayload(ff));
             TupleQueryResult forms = lexiconManager.getFilterdForms(ff);
             List<FormItem> fi = formItemsHelper.newDataList(forms);
             HitsDataList hdl = new HitsDataList(formItemsHelper.getTotalHits(), fi);
@@ -704,7 +704,7 @@ public class LexiconData extends Service {
     public Response lexicalConceptsList(@HeaderParam("Authorization") String key, LexicalConceptFilter lcf) throws HelperException {
         try {
             userCheck(key);
-            log(Level.INFO, "lexicon/data/filteredLexicalConcepts\n" + LogUtil.getLogFormPayload(lcf));
+            log(Level.INFO, "lexicon/data/filteredLexicalConcepts\n" + LogUtil.getLogFromPayload(lcf));
             TupleQueryResult lexicalConcepts = lexiconManager.getFilterdLexicalConcepts(lcf);
             List<LexicalConceptItem> lcs = lexicalConceptItemHelper.newDataList(lexicalConcepts);
             HitsDataList hdl = new HitsDataList(lexicalConceptItemHelper.getTotalHits(), lcs);

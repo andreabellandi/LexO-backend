@@ -1,11 +1,13 @@
 package it.cnr.ilc.lexo.util;
 
+import it.cnr.ilc.lexo.service.data.RepositoryData;
 import it.cnr.ilc.lexo.service.data.lexicon.input.ExportSetting;
 import it.cnr.ilc.lexo.service.data.lexicon.input.FormFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalConceptFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalEntryFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalSenseFilter;
 import java.util.Arrays;
+import org.eclipse.rdf4j.repository.config.RepositoryConfig;
 
 /**
  *
@@ -13,7 +15,7 @@ import java.util.Arrays;
  */
 public class LogUtil {
 
-    public static String getLogFormPayload(Object payload) {
+    public static String getLogFromPayload(Object payload) {
         String log = null;
         if (payload.getClass().getName().contains("LexicalEntryFilter")) {
             LexicalEntryFilter lef = (LexicalEntryFilter) payload;
@@ -30,6 +32,9 @@ public class LogUtil {
         } else if (payload.getClass().getName().contains("ExportSetting")) {
             ExportSetting es = (ExportSetting) payload;
             log = getLog(es);
+        } else if (payload.getClass().getName().contains("RepositoryData")) {
+            RepositoryData rd = (RepositoryData) payload;
+            log = getLog(rd);
         }
         return log;
     }
@@ -64,7 +69,7 @@ public class LogUtil {
                 + "   offset: " + lsf.getOffset() + "\n"
                 + "}";
     }
-    
+
     private static String getLog(FormFilter ff) {
         return "{\n"
                 + "   text: " + ff.getText() + "\n"
@@ -75,7 +80,7 @@ public class LogUtil {
                 + "   offset: " + ff.getOffset() + "\n"
                 + "}";
     }
-    
+
     private static String getLog(LexicalConceptFilter lcf) {
         return "{\n"
                 + "   text: " + lcf.getText() + "\n"
@@ -86,7 +91,7 @@ public class LogUtil {
                 + "   offset: " + lcf.getOffset() + "\n"
                 + "}";
     }
-    
+
     private static String getLog(ExportSetting es) {
         return "{\n"
                 + "   file name: " + es.getFileName() + "\n"
@@ -95,6 +100,15 @@ public class LogUtil {
                 + "   predicate: " + es.getPredicate() + "\n"
                 + "   object: " + es.getObject() + "\n"
                 + "   context: " + Arrays.toString(es.getContext().toArray()) + "\n"
+                + "}";
+    }
+
+    private static String getLog(RepositoryData rd) {
+        return "{\n"
+                + "   repo ID: " + rd.getRepoID() + "\n"
+                + "   description: " + rd.getLabelID() + "\n"
+                + "   base url: " + rd.getBaseUrl() + "\n"
+                + "   ruleset name: " + rd.getRuleset() + "\n"
                 + "}";
     }
 

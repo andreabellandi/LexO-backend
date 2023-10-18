@@ -420,4 +420,27 @@ public class EnumUtil {
         }
 
     }
+    
+    public static enum RulesetRepositoryConfiguration {
+        rdfs("rdfs"),
+        owlhorst("owl-horst"),
+        owlmax("owl-max"),
+        owl2rl("owl2-rl"),
+        rdfsoptimized("rdfs-optimized"),
+        owlhorstoptimized("owl-horst-optimized"),
+        owlmaxoptimized("owl-max-optimized"),
+        owl2rloptimized("owl2-rl-optimized");
+
+        private final String types;
+
+        private RulesetRepositoryConfiguration(String types) {
+            this.types = types;
+        }
+
+        @Override
+        public String toString() {
+            return this.types;
+        }
+
+    }
 }

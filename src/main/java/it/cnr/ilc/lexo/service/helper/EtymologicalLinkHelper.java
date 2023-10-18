@@ -26,10 +26,10 @@ public class EtymologicalLinkHelper extends TripleStoreDataHelper<EtymologicalLi
         data.setEtyLinkType(getStringValue(bs, SparqlVariable.ETY_LINK_TYPE));
         data.setEtySource(getStringValue(bs, SparqlVariable.ETY_SOURCE));
 //        data.setEtySourceInstanceName(isExternalUri(getStringValue(bs, SparqlVariable.ETY_SOURCE)) ? "" : getLocalName(bs, SparqlVariable.ETY_SOURCE));
-        data.setEtySourceLabel(getStringValue(bs, SparqlVariable.ETY_SOURCE_LABEL));
+        data.setEtySourceLabel(getLiteralLabel(bs, SparqlVariable.ETY_SOURCE_LABEL) + "@" + getLiteralLanguage(bs, SparqlVariable.ETY_SOURCE_LABEL));
         data.setEtyTarget(getStringValue(bs, SparqlVariable.ETY_TARGET));
 //        data.setEtyTargetInstanceName(getLocalName(bs, SparqlVariable.ETY_TARGET));
-        data.setEtyTargetLabel(getStringValue(bs, SparqlVariable.ETY_TARGET_LABEL));
+        data.setEtyTargetLabel(getLiteralLabel(bs, SparqlVariable.ETY_TARGET_LABEL) + "@" + getLiteralLanguage(bs, SparqlVariable.ETY_TARGET_LABEL));
         data.setLabel(getStringValue(bs, SparqlVariable.ETY_LINK_LABEL));
         data.setExternalIRI(isExternalUri(getStringValue(bs, SparqlVariable.ETY_SOURCE)));
         data.setConfidence(getDoubleNumber(bs, "confidence"));
