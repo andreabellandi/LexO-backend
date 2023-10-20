@@ -22,6 +22,7 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.ConceptSet;
 import it.cnr.ilc.lexo.service.data.lexicon.output.EtymologicalLink;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Etymology;
 import it.cnr.ilc.lexo.service.data.lexicon.output.FormCore;
+import it.cnr.ilc.lexo.service.data.lexicon.output.FormRestriction;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Language;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalConcept;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryCore;
@@ -40,6 +41,7 @@ import it.cnr.ilc.lexo.service.helper.LexicalConceptHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalEntryCoreHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalSenseCoreHelper;
 import it.cnr.ilc.lexo.service.helper.DirectRelationHelper;
+import it.cnr.ilc.lexo.service.helper.FormRestrictionHelper;
 import it.cnr.ilc.lexo.service.helper.IndirectRelationHelper;
 import it.cnr.ilc.lexo.service.helper.TranslationSetHelper;
 import java.io.UnsupportedEncodingException;
@@ -67,7 +69,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class LexiconCreation extends Service {
 
     private final LexiconCreationManager lexiconManager = ManagerFactory.getManager(LexiconCreationManager.class);
-    
+
     private final BibliographyManager bibliographyManager = ManagerFactory.getManager(BibliographyManager.class);
     private final SKOSManager skosManager = ManagerFactory.getManager(SKOSManager.class);
     private final LexicalEntryCoreHelper lexicalEntryCoreHelper = new LexicalEntryCoreHelper();
@@ -79,12 +81,12 @@ public class LexiconCreation extends Service {
     private final LexicalSenseCoreHelper lexicalSenseCoreHelper = new LexicalSenseCoreHelper();
     private final ComponentHelper componentHelper = new ComponentHelper();
     private final CollocationHelper collocationHelper = new CollocationHelper();
+    private final FormRestrictionHelper formRestrictionHelper = new FormRestrictionHelper();
     private final IndirectRelationHelper indirectLexicalRelationHelper = new IndirectRelationHelper();
     private final TranslationSetHelper translationSetHelper = new TranslationSetHelper();
     private final LexicalConceptHelper lexicalConceptHelper = new LexicalConceptHelper();
     private final ConceptSetHelper conceptSetHelper = new ConceptSetHelper();
 
- 
     @GET
     @Path("language")
     @Produces(MediaType.APPLICATION_JSON)
@@ -235,31 +237,31 @@ public class LexiconCreation extends Service {
             log(Level.INFO, "lexicon/creation/form of the lexical entry: " + URLDecoder.decode(lexicalEntryID, StandardCharsets.UTF_8.name()));
             checkKey(key);
 //            if (checkPermissions(UserRightManager.Operation.WRITE)) {
-                String _lexicalEntryID = URLDecoder.decode(lexicalEntryID, StandardCharsets.UTF_8.name());
-                try {
-                    UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
-                    utilityManager.validateNamespace(prefix, baseIRI);
-                    if (!utilityManager.isLexicalEntry(_lexicalEntryID)) {
-                        log(Level.ERROR, "lexicon/creation/form: " + "IRI " + _lexicalEntryID + " does not exist");
-                        return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _lexicalEntryID + " does not exist").build();
-                    }
-                    String lang = utilityManager.getLanguage(_lexicalEntryID);
-                    if (lang == null) {
-                        log(Level.ERROR, "lexicon/creation/form: form cannot be created: the lexical entry language must be set first");
-                        return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("form cannot be created: the lexical entry language must be set first").build();
-                    }
-                    FormCore fc = lexiconManager.createForm(_lexicalEntryID, getUser(author), lang, prefix, baseIRI);
-                    String json = formCoreHelper.toJson(fc);
-                    log(Level.INFO, "Form " + fc.getLabel() + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
-                    return Response.ok(json)
-                            .type(MediaType.TEXT_PLAIN)
-                            .header("Access-Control-Allow-Headers", "content-type")
-                            .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                            .build();
-                } catch (ManagerException ex) {
-                    log(Level.ERROR, "lexicon/creation/form: " + ex.getMessage());
-                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            String _lexicalEntryID = URLDecoder.decode(lexicalEntryID, StandardCharsets.UTF_8.name());
+            try {
+                UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+                utilityManager.validateNamespace(prefix, baseIRI);
+                if (!utilityManager.isLexicalEntry(_lexicalEntryID)) {
+                    log(Level.ERROR, "lexicon/creation/form: " + "IRI " + _lexicalEntryID + " does not exist");
+                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _lexicalEntryID + " does not exist").build();
                 }
+                String lang = utilityManager.getLanguage(_lexicalEntryID);
+                if (lang == null) {
+                    log(Level.ERROR, "lexicon/creation/form: form cannot be created: the lexical entry language must be set first");
+                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("form cannot be created: the lexical entry language must be set first").build();
+                }
+                FormCore fc = lexiconManager.createForm(_lexicalEntryID, getUser(author), lang, prefix, baseIRI);
+                String json = formCoreHelper.toJson(fc);
+                log(Level.INFO, "Form " + fc.getLabel() + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
+                return Response.ok(json)
+                        .type(MediaType.TEXT_PLAIN)
+                        .header("Access-Control-Allow-Headers", "content-type")
+                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                        .build();
+            } catch (ManagerException ex) {
+                log(Level.ERROR, "lexicon/creation/form: " + ex.getMessage());
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            }
 //            } else {
 //                log(Level.ERROR, "lexicon/creation/form: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
 //                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
@@ -404,7 +406,7 @@ public class LexiconCreation extends Service {
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
-    
+
     @GET
     @Path("collocation")
     @Produces(MediaType.APPLICATION_JSON)
@@ -740,8 +742,7 @@ public class LexiconCreation extends Service {
         } catch (ManagerException ex) {
             log(Level.ERROR, "lexicon/creation/lexicalConcept: " + ex.getMessage());
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
-        } 
-        catch (AuthorizationException | ServiceException ex) {
+        } catch (AuthorizationException | ServiceException ex) {
             log(Level.ERROR, "lexicon/creation/lexicalConcept: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
@@ -866,7 +867,7 @@ public class LexiconCreation extends Service {
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
-    
+
     @GET
     @Path("translationSet")
     @Produces(MediaType.APPLICATION_JSON)
@@ -916,5 +917,69 @@ public class LexiconCreation extends Service {
             log(Level.ERROR, "lexicon/creation/translationSet: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
+    }
+
+    @GET
+    @Path("formRestriction")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "formRestriction",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Creation of a form restriction",
+            notes = "This method creates a form restriction according to the lexicog ontolex module")
+    public Response formRestriction(
+            @HeaderParam("Authorization") String key,
+            @ApiParam(
+                    name = "id",
+                    value = "the lexical sense to which the restriction is applied",
+                    required = true)
+            @QueryParam("id") String id,
+            @ApiParam(
+                    name = "author",
+                    value = "the account that is creating the translation set (if LexO user management disabled)",
+                    example = "user7",
+                    required = false)
+            @QueryParam("author") String author,
+            @ApiParam(
+                    name = "prefix",
+                    value = "prefix of the namespace",
+                    example = "myprefix",
+                    required = true)
+            @QueryParam("prefix") String prefix,
+            @ApiParam(
+                    name = "baseIRI",
+                    value = "base IRI of the relation",
+                    example = "http://mydata.com#",
+                    required = true)
+            @QueryParam("baseIRI") String baseIRI) {
+        try {
+            checkKey(key);
+            log(Level.INFO, "lexicon/creation/formRestriction of the following lexical sense: " + URLDecoder.decode(id, StandardCharsets.UTF_8.name()));
+            String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
+            try {
+                UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+                utilityManager.validateNamespace(prefix, baseIRI);
+
+                FormRestriction fr = lexiconManager.createFormRestriction(_id, author, prefix, baseIRI);
+                String json = formRestrictionHelper.toJson(fr);
+                log(Level.INFO, "Form restriction " + fr.getFormRestriction() + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
+                return Response.ok(json)
+                        .type(MediaType.TEXT_PLAIN)
+                        .header("Access-Control-Allow-Headers", "content-type")
+                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                        .build();
+            } catch (ManagerException ex) {
+                log(Level.ERROR, "lexicon/creation/formRestriction: " + ex.getMessage());
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            }
+        } catch (UnsupportedEncodingException ex) {
+            log(Level.ERROR, "lexicon/creation/formRestriction: " + ex.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        } catch (AuthorizationException | ServiceException ex) {
+            log(Level.ERROR, "lexicon/creation/formRestriction: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
+        }
+
     }
 }

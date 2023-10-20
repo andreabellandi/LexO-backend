@@ -22,6 +22,7 @@ public class SparqlPrefix {
     public static Namespace ETY = new Namespace("ety:", "http://lari-datasets.ilc.cnr.it/lemonEty#");
     public static Namespace FRAC = new Namespace("frac:", "http://www.w3.org/ns/lemon/frac#");
     public static Namespace TRCAT = new Namespace("trcat:", "http://purl.org/net/translation-categories#");
+    public static Namespace LEXICOG = new Namespace("lexicog:", "http://www.w3.org/ns/lemon/lexicog#");
 
     // metadata
     public static Namespace DCT = new Namespace("dct:", "http://purl.org/dc/terms/");

@@ -32,6 +32,7 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.Etymology;
 import it.cnr.ilc.lexo.service.data.lexicon.output.EtymologyItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.EtymologyTree;
 import it.cnr.ilc.lexo.service.data.lexicon.output.FormCore;
+import it.cnr.ilc.lexo.service.data.lexicon.output.FormRestriction;
 import it.cnr.ilc.lexo.service.data.lexicon.output.GroupedLinkedEntity;
 import it.cnr.ilc.lexo.service.data.lexicon.output.HitsDataList;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ImageDetail;
@@ -60,6 +61,7 @@ import it.cnr.ilc.lexo.service.helper.EtymologyHelper;
 import it.cnr.ilc.lexo.service.helper.EtymologyTreeHelper;
 import it.cnr.ilc.lexo.service.helper.FormCoreHelper;
 import it.cnr.ilc.lexo.service.helper.FormItemsHelper;
+import it.cnr.ilc.lexo.service.helper.FormRestrictionHelper;
 import it.cnr.ilc.lexo.service.helper.HelperException;
 import it.cnr.ilc.lexo.service.helper.ImageHelper;
 import it.cnr.ilc.lexo.service.helper.IndirectRelationHelper;
@@ -78,9 +80,13 @@ import it.cnr.ilc.lexo.service.helper.VarTransDataHelper;
 import it.cnr.ilc.lexo.sparql.SparqlVariable;
 import it.cnr.ilc.lexo.util.EnumUtil;
 import it.cnr.ilc.lexo.util.LogUtil;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -93,6 +99,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import org.apache.log4j.Level;
 import org.eclipse.rdf4j.query.TupleQueryResult;
 import org.slf4j.Logger;
@@ -139,6 +146,7 @@ public class LexiconData extends Service {
     private final ComponentFilterHelper componentFilterHelper = new ComponentFilterHelper();
     private final ComponentHelper componentHelper = new ComponentHelper();
     private final CollocationHelper collocationHelper = new CollocationHelper();
+    private final FormRestrictionHelper formRestrictionHelper = new FormRestrictionHelper();
     private final ConceptSetHelper conceptSetHelper = new ConceptSetHelper();
     private final SKOSManager skosManager = ManagerFactory.getManager(SKOSManager.class);
     private final VarTransDataHelper varTransDataHelper = new VarTransDataHelper();
@@ -344,10 +352,40 @@ public class LexiconData extends Service {
             log(Level.ERROR, ex.getMessage());
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }
-        
-        
-        
-        
+    }
+
+    @GET
+    @Path("formRestriction")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "formRestriction",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Form Restriction",
+            notes = "This method returns the form restrictions of a given sense")
+    public Response formRestriction(
+            @HeaderParam("Authorization") String key,
+            @ApiParam(
+                    name = "id",
+                    value = "sense ID",
+                    required = true)
+            @QueryParam("id") String id) {
+        try {
+            userCheck(key);
+            String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
+            log(Level.INFO, "lexicon/data/formRestriction of " + _id);
+            TupleQueryResult restriction = lexiconManager.getFormRestriction(_id);
+            FormRestriction fr = formRestrictionHelper.newData(restriction);
+            String json = formRestrictionHelper.toJson(fr);
+            return Response.ok(json)
+                    .type(MediaType.TEXT_PLAIN)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
+        } catch (ManagerException | UnsupportedEncodingException | AuthorizationException | ServiceException ex) {
+            log(Level.ERROR, ex.getMessage());
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        }
     }
 
     @GET
@@ -426,7 +464,7 @@ public class LexiconData extends Service {
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }
     }
-    
+
     @GET
     @Path("collocations")
     @Produces(MediaType.APPLICATION_JSON)
@@ -1170,15 +1208,15 @@ public class LexiconData extends Service {
     }
 
     @GET
-    @Path("images")
+    @Path("image/metadata")
     @Produces(MediaType.APPLICATION_JSON)
     @RequestMapping(
             method = RequestMethod.GET,
-            value = "images",
+            value = "image/metadata",
             produces = "application/json; charset=UTF-8")
     @ApiOperation(value = "Image(s) of lexical entity",
-            notes = "This method returns all the images associted to a lexical entity")
-    public Response images(
+            notes = "This method returns all the metadata of the images associated to a lexical entity")
+    public Response imageDetail(
             @HeaderParam("Authorization") String key,
             @ApiParam(
                     name = "id",
@@ -1188,7 +1226,7 @@ public class LexiconData extends Service {
         try {
             userCheck(key);
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
-            log(Level.INFO, "lexicon/data/images <" + _id + ">");
+            log(Level.INFO, "lexicon/data/image/metadata <" + _id + ">");
             TupleQueryResult _imgs = lexiconManager.getImages(_id);
             List<ImageDetail> images = imageHelper.newDataList(_imgs);
             String json = imageHelper.toJson(images);
@@ -1198,6 +1236,45 @@ public class LexiconData extends Service {
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
         } catch (UnsupportedEncodingException | AuthorizationException | ServiceException ex) {
+            log(Level.ERROR, ex.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        }
+    }
+
+    @GET
+    @Path("image/content")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "image/content",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Image(s) of lexical entity",
+            notes = "This method returns the image content associated to an image id")
+    public Response imageContent(
+            @HeaderParam("Authorization") String key,
+            @ApiParam(
+                    name = "id",
+                    value = "image ID",
+                    required = true)
+            @QueryParam("id") String id) {
+        try {
+            userCheck(key);
+            log(Level.INFO, "lexicon/data/image/content <" + id + ">");
+            java.nio.file.Path path = Paths.get(id);
+            String contentType = path.toUri().toURL().openConnection().getContentType();
+            byte[] bytes = Files.readAllBytes(path);
+            return Response.status(Status.OK)
+                    .type(contentType)
+                    .header("Content-Disposition", "attachment; filename=" + id)
+                    .header("Access-Control-Expose-Headers", "content-disposition")
+                    .entity(bytes).build();
+        } catch (UnsupportedEncodingException | AuthorizationException | ServiceException ex) {
+            log(Level.ERROR, ex.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        } catch (MalformedURLException ex) {
+            log(Level.ERROR, ex.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        } catch (IOException ex) {
             log(Level.ERROR, ex.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }

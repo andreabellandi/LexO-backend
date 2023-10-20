@@ -56,6 +56,10 @@ public class SparqlQueryUtil {
             = SparqlPrefix.FRAC.getSparqlPrefix() + "\n"
             + "ASK { <_ID_> a " + SparqlPrefix.FRAC.getPrefix() + "Collocation }";
     
+    public static final String IS_FORMRESTRICTION_ID
+            = SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
+            + "ASK { <_ID_> a " + SparqlPrefix.LEXICOG.getPrefix() + "FormRestriction }";
+    
     public static final String IS_LEXICOSEMANTIC_RELATION_ID
             = SparqlPrefix.VARTRANS.getSparqlPrefix() + "\n"
             + "ASK { <_ID_> a " + SparqlPrefix.VARTRANS.getPrefix() + "LexicoSemanticRelation }";

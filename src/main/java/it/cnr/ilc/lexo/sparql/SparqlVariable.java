@@ -68,6 +68,7 @@ public class SparqlVariable {
     public static final String INHERITED_MORPHOLOGY_TRAIT_VALUE = "inheritedTraitValue";
     public static final String MORPHOLOGY = "morpho";
     public static final String TRAIT = "trait";
+    public static final String RESTRICTION = "restriction";
 
     public static final String SENSE = "sense";
 //    public static final String SENSE_INSTANCE_NAME = "senseInstanceName";
@@ -103,6 +104,8 @@ public class SparqlVariable {
     public static final String COLLOCATION = "collocation";
     public static final String HEAD = "head";
     public static final String FREQUENCY = "frequency";
+    
+    public static final String FORM_RESTRICTION = "formRestriction";
 
     public static final String IMAGE = "image";
     public static final String TITLE = "title";

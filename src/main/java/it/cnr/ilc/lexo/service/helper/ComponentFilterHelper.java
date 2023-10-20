@@ -24,7 +24,7 @@ public class ComponentFilterHelper extends TripleStoreDataHelper<ComponentItem> 
         data.setMorphology(getMorphology(bs, getStringValue(bs, SparqlVariable.MORPHOLOGY)));
         data.setComponent(getStringValue(bs, SparqlVariable.COMPONENT));
         data.setPosition(getComponentPosition(getStringValue(bs, SparqlVariable.COMPONENT_POSITION)));
-        data.setConfidence(getDoubleNumber(bs, "confidence"));
+        data.setConfidence(getDoubleNumber(bs, SparqlVariable.CONFIDENCE));
     }
 
     @Override

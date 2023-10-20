@@ -103,10 +103,10 @@ public class SparqlSelectStatistics {
             + SparqlPrefix.VS.getSparqlPrefix() + "\n"
             + SparqlPrefix.LOC.getSparqlPrefix() + "\n"
             + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
-            + "SELECT ?" + SparqlVariable.CREATION_DATE + " ?" + SparqlVariable.COMPLETION_DATE + " ?" + SparqlVariable.REVISION_DATE
+            + "SELECT ?" + SparqlVariable.LEXICAL_ENTITY +  " ?" + SparqlVariable.CREATION_DATE + " ?" + SparqlVariable.COMPLETION_DATE + " ?" + SparqlVariable.REVISION_DATE
             + " ?" + SparqlVariable.LAST_UPDATE + " ?" + SparqlVariable.NOTE + " ?" + SparqlVariable.CONFIDENCE
             + " ?" + SparqlVariable.LEXICAL_ENTRY_STATUS + " ?" + SparqlVariable.LEXICAL_ENTRY_CREATION_AUTHOR + " ?" + SparqlVariable.LEXICAL_ENTRY_COMPLETING_AUTHOR
-            + " ?" + SparqlVariable.LEXICAL_ENTRY_REVISOR + " ?" + SparqlVariable.SOURCE
+            + " ?" + SparqlVariable.LEXICAL_ENTRY_REVISOR + " ?" + SparqlVariable.SOURCE + "\n"
             + "WHERE {\n"
             + "    BIND (<_ID_> AS ?" + SparqlVariable.LEXICAL_ENTITY + ")  .\n"
             + "    OPTIONAL {?" + SparqlVariable.LEXICAL_ENTITY + " dct:created ?" + SparqlVariable.CREATION_DATE + "} .\n"

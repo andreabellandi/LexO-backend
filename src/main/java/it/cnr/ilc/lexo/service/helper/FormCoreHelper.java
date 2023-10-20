@@ -30,7 +30,7 @@ public class FormCoreHelper extends TripleStoreDataHelper<FormCore> {
         data.setLastUpdate(getStringValue(bs, SparqlVariable.LAST_UPDATE));
         data.setCreationDate(getStringValue(bs, SparqlVariable.CREATION_DATE));
         data.setCreator(getStringValue(bs, SparqlVariable.FORM_CREATION_AUTHOR));
-        data.setConfidence(getDoubleNumber(bs, "confidence"));
+        data.setConfidence(getDoubleNumber(bs, SparqlVariable.CONFIDENCE));
         data.setLexicalEntry(getStringValue(bs, SparqlVariable.LEXICAL_ENTRY));
         data.setLexicalEntryLabel(getLiteralLabel(bs, SparqlVariable.LABEL));
         data.setLanguage(getLiteralLanguage(bs, SparqlVariable.LABEL));

@@ -23,7 +23,7 @@ public class FormByLexicalEntryHelper extends TripleStoreDataHelper<FormByLexica
         data.setMorphology(getMorphologyWithPoS(bs, getStringValue(bs, SparqlVariable.MORPHOLOGY), 
                 getLocalName(bs, SparqlVariable.LEXICAL_ENTRY_POS)));
         data.setLexicalEntry(getStringValue(bs, SparqlVariable.LEXICAL_ENTRY));
-        data.setConfidence(getDoubleNumber(bs, "confidence"));
+        data.setConfidence(getDoubleNumber(bs, SparqlVariable.CONFIDENCE));
     }
 
     @Override

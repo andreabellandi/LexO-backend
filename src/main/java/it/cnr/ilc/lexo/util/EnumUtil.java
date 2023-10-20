@@ -401,11 +401,16 @@ public class EnumUtil {
     }
     
     public static enum MetadataTypes {
+        //source, rights, title, description, publisher
         note(SparqlPrefix.SKOS.getUri() + "note"),
         label(SparqlPrefix.RDFS.getUri() + "label"),
         confidence(SparqlPrefix.LEXINFO.getUri() + "confidence"),
         description(SparqlPrefix.DCT.getUri() + "description"),
         example(SparqlPrefix.LEXINFO.getUri() + "example"),
+        source(SparqlPrefix.DCT.getUri() + "source"),
+        rights(SparqlPrefix.DCT.getUri() + "rights"),
+        title(SparqlPrefix.DCT.getUri() + "title"),
+        publisher(SparqlPrefix.DCT.getUri() + "publisher"),
         comment(SparqlPrefix.RDFS.getUri() + "comment");
 
         private final String metadataTypes;

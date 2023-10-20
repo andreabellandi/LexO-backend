@@ -26,7 +26,7 @@ public class LexicalEntryFilterHelper extends TripleStoreDataHelper<LexicalEntry
         data.setLexicalEntry(getStringValue(bs, SparqlVariable.LEXICAL_ENTRY));
         data.setType(getTypes(bs, getStringValue(bs, SparqlVariable.LEXICAL_ENTRY_TYPE)));
         data.setPos(getLocalName(bs, SparqlVariable.LEXICAL_ENTRY_POS));
-        data.setConfidence(getDoubleNumber(bs, "confidence"));
+        data.setConfidence(getDoubleNumber(bs, SparqlVariable.CONFIDENCE));
         data.setLabel(getLiteralLabel(bs, SparqlVariable.LABEL));
         try {
             data.setLanguage(getLiteralLanguage(bs, SparqlVariable.LABEL));

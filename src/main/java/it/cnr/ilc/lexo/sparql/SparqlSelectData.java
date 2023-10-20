@@ -848,6 +848,32 @@ public class SparqlSelectData {
             + "    OPTIONAL { ?" + SparqlVariable.SENSE + " " + SparqlPrefix.DCT.getPrefix() + "subject ?" + SparqlVariable.SENSE_TOPIC + " }\n"
             + "}";
 
+    public static final String DATA_FORM_RESTRICTION
+            = SparqlPrefix.INST.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTO.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
+            + SparqlPrefix.SKOS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDF.getSparqlPrefix() + "\n"
+            + "SELECT ?" + SparqlVariable.RESTRICTION + " ?" + SparqlVariable.LABEL + " ?" + SparqlVariable.NOTE + " ?" + SparqlVariable.EXAMPLE 
+            + " ?" + SparqlVariable.CREATOR + " ?" + SparqlVariable.LAST_UPDATE + " ?" + SparqlVariable.CREATION_DATE 
+            + " (GROUP_CONCAT(concat(str(?property),\"<>\",str(?value));SEPARATOR=\";\") AS ?" + SparqlVariable.MORPHOLOGY + ")\n"
+            + "FROM onto:explicit\n"
+            + "WHERE {\n"
+            + "    <_ID_> lexicog:restrictedTo ?" + SparqlVariable.RESTRICTION + " .\n"
+            + "    OPTIONAL { ?" + SparqlVariable.RESTRICTION + " ?property ?value .\n"
+            + "               ?property rdfs:subPropertyOf lexinfo:morphosyntacticProperty }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.RESTRICTION + " rdf:label ?" + SparqlVariable.LABEL + " }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.RESTRICTION + " skos:note ?" + SparqlVariable.NOTE + " }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.RESTRICTION + " lexinfo:example ?" + SparqlVariable.EXAMPLE + " }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.RESTRICTION + " dct:creator ?" + SparqlVariable.CREATOR + " }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.RESTRICTION + " dct:modified ?" + SparqlVariable.LAST_UPDATE + " }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.RESTRICTION + " dct:created ?" + SparqlVariable.CREATION_DATE + " }\n"
+            + "} GROUP BY ?" + SparqlVariable.RESTRICTION + " ?" + SparqlVariable.LABEL + " ?" + SparqlVariable.NOTE + " ?" + SparqlVariable.EXAMPLE 
+            + " ?" + SparqlVariable.CREATOR + " ?" + SparqlVariable.LAST_UPDATE + " ?" + SparqlVariable.CREATION_DATE;
+
     public static final String DATA_LEXICAL_SENSE_DIRECT_VARTRANS
             = SparqlPrefix.INST.getSparqlPrefix() + "\n"
             + SparqlPrefix.ONTO.getSparqlPrefix() + "\n"
@@ -869,7 +895,7 @@ public class SparqlSelectData {
             + "    OPTIONAL { GRAPH ?" + SparqlVariable.GRAPH + " { ?" + SparqlVariable.SENSE + " ?" + SparqlVariable.PROPERTY_NAME + " ?" + SparqlVariable.LEXICAL_ENTITY + " } .\n"
             + "               ?" + SparqlVariable.PROPERTY_NAME + " rdfs:subPropertyOf vartrans:senseRel . \n"
             + "               OPTIONAL { "
-            + "                               GRAPH ?_graph { ?" + SparqlVariable.LEXICAL_ENTITY + " rdfs:label|skos:definition ?" + SparqlVariable.LABEL +" }\n"
+            + "                               GRAPH ?_graph { ?" + SparqlVariable.LEXICAL_ENTITY + " rdfs:label|skos:definition ?" + SparqlVariable.LABEL + " }\n"
             + "                               FILTER(STRSTARTS(STR(?_graph), \"http://www.ontotext.com/explicit\")) "
             + "                        }\n"
             + "               OPTIONAL { ?" + SparqlVariable.LEXICAL_ENTITY + " sesame:directType ?_type .\n"

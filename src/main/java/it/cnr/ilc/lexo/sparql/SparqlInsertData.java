@@ -163,6 +163,23 @@ public class SparqlInsertData {
             + "                   dct:modified \"_MODIFIED_\" . \n"
             + "}";
     
+    public static final String CREATE_FORMRESTRICTION
+            = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.VS.getSparqlPrefix() + "\n"
+             + SparqlPrefix.VARTRANS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
+            + "_PREFIX_ \n"
+            + "INSERT DATA {\n"
+            + "    <_ID_> a lexicog:FormRestriction ;\n"
+            + "                   dct:creator \"_AUTHOR_\" ;\n"
+            + "                   dct:created \"_CREATED_\" ;\n"
+            + "                   rdfs:label \"_LABEL_\" ;\n"
+            + "                   dct:modified \"_MODIFIED_\" . \n"
+            + "    <_LEXID_> lexicog:restrictedTo <_ID_> .\n"
+            + "}";
+    
     public static final String CREATE_LEXICAL_CONCEPT
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
             + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
@@ -246,7 +263,7 @@ public class SparqlInsertData {
             + "}";
     
     public static final String CREATE_IMAGE_REFERENCE
-            // source, rights, title, description, creator
+            // source, rights, title, description, publisher
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
             + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
             + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
@@ -258,8 +275,9 @@ public class SparqlInsertData {
             + "        dct:identifier \"_IMAGEURL_\" ;\n"
             + "        dct:format \"image/_FORMAT_\" ;\n"
             + "        dct:type \"image\" ;\n"
-            + "        dct:publisher \"_AUTHOR_\" ;\n"
+            + "        dct:creator \"_AUTHOR_\" ;\n"
             + "        dct:created \"_CREATED_\" ;\n"
+            + "        foaf:depicts <_LEID_> ;\n"
             + "        dct:modified \"_MODIFIED_\" . \n"
             + "    <_LEID_> foaf:depiction <_ID_> .\n"
             + "}";

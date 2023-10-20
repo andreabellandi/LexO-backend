@@ -30,7 +30,7 @@ public class FormItemsHelper extends TripleStoreDataHelper<FormItem> {
         data.setCreationDate(getStringValue(bs, SparqlVariable.CREATION_DATE));
         data.setLexicalEntry(getStringValue(bs, SparqlVariable.LEXICAL_ENTRY));
 //        data.setTargetSense(getStringValue(bs, SparqlVariable.TARGET));
-        data.setConfidence(getDoubleNumber(bs, "confidence"));
+        data.setConfidence(getDoubleNumber(bs, SparqlVariable.CONFIDENCE));
     }
 
     @Override

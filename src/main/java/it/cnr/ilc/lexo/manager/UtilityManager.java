@@ -184,6 +184,11 @@ public final class UtilityManager implements Manager, Cached {
         return RDFQueryUtil.evaluateBQuery(query);
     }
     
+    public boolean isFormRestriction(String id) throws QueryEvaluationException {
+        String query = SparqlQueryUtil.IS_FORMRESTRICTION_ID.replaceAll("_ID_", id);
+        return RDFQueryUtil.evaluateBQuery(query);
+    }
+    
     public boolean isLexicoSemanticRelation(String id) throws QueryEvaluationException {
         String query = SparqlQueryUtil.IS_LEXICOSEMANTIC_RELATION_ID.replaceAll("_ID_", id);
         return RDFQueryUtil.evaluateBQuery(query);

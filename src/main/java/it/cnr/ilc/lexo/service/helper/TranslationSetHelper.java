@@ -17,7 +17,7 @@ public class TranslationSetHelper extends TripleStoreDataHelper<TranslationSet> 
 
     @Override
     public void fillData(TranslationSet data, BindingSet bs) {
-       data.setConfidence(getDoubleNumber(bs, "confidence"));
+       data.setConfidence(getDoubleNumber(bs, SparqlVariable.CONFIDENCE));
        data.setCreationDate(getStringValue(bs, SparqlVariable.CREATION_DATE));
        data.setCreator(getStringValue(bs, SparqlVariable.COMPONENT_CREATION_AUTHOR));
        data.setLastUpdate(getStringValue(bs, SparqlVariable.LAST_UPDATE));
