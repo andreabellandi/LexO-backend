@@ -257,7 +257,35 @@
                 <graphdb.poolSize>5</graphdb.poolSize>
                 <graphDb.namedGraph></graphDb.namedGraph>
             </properties>
-        </profile>       
+        </profile>     
+        <profile>
+            <id>maia-complit</id> 
+            <properties>
+                <db.jdbcUrl>jdbc:mysql://licodemo/lexo_server</db.jdbcUrl>
+                <db.user>lexo</db.user>
+                <db.password>LexOServer12</db.password>
+                <envClassifier>maia-complit</envClassifier> <!-- postfix del nome del war -->
+                <postfix>-maia-complit</postfix> <!-- postfix della webapp (parte finale della URL) -->
+                <graphdb.url>https://lexo-datasets.ilc.cnr.it:7200</graphdb.url>
+                <graphdb.repository>CompL-it</graphdb.repository>
+                <graphdb.poolSize>5</graphdb.poolSize>
+                <graphDb.namedGraph></graphDb.namedGraph>
+            </properties>
+        </profile> 
+        <profile>
+            <id>simone_test</id> 
+            <properties>
+                <db.jdbcUrl>jdbc:mysql://licodemo/lexo_server</db.jdbcUrl>
+                <db.user>lexo</db.user>
+                <db.password>LexOServer12</db.password>
+                <envClassifier>simone_test</envClassifier> <!-- postfix del nome del war -->
+                <postfix>-simone_test</postfix> <!-- postfix della webapp (parte finale della URL) -->
+                <graphdb.url>https://lexo-datasets.ilc.cnr.it:7200</graphdb.url>
+                <graphdb.repository>simone_test</graphdb.repository>
+                <graphdb.poolSize>5</graphdb.poolSize>
+                <graphDb.namedGraph></graphDb.namedGraph>
+            </properties>
+        </profile>     
         <profile>
             <id>devel-andrea</id> 
             <properties>
@@ -265,7 +293,7 @@
                 <db.user>root</db.user>
                 <db.password>root</db.password>
                 <graphdb.url>http://localhost:7200</graphdb.url>
-<!--                <graphdb.repository>ItAnt</graphdb.repository>-->
+                <!--                <graphdb.repository>ItAnt</graphdb.repository>-->
                 <graphdb.repository>dictionary</graphdb.repository>
                 <!--<graphdb.repository>TEST_NEW_SERVICES</graphdb.repository>-->
                 <graphdb.poolSize>5</graphdb.poolSize>
