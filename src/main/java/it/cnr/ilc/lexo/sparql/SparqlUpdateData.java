@@ -38,6 +38,15 @@ public class SparqlUpdateData {
             + "                  dct:modified _LAST_UPDATE_ . }\n"
             + "WHERE {  OPTIONAL { <_ID_> dct:modified ?modified .} \n"
             + "         OPTIONAL { <_ID_> <_RELATION_> _VALUE_TO_DELETE_ . } }";
+    
+    public static final String UPDATE_DICTIONARY_ENTRY
+            = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+            + "DELETE { <_ID_> <_RELATION_> _VALUE_TO_DELETE_ ;\n "
+            + "                  dct:modified ?modified . } \n"
+            + "INSERT { <_ID_> <_RELATION_> _VALUE_TO_INSERT_ ;\n"
+            + "                  dct:modified _LAST_UPDATE_ . }\n"
+            + "WHERE {  OPTIONAL { <_ID_> dct:modified ?modified .} \n"
+            + "         OPTIONAL { <_ID_> <_RELATION_> _VALUE_TO_DELETE_ . } }";
 
     public static final String UPDATE_LEXICAL_ENTRY_BACKWARDING_STATUS
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
@@ -83,6 +92,23 @@ public class SparqlUpdateData {
             + "};\n"
             + "INSERT { ?" + SparqlVariable.LEXICON + " " + SparqlPrefix.LIME.getPrefix() + "entry <_ID_> }\n"
             + "WHERE { ?" + SparqlVariable.LEXICON + " " + SparqlPrefix.LIME.getPrefix() + "language \"_LANG_\" };\n"
+            + "DELETE { <_ID_> " + SparqlPrefix.RDFS.getPrefix() + "label ?" + SparqlVariable.LABEL + " ;\n"
+            + "         " + SparqlPrefix.DCT.getPrefix() + "modified ?modified . } \n"
+            + "INSERT { <_ID_> " + SparqlPrefix.RDFS.getPrefix() + "label \"_LABEL_\"@_LANG_ ;\n"
+            + "         " + SparqlPrefix.DCT.getPrefix() + "modified _LAST_UPDATE_ . }\n"
+            + "WHERE { <_ID_> " + SparqlPrefix.RDFS.getPrefix() + "label ?" + SparqlVariable.LABEL + " ;\n"
+            + "             " + SparqlPrefix.DCT.getPrefix() + "modified ?modified . } \n";
+    
+    public static final String UPDATE_DICTIONARY_ENTRY_LANGUAGE
+            = SparqlPrefix.LIME.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+            + "DELETE { ?" + SparqlVariable.DICT_ELEMENT + " " + SparqlPrefix.LEXICOG.getPrefix() + "entry <_ID_> }\n"
+            + "WHERE { \n"
+            + "    OPTIONAL { ?" + SparqlVariable.DICT_ELEMENT + " " + SparqlPrefix.LEXICOG.getPrefix() + "entry <_ID_> } \n"
+            + "};\n"
+            + "INSERT { ?" + SparqlVariable.DICT_ELEMENT + " " + SparqlPrefix.LEXICOG.getPrefix() + "entry <_ID_> }\n"
+            + "WHERE { ?" + SparqlVariable.DICT_ELEMENT + " " + SparqlPrefix.LIME.getPrefix() + "language \"_LANG_\" };\n"
             + "DELETE { <_ID_> " + SparqlPrefix.RDFS.getPrefix() + "label ?" + SparqlVariable.LABEL + " ;\n"
             + "         " + SparqlPrefix.DCT.getPrefix() + "modified ?modified . } \n"
             + "INSERT { <_ID_> " + SparqlPrefix.RDFS.getPrefix() + "label \"_LABEL_\"@_LANG_ ;\n"
@@ -210,5 +236,11 @@ public class SparqlUpdateData {
             + "                  dct:modified _LAST_UPDATE_ . }\n"
             + "WHERE {  OPTIONAL { <_ID_> dct:modified ?modified . }\n"
             + "         OPTIONAL { <_ID_> rdf:_CURR_POS <_IDCOMPONENT_> . } }";
+    
+    public static final String ADD_COMPONENT_MEMBER
+            = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
+            + "INSERT { <_ID_> rdfs:member <_IDCOMPONENT_> ;\n"
+            + "                  dct:modified _LAST_UPDATE_ . }\n";
 
 }

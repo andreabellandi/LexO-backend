@@ -27,6 +27,7 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.Collocation;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Component;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ComponentItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ConceptSetItem;
+import it.cnr.ilc.lexo.service.data.lexicon.output.DictionaryEntryComponent;
 import it.cnr.ilc.lexo.service.data.lexicon.output.EtymologicalLink;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Etymology;
 import it.cnr.ilc.lexo.service.data.lexicon.output.EtymologyItem;
@@ -54,6 +55,7 @@ import it.cnr.ilc.lexo.service.helper.ComponentFilterHelper;
 import it.cnr.ilc.lexo.service.helper.ComponentHelper;
 import it.cnr.ilc.lexo.service.helper.ConceptSetHelper;
 import it.cnr.ilc.lexo.service.helper.ConceptSetItemHelper;
+import it.cnr.ilc.lexo.service.helper.DictionaryEntryComponentHelper;
 import it.cnr.ilc.lexo.service.helper.DirectRelationHelper;
 import it.cnr.ilc.lexo.service.helper.EtymologicalLinkHelper;
 import it.cnr.ilc.lexo.service.helper.EtymologyFilterHelper;
@@ -145,6 +147,7 @@ public class LexiconData extends Service {
     private final ImageHelper imageHelper = new ImageHelper();
     private final ComponentFilterHelper componentFilterHelper = new ComponentFilterHelper();
     private final ComponentHelper componentHelper = new ComponentHelper();
+    private final DictionaryEntryComponentHelper dictionaryEntryComponentHelper = new DictionaryEntryComponentHelper();
     private final CollocationHelper collocationHelper = new CollocationHelper();
     private final FormRestrictionHelper formRestrictionHelper = new FormRestrictionHelper();
     private final ConceptSetHelper conceptSetHelper = new ConceptSetHelper();
@@ -420,6 +423,46 @@ public class LexiconData extends Service {
                 EtymologyTree et = lexiconManager.getEtymologyTree(e, etyLinks);
                 json = etymologyTreeHelper.toJson(et);
             }
+            return Response.ok(json)
+                    .type(MediaType.TEXT_PLAIN)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
+        } catch (ManagerException | UnsupportedEncodingException | AuthorizationException | ServiceException ex) {
+            log(Level.ERROR, ex.getMessage());
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        }
+    }
+
+    @GET
+    @Path("dictionaryEntryComponents") 
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "dictionaryEntryComponents",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Dictionary entry component",
+            notes = "This method returns the lements belonging to a given dictionary entry component")
+    public Response dictionaryEntryComponents(
+            @HeaderParam("Authorization") String key,
+            @ApiParam(
+                    name = "id",
+                    value = "dictionary entry component ID",
+                    required = true)
+            @QueryParam("id") String id) {
+        try {
+            userCheck(key);
+            String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
+            log(Level.INFO, "lexicon/data/dictionaryEntryComponents: <" + _id + ">");
+            UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+            if (!utilityManager.isDictEntryComponent(_id)) {
+                log(Level.ERROR, "lexicon/data/dictionaryEntryComponents: <" + _id + "> is not neither an Entry nor a Lexicographic component");
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("lexicon/data/dictionaryEntryComponents: <"
+                        + _id + "> is not neither an Entry nor a Lexicographic component").build();
+            }
+            TupleQueryResult comps = lexiconManager.getDictEntryComponents(_id);
+            DictionaryEntryComponent dec = dictionaryEntryComponentHelper.newData(comps);
+            String json = dictionaryEntryComponentHelper.toJson(dec);
             return Response.ok(json)
                     .type(MediaType.TEXT_PLAIN)
                     .header("Access-Control-Allow-Headers", "content-type")
@@ -1185,7 +1228,7 @@ public class LexiconData extends Service {
             );
             if (utilityManager.isLexicalEntry(_id)) {
                 _comps = lexiconManager.getComponents(_id, SparqlVariable.LEXICAL_ENTRY_INDEX, "lexicalEntryLabel");
-            } else if (utilityManager.isLexicalEntry(_id)) {
+            } else if (utilityManager.isComponent(_id)) {
                 _comps = lexiconManager.getComponents(_id, SparqlVariable.COMPONENT_INDEX, "componentLabel");
             } else {
                 return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + id + " is not neither a lexical entry or a component").build();

@@ -92,6 +92,50 @@ public class LexiconDeletion extends Service {
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
             }
     }
+    
+    @GET
+    @Path("dictionary")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "dictionary",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Dictionary deletion",
+            notes = "This method deletes a dictionary, if it has no entries")
+    public Response dictionary(
+            @HeaderParam("Authorization") String key,
+            @ApiParam(
+                    name = "id",
+                    value = "dictionary ID",
+                    required = true)
+            @QueryParam("id") String id) {
+            try {
+                String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
+                try {
+                    checkKey(key);
+                    UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+                    if (!utilityManager.isDictionary(_id)) {
+                        return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " does not exist").build();
+                    }
+                    if (utilityManager.dictionaryHasEntry(_id)) {
+                        return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " cannot be deleted. Remove all its entries first").build();
+                    }
+                    lexiconManager.deleteDictionary(_id);
+                    return Response.ok()
+                            .type(MediaType.TEXT_PLAIN)
+                            .header("Access-Control-Allow-Headers", "content-type")
+                            .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                            .build();
+                } catch (ManagerException ex) {
+                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+                } catch (AuthorizationException | ServiceException ex) {
+                   log(Level.ERROR, "lexicon/creation/dictionary: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
+                }
+            } catch (UnsupportedEncodingException ex) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            }
+    }
 
     @GET
     @Path("lexicalEntry")
@@ -129,6 +173,46 @@ public class LexiconDeletion extends Service {
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
             } catch (AuthorizationException | ServiceException ex) {
             log(Level.ERROR, "lexicon/creation/lexicalEntry: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
+        }
+    }
+    
+    @GET
+    @Path("dictionaryEntryComponent")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "dictionaryEntryComponent",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Dictionary entry component deletion",
+            notes = "This method deletes a dictionary entry component")
+    public Response dictionaryEntryComponent(
+            @HeaderParam("Authorization") String key,
+            @ApiParam(
+                    name = "id",
+                    value = "dictionary entry component ID",
+                    required = true)
+            @QueryParam("id") String id) {
+            try {
+                checkKey(key);
+                String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
+                try {
+                    UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+                    if (!utilityManager.isDictEntryComponent(_id)) {
+                        return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " does not exist").build();
+                    }
+                    return Response.ok(lexiconManager.deleteDictionaryEntryComponent(_id))
+                            .type(MediaType.TEXT_PLAIN)
+                            .header("Access-Control-Allow-Headers", "content-type")
+                            .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                            .build();
+                } catch (ManagerException ex) {
+                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+                }
+            } catch (UnsupportedEncodingException ex) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            } catch (AuthorizationException | ServiceException ex) {
+            log(Level.ERROR, "lexicon/creation/dictionaryEntryComponent: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }

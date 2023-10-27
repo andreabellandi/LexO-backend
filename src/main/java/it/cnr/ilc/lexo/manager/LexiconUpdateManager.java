@@ -7,6 +7,7 @@ package it.cnr.ilc.lexo.manager;
 
 import it.cnr.ilc.lexo.LexOProperties;
 import it.cnr.ilc.lexo.service.data.lexicon.input.ComponentPositionUpdater;
+import it.cnr.ilc.lexo.service.data.lexicon.input.DictionaryEntryUpdater;
 import it.cnr.ilc.lexo.service.data.lexicon.input.EtymologicalLinkUpdater;
 import it.cnr.ilc.lexo.service.data.lexicon.input.EtymologyUpdater;
 import it.cnr.ilc.lexo.service.data.lexicon.input.FormUpdater;
@@ -15,6 +16,7 @@ import it.cnr.ilc.lexo.service.data.lexicon.input.LanguageUpdater;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalEntryUpdater;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalSenseUpdater;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LinguisticRelationUpdater;
+import it.cnr.ilc.lexo.sparql.Namespace;
 import it.cnr.ilc.lexo.sparql.SparqlDeleteData;
 import it.cnr.ilc.lexo.sparql.SparqlInsertData;
 import it.cnr.ilc.lexo.sparql.SparqlPrefix;
@@ -69,6 +71,10 @@ public final class LexiconUpdateManager implements Manager, Cached {
 
     public void validateLexicalEntryAttribute(String attribute) throws ManagerException {
         Manager.validateWithEnum("attribute", OntoLexEntity.LexicalEntryAttributes.class, attribute);
+    }
+
+    public void validateDictionaryEntryAttribute(String attribute) throws ManagerException {
+        Manager.validateWithEnum("attribute", OntoLexEntity.DictionaryEntryAttributes.class, attribute);
     }
 
     public void validateLexicalEntryType(String type) throws ManagerException {
@@ -135,6 +141,10 @@ public final class LexiconUpdateManager implements Manager, Cached {
 
     public void validateDecomp(String rel) throws ManagerException {
         Manager.validateWithEnum("rel", OntoLexEntity.Decomp.class, rel);
+    }
+
+    public void validateLexicog(String rel) throws ManagerException {
+        Manager.validateWithEnum("rel", OntoLexEntity.Lexicog.class, rel);
     }
 
     public void validateLexicalEntryStatus(String status) throws ManagerException {
@@ -300,6 +310,16 @@ public final class LexiconUpdateManager implements Manager, Cached {
         return lastupdate;
     }
 
+    private String updateDictionaryLanguage(String id, String label, String lang) {
+        String lastupdate = timestampFormat.format(new Timestamp(System.currentTimeMillis()));
+        RDFQueryUtil.update(SparqlUpdateData.UPDATE_DICTIONARY_ENTRY_LANGUAGE.replaceAll("_ID_", id)
+                .replaceAll("_LABEL_", label)
+                .replaceAll("_LAST_UPDATE_", "\"" + lastupdate + "\"")
+                .replaceAll("_LANG_", lang));
+
+        return lastupdate;
+    }
+
     private String updateLanguage(String id, LexicalEntryUpdater leu) throws QueryEvaluationException {
         String label = getLabel(id);
         if (label != null) {
@@ -308,8 +328,28 @@ public final class LexiconUpdateManager implements Manager, Cached {
         return null;
     }
 
+    private String updateLanguage(String id, DictionaryEntryUpdater leu) throws QueryEvaluationException {
+        String label = getDictionaryLabel(id);
+        if (label != null) {
+            return updateDictionaryLanguage(id, label, leu.getValue());
+        }
+        return null;
+    }
+
     public String getLabel(String id) throws QueryEvaluationException {
         try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(SparqlSelectData.LEXICON_ENTRY_LANGUAGE.replaceAll("_ID_", id))) {
+
+            while (result.hasNext()) {
+                BindingSet bs = result.next();
+                return (bs.getBinding(SparqlVariable.LABEL) != null) ? ((Literal) bs.getBinding(SparqlVariable.LABEL).getValue()).getLabel() : null;
+            }
+        } catch (QueryEvaluationException qee) {
+        }
+        return null;
+    }
+
+    public String getDictionaryLabel(String id) throws QueryEvaluationException {
+        try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(SparqlSelectData.DICTIONARY_ENTRY_LANGUAGE.replaceAll("_ID_", id))) {
 
             while (result.hasNext()) {
                 BindingSet bs = result.next();
@@ -667,6 +707,20 @@ public final class LexiconUpdateManager implements Manager, Cached {
                     throw new ManagerException(lru.getValue() + " is not a valid Lexical Entry");
                 }
             }
+        } else if (lru.getType().equals(EnumUtil.LinguisticRelation.Lexicog.toString())) {
+            validateLexicog(lru.getRelation());
+            // currently external IRIs are not considered
+            if (lru.getRelation().equals(OntoLexEntity.Lexicog.subComponent.toString())) {
+                if (StringUtil.existsTypedIRI(lru.getValue(), SparqlPrefix.LEXICOG.getUri() + "LexicographicComponent")) {
+                } else {
+                    throw new ManagerException(lru.getValue() + " is not a valid Lexicographic component");
+                }
+            } else if (lru.getRelation().equals(OntoLexEntity.Lexicog.describes.toString())) {
+                if (StringUtil.existsIRI(lru.getValue())) {
+                } else {
+                    throw new ManagerException(lru.getValue() + " is not a valid IRI");
+                }
+            }
         } else if (lru.getType().equals(EnumUtil.LinguisticRelation.ConceptRel.toString())) {
             validateConceptRel(lru.getRelation());
             if (lru.getRelation().equals(OntoLexEntity.LexicalConceptRel.evokes.toString())) {
@@ -869,46 +923,54 @@ public final class LexiconUpdateManager implements Manager, Cached {
     }
 
     public String updateComponentPosition(String lexicalEntityID, ComponentPositionUpdater cpu) throws ManagerException {
+        validatePositionRelation(cpu.getRelation());
+        UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+        if (cpu.getComponent() == null) {
+            throw new ManagerException("The component field can not be null ");
+        }
+        if (cpu.getComponent().isEmpty()) {
+            throw new ManagerException("The component field can not be empty");
+        }
         if (cpu.getType().equals(EnumUtil.LinguisticRelation.Decomp.toString())) {
-            validatePositionRelation(cpu.getRelation());
-            UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
-            if (cpu.getComponent() != null) {
-                if (!cpu.getComponent().isEmpty()) {
-//                    if (!utilityManager.existsLinguisticRelation(lexicalEntryID, cpu.getRelation(), cpu.getComponent())) {
-//                        throw new ManagerException("The statement to update <" + lexicalEntryID + ", " + cpu.getRelation() + ", " + cpu.getComponent() + "> does not exist");
-//                    }
-                }
-            } else {
-                throw new ManagerException("The component field can not be null or empty");
+            return setPosition(lexicalEntityID, cpu, utilityManager);
+        } else if (cpu.getType().equals(EnumUtil.LinguisticRelation.Lexicog.toString())) {
+            if (cpu.getRelation().equals(EnumUtil.PositionRelation.rdfListPosition.toString())) {
+                return setPosition(lexicalEntityID, cpu, utilityManager);
+            } else if (cpu.getRelation().equals(EnumUtil.PositionRelation.rdfsMemeber.toString())) {
+                return addComponentMember(lexicalEntityID, cpu.getComponent());
             }
-            if (cpu.getPosition() != 0) {
-                if (cpu.getPosition() != (int) cpu.getPosition()) {
-                    throw new ManagerException(cpu.getPosition() + " must be an integer number");
-                } else {
-                    if (cpu.getCurrentPosition() != 0) {
-                        if (cpu.getCurrentPosition() != (int) cpu.getCurrentPosition()) {
-                            throw new ManagerException(cpu.getCurrentPosition() + " must be an integer number");
-                        } else {
-                            if (!utilityManager.existsGenericRelation(lexicalEntityID, cpu.getRelation().replaceAll("_n", "_" + String.valueOf(cpu.getCurrentPosition())), "?x")) {
-                                throw new ManagerException(lexicalEntityID + " has not a component in position #" + cpu.getCurrentPosition());
-                            }
-                            if (utilityManager.existsGenericRelation(lexicalEntityID, cpu.getRelation().replaceAll("_n", "_" + String.valueOf(cpu.getPosition())), "?x")) {
-                                throw new ManagerException(lexicalEntityID + " has just a component in position #" + cpu.getPosition() + ". Please, first remove it");
-                            }
-                            return updateComponentPosition(lexicalEntityID, cpu.getComponent(), cpu.getPosition(), cpu.getCurrentPosition());
-                        }
+            return null;
+        } else {
+            throw new ManagerException(cpu.getType() + " is not a valid relation type");
+        }
+    }
+
+    private String setPosition(String lexicalEntityID, ComponentPositionUpdater cpu, UtilityManager utilityManager) throws ManagerException {
+        if (cpu.getPosition() != 0) {
+            if (cpu.getPosition() != (int) cpu.getPosition()) {
+                throw new ManagerException(cpu.getPosition() + " must be an integer number");
+            } else {
+                if (cpu.getCurrentPosition() != 0) {
+                    if (cpu.getCurrentPosition() != (int) cpu.getCurrentPosition()) {
+                        throw new ManagerException(cpu.getCurrentPosition() + " must be an integer number");
                     } else {
+                        if (!utilityManager.existsGenericRelation(lexicalEntityID, cpu.getRelation().replaceAll("_n", "_" + String.valueOf(cpu.getCurrentPosition())), "?x")) {
+                            throw new ManagerException(lexicalEntityID + " has not a component in position #" + cpu.getCurrentPosition());
+                        }
                         if (utilityManager.existsGenericRelation(lexicalEntityID, cpu.getRelation().replaceAll("_n", "_" + String.valueOf(cpu.getPosition())), "?x")) {
                             throw new ManagerException(lexicalEntityID + " has just a component in position #" + cpu.getPosition() + ". Please, first remove it");
                         }
-                        return createComponentPosition(lexicalEntityID, cpu.getComponent(), cpu.getPosition());
+                        return updateComponentPosition(lexicalEntityID, cpu.getComponent(), cpu.getPosition(), cpu.getCurrentPosition());
                     }
+                } else {
+                    if (utilityManager.existsGenericRelation(lexicalEntityID, cpu.getRelation().replaceAll("_n", "_" + String.valueOf(cpu.getPosition())), "?x")) {
+                        throw new ManagerException(lexicalEntityID + " has just a component in position #" + cpu.getPosition() + ". Please, first remove it");
+                    }
+                    return createComponentPosition(lexicalEntityID, cpu.getComponent(), cpu.getPosition());
                 }
-            } else {
-                throw new ManagerException("position can not be 0");
             }
         } else {
-            throw new ManagerException(cpu.getType() + " is not a valid relation type");
+            throw new ManagerException("position can not be 0");
         }
     }
 
@@ -926,6 +988,48 @@ public final class LexiconUpdateManager implements Manager, Cached {
                 .replaceAll("POSITION", String.valueOf(position))
                 .replaceAll("CURR_POS", String.valueOf(currentPosition))
                 .replaceAll("_IDCOMPONENT_", component)
+                .replaceAll("_LAST_UPDATE_", "\"" + lastupdate + "\""));
+        return lastupdate;
+    }
+
+    public String addComponentMember(String lexicalEntityID, String component) throws ManagerException, UpdateExecutionException {
+        String lastupdate = timestampFormat.format(new Timestamp(System.currentTimeMillis()));
+        RDFQueryUtil.update(SparqlUpdateData.ADD_COMPONENT_MEMBER.replaceAll("_ID_", lexicalEntityID)
+                .replaceAll("_IDCOMPONENT_", component)
+                .replaceAll("_LAST_UPDATE_", "\"" + lastupdate + "\""));
+        return lastupdate;
+    }
+
+    public String updateDictionaryEntry(String id, DictionaryEntryUpdater leu, String user, String type) throws ManagerException {
+        validateDictionaryEntryAttribute(leu.getRelation());
+        if (leu.getRelation().equals(OntoLexEntity.LexicalEntryAttributes.Label.toString())) {
+            String lang = ManagerFactory.getManager(UtilityManager.class).getDictLanguage(id);
+            return updateDictionaryEntry(id, leu.getRelation(),
+                    (lang != null) ? ("\"" + leu.getValue() + "\"@" + lang) : "\"" + leu.getValue() + "\"", "?" + SparqlVariable.TARGET);
+        } else if (leu.getRelation().equals(OntoLexEntity.LexicalEntryAttributes.Language.toString())) {
+            validateLexicalEntryLanguage(leu.getValue());
+            return updateLanguage(id, leu);
+        } else if (leu.getRelation().equals(OntoLexEntity.LexicalEntryAttributes.Note.toString())) {
+            return updateDictionaryEntry(id, leu.getRelation(), "\"" + leu.getValue() + "\"", "?" + SparqlVariable.TARGET);
+        } else if (leu.getRelation().equals(OntoLexEntity.LanguageAttributes.Confidence.toString())) {
+            validateConfidenceValue(leu.getValue());
+            return updateDictionaryEntry(id, leu.getRelation(),
+                    leu.getValue(),
+                    "?" + SparqlVariable.TARGET);
+        } else {
+            return null;
+        }
+    }
+
+    public String updateDictionaryEntry(String id, String relation, String valueToInsert, String valueToDelete) throws ManagerException, UpdateExecutionException {
+        if (valueToInsert.isEmpty()) {
+            throw new ManagerException("value cannot be empty");
+        }
+        String lastupdate = timestampFormat.format(new Timestamp(System.currentTimeMillis()));
+        RDFQueryUtil.update(SparqlUpdateData.UPDATE_DICTIONARY_ENTRY.replaceAll("_ID_", id)
+                .replaceAll("_RELATION_", relation)
+                .replaceAll("_VALUE_TO_INSERT_", valueToInsert)
+                .replaceAll("_VALUE_TO_DELETE_", valueToDelete)
                 .replaceAll("_LAST_UPDATE_", "\"" + lastupdate + "\""));
         return lastupdate;
     }

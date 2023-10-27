@@ -303,6 +303,23 @@ public class OntoLexEntity {
         }
 
     }
+    
+    public static enum Lexicog {
+        describes(SparqlPrefix.LEXICOG.getUri() + "describes"),
+        subComponent(SparqlPrefix.LEXICOG.getUri() + "subComponent");
+
+        private final String lexicog;
+
+        private Lexicog(String lexicog) {
+            this.lexicog = lexicog;
+        }
+
+        @Override
+        public String toString() {
+            return this.lexicog;
+        }
+
+    }
 
     public static enum LanguageAttributes {
         Description(SparqlPrefix.DCT.getUri() + "description"),
@@ -341,6 +358,25 @@ public class OntoLexEntity {
         @Override
         public String toString() {
             return this.lexicalEntryAttributes;
+        }
+
+    }
+    
+    public static enum DictionaryEntryAttributes {
+        Label(SparqlPrefix.RDFS.getUri() + "label"),
+        Note(SparqlPrefix.SKOS.getUri() + "note"),
+        Language(SparqlPrefix.LEXICOG.getUri() + "entry"),
+        Confidence(SparqlPrefix.LEXINFO.getUri() + "confidence");
+
+        private final String dictionaryEntryAttributes;
+
+        private DictionaryEntryAttributes(String dictionaryEntryAttributes) {
+            this.dictionaryEntryAttributes = dictionaryEntryAttributes;
+        }
+
+        @Override
+        public String toString() {
+            return this.dictionaryEntryAttributes;
         }
 
     }

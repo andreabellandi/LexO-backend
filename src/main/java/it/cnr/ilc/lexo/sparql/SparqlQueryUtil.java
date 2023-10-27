@@ -36,38 +36,53 @@ public class SparqlQueryUtil {
     public static final String IS_LEXICON_LANGUAGE
             = SparqlPrefix.LIME.getSparqlPrefix() + "\n"
             + "ASK { <_ID_> a " + SparqlPrefix.LIME.getPrefix() + "Lexicon }";
+    
+    public static final String DICTIONARY_HAS_ENTRY
+            = SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
+            + "ASK { <_ID_> " + SparqlPrefix.LEXICOG.getPrefix() + "entry ?entry }";
+    
+    public static final String IS_DICTIONARY
+            = SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
+            + "ASK { <_ID_> a " + SparqlPrefix.LEXICOG.getPrefix() + "LexicographicResource }";
 
     public static final String IS_LEXICALENTRY_ID
             = SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
             + "ASK { <_ID_> a " + SparqlPrefix.ONTOLEX.getPrefix() + "LexicalEntry }";
-    
+
+    public static final String IS_DICTENTRY_COMPONENT_ID
+            = SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
+            + "ASK { \n"
+            + "{ <_ID_> a " + SparqlPrefix.LEXICOG.getPrefix() + "Entry }\n"
+            + " UNION \n"
+            + "{ <_ID_> a " + SparqlPrefix.LEXICOG.getPrefix() + "LexicographicComponent }\n"
+            + "}";
+
     public static final String LEXICALENTRY_TYPE
             = SparqlPrefix.SESAME.getSparqlPrefix() + "\n"
-            + "SELECT ?"+ SparqlVariable.LEXICAL_ENTRY_TYPE + "\n"
+            + "SELECT ?" + SparqlVariable.LEXICAL_ENTRY_TYPE + "\n"
             + "WHERE { <_ID_> rdf:type ?" + SparqlVariable.LEXICAL_ENTRY_TYPE + " .\n"
-            + "FILTER(regex(str(?" + SparqlVariable.LEXICAL_ENTRY_TYPE + "),\"" 
+            + "FILTER(regex(str(?" + SparqlVariable.LEXICAL_ENTRY_TYPE + "),\""
             + SparqlPrefix.ONTOLEX.getUri() + "|" + SparqlPrefix.ETY.getUri() + "\")) }";
 
     public static final String IS_COMPONENT_ID
             = SparqlPrefix.DECOMP.getSparqlPrefix() + "\n"
             + "ASK { <_ID_> a " + SparqlPrefix.DECOMP.getPrefix() + "Component }";
-    
+
     public static final String IS_COLLOCATION_ID
             = SparqlPrefix.FRAC.getSparqlPrefix() + "\n"
             + "ASK { <_ID_> a " + SparqlPrefix.FRAC.getPrefix() + "Collocation }";
-    
+
     public static final String IS_FORMRESTRICTION_ID
             = SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
             + "ASK { <_ID_> a " + SparqlPrefix.LEXICOG.getPrefix() + "FormRestriction }";
-    
+
     public static final String IS_LEXICOSEMANTIC_RELATION_ID
             = SparqlPrefix.VARTRANS.getSparqlPrefix() + "\n"
             + "ASK { <_ID_> a " + SparqlPrefix.VARTRANS.getPrefix() + "LexicoSemanticRelation }";
-    
+
     public static final String IS_TRANSLATIONSET_ID
             = SparqlPrefix.VARTRANS.getSparqlPrefix() + "\n"
             + "ASK { <_ID_> a " + SparqlPrefix.VARTRANS.getPrefix() + "TranslationSet }";
-
     public static final String IS_LEXICAL_CONCEPT_ID
             = SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
             + "ASK { <_ID_> a " + SparqlPrefix.ONTOLEX.getPrefix() + "LexicalConcept }";
@@ -84,7 +99,7 @@ public class SparqlQueryUtil {
             + " UNION \n"
             + "{ <_ID_> a " + SparqlPrefix.DECOMP.getPrefix() + "Component }\n"
             + "}";
-    
+
     public static final String IS_ADMISSIBLE_HEAD_OF_COLLOCATION_ID
             = SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
             + SparqlPrefix.FRAC.getSparqlPrefix() + "\n"
@@ -106,6 +121,15 @@ public class SparqlQueryUtil {
             = SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
             + "ASK { <_ID_> " + SparqlPrefix.ONTOLEX.getPrefix() + "sense|" + SparqlPrefix.ONTOLEX.getPrefix() + "lexicalForm ?f}";
 
+    public static final String HAS_DICTIONARYENTRY_COMPONENTS
+            = SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
+            + "ASK { \n"
+            + "       { <_ID_> rdfs:member ?m }\n"
+            + "          UNION \n"
+            + "       { <_ID_> lexicog:subComponent ?sc }\n"
+            + "    }";
+
     public static final String EXISTS_ID
             = "ASK { <_ID_> a ?type }";
 
@@ -117,8 +141,13 @@ public class SparqlQueryUtil {
             + "ASK { ?lex a " + SparqlPrefix.LIME.getPrefix() + "Lexicon ;"
             + "      " + SparqlPrefix.LIME.getPrefix() + "language \"_LANG_\" . }";
 
+    public static final String EXISTS_DICT_LANGUAGE
+            = SparqlPrefix.LIME.getSparqlPrefix() + "\n"
+            + "ASK { ?lex a " + SparqlPrefix.LEXICOG.getPrefix() + "LexicographicResource ;"
+            + "      " + SparqlPrefix.LIME.getPrefix() + "language \"_LANG_\" . }";
+
     public static final String IS_FORM_ID
-             = SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
+            = SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
             + "ASK { <_ID_> a " + SparqlPrefix.ONTOLEX.getPrefix() + "Form }";
 
     public static final String IS_ETYMOLOGY_ID
@@ -138,6 +167,12 @@ public class SparqlQueryUtil {
             + "SELECT ?" + SparqlVariable.LEXICON_LANGUAGE + " \n"
             + "WHERE { ?" + SparqlVariable.LEXICON + " " + SparqlPrefix.LIME.getPrefix() + "entry  <_ID_> ;\n"
             + "        " + SparqlPrefix.LIME.getPrefix() + "language ?" + SparqlVariable.LEXICON_LANGUAGE + " }";
+    
+    public static final String DICTIONARY_LANGUAGE
+            = SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
+            + "SELECT ?" + SparqlVariable.DICT_LANGUAGE + " \n"
+            + "WHERE { ?" + SparqlVariable.DICT_ELEMENT + " " + SparqlPrefix.LEXICOG.getPrefix() + "entry  <_ID_> ;\n"
+            + "        " + SparqlPrefix.LIME.getPrefix() + "language ?" + SparqlVariable.DICT_LANGUAGE + " }";
 
     public static final String LEXICAL_ENTRY_BY_FORM
             = SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
@@ -165,7 +200,7 @@ public class SparqlQueryUtil {
             + "  }\n"
             + "  FILTER( ?" + SparqlVariable.LABEL_COUNT + " > _COG_NUMBER_ )\n"
             + "}";
-    
+
     public static final String IMAGE_URL
             = SparqlPrefix.FOAF.getSparqlPrefix() + "\n"
             + "SELECT ?" + SparqlVariable.IDENTIFIER + " \n"

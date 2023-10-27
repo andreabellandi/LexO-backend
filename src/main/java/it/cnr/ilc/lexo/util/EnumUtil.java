@@ -217,6 +217,7 @@ public class EnumUtil {
         Translation("translation"),
         TranslationSet("translationSet"),
         LexicoSemanticRel("LexicosemanticRel"),
+        Lexicog("lexicog"),
         //        Cognate("cognate"),
         ConceptRel("conceptRel");
 
@@ -293,7 +294,8 @@ public class EnumUtil {
     }
 
     public static enum PositionRelation {
-        rdfListPosition(SparqlPrefix.RDF.getUri() + "_n");
+        rdfListPosition(SparqlPrefix.RDF.getUri() + "_n"),
+        rdfsMemeber(SparqlPrefix.RDFS.getUri() + "member");
 
         private final String positionRelation;
 

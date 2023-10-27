@@ -8,6 +8,8 @@ package it.cnr.ilc.lexo.manager;
 import it.cnr.ilc.lexo.LexOProperties;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Collocation;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Component;
+import it.cnr.ilc.lexo.service.data.lexicon.output.Dictionary;
+import it.cnr.ilc.lexo.service.data.lexicon.output.DictionaryEntryComponent;
 import it.cnr.ilc.lexo.service.data.lexicon.output.EtymologicalLink;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Etymology;
 import it.cnr.ilc.lexo.service.data.lexicon.output.FormCore;
@@ -19,6 +21,7 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalSenseCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ReifiedRelation;
 import it.cnr.ilc.lexo.service.data.lexicon.output.TranslationSet;
 import it.cnr.ilc.lexo.sparql.SparqlInsertData;
+import it.cnr.ilc.lexo.sparql.SparqlPrefix;
 import it.cnr.ilc.lexo.util.OntoLexEntity;
 import it.cnr.ilc.lexo.util.RDFQueryUtil;
 import java.sql.Timestamp;
@@ -39,6 +42,33 @@ public class LexiconCreationManager implements Manager, Cached {
     @Override
     public void reloadCache() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    public Dictionary createDictionary(String prefix, String baseIRI, String author, String lang) throws ManagerException {
+        Timestamp tm = new Timestamp(System.currentTimeMillis());
+        String id = idInstancePrefix + tm.toString();
+        String created = timestampFormat.format(tm);
+        String sparqlPrefix = "PREFIX " + prefix + ": <" + baseIRI + ">";
+        String _id = baseIRI + id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
+        RDFQueryUtil.update(SparqlInsertData.CREATE_DICTIONARY.replace("_ID_", _id)
+                .replace("_LANG_", lang)
+                .replace("_PREFIX_", sparqlPrefix)
+                .replace("_AUTHOR_", author)
+                .replace("_CREATED_", created)
+                .replace("_MODIFIED_", created));
+        return setDictionary(_id, created, author, lang);
+    }
+    
+    private Dictionary setDictionary(String id, String created, String author, String lang) {
+        Dictionary d = new Dictionary();
+        d.setCreator(author);
+        d.setConfidence(-1);
+        d.setLanguage(id);
+        d.setLabel(lang);
+        d.setLastUpdate(created);
+        d.setCreationDate(created);
+        d.setEntries(0);
+        return d;
     }
     
     public Language createLanguage(String prefix, String baseIRI, String author, String lang) throws ManagerException {
@@ -87,6 +117,22 @@ public class LexiconCreationManager implements Manager, Cached {
         return setLexicalEntry(_id, idLabel, created, author);
     }
     
+    public DictionaryEntryComponent createDictionaryEntry(String author, String prefix, String baseIRI) throws ManagerException {
+        Timestamp tm = new Timestamp(System.currentTimeMillis());
+        String id = idInstancePrefix + tm.toString();
+        String created = timestampFormat.format(tm);
+        String sparqlPrefix = "PREFIX " + prefix + ": <" + baseIRI + ">";
+        String idLabel = id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
+        String _id = baseIRI + idLabel;
+        RDFQueryUtil.update(SparqlInsertData.CREATE_DICTIONARY_ENTRY.replace("[ID]", _id)
+                .replace("[LABEL]", idLabel)
+                .replace("_PREFIX_", sparqlPrefix)
+                .replace("[AUTHOR]", author)
+                .replace("[CREATED]", created)
+                .replace("[MODIFIED]", created));
+        return setDictionaryEntry(_id, idLabel, created);
+    }
+    
     private LexicalEntryCore setLexicalEntry(String id, String label, String created, String author) {
         ArrayList<String> types = new ArrayList<>();
         types.add("LexicalEntry");
@@ -100,6 +146,16 @@ public class LexiconCreationManager implements Manager, Cached {
         lec.setLastUpdate(created);
         lec.setCreationDate(created);
         return lec;
+    }
+    
+     private DictionaryEntryComponent setDictionaryEntry(String id, String label, String created) {
+        DictionaryEntryComponent dec = new DictionaryEntryComponent();
+        dec.setLabel(label);
+        dec.setConfidence(-1);
+        dec.setComponent(id);
+        dec.setLastUpdate(created);
+        dec.setCreationDate(created);
+        return dec;
     }
     
     public FormCore createForm(String leID, String author, String lang, String prefix, String baseIRI) throws ManagerException {
@@ -222,6 +278,20 @@ public class LexiconCreationManager implements Manager, Cached {
         return setComponent(_id, created, author);
     }
     
+    public DictionaryEntryComponent createDictionaryEntryComponent(String author, String prefix, String baseIRI) throws ManagerException {
+        Timestamp tm = new Timestamp(System.currentTimeMillis());
+        String id = idInstancePrefix + tm.toString();
+        String created = timestampFormat.format(tm);
+        String sparqlPrefix = "PREFIX " + prefix + ": <" + baseIRI + ">";
+        String _id = baseIRI + id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
+        RDFQueryUtil.update(SparqlInsertData.CREATE_DICTIONARY_ENTRY_COMPONENT.replaceAll("_ID_", _id)
+                .replace("_AUTHOR_", author)
+                .replace("_CREATED_", created)
+                .replace("_PREFIX_", sparqlPrefix)
+                .replace("_MODIFIED_", created));
+        return setDictionaryEntryComponent(_id, created, author);
+    }
+    
     public Collocation createCollocation(String leID, String author, String prefix, String baseIRI) throws ManagerException {
         Timestamp tm = new Timestamp(System.currentTimeMillis());
         String id = idInstancePrefix + tm.toString();
@@ -314,6 +384,17 @@ public class LexiconCreationManager implements Manager, Cached {
         sc.setLastUpdate(created);
         sc.setCreationDate(created);
         return sc;
+    }
+    
+    private DictionaryEntryComponent setDictionaryEntryComponent(String id, String created, String author) {
+        DictionaryEntryComponent dec = new DictionaryEntryComponent();
+        dec.setCreator(author);
+        dec.setConfidence(-1);
+        dec.setComponent(id);
+        dec.setLastUpdate(created);
+        dec.setCreationDate(created);
+        dec.setComponent(id);
+        return dec;
     }
     
     private Collocation setCollocation(String id, String leID, String created, String author) {

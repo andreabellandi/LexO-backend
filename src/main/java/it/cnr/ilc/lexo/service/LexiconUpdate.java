@@ -14,6 +14,7 @@ import it.cnr.ilc.lexo.manager.ManagerException;
 import it.cnr.ilc.lexo.manager.ManagerFactory;
 import it.cnr.ilc.lexo.manager.UtilityManager;
 import it.cnr.ilc.lexo.service.data.lexicon.input.ComponentPositionUpdater;
+import it.cnr.ilc.lexo.service.data.lexicon.input.DictionaryEntryUpdater;
 import it.cnr.ilc.lexo.service.data.lexicon.input.EtymologicalLinkUpdater;
 import it.cnr.ilc.lexo.service.data.lexicon.input.EtymologyUpdater;
 import it.cnr.ilc.lexo.service.data.lexicon.input.FormUpdater;
@@ -120,6 +121,45 @@ public class LexiconUpdate extends Service {
                 return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
             } catch (AuthorizationException | ServiceException ex) {
             log(Level.ERROR, "lexicon/creation/lexicalEntry: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
+        }
+    }
+    
+    @POST
+    @Path("dictionaryEntry")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.POST,
+            value = "dictionaryEntry",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Dictionary entry update",
+            notes = "This method updates the dictionary entry according to the input updater")
+    public Response dictionaryEntry(
+            @HeaderParam("Authorization") String key, @QueryParam("id") String id, 
+            @ApiParam(
+                    name = "author",
+                    value = "if LexO user management is disabled, the account that is updating the status of the lexical entry",
+                    example = "user7",
+                    required = true)
+            @QueryParam("author") String author,
+            DictionaryEntryUpdater deu) {
+            try {
+                checkKey(key);
+                String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
+                UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+                String type = utilityManager.getLexicalEntryType(_id);
+                if (type == null) {
+                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " does not exist").build();
+                } 
+                return Response.ok(lexiconManager.updateDictionaryEntry(_id, deu, author, type))
+                        .type(MediaType.TEXT_PLAIN)
+                        .header("Access-Control-Allow-Headers", "content-type")
+                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                        .build();
+            } catch (ManagerException | UpdateExecutionException | UnsupportedEncodingException ex) {
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            } catch (AuthorizationException | ServiceException ex) {
+            log(Level.ERROR, "lexicon/creation/dictionaryEntry: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }

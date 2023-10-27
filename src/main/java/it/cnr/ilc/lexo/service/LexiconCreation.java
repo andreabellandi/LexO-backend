@@ -19,6 +19,8 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.BibliographicItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Collocation;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Component;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ConceptSet;
+import it.cnr.ilc.lexo.service.data.lexicon.output.Dictionary;
+import it.cnr.ilc.lexo.service.data.lexicon.output.DictionaryEntryComponent;
 import it.cnr.ilc.lexo.service.data.lexicon.output.EtymologicalLink;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Etymology;
 import it.cnr.ilc.lexo.service.data.lexicon.output.FormCore;
@@ -33,6 +35,8 @@ import it.cnr.ilc.lexo.service.helper.BibliographyHelper;
 import it.cnr.ilc.lexo.service.helper.CollocationHelper;
 import it.cnr.ilc.lexo.service.helper.ComponentHelper;
 import it.cnr.ilc.lexo.service.helper.ConceptSetHelper;
+import it.cnr.ilc.lexo.service.helper.DictionaryEntryComponentHelper;
+import it.cnr.ilc.lexo.service.helper.DictionaryHelper;
 import it.cnr.ilc.lexo.service.helper.EtymologicalLinkHelper;
 import it.cnr.ilc.lexo.service.helper.EtymologyHelper;
 import it.cnr.ilc.lexo.service.helper.FormCoreHelper;
@@ -74,6 +78,7 @@ public class LexiconCreation extends Service {
     private final SKOSManager skosManager = ManagerFactory.getManager(SKOSManager.class);
     private final LexicalEntryCoreHelper lexicalEntryCoreHelper = new LexicalEntryCoreHelper();
     private final LanguageHelper languageHelper = new LanguageHelper();
+    private final DictionaryHelper dictionaryHelper = new DictionaryHelper();
     private final FormCoreHelper formCoreHelper = new FormCoreHelper();
     private final EtymologyHelper etymologyHelper = new EtymologyHelper();
     private final EtymologicalLinkHelper etymologicalLinkHelper = new EtymologicalLinkHelper();
@@ -86,6 +91,68 @@ public class LexiconCreation extends Service {
     private final TranslationSetHelper translationSetHelper = new TranslationSetHelper();
     private final LexicalConceptHelper lexicalConceptHelper = new LexicalConceptHelper();
     private final ConceptSetHelper conceptSetHelper = new ConceptSetHelper();
+    private final DictionaryEntryComponentHelper dictionaryEntryComponentHelper = new DictionaryEntryComponentHelper();
+
+    @GET
+    @Path("dictionary")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "dictionary",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Dictionary creation",
+            notes = "This method creates a new dictionary according to lexicog module")
+    public Response dictionary(
+            @HeaderParam("Authorization") String key,
+            @ApiParam(
+                    name = "lang",
+                    value = "language code (2 or 3 digits)",
+                    example = "en",
+                    required = true)
+            @QueryParam("lang") String lang,
+            @ApiParam(
+                    name = "author",
+                    value = "the account that is creating the dictionary (if LexO user management disabled)",
+                    example = "user7",
+                    required = false)
+            @QueryParam("author") String author,
+            @ApiParam(
+                    name = "prefix",
+                    value = "prefix of the namespace",
+                    example = "myprefix",
+                    required = true)
+            @QueryParam("prefix") String prefix,
+            @ApiParam(
+                    name = "baseIRI",
+                    value = "base IRI of the entity",
+                    example = "http://mydata.com#",
+                    required = true)
+            @QueryParam("baseIRI") String baseIRI) {
+        try {
+            checkKey(key);
+            log(Level.INFO, "lexicon/creation/dictionary: lang=" + lang);
+            UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+            utilityManager.validateNamespace(prefix, baseIRI);
+            if (utilityManager.dictionaryLanguageExists(lang)) {
+                log(Level.INFO, "Language label " + lang + " already exists");
+                return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Language label " + lang + " already exists").build();
+            }
+            Dictionary d = lexiconManager.createDictionary(prefix, baseIRI, author, lang);
+            String json = dictionaryHelper.toJson(d);
+            log(Level.INFO, "Dictionary for language " + lang + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
+            return Response.ok(json)
+                    .type(MediaType.TEXT_PLAIN)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
+        } catch (ManagerException ex) {
+            log(Level.ERROR, "lexicon/creation/dictionary: " + ex.getMessage());
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        } catch (AuthorizationException | ServiceException ex) {
+            log(Level.ERROR, "lexicon/creation/dictionary: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
+        }
+    }
 
     @GET
     @Path("language")
@@ -196,6 +263,57 @@ public class LexiconCreation extends Service {
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         } catch (AuthorizationException | ServiceException ex) {
             log(Level.ERROR, "lexicon/creation/lexicalEntry: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
+        }
+    }
+
+    @GET
+    @Path("dictionaryEntry")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "dictionaryEntry",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Dictionary entry creation",
+            notes = "This method creates a new dictionary entry according to lexicog module, and returns its id and some metadata")
+    public Response dictionaryEntry(
+            @HeaderParam("Authorization") String key,
+            @ApiParam(
+                    name = "author",
+                    value = "the account that is creating the lexical entry (if LexO user management disabled)",
+                    example = "user7",
+                    required = false)
+            @QueryParam("author") String author,
+            @ApiParam(
+                    name = "prefix",
+                    value = "prefix of the namespace",
+                    example = "myprefix",
+                    required = true)
+            @QueryParam("prefix") String prefix,
+            @ApiParam(
+                    name = "baseIRI",
+                    value = "base IRI of the entity",
+                    example = "http://mydata.com#",
+                    required = true)
+            @QueryParam("baseIRI") String baseIRI) {
+        try {
+            checkKey(key);
+            log(Level.INFO, "lexicon/creation/dictionaryEntry");
+            UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+            utilityManager.validateNamespace(prefix, baseIRI);
+            DictionaryEntryComponent dec = lexiconManager.createDictionaryEntry(author, prefix, baseIRI);
+            String json = dictionaryEntryComponentHelper.toJson(dec);
+            log(Level.INFO, "Dictionary entry " + dec.getLabel() + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
+            return Response.ok(json)
+                    .type(MediaType.TEXT_PLAIN)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
+        } catch (ManagerException ex) {
+            log(Level.ERROR, "lexicon/creation/dictionaryEntry: " + ex.getMessage());
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        } catch (AuthorizationException | ServiceException ex) {
+            log(Level.ERROR, "lexicon/creation/dictionaryEntry: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
@@ -981,5 +1099,57 @@ public class LexiconCreation extends Service {
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
 
+    }
+
+    @GET
+    @Path("lexicographicComponent")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "lexicographicComponent",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Dictionary entry component creation",
+            notes = "This method creates a new component of a dictionary entry according to lexcog module, and returns its id and some metadata")
+    public Response lexicographicComponent(
+            @HeaderParam("Authorization") String key,
+            @ApiParam(
+                    name = "author",
+                    value = "the account that is creating the component (if LexO user management disabled)",
+                    example = "user7",
+                    required = false)
+            @QueryParam("author") String author,
+            @ApiParam(
+                    name = "prefix",
+                    value = "prefix of the namespace",
+                    example = "myprefix",
+                    required = true)
+            @QueryParam("prefix") String prefix,
+            @ApiParam(
+                    name = "baseIRI",
+                    value = "base IRI of the entity",
+                    example = "http://mydata.com#",
+                    required = true)
+            @QueryParam("baseIRI") String baseIRI) {
+        try {
+            checkKey(key);
+            try {
+                UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+                utilityManager.validateNamespace(prefix, baseIRI);
+                DictionaryEntryComponent dec = lexiconManager.createDictionaryEntryComponent(author, prefix, baseIRI);
+                String json = dictionaryEntryComponentHelper.toJson(dec);
+                log(Level.INFO, "Lexicographic component " + dec.getComponent() + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
+                return Response.ok(json)
+                        .type(MediaType.TEXT_PLAIN)
+                        .header("Access-Control-Allow-Headers", "content-type")
+                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                        .build();
+            } catch (ManagerException ex) {
+                log(Level.ERROR, "lexicon/creation/lexicographicComponent: " + ex.getMessage());
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            }
+        } catch (AuthorizationException | ServiceException ex) {
+            log(Level.ERROR, "lexicon/creation/lexicographicComponent: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
+        }
     }
 }

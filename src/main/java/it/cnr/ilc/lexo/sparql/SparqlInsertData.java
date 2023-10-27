@@ -25,6 +25,23 @@ public class SparqlInsertData {
             + "                   dct:created \"[CREATED]\" ;\n"
             + "                   dct:modified \"[MODIFIED]\" . \n"
             + "}";
+    
+    public static final String CREATE_DICTIONARY_ENTRY
+            = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.VS.getSparqlPrefix() + "\n"
+             + SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
+            + "_PREFIX_ \n"
+            + "INSERT DATA {\n"
+            + "    <[ID]> a lexicog:Entry ;\n"
+            + "                   rdfs:label \"[LABEL]\" ;\n"
+            + "                   dct:creator \"[AUTHOR]\" ;\n"
+//            + "                   vs:term_status \"working\" ;\n"
+            + "                   dct:created \"[CREATED]\" ;\n"
+            + "                   dct:modified \"[MODIFIED]\" . \n"
+            + "}";
+    
 
     public static final String CREATE_LEXICON_LANGUAGE
             = SparqlPrefix.LIME.getSparqlPrefix() + "\n"
@@ -34,6 +51,18 @@ public class SparqlInsertData {
             + "<_ID_> a " + SparqlPrefix.LIME.getPrefix() + "Lexicon ;\n"
             + SparqlPrefix.LIME.getPrefix() + "language \"_LANG_\" ;\n"
             + SparqlPrefix.LIME.getPrefix() + "linguisticCatalog <http://www.lexinfo.net/ontologies/3.0/lexinfo> ;\n"
+            + SparqlPrefix.DCT.getPrefix() + "creator \"_AUTHOR_\" ;\n"
+            + SparqlPrefix.DCT.getPrefix() + "created \"_CREATED_\" ;\n"
+            + SparqlPrefix.DCT.getPrefix() + "modified \"_MODIFIED_\" . \n"
+            + "}";
+    
+    public static final String CREATE_DICTIONARY
+            = SparqlPrefix.LIME.getSparqlPrefix() + "\n"
+            + SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+            + "_PREFIX_ \n"
+            + "INSERT DATA { \n"
+            + "<_ID_> a " + SparqlPrefix.LEXICOG.getPrefix() + "LexicographicResource ;\n"
+            + SparqlPrefix.LIME.getPrefix() + "language \"_LANG_\" ;\n"
             + SparqlPrefix.DCT.getPrefix() + "creator \"_AUTHOR_\" ;\n"
             + SparqlPrefix.DCT.getPrefix() + "created \"_CREATED_\" ;\n"
             + SparqlPrefix.DCT.getPrefix() + "modified \"_MODIFIED_\" . \n"
@@ -113,6 +142,17 @@ public class SparqlInsertData {
             + "                   dct:created \"_CREATED_\" ;\n"
             + "                   dct:modified \"_MODIFIED_\" . \n"
             + "    <_LEID_> decomp:constituent <_ID_> .\n"
+            + "}";
+    
+    public static final String CREATE_DICTIONARY_ENTRY_COMPONENT
+            = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
+            + "_PREFIX_ \n"
+            + "INSERT DATA {\n"
+            + "    <_ID_> a lexicog:exicographicComponent ;\n"
+            + "                   dct:creator \"_AUTHOR_\" ;\n"
+            + "                   dct:created \"_CREATED_\" ;\n"
+            + "                   dct:modified \"_MODIFIED_\" . \n"
             + "}";
     
     public static final String CREATE_COLLOCATION

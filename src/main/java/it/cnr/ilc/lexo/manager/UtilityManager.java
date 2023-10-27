@@ -66,6 +66,18 @@ public final class UtilityManager implements Manager, Cached {
         }
         return null;
     }
+    
+    public String getDictLanguage(String id) throws QueryEvaluationException {
+        String query = SparqlQueryUtil.DICTIONARY_LANGUAGE.replaceAll("_ID_", id);
+        try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {
+            while (result.hasNext()) {
+                BindingSet bs = result.next();
+                return (bs.getBinding(SparqlVariable.DICT_LANGUAGE) != null) ? bs.getBinding(SparqlVariable.DICT_LANGUAGE).getValue().stringValue() : null;
+            }
+        } catch (QueryEvaluationException qee) {
+        }
+        return null;
+    }
 
     public String getLabel(String id) throws QueryEvaluationException {
         String query = SparqlQueryUtil.LEXICAL_ENTRY_LABEL.replaceAll("_ID_", id);
@@ -143,9 +155,19 @@ public final class UtilityManager implements Manager, Cached {
         }
         return 1;
     }
+    
+    public boolean dictionaryHasEntry(String id) throws QueryEvaluationException {
+        String query = SparqlQueryUtil.DICTIONARY_HAS_ENTRY.replaceAll("_ID_", id);
+        return RDFQueryUtil.evaluateBQuery(query);
+    }
 
     public boolean isLexiconLanguage(String id) throws QueryEvaluationException {
         String query = SparqlQueryUtil.IS_LEXICON_LANGUAGE.replaceAll("_ID_", id);
+        return RDFQueryUtil.evaluateBQuery(query);
+    }
+    
+    public boolean isDictionary(String id) throws QueryEvaluationException {
+        String query = SparqlQueryUtil.IS_DICTIONARY.replaceAll("_ID_", id);
         return RDFQueryUtil.evaluateBQuery(query);
     }
 
@@ -153,9 +175,19 @@ public final class UtilityManager implements Manager, Cached {
         String query = SparqlQueryUtil.HAS_LEXICALENTRY_CHILDREN.replaceAll("_ID_", id);
         return RDFQueryUtil.evaluateBQuery(query);
     }
+    
+    public boolean hasDictionaryEntryComponents(String id) throws QueryEvaluationException {
+        String query = SparqlQueryUtil.HAS_DICTIONARYENTRY_COMPONENTS.replaceAll("_ID_", id);
+        return RDFQueryUtil.evaluateBQuery(query);
+    }
 
     public boolean isLexicalEntry(String id) throws QueryEvaluationException {
         String query = SparqlQueryUtil.IS_LEXICALENTRY_ID.replaceAll("_ID_", id);
+        return RDFQueryUtil.evaluateBQuery(query);
+    }
+    
+    public boolean isDictEntryComponent(String id) throws QueryEvaluationException {
+        String query = SparqlQueryUtil.IS_DICTENTRY_COMPONENT_ID.replaceAll("_ID_", id);
         return RDFQueryUtil.evaluateBQuery(query);
     }
 
@@ -216,6 +248,11 @@ public final class UtilityManager implements Manager, Cached {
 
     public boolean languageExists(String lang) throws QueryEvaluationException {
         String query = SparqlQueryUtil.EXISTS_LANGUAGE.replaceAll("_LANG_", lang);
+        return RDFQueryUtil.evaluateBQuery(query);
+    }
+    
+    public boolean dictionaryLanguageExists(String lang) throws QueryEvaluationException {
+        String query = SparqlQueryUtil.EXISTS_DICT_LANGUAGE.replaceAll("_LANG_", lang);
         return RDFQueryUtil.evaluateBQuery(query);
     }
 

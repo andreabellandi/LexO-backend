@@ -104,7 +104,7 @@ public class SparqlVariable {
     public static final String COLLOCATION = "collocation";
     public static final String HEAD = "head";
     public static final String FREQUENCY = "frequency";
-    
+
     public static final String FORM_RESTRICTION = "formRestriction";
 
     public static final String IMAGE = "image";
@@ -210,6 +210,14 @@ public class SparqlVariable {
     public static final String REIFIED_RELATION_OBJECT = "reifiedRelationObject";
     public static final String CATEGORY = "category";
     public static final String EXTRA = "extra";
+
+    public static final String DICT_ELEMENT = "dictElement";
+    public static final String DICT_LANGUAGE = "dictLanguage";
+    public static final String DICT_ELEMENT_TYPE = "dictElementType";
+    public static final String DESCRIBE = "describe";
+    public static final String DESCRIBE_LABEL = "describeLabel";
+    public static final String ORDERED_MEMBER = "orderedMember";
+    public static final String UNORDERED_MEMBER = "unorderedMember";
 
     // skos variables
     public static final String CHILD = "child";

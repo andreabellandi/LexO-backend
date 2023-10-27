@@ -14,8 +14,18 @@ public class SparqlDeleteData {
     public static final String DELETE_LEXICON_LANGUAGE
             = "DELETE { <_ID_> ?predicate ?object . } \n"
             + "WHERE { <_ID_> ?predicate ?object . }";
+    
+    public static final String DELETE_DICTIONARY
+            = "DELETE { <_ID_> ?predicate ?object . } \n"
+            + "WHERE { <_ID_> ?predicate ?object . }";
 
     public static final String DELETE_LEXICAL_ENTRY
+            = "DELETE { <_ID_> ?predicate ?object . \n"
+            + "         ?subject ?_predicate <_ID_> . }\n"
+            + "WHERE { <_ID_> ?predicate ?object . \n"
+            + "         OPTIONAL { ?subject ?_predicate <_ID_> . } }";
+    
+    public static final String DELETE_DICTIONARY_ENTRY_COMPONENT
             = "DELETE { <_ID_> ?predicate ?object . \n"
             + "         ?subject ?_predicate <_ID_> . }\n"
             + "WHERE { <_ID_> ?predicate ?object . \n"

@@ -31,6 +31,11 @@ public class LexiconDeletionManager implements Manager, Cached {
         RDFQueryUtil.update(SparqlDeleteData.DELETE_LEXICON_LANGUAGE.replaceAll("_ID_", id));
         return timestampFormat.format(new Timestamp(System.currentTimeMillis()));
     }
+    
+    public String deleteDictionary(String id) throws ManagerException {
+        RDFQueryUtil.update(SparqlDeleteData.DELETE_DICTIONARY.replaceAll("_ID_", id));
+        return timestampFormat.format(new Timestamp(System.currentTimeMillis()));
+    }
 
     public String deleteLexicalEntry(String id) throws ManagerException {
         if (!ManagerFactory.getManager(UtilityManager.class).hasLexicalEntryChildren(id)) {
@@ -39,7 +44,15 @@ public class LexiconDeletionManager implements Manager, Cached {
         } else {
             throw new ManagerException("The lexical entry cannot be deleted. Remove its forms and/or senses first.");
         }
-
+    }
+    
+    public String deleteDictionaryEntryComponent(String id) throws ManagerException {
+        if (!ManagerFactory.getManager(UtilityManager.class).hasDictionaryEntryComponents(id)) {
+            RDFQueryUtil.update(SparqlDeleteData.DELETE_DICTIONARY_ENTRY_COMPONENT.replaceAll("_ID_", id));
+            return timestampFormat.format(new Timestamp(System.currentTimeMillis()));
+        } else {
+            throw new ManagerException("The dictionary entry component cannot be deleted. Remove its components first.");
+        }
     }
 
     public String deleteForm(String id) throws ManagerException {
