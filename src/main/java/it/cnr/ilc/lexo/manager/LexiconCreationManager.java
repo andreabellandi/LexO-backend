@@ -35,21 +35,22 @@ import java.util.List;
  * @author andreabellandi
  */
 public class LexiconCreationManager implements Manager, Cached {
-    
+
     private final String idInstancePrefix = LexOProperties.getProperty("repository.instance.id");
     private static final SimpleDateFormat timestampFormat = new SimpleDateFormat(LexOProperties.getProperty("manager.operationTimestampFormat"));
-    
+
     @Override
     public void reloadCache() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
-    public Dictionary createDictionary(String prefix, String baseIRI, String author, String lang) throws ManagerException {
+
+    public Dictionary createDictionary(String prefix, String baseIRI, String author, String lang, String desiredID) throws ManagerException {
         Timestamp tm = new Timestamp(System.currentTimeMillis());
-        String id = idInstancePrefix + tm.toString();
+        String id = (desiredID != null ? (!desiredID.isEmpty() ? (Manager.getID(baseIRI + desiredID) ? baseIRI + desiredID : null) : idInstancePrefix + tm.toString()) : idInstancePrefix + tm.toString());
+        if (id == null) throw new ManagerException("ID " + desiredID + " already exists");
         String created = timestampFormat.format(tm);
-        String sparqlPrefix = "PREFIX " + prefix + ": <" + baseIRI + ">";
         String _id = baseIRI + id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
+        String sparqlPrefix = "PREFIX " + prefix + ": <" + baseIRI + ">";
         RDFQueryUtil.update(SparqlInsertData.CREATE_DICTIONARY.replace("_ID_", _id)
                 .replace("_LANG_", lang)
                 .replace("_PREFIX_", sparqlPrefix)
@@ -58,7 +59,7 @@ public class LexiconCreationManager implements Manager, Cached {
                 .replace("_MODIFIED_", created));
         return setDictionary(_id, created, author, lang);
     }
-    
+
     private Dictionary setDictionary(String id, String created, String author, String lang) {
         Dictionary d = new Dictionary();
         d.setCreator(author);
@@ -70,10 +71,11 @@ public class LexiconCreationManager implements Manager, Cached {
         d.setEntries(0);
         return d;
     }
-    
-    public Language createLanguage(String prefix, String baseIRI, String author, String lang) throws ManagerException {
+
+    public Language createLanguage(String prefix, String baseIRI, String author, String lang, String desiredID) throws ManagerException {
         Timestamp tm = new Timestamp(System.currentTimeMillis());
-        String id = idInstancePrefix + tm.toString();
+        String id = (desiredID != null ? (!desiredID.isEmpty() ? (Manager.getID(baseIRI + desiredID) ? baseIRI + desiredID : null) : idInstancePrefix + tm.toString()) : idInstancePrefix + tm.toString());
+        if (id == null) throw new ManagerException("ID " + desiredID + " already exists");
         String created = timestampFormat.format(tm);
         String sparqlPrefix = "PREFIX " + prefix + ": <" + baseIRI + ">";
         String _id = baseIRI + id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
@@ -85,7 +87,7 @@ public class LexiconCreationManager implements Manager, Cached {
                 .replace("_MODIFIED_", created));
         return setLanguage(_id, created, author, lang);
     }
-    
+
     private Language setLanguage(String id, String created, String author, String lang) {
         Language l = new Language();
         ArrayList<String> cat = new ArrayList();
@@ -100,10 +102,11 @@ public class LexiconCreationManager implements Manager, Cached {
         l.setEntries(0);
         return l;
     }
-    
-    public LexicalEntryCore createLexicalEntry(String author, String prefix, String baseIRI) throws ManagerException {
+
+    public LexicalEntryCore createLexicalEntry(String author, String prefix, String baseIRI, String desiredID) throws ManagerException {
         Timestamp tm = new Timestamp(System.currentTimeMillis());
-        String id = idInstancePrefix + tm.toString();
+        String id = (desiredID != null ? (!desiredID.isEmpty() ? (Manager.getID(baseIRI + desiredID) ? baseIRI + desiredID : null) : idInstancePrefix + tm.toString()) : idInstancePrefix + tm.toString());
+        if (id == null) throw new ManagerException("ID " + desiredID + " already exists");
         String created = timestampFormat.format(tm);
         String sparqlPrefix = "PREFIX " + prefix + ": <" + baseIRI + ">";
         String idLabel = id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
@@ -116,10 +119,11 @@ public class LexiconCreationManager implements Manager, Cached {
                 .replace("[MODIFIED]", created));
         return setLexicalEntry(_id, idLabel, created, author);
     }
-    
-    public DictionaryEntryComponent createDictionaryEntry(String author, String prefix, String baseIRI) throws ManagerException {
+
+    public DictionaryEntryComponent createDictionaryEntry(String author, String prefix, String baseIRI, String desiredID) throws ManagerException {
         Timestamp tm = new Timestamp(System.currentTimeMillis());
-        String id = idInstancePrefix + tm.toString();
+        String id = (desiredID != null ? (!desiredID.isEmpty() ? (Manager.getID(baseIRI + desiredID) ? baseIRI + desiredID : null) : idInstancePrefix + tm.toString()) : idInstancePrefix + tm.toString());
+        if (id == null) throw new ManagerException("ID " + desiredID + " already exists");
         String created = timestampFormat.format(tm);
         String sparqlPrefix = "PREFIX " + prefix + ": <" + baseIRI + ">";
         String idLabel = id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
@@ -132,7 +136,7 @@ public class LexiconCreationManager implements Manager, Cached {
                 .replace("[MODIFIED]", created));
         return setDictionaryEntry(_id, idLabel, created);
     }
-    
+
     private LexicalEntryCore setLexicalEntry(String id, String label, String created, String author) {
         ArrayList<String> types = new ArrayList<>();
         types.add("LexicalEntry");
@@ -147,8 +151,8 @@ public class LexiconCreationManager implements Manager, Cached {
         lec.setCreationDate(created);
         return lec;
     }
-    
-     private DictionaryEntryComponent setDictionaryEntry(String id, String label, String created) {
+
+    private DictionaryEntryComponent setDictionaryEntry(String id, String label, String created) {
         DictionaryEntryComponent dec = new DictionaryEntryComponent();
         dec.setLabel(label);
         dec.setConfidence(-1);
@@ -157,10 +161,11 @@ public class LexiconCreationManager implements Manager, Cached {
         dec.setCreationDate(created);
         return dec;
     }
-    
-    public FormCore createForm(String leID, String author, String lang, String prefix, String baseIRI) throws ManagerException {
+
+    public FormCore createForm(String leID, String author, String lang, String prefix, String baseIRI, String desiredID) throws ManagerException {
         Timestamp tm = new Timestamp(System.currentTimeMillis());
-        String id = idInstancePrefix + tm.toString();
+        String id = (desiredID != null ? (!desiredID.isEmpty() ? (Manager.getID(baseIRI + desiredID) ? baseIRI + desiredID : null) : idInstancePrefix + tm.toString()) : idInstancePrefix + tm.toString());
+        if (id == null) throw new ManagerException("ID " + desiredID + " already exists");
         String created = timestampFormat.format(tm);
         String sparqlPrefix = "PREFIX " + prefix + ": <" + baseIRI + ">";
         String idLabel = id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
@@ -175,7 +180,7 @@ public class LexiconCreationManager implements Manager, Cached {
                 .replaceAll("_LEID_", leID));
         return setForm(_id, idLabel, created, author);
     }
-    
+
     private FormCore setForm(String id, String label, String created, String author) {
         List<Property> pl = new ArrayList();
         Property p = new Property("writtenRep", label);
@@ -190,10 +195,11 @@ public class LexiconCreationManager implements Manager, Cached {
         fc.setCreationDate(created);
         return fc;
     }
-    
-    public Etymology createEtymology(String leID, String author, String label, String prefix, String baseIRI) throws ManagerException {
+
+    public Etymology createEtymology(String leID, String author, String label, String prefix, String baseIRI, String desiredID) throws ManagerException {
         Timestamp tm = new Timestamp(System.currentTimeMillis());
-        String id = idInstancePrefix + tm.toString();
+        String id = (desiredID != null ? (!desiredID.isEmpty() ? (Manager.getID(baseIRI + desiredID) ? baseIRI + desiredID : null) : idInstancePrefix + tm.toString()) : idInstancePrefix + tm.toString());
+        if (id == null) throw new ManagerException("ID " + desiredID + " already exists");
         String created = timestampFormat.format(tm);
         String sparqlPrefix = "PREFIX " + prefix + ": <" + baseIRI + ">";
         String _id = baseIRI + id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
@@ -206,7 +212,7 @@ public class LexiconCreationManager implements Manager, Cached {
                 .replaceAll("_LEID_", leID));
         return setEtymology(_id, created, author, label);
     }
-    
+
     private Etymology setEtymology(String id, String created, String author, String label) {
         Etymology e = new Etymology();
         e.setCreator(author);
@@ -217,10 +223,11 @@ public class LexiconCreationManager implements Manager, Cached {
         e.setCreationDate(created);
         return e;
     }
-    
-    public EtymologicalLink createEtymologicalLink(String leID, String author, String etymologyID, String prefix, String baseIRI) throws ManagerException {
+
+    public EtymologicalLink createEtymologicalLink(String leID, String author, String etymologyID, String prefix, String baseIRI, String desiredID) throws ManagerException {
         Timestamp tm = new Timestamp(System.currentTimeMillis());
-        String id = idInstancePrefix + tm.toString();
+        String id = (desiredID != null ? (!desiredID.isEmpty() ? (Manager.getID(baseIRI + desiredID) ? baseIRI + desiredID : null) : idInstancePrefix + tm.toString()) : idInstancePrefix + tm.toString());
+        if (id == null) throw new ManagerException("ID " + desiredID + " already exists");
         String created = timestampFormat.format(tm);
         String sparqlPrefix = "PREFIX " + prefix + ": <" + baseIRI + ">";
         String _id = baseIRI + id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
@@ -233,7 +240,7 @@ public class LexiconCreationManager implements Manager, Cached {
                 .replaceAll("_LEID_", leID));
         return setEtymologicalLink(_id, created, author, leID);
     }
-    
+
     private EtymologicalLink setEtymologicalLink(String id, String created, String author, String leID) {
         EtymologicalLink el = new EtymologicalLink();
         el.setEtyLinkType("inheritance");
@@ -247,10 +254,11 @@ public class LexiconCreationManager implements Manager, Cached {
         el.setCreationDate(created);
         return el;
     }
-    
-    public LexicalSenseCore createLexicalSense(String leID, String author, String prefix, String baseIRI) throws ManagerException {
+
+    public LexicalSenseCore createLexicalSense(String leID, String author, String prefix, String baseIRI, String desiredID) throws ManagerException {
         Timestamp tm = new Timestamp(System.currentTimeMillis());
-        String id = idInstancePrefix + tm.toString();
+        String id = (desiredID != null ? (!desiredID.isEmpty() ? (Manager.getID(baseIRI + desiredID) ? baseIRI + desiredID : null) : idInstancePrefix + tm.toString()) : idInstancePrefix + tm.toString());
+        if (id == null) throw new ManagerException("ID " + desiredID + " already exists");
         String created = timestampFormat.format(tm);
         String sparqlPrefix = "PREFIX " + prefix + ": <" + baseIRI + ">";
         String _id = baseIRI + id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
@@ -262,10 +270,11 @@ public class LexiconCreationManager implements Manager, Cached {
                 .replaceAll("_LEID_", leID));
         return setSense(_id, created, author);
     }
-    
-    public Component createComponent(String leID, String author, String prefix, String baseIRI) throws ManagerException {
+
+    public Component createComponent(String leID, String author, String prefix, String baseIRI, String desiredID) throws ManagerException {
         Timestamp tm = new Timestamp(System.currentTimeMillis());
-        String id = idInstancePrefix + tm.toString();
+        String id = (desiredID != null ? (!desiredID.isEmpty() ? (Manager.getID(baseIRI + desiredID) ? baseIRI + desiredID : null) : idInstancePrefix + tm.toString()) : idInstancePrefix + tm.toString());
+        if (id == null) throw new ManagerException("ID " + desiredID + " already exists");
         String created = timestampFormat.format(tm);
         String sparqlPrefix = "PREFIX " + prefix + ": <" + baseIRI + ">";
         String _id = baseIRI + id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
@@ -277,10 +286,11 @@ public class LexiconCreationManager implements Manager, Cached {
                 .replace("_MODIFIED_", created));
         return setComponent(_id, created, author);
     }
-    
-    public DictionaryEntryComponent createDictionaryEntryComponent(String author, String prefix, String baseIRI) throws ManagerException {
+
+    public DictionaryEntryComponent createDictionaryEntryComponent(String author, String prefix, String baseIRI, String desiredID) throws ManagerException {
         Timestamp tm = new Timestamp(System.currentTimeMillis());
-        String id = idInstancePrefix + tm.toString();
+        String id = (desiredID != null ? (!desiredID.isEmpty() ? (Manager.getID(baseIRI + desiredID) ? baseIRI + desiredID : null) : idInstancePrefix + tm.toString()) : idInstancePrefix + tm.toString());
+        if (id == null) throw new ManagerException("ID " + desiredID + " already exists");
         String created = timestampFormat.format(tm);
         String sparqlPrefix = "PREFIX " + prefix + ": <" + baseIRI + ">";
         String _id = baseIRI + id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
@@ -291,10 +301,11 @@ public class LexiconCreationManager implements Manager, Cached {
                 .replace("_MODIFIED_", created));
         return setDictionaryEntryComponent(_id, created, author);
     }
-    
-    public Collocation createCollocation(String leID, String author, String prefix, String baseIRI) throws ManagerException {
+
+    public Collocation createCollocation(String leID, String author, String prefix, String baseIRI, String desiredID) throws ManagerException {
         Timestamp tm = new Timestamp(System.currentTimeMillis());
-        String id = idInstancePrefix + tm.toString();
+        String id = (desiredID != null ? (!desiredID.isEmpty() ? (Manager.getID(baseIRI + desiredID) ? baseIRI + desiredID : null) : idInstancePrefix + tm.toString()) : idInstancePrefix + tm.toString());
+        if (id == null) throw new ManagerException("ID " + desiredID + " already exists");
         String created = timestampFormat.format(tm);
         String sparqlPrefix = "PREFIX " + prefix + ": <" + baseIRI + ">";
         String _id = baseIRI + id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
@@ -306,11 +317,12 @@ public class LexiconCreationManager implements Manager, Cached {
                 .replace("_MODIFIED_", created));
         return setCollocation(_id, leID, created, author);
     }
-    
-    public ReifiedRelation createLexicoSemanticRelation(String leID, String type, String author, String prefix, String baseIRI) throws ManagerException {
+
+    public ReifiedRelation createLexicoSemanticRelation(String leID, String type, String author, String prefix, String baseIRI, String desiredID) throws ManagerException {
         Manager.validateWithEnum("type", OntoLexEntity.VartransRelationClasses.class, type);
         Timestamp tm = new Timestamp(System.currentTimeMillis());
-        String id = idInstancePrefix + tm.toString();
+        String id = (desiredID != null ? (!desiredID.isEmpty() ? (Manager.getID(baseIRI + desiredID) ? baseIRI + desiredID : null) : idInstancePrefix + tm.toString()) : idInstancePrefix + tm.toString());
+        if (id == null) throw new ManagerException("ID " + desiredID + " already exists");
         String created = timestampFormat.format(tm);
         String sparqlPrefix = "PREFIX " + prefix + ": <" + baseIRI + ">";
         String _id = baseIRI + id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
@@ -324,10 +336,11 @@ public class LexiconCreationManager implements Manager, Cached {
                 .replace("_MODIFIED_", created));
         return setLexicoSemanticRelation(_id, created, author, type, leID);
     }
-    
-    public TranslationSet createTranslationSet(String author, String prefix, String baseIRI) throws ManagerException {
+
+    public TranslationSet createTranslationSet(String author, String prefix, String baseIRI, String desiredID) throws ManagerException {
         Timestamp tm = new Timestamp(System.currentTimeMillis());
-        String id = idInstancePrefix + tm.toString();
+        String id = (desiredID != null ? (!desiredID.isEmpty() ? (Manager.getID(baseIRI + desiredID) ? baseIRI + desiredID : null) : idInstancePrefix + tm.toString()) : idInstancePrefix + tm.toString());
+        if (id == null) throw new ManagerException("ID " + desiredID + " already exists");
         String created = timestampFormat.format(tm);
         String sparqlPrefix = "PREFIX " + prefix + ": <" + baseIRI + ">";
         String _id = baseIRI + id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
@@ -339,7 +352,7 @@ public class LexiconCreationManager implements Manager, Cached {
                 .replace("_MODIFIED_", created));
         return setTranslationSet(_id, created, author);
     }
-    
+
     private TranslationSet setTranslationSet(String id, String created, String author) {
         TranslationSet ts = new TranslationSet();
         ts.setCreator(author);
@@ -350,7 +363,7 @@ public class LexiconCreationManager implements Manager, Cached {
         ts.setCreationDate(created);
         return ts;
     }
-    
+
     private ReifiedRelation setLexicoSemanticRelation(String id, String created, String author, String type, String leID) {
         ReifiedRelation rr = new ReifiedRelation();
         rr.setCreator(author);
@@ -364,7 +377,7 @@ public class LexiconCreationManager implements Manager, Cached {
         rr.setCategory(null);
         return rr;
     }
-    
+
     private LexicalSenseCore setSense(String id, String created, String author) {
         LexicalSenseCore sc = new LexicalSenseCore();
         sc.setCreator(author);
@@ -374,7 +387,7 @@ public class LexiconCreationManager implements Manager, Cached {
         sc.setCreationDate(created);
         return sc;
     }
-    
+
     private Component setComponent(String id, String created, String author) {
         Component sc = new Component();
         sc.setCreator(author);
@@ -385,7 +398,7 @@ public class LexiconCreationManager implements Manager, Cached {
         sc.setCreationDate(created);
         return sc;
     }
-    
+
     private DictionaryEntryComponent setDictionaryEntryComponent(String id, String created, String author) {
         DictionaryEntryComponent dec = new DictionaryEntryComponent();
         dec.setCreator(author);
@@ -396,7 +409,7 @@ public class LexiconCreationManager implements Manager, Cached {
         dec.setComponent(id);
         return dec;
     }
-    
+
     private Collocation setCollocation(String id, String leID, String created, String author) {
         Collocation col = new Collocation();
         col.setCreator(author);
@@ -407,10 +420,11 @@ public class LexiconCreationManager implements Manager, Cached {
         col.setCreationDate(created);
         return col;
     }
-    
-    public FormRestriction createFormRestriction(String lexID, String author, String prefix, String baseIRI) throws ManagerException {
+
+    public FormRestriction createFormRestriction(String lexID, String author, String prefix, String baseIRI, String desiredID) throws ManagerException {
         Timestamp tm = new Timestamp(System.currentTimeMillis());
-        String id = idInstancePrefix + tm.toString();
+        String id = (desiredID != null ? (!desiredID.isEmpty() ? (Manager.getID(baseIRI + desiredID) ? baseIRI + desiredID : null) : idInstancePrefix + tm.toString()) : idInstancePrefix + tm.toString());
+        if (id == null) throw new ManagerException("ID " + desiredID + " already exists");
         String created = timestampFormat.format(tm);
         String sparqlPrefix = "PREFIX " + prefix + ": <" + baseIRI + ">";
         String _id = baseIRI + id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
@@ -423,7 +437,7 @@ public class LexiconCreationManager implements Manager, Cached {
                 .replace("_MODIFIED_", created));
         return setFormRestriction(_id, created, author);
     }
-    
+
     private FormRestriction setFormRestriction(String id, String created, String author) {
         FormRestriction fr = new FormRestriction();
         fr.setCreator(author);
@@ -433,5 +447,5 @@ public class LexiconCreationManager implements Manager, Cached {
         fr.setCreationDate(created);
         return fr;
     }
-    
+
 }

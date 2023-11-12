@@ -122,9 +122,10 @@ public class SKOSManager implements Manager, Cached {
         }
     }
 
-    public LexicalConcept createLexicalConcept(String author, String prefix, String baseIRI) throws ManagerException {
+    public LexicalConcept createLexicalConcept(String author, String prefix, String baseIRI, String desiredID) throws ManagerException {
         Timestamp tm = new Timestamp(System.currentTimeMillis());
-        String id = idInstancePrefix + tm.toString();
+        String id = (desiredID != null ? (!desiredID.isEmpty() ? (Manager.getID(baseIRI + desiredID) ? baseIRI + desiredID : null) : idInstancePrefix + tm.toString()) : idInstancePrefix + tm.toString());
+        if (id == null) throw new ManagerException("ID " + desiredID + " already exists");
         String created = timestampFormat.format(tm);
         String sparqlPrefix = "PREFIX " + prefix + ": <" + baseIRI + ">";
         String idLabel = id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
@@ -139,9 +140,10 @@ public class SKOSManager implements Manager, Cached {
         return setLexicalConcept(_id, idLabel, created, author);
     }
 
-    public ConceptSet createConceptSet(String author, String prefix, String baseIRI) throws ManagerException {
+    public ConceptSet createConceptSet(String author, String prefix, String baseIRI, String desiredID) throws ManagerException {
         Timestamp tm = new Timestamp(System.currentTimeMillis());
-        String id = idInstancePrefix + tm.toString();
+        String id = (desiredID != null ? (!desiredID.isEmpty() ? (Manager.getID(baseIRI + desiredID) ? baseIRI + desiredID : null) : idInstancePrefix + tm.toString()) : idInstancePrefix + tm.toString());
+        if (id == null) throw new ManagerException("ID " + desiredID + " already exists");
         String created = timestampFormat.format(tm);
         String sparqlPrefix = "PREFIX " + prefix + ": <" + baseIRI + ">";
         String idLabel = id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");

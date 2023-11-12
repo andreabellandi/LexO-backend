@@ -3,7 +3,10 @@ package it.cnr.ilc.lexo.manager;
 import it.cnr.ilc.lexo.service.data.vocabulary.PropertyHierarchy;
 import it.cnr.ilc.lexo.service.data.vocabulary.RangedProperty;
 import it.cnr.ilc.lexo.service.data.vocabulary.Value;
+import it.cnr.ilc.lexo.sparql.SparqlInsertData;
+import it.cnr.ilc.lexo.sparql.SparqlQueryUtil;
 import it.cnr.ilc.lexo.util.EnumUtil;
+import it.cnr.ilc.lexo.util.RDFQueryUtil;
 import java.util.Arrays;
 
 /**
@@ -14,6 +17,10 @@ public interface Manager {
 
     public final LexinfoManager lexinfoManager = ManagerFactory.getManager(LexinfoManager.class);
 
+    public static boolean getID(String iri) {
+        return RDFQueryUtil.evaluateBQuery(SparqlQueryUtil.UNIQUE_ID.replace("_ID_", iri));
+    }
+    
     public static boolean validateLexinfo(String type, String value) throws ManagerException {
         boolean found = false;
         switch (type) {

@@ -139,15 +139,11 @@ public class LexiconCreation extends Service {
             log(Level.INFO, "lexicon/creation/dictionary: lang=" + lang);
             UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
             utilityManager.validateNamespace(prefix, baseIRI);
-            if (!isUniqueID(baseIRI + desiredID)) {
-                log(Level.ERROR, "ID " + desiredID + " already exists");
-                return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("ID " + desiredID + " already exists").build();
-            }
             if (utilityManager.dictionaryLanguageExists(lang)) {
                 log(Level.INFO, "Language label " + lang + " already exists");
                 return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Language label " + lang + " already exists").build();
             }
-            Dictionary d = lexiconManager.createDictionary(prefix, baseIRI, author, lang);
+            Dictionary d = lexiconManager.createDictionary(prefix, baseIRI, author, lang, desiredID);
             String json = dictionaryHelper.toJson(d);
             log(Level.INFO, "Dictionary for language " + lang + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
             return Response.ok(json)
@@ -210,15 +206,11 @@ public class LexiconCreation extends Service {
             log(Level.INFO, "lexicon/creation/language: lang=" + lang);
             UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
             utilityManager.validateNamespace(prefix, baseIRI);
-            if (!isUniqueID(baseIRI + desiredID)) {
-                log(Level.ERROR, "ID " + desiredID + " already exists");
-                return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("ID " + desiredID + " already exists").build();
-            }
             if (utilityManager.languageExists(lang)) {
                 log(Level.INFO, "Language label " + lang + " already exists");
                 return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Language label " + lang + " already exists").build();
             }
-            Language l = lexiconManager.createLanguage(prefix, baseIRI, author, lang);
+            Language l = lexiconManager.createLanguage(prefix, baseIRI, author, lang, desiredID);
             String json = languageHelper.toJson(l);
             log(Level.INFO, "Language " + lang + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
             return Response.ok(json)
@@ -276,11 +268,7 @@ public class LexiconCreation extends Service {
             log(Level.INFO, "lexicon/creation/lexicalEntry");
             UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
             utilityManager.validateNamespace(prefix, baseIRI);
-            if (!isUniqueID(baseIRI + desiredID)) {
-                log(Level.ERROR, "ID " + desiredID + " already exists");
-                return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("ID " + desiredID + " already exists").build();
-            }
-            LexicalEntryCore lec = lexiconManager.createLexicalEntry(author, prefix, baseIRI);
+            LexicalEntryCore lec = lexiconManager.createLexicalEntry(author, prefix, baseIRI, desiredID);
             String json = lexicalEntryCoreHelper.toJson(lec);
             log(Level.INFO, "Lexical entry " + lec.getLabel() + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
             return Response.ok(json)
@@ -337,11 +325,7 @@ public class LexiconCreation extends Service {
             log(Level.INFO, "lexicon/creation/dictionaryEntry");
             UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
             utilityManager.validateNamespace(prefix, baseIRI);
-            if (!isUniqueID(baseIRI + desiredID)) {
-                log(Level.ERROR, "ID " + desiredID + " already exists");
-                return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("ID " + desiredID + " already exists").build();
-            }
-            DictionaryEntryComponent dec = lexiconManager.createDictionaryEntry(author, prefix, baseIRI);
+            DictionaryEntryComponent dec = lexiconManager.createDictionaryEntry(author, prefix, baseIRI, desiredID);
             String json = dictionaryEntryComponentHelper.toJson(dec);
             log(Level.INFO, "Dictionary entry " + dec.getLabel() + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
             return Response.ok(json)
@@ -405,10 +389,6 @@ public class LexiconCreation extends Service {
             try {
                 UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
                 utilityManager.validateNamespace(prefix, baseIRI);
-                if (!isUniqueID(baseIRI + desiredID)) {
-                    log(Level.ERROR, "ID " + desiredID + " already exists");
-                    return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("ID " + desiredID + " already exists").build();
-                }
                 if (!utilityManager.isLexicalEntry(_lexicalEntryID)) {
                     log(Level.ERROR, "lexicon/creation/form: " + "IRI " + _lexicalEntryID + " does not exist");
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _lexicalEntryID + " does not exist").build();
@@ -418,7 +398,7 @@ public class LexiconCreation extends Service {
                     log(Level.ERROR, "lexicon/creation/form: form cannot be created: the lexical entry language must be set first");
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("form cannot be created: the lexical entry language must be set first").build();
                 }
-                FormCore fc = lexiconManager.createForm(_lexicalEntryID, getUser(author), lang, prefix, baseIRI);
+                FormCore fc = lexiconManager.createForm(_lexicalEntryID, getUser(author), lang, prefix, baseIRI, desiredID);
                 String json = formCoreHelper.toJson(fc);
                 log(Level.INFO, "Form " + fc.getLabel() + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
                 return Response.ok(json)
@@ -491,14 +471,10 @@ public class LexiconCreation extends Service {
             try {
                 UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
                 utilityManager.validateNamespace(prefix, baseIRI);
-                if (!isUniqueID(baseIRI + desiredID)) {
-                    log(Level.ERROR, "ID " + desiredID + " already exists");
-                    return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("ID " + desiredID + " already exists").build();
-                }
                 if (!utilityManager.isLexicalEntry(_lexicalEntryID)) {
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _lexicalEntryID + " does not exist").build();
                 }
-                LexicalSenseCore sc = lexiconManager.createLexicalSense(_lexicalEntryID, author, prefix, baseIRI);
+                LexicalSenseCore sc = lexiconManager.createLexicalSense(_lexicalEntryID, author, prefix, baseIRI, desiredID);
                 String json = lexicalSenseCoreHelper.toJson(sc);
                 log(Level.INFO, "Lexical sense " + sc.getSense() + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
                 return Response.ok(json)
@@ -566,15 +542,11 @@ public class LexiconCreation extends Service {
             try {
                 UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
                 utilityManager.validateNamespace(prefix, baseIRI);
-                if (!isUniqueID(baseIRI + desiredID)) {
-                    log(Level.ERROR, "ID " + desiredID + " already exists");
-                    return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("ID " + desiredID + " already exists").build();
-                }
                 if (!utilityManager.isLexicalEntryOrComponent(_id)) {
                     log(Level.ERROR, "lexicon/creation/component: " + "IRI " + _id + " is not neither a lexical entry nor a component");
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " is not neither a lexical entry nor a component").build();
                 }
-                Component comp = lexiconManager.createComponent(_id, author, prefix, baseIRI);
+                Component comp = lexiconManager.createComponent(_id, author, prefix, baseIRI, desiredID);
                 String json = componentHelper.toJson(comp);
                 log(Level.INFO, "Component " + comp.getComponent() + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
                 return Response.ok(json)
@@ -642,15 +614,11 @@ public class LexiconCreation extends Service {
             try {
                 UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
                 utilityManager.validateNamespace(prefix, baseIRI);
-                if (!isUniqueID(baseIRI + desiredID)) {
-                    log(Level.ERROR, "ID " + desiredID + " already exists");
-                    return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("ID " + desiredID + " already exists").build();
-                }
                 if (!utilityManager.isAdmissibleHeadOfCollocation(_id)) {
                     log(Level.ERROR, "lexicon/creation/collocation: " + "IRI " + _id + " is not an admissible head of collocation");
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " is not an admissible head of collocation").build();
                 }
-                Collocation col = lexiconManager.createCollocation(_id, author, prefix, baseIRI);
+                Collocation col = lexiconManager.createCollocation(_id, author, prefix, baseIRI, desiredID);
                 String json = collocationHelper.toJson(col);
                 log(Level.INFO, "Collocation " + col.getCollocation() + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
                 return Response.ok(json)
@@ -719,10 +687,6 @@ public class LexiconCreation extends Service {
             try {
                 UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
                 utilityManager.validateNamespace(prefix, baseIRI);
-                if (!isUniqueID(baseIRI + desiredID)) {
-                    log(Level.ERROR, "ID " + desiredID + " already exists");
-                    return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("ID " + desiredID + " already exists").build();
-                }
                 if (!utilityManager.isLexicalEntry(_lexicalEntryID)) {
                     log(Level.ERROR, "lexicon/creation/etymology: " + "IRI " + _lexicalEntryID + " does not exist");
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _lexicalEntryID + " does not exist").build();
@@ -732,7 +696,7 @@ public class LexiconCreation extends Service {
                     log(Level.ERROR, "lexicon/creation/etymology: " + "etymology cannot be created: the lexical entry label is not definied");
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("etymology cannot be created: the lexical entry label is not definied").build();
                 }
-                Etymology e = lexiconManager.createEtymology(_lexicalEntryID, author, label, prefix, baseIRI);
+                Etymology e = lexiconManager.createEtymology(_lexicalEntryID, author, label, prefix, baseIRI, desiredID);
                 String json = etymologyHelper.toJson(e);
                 log(Level.INFO, "Etymology " + e.getEtymology() + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
                 return Response.ok(json)
@@ -806,10 +770,6 @@ public class LexiconCreation extends Service {
             try {
                 UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
                 utilityManager.validateNamespace(prefix, baseIRI);
-                if (!isUniqueID(baseIRI + desiredID)) {
-                    log(Level.ERROR, "ID " + desiredID + " already exists");
-                    return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("ID " + desiredID + " already exists").build();
-                }
                 if (!utilityManager.isLexicalEntry(_lexicalEntryID)) {
                     log(Level.ERROR, "lexicon/creation/etymologicalLink: " + "IRI " + _lexicalEntryID + " does not exist");
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _lexicalEntryID + " does not exist").build();
@@ -824,7 +784,7 @@ public class LexiconCreation extends Service {
                     log(Level.ERROR, "lexicon/creation/etymologicalLink: " + "IRI " + _etymologyID + " does not exist");
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _etymologyID + " does not exist").build();
                 }
-                EtymologicalLink el = lexiconManager.createEtymologicalLink(_lexicalEntryID, author, _etymologyID, prefix, baseIRI);
+                EtymologicalLink el = lexiconManager.createEtymologicalLink(_lexicalEntryID, author, _etymologyID, prefix, baseIRI, desiredID);
                 String json = etymologicalLinkHelper.toJson(el);
                 log(Level.INFO, "Etymological link " + el.getEtymologicalLink() + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
                 return Response.ok(json)
@@ -895,15 +855,11 @@ public class LexiconCreation extends Service {
             try {
                 UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
                 utilityManager.validateNamespace(prefix, baseIRI);
-                if (!isUniqueID(baseIRI + desiredID)) {
-                    log(Level.ERROR, "ID " + desiredID + " already exists");
-                    return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("ID " + desiredID + " already exists").build();
-                }
                 if ((bibliography.getId() == null || bibliography.getId().isEmpty())) {
                     log(Level.ERROR, "lexicon/creation/bibliography: " + "id of bibliography must be defined");
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("id of bibliography must be defined").build();
                 }
-                BibliographicItem bi = bibliographyManager.createBibliographyReference(_id, author, bibliography, prefix, baseIRI);
+                BibliographicItem bi = bibliographyManager.createBibliographyReference(_id, author, bibliography, prefix, baseIRI, desiredID);
                 String json = bibliographyHelper.toJson(bi);
                 log(Level.INFO, "Bibliography " + bi.getBibliography() + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
                 return Response.ok(json)
@@ -965,11 +921,7 @@ public class LexiconCreation extends Service {
             log(Level.INFO, "lexicon/creation/lexicalConcept");
             UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
             utilityManager.validateNamespace(prefix, baseIRI);
-            if (!isUniqueID(baseIRI + desiredID)) {
-                log(Level.ERROR, "ID " + desiredID + " already exists");
-                return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("ID " + desiredID + " already exists").build();
-            }
-            LexicalConcept lc = skosManager.createLexicalConcept(author, prefix, baseIRI);
+            LexicalConcept lc = skosManager.createLexicalConcept(author, prefix, baseIRI, desiredID);
             String json = lexicalConceptHelper.toJson(lc);
             log(Level.INFO, "Lexical concept " + lc.getLexicalConcept() + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
             return Response.ok(json)
@@ -1026,11 +978,7 @@ public class LexiconCreation extends Service {
             log(Level.INFO, "lexicon/creation/conceptSet");
             UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
             utilityManager.validateNamespace(prefix, baseIRI);
-            if (!isUniqueID(baseIRI + desiredID)) {
-                log(Level.ERROR, "ID " + desiredID + " already exists");
-                return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("ID " + desiredID + " already exists").build();
-            }
-            ConceptSet cs = skosManager.createConceptSet(author, prefix, baseIRI);
+            ConceptSet cs = skosManager.createConceptSet(author, prefix, baseIRI, desiredID);
             String json = conceptSetHelper.toJson(cs);
             log(Level.INFO, "Concept set " + cs.getConceptSet() + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
             return Response.ok(json)
@@ -1101,11 +1049,7 @@ public class LexiconCreation extends Service {
             try {
                 UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
                 utilityManager.validateNamespace(prefix, baseIRI);
-                if (!isUniqueID(baseIRI + desiredID)) {
-                    log(Level.ERROR, "ID " + desiredID + " already exists");
-                    return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("ID " + desiredID + " already exists").build();
-                }
-                ReifiedRelation rr = lexiconManager.createLexicoSemanticRelation(_id, _type, author, prefix, baseIRI);
+                ReifiedRelation rr = lexiconManager.createLexicoSemanticRelation(_id, _type, author, prefix, baseIRI, desiredID);
                 String json = indirectLexicalRelationHelper.toJson(rr);
                 log(Level.INFO, "lexicoSemanticRelation " + rr.getRelation() + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
                 return Response.ok(json)
@@ -1165,13 +1109,7 @@ public class LexiconCreation extends Service {
             checkKey(key);
             log(Level.INFO, "lexicon/creation/translationSet");
             try {
-                UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
-                utilityManager.validateNamespace(prefix, baseIRI);
-                if (!isUniqueID(baseIRI + desiredID)) {
-                    log(Level.ERROR, "ID " + desiredID + " already exists");
-                    return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("ID " + desiredID + " already exists").build();
-                }
-                TranslationSet ts = lexiconManager.createTranslationSet(author, prefix, baseIRI);
+                TranslationSet ts = lexiconManager.createTranslationSet(author, prefix, baseIRI, desiredID);
                 String json = translationSetHelper.toJson(ts);
                 log(Level.INFO, "translationSet " + ts.getTranslationSet() + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
                 return Response.ok(json)
@@ -1236,11 +1174,8 @@ public class LexiconCreation extends Service {
             try {
                 UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
                 utilityManager.validateNamespace(prefix, baseIRI);
-                if (!isUniqueID(baseIRI + desiredID)) {
-                    log(Level.ERROR, "ID " + desiredID + " already exists");
-                    return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("ID " + desiredID + " already exists").build();
-                }
-                FormRestriction fr = lexiconManager.createFormRestriction(_id, author, prefix, baseIRI);
+
+                FormRestriction fr = lexiconManager.createFormRestriction(_id, author, prefix, baseIRI, desiredID);
                 String json = formRestrictionHelper.toJson(fr);
                 log(Level.INFO, "Form restriction " + fr.getFormRestriction() + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
                 return Response.ok(json)
@@ -1302,11 +1237,7 @@ public class LexiconCreation extends Service {
             try {
                 UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
                 utilityManager.validateNamespace(prefix, baseIRI);
-                if (!isUniqueID(baseIRI + desiredID)) {
-                    log(Level.ERROR, "ID " + desiredID + " already exists");
-                    return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("ID " + desiredID + " already exists").build();
-                }
-                DictionaryEntryComponent dec = lexiconManager.createDictionaryEntryComponent(author, prefix, baseIRI);
+                DictionaryEntryComponent dec = lexiconManager.createDictionaryEntryComponent(author, prefix, baseIRI, desiredID);
                 String json = dictionaryEntryComponentHelper.toJson(dec);
                 log(Level.INFO, "Lexicographic component " + dec.getComponent() + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
                 return Response.ok(json)
@@ -1322,11 +1253,6 @@ public class LexiconCreation extends Service {
             log(Level.ERROR, "lexicon/creation/lexicographicComponent: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
-    }
-
-    private boolean isUniqueID(String desiredID) {
-        UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
-        return utilityManager.isUniqueID(desiredID);
     }
 
 }

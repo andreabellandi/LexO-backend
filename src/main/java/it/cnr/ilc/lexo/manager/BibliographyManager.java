@@ -41,10 +41,11 @@ public class BibliographyManager implements Manager, Cached {
     public void reloadCache() {
     }
 
-    public BibliographicItem createBibliographyReference(String leID, String author, Bibliography bibliography, String prefix, String baseIRI) throws ManagerException {
+    public BibliographicItem createBibliographyReference(String leID, String author, Bibliography bibliography, String prefix, String baseIRI, String desiredID) throws ManagerException {
         setBibliography(bibliography);
         Timestamp tm = new Timestamp(System.currentTimeMillis());
-        String idBib = idInstancePrefix + tm.toString();
+        String idBib = (desiredID != null ? (!desiredID.isEmpty() ? (Manager.getID(baseIRI + desiredID) ? baseIRI + desiredID : null) : idInstancePrefix + tm.toString()) : idInstancePrefix + tm.toString());
+        if (idBib == null) throw new ManagerException("ID " + desiredID + " already exists");
         String created = timestampFormat.format(tm);
         String sparqlPrefix = "PREFIX " + prefix + ": <" + baseIRI + ">";
         String _idBib = baseIRI + idBib.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
