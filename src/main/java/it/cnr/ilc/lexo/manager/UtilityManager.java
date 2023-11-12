@@ -280,6 +280,11 @@ public final class UtilityManager implements Manager, Cached {
         String query = SparqlQueryUtil.IS_COGNATE.replaceAll("_ID_", id).replace("_COG_NUMBER_", String.valueOf(n));
         return RDFQueryUtil.evaluateBQuery(query);
     }
+    
+    public boolean isUniqueID(String id) {
+        String query = SparqlQueryUtil.UNIQUE_ID.replaceAll("_ID_", id);
+        return RDFQueryUtil.evaluateBQuery(query);
+    }
 
     public void validateNamespace(String prefix, String baseIRI) throws ManagerException {
         if (prefix == null || baseIRI == null) {

@@ -95,7 +95,7 @@ public class LexinfoData extends Service {
             value = "lexicalRelations",
             produces = "application/json; charset=UTF-8")
     @ApiOperation(value = "Lexical relations",
-            notes = "This method returns the lexical relations of the vartrans module definied in the Lexinfo vocabulary")
+            notes = "This method returns the lexical relations definied in the Lexinfo vocabulary")
     public Response lexicalRel() {
         String json = propertyHierachyHelper.toJson(lexiconManager.getLexicalRel());
         return Response.ok(json)
@@ -113,7 +113,7 @@ public class LexinfoData extends Service {
             value = "senseRelations",
             produces = "application/json; charset=UTF-8")
     @ApiOperation(value = "Sense relations",
-            notes = "This method returns the sense relations of the vartrans module definied in the Lexinfo vocabulary")
+            notes = "This method returns the sense relations definied in the Lexinfo vocabulary")
     public Response senseRel() {
         String json = propertyHierachyHelper.toJson(lexiconManager.getSenseRel());
         return Response.ok(json)
@@ -131,7 +131,7 @@ public class LexinfoData extends Service {
             value = "formRelations",
             produces = "application/json; charset=UTF-8")
     @ApiOperation(value = "Form relations",
-            notes = "This method returns the form relations of the vartrans module definied in the Lexinfo vocabulary")
+            notes = "This method returns the form relations definied in the Lexinfo vocabulary")
     public Response formRel() {
         String json = propertyHierachyHelper.toJson(lexiconManager.getFormRel());
         return Response.ok(json)
@@ -166,8 +166,8 @@ public class LexinfoData extends Service {
             method = RequestMethod.GET,
             value = "lexicalCategories",
             produces = "application/json; charset=UTF-8")
-    @ApiOperation(value = "Lexical categories for vartrans reified lexico-semantic relations",
-            notes = "This method returns the category types for vartrans reified lexical relations")
+    @ApiOperation(value = "Lexical categories",
+            notes = "This method returns some categories for lexical entries")
     public Response lexicalCategories() {
         String json = lexinfoMorphoHelper.toJson(lexiconManager.getLexicalCategory());
         return Response.ok(json)
@@ -184,8 +184,8 @@ public class LexinfoData extends Service {
             method = RequestMethod.GET,
             value = "semanticCategories",
             produces = "application/json; charset=UTF-8")
-    @ApiOperation(value = "Semantic categories for vartrans reified lexico-semantic relations",
-            notes = "This method returns the category types for vartrans reified semantic relations")
+    @ApiOperation(value = "Semantic categories",
+            notes = "This method returns some categories for lexical senses")
     public Response semanticCategories() {
         String json = lexinfoMorphoHelper.toJson(lexiconManager.getSemanticCategory());
         return Response.ok(json)
@@ -202,8 +202,8 @@ public class LexinfoData extends Service {
             method = RequestMethod.GET,
             value = "formCategories",
             produces = "application/json; charset=UTF-8")
-    @ApiOperation(value = "Form categories for vartrans reified form relations",
-            notes = "This method returns the category types for vartrans reified form relations")
+    @ApiOperation(value = "Form categories",
+            notes = "This method returns some categories for forms")
     public Response formCategories() {
         String json = lexinfoMorphoHelper.toJson(lexiconManager.getFormCategory());
         return Response.ok(json)

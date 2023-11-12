@@ -111,6 +111,12 @@ public class LexiconCreation extends Service {
                     required = true)
             @QueryParam("lang") String lang,
             @ApiParam(
+                    name = "desiredID",
+                    value = "the ID name to assign to the created entity",
+                    example = "idName",
+                    required = false)
+            @QueryParam("desiredID") String desiredID,
+            @ApiParam(
                     name = "author",
                     value = "the account that is creating the dictionary (if LexO user management disabled)",
                     example = "user7",
@@ -133,6 +139,10 @@ public class LexiconCreation extends Service {
             log(Level.INFO, "lexicon/creation/dictionary: lang=" + lang);
             UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
             utilityManager.validateNamespace(prefix, baseIRI);
+            if (!isUniqueID(baseIRI + desiredID)) {
+                log(Level.ERROR, "ID " + desiredID + " already exists");
+                return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("ID " + desiredID + " already exists").build();
+            }
             if (utilityManager.dictionaryLanguageExists(lang)) {
                 log(Level.INFO, "Language label " + lang + " already exists");
                 return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Language label " + lang + " already exists").build();
@@ -178,6 +188,12 @@ public class LexiconCreation extends Service {
                     required = false)
             @QueryParam("author") String author,
             @ApiParam(
+                    name = "desiredID",
+                    value = "the ID name to assign to the created entity",
+                    example = "idName",
+                    required = false)
+            @QueryParam("desiredID") String desiredID,
+            @ApiParam(
                     name = "prefix",
                     value = "prefix of the namespace",
                     example = "myprefix",
@@ -194,6 +210,10 @@ public class LexiconCreation extends Service {
             log(Level.INFO, "lexicon/creation/language: lang=" + lang);
             UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
             utilityManager.validateNamespace(prefix, baseIRI);
+            if (!isUniqueID(baseIRI + desiredID)) {
+                log(Level.ERROR, "ID " + desiredID + " already exists");
+                return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("ID " + desiredID + " already exists").build();
+            }
             if (utilityManager.languageExists(lang)) {
                 log(Level.INFO, "Language label " + lang + " already exists");
                 return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Language label " + lang + " already exists").build();
@@ -234,6 +254,12 @@ public class LexiconCreation extends Service {
                     required = false)
             @QueryParam("author") String author,
             @ApiParam(
+                    name = "desiredID",
+                    value = "the ID name to assign to the created entity",
+                    example = "idName",
+                    required = false)
+            @QueryParam("desiredID") String desiredID,
+            @ApiParam(
                     name = "prefix",
                     value = "prefix of the namespace",
                     example = "myprefix",
@@ -250,6 +276,10 @@ public class LexiconCreation extends Service {
             log(Level.INFO, "lexicon/creation/lexicalEntry");
             UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
             utilityManager.validateNamespace(prefix, baseIRI);
+            if (!isUniqueID(baseIRI + desiredID)) {
+                log(Level.ERROR, "ID " + desiredID + " already exists");
+                return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("ID " + desiredID + " already exists").build();
+            }
             LexicalEntryCore lec = lexiconManager.createLexicalEntry(author, prefix, baseIRI);
             String json = lexicalEntryCoreHelper.toJson(lec);
             log(Level.INFO, "Lexical entry " + lec.getLabel() + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
@@ -285,6 +315,12 @@ public class LexiconCreation extends Service {
                     required = false)
             @QueryParam("author") String author,
             @ApiParam(
+                    name = "desiredID",
+                    value = "the ID name to assign to the created entity",
+                    example = "idName",
+                    required = false)
+            @QueryParam("desiredID") String desiredID,
+            @ApiParam(
                     name = "prefix",
                     value = "prefix of the namespace",
                     example = "myprefix",
@@ -301,6 +337,10 @@ public class LexiconCreation extends Service {
             log(Level.INFO, "lexicon/creation/dictionaryEntry");
             UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
             utilityManager.validateNamespace(prefix, baseIRI);
+            if (!isUniqueID(baseIRI + desiredID)) {
+                log(Level.ERROR, "ID " + desiredID + " already exists");
+                return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("ID " + desiredID + " already exists").build();
+            }
             DictionaryEntryComponent dec = lexiconManager.createDictionaryEntry(author, prefix, baseIRI);
             String json = dictionaryEntryComponentHelper.toJson(dec);
             log(Level.INFO, "Dictionary entry " + dec.getLabel() + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
@@ -340,6 +380,12 @@ public class LexiconCreation extends Service {
                     example = "user7")
             @QueryParam("author") String author,
             @ApiParam(
+                    name = "desiredID",
+                    value = "the ID name to assign to the created entity",
+                    example = "idName",
+                    required = false)
+            @QueryParam("desiredID") String desiredID,
+            @ApiParam(
                     name = "prefix",
                     value = "prefix of the namespace",
                     example = "myprefix",
@@ -359,6 +405,10 @@ public class LexiconCreation extends Service {
             try {
                 UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
                 utilityManager.validateNamespace(prefix, baseIRI);
+                if (!isUniqueID(baseIRI + desiredID)) {
+                    log(Level.ERROR, "ID " + desiredID + " already exists");
+                    return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("ID " + desiredID + " already exists").build();
+                }
                 if (!utilityManager.isLexicalEntry(_lexicalEntryID)) {
                     log(Level.ERROR, "lexicon/creation/form: " + "IRI " + _lexicalEntryID + " does not exist");
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _lexicalEntryID + " does not exist").build();
@@ -417,6 +467,12 @@ public class LexiconCreation extends Service {
                     required = false)
             @QueryParam("author") String author,
             @ApiParam(
+                    name = "desiredID",
+                    value = "the ID name to assign to the created entity",
+                    example = "idName",
+                    required = false)
+            @QueryParam("desiredID") String desiredID,
+            @ApiParam(
                     name = "prefix",
                     value = "prefix of the namespace",
                     example = "myprefix",
@@ -435,6 +491,10 @@ public class LexiconCreation extends Service {
             try {
                 UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
                 utilityManager.validateNamespace(prefix, baseIRI);
+                if (!isUniqueID(baseIRI + desiredID)) {
+                    log(Level.ERROR, "ID " + desiredID + " already exists");
+                    return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("ID " + desiredID + " already exists").build();
+                }
                 if (!utilityManager.isLexicalEntry(_lexicalEntryID)) {
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _lexicalEntryID + " does not exist").build();
                 }
@@ -482,6 +542,12 @@ public class LexiconCreation extends Service {
                     required = false)
             @QueryParam("author") String author,
             @ApiParam(
+                    name = "desiredID",
+                    value = "the ID name to assign to the created entity",
+                    example = "idName",
+                    required = false)
+            @QueryParam("desiredID") String desiredID,
+            @ApiParam(
                     name = "prefix",
                     value = "prefix of the namespace",
                     example = "myprefix",
@@ -500,6 +566,10 @@ public class LexiconCreation extends Service {
             try {
                 UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
                 utilityManager.validateNamespace(prefix, baseIRI);
+                if (!isUniqueID(baseIRI + desiredID)) {
+                    log(Level.ERROR, "ID " + desiredID + " already exists");
+                    return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("ID " + desiredID + " already exists").build();
+                }
                 if (!utilityManager.isLexicalEntryOrComponent(_id)) {
                     log(Level.ERROR, "lexicon/creation/component: " + "IRI " + _id + " is not neither a lexical entry nor a component");
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " is not neither a lexical entry nor a component").build();
@@ -548,6 +618,12 @@ public class LexiconCreation extends Service {
                     required = false)
             @QueryParam("author") String author,
             @ApiParam(
+                    name = "desiredID",
+                    value = "the ID name to assign to the created entity",
+                    example = "idName",
+                    required = false)
+            @QueryParam("desiredID") String desiredID,
+            @ApiParam(
                     name = "prefix",
                     value = "prefix of the namespace",
                     example = "myprefix",
@@ -566,6 +642,10 @@ public class LexiconCreation extends Service {
             try {
                 UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
                 utilityManager.validateNamespace(prefix, baseIRI);
+                if (!isUniqueID(baseIRI + desiredID)) {
+                    log(Level.ERROR, "ID " + desiredID + " already exists");
+                    return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("ID " + desiredID + " already exists").build();
+                }
                 if (!utilityManager.isAdmissibleHeadOfCollocation(_id)) {
                     log(Level.ERROR, "lexicon/creation/collocation: " + "IRI " + _id + " is not an admissible head of collocation");
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " is not an admissible head of collocation").build();
@@ -615,6 +695,12 @@ public class LexiconCreation extends Service {
                     required = false)
             @QueryParam("author") String author,
             @ApiParam(
+                    name = "desiredID",
+                    value = "the ID name to assign to the created entity",
+                    example = "idName",
+                    required = false)
+            @QueryParam("desiredID") String desiredID,
+            @ApiParam(
                     name = "prefix",
                     value = "prefix of the namespace",
                     example = "myprefix",
@@ -633,6 +719,10 @@ public class LexiconCreation extends Service {
             try {
                 UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
                 utilityManager.validateNamespace(prefix, baseIRI);
+                if (!isUniqueID(baseIRI + desiredID)) {
+                    log(Level.ERROR, "ID " + desiredID + " already exists");
+                    return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("ID " + desiredID + " already exists").build();
+                }
                 if (!utilityManager.isLexicalEntry(_lexicalEntryID)) {
                     log(Level.ERROR, "lexicon/creation/etymology: " + "IRI " + _lexicalEntryID + " does not exist");
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _lexicalEntryID + " does not exist").build();
@@ -692,6 +782,12 @@ public class LexiconCreation extends Service {
                     required = false)
             @QueryParam("author") String author,
             @ApiParam(
+                    name = "desiredID",
+                    value = "the ID name to assign to the created entity",
+                    example = "idName",
+                    required = false)
+            @QueryParam("desiredID") String desiredID,
+            @ApiParam(
                     name = "prefix",
                     value = "prefix of the namespace",
                     example = "myprefix",
@@ -710,6 +806,10 @@ public class LexiconCreation extends Service {
             try {
                 UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
                 utilityManager.validateNamespace(prefix, baseIRI);
+                if (!isUniqueID(baseIRI + desiredID)) {
+                    log(Level.ERROR, "ID " + desiredID + " already exists");
+                    return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("ID " + desiredID + " already exists").build();
+                }
                 if (!utilityManager.isLexicalEntry(_lexicalEntryID)) {
                     log(Level.ERROR, "lexicon/creation/etymologicalLink: " + "IRI " + _lexicalEntryID + " does not exist");
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _lexicalEntryID + " does not exist").build();
@@ -768,6 +868,12 @@ public class LexiconCreation extends Service {
                     example = "user7",
                     required = false)
             @QueryParam("author") String author,
+            @ApiParam(
+                    name = "desiredID",
+                    value = "the ID name to assign to the created entity",
+                    example = "idName",
+                    required = false)
+            @QueryParam("desiredID") String desiredID,
             Bibliography bibliography,
             @ApiParam(
                     name = "prefix",
@@ -789,6 +895,10 @@ public class LexiconCreation extends Service {
             try {
                 UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
                 utilityManager.validateNamespace(prefix, baseIRI);
+                if (!isUniqueID(baseIRI + desiredID)) {
+                    log(Level.ERROR, "ID " + desiredID + " already exists");
+                    return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("ID " + desiredID + " already exists").build();
+                }
                 if ((bibliography.getId() == null || bibliography.getId().isEmpty())) {
                     log(Level.ERROR, "lexicon/creation/bibliography: " + "id of bibliography must be defined");
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("id of bibliography must be defined").build();
@@ -833,6 +943,12 @@ public class LexiconCreation extends Service {
                     required = false)
             @QueryParam("author") String author,
             @ApiParam(
+                    name = "desiredID",
+                    value = "the ID name to assign to the created entity",
+                    example = "idName",
+                    required = false)
+            @QueryParam("desiredID") String desiredID,
+            @ApiParam(
                     name = "prefix",
                     value = "prefix of the namespace",
                     example = "myprefix",
@@ -849,6 +965,10 @@ public class LexiconCreation extends Service {
             log(Level.INFO, "lexicon/creation/lexicalConcept");
             UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
             utilityManager.validateNamespace(prefix, baseIRI);
+            if (!isUniqueID(baseIRI + desiredID)) {
+                log(Level.ERROR, "ID " + desiredID + " already exists");
+                return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("ID " + desiredID + " already exists").build();
+            }
             LexicalConcept lc = skosManager.createLexicalConcept(author, prefix, baseIRI);
             String json = lexicalConceptHelper.toJson(lc);
             log(Level.INFO, "Lexical concept " + lc.getLexicalConcept() + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
@@ -884,6 +1004,12 @@ public class LexiconCreation extends Service {
                     required = false)
             @QueryParam("author") String author,
             @ApiParam(
+                    name = "desiredID",
+                    value = "the ID name to assign to the created entity",
+                    example = "idName",
+                    required = false)
+            @QueryParam("desiredID") String desiredID,
+            @ApiParam(
                     name = "prefix",
                     value = "prefix of the namespace",
                     example = "myprefix",
@@ -900,6 +1026,10 @@ public class LexiconCreation extends Service {
             log(Level.INFO, "lexicon/creation/conceptSet");
             UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
             utilityManager.validateNamespace(prefix, baseIRI);
+            if (!isUniqueID(baseIRI + desiredID)) {
+                log(Level.ERROR, "ID " + desiredID + " already exists");
+                return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("ID " + desiredID + " already exists").build();
+            }
             ConceptSet cs = skosManager.createConceptSet(author, prefix, baseIRI);
             String json = conceptSetHelper.toJson(cs);
             log(Level.INFO, "Concept set " + cs.getConceptSet() + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
@@ -940,6 +1070,12 @@ public class LexiconCreation extends Service {
                     required = false)
             @QueryParam("author") String author,
             @ApiParam(
+                    name = "desiredID",
+                    value = "the ID name to assign to the created entity",
+                    example = "idName",
+                    required = false)
+            @QueryParam("desiredID") String desiredID,
+            @ApiParam(
                     name = "type",
                     value = "the full IRI of the relation type",
                     example = "http://www.w3.org/ns/lemon/vartrans#LexicalRelation",
@@ -965,6 +1101,10 @@ public class LexiconCreation extends Service {
             try {
                 UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
                 utilityManager.validateNamespace(prefix, baseIRI);
+                if (!isUniqueID(baseIRI + desiredID)) {
+                    log(Level.ERROR, "ID " + desiredID + " already exists");
+                    return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("ID " + desiredID + " already exists").build();
+                }
                 ReifiedRelation rr = lexiconManager.createLexicoSemanticRelation(_id, _type, author, prefix, baseIRI);
                 String json = indirectLexicalRelationHelper.toJson(rr);
                 log(Level.INFO, "lexicoSemanticRelation " + rr.getRelation() + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
@@ -1004,6 +1144,12 @@ public class LexiconCreation extends Service {
                     required = false)
             @QueryParam("author") String author,
             @ApiParam(
+                    name = "desiredID",
+                    value = "the ID name to assign to the created entity",
+                    example = "idName",
+                    required = false)
+            @QueryParam("desiredID") String desiredID,
+            @ApiParam(
                     name = "prefix",
                     value = "prefix of the namespace",
                     example = "myprefix",
@@ -1019,6 +1165,12 @@ public class LexiconCreation extends Service {
             checkKey(key);
             log(Level.INFO, "lexicon/creation/translationSet");
             try {
+                UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+                utilityManager.validateNamespace(prefix, baseIRI);
+                if (!isUniqueID(baseIRI + desiredID)) {
+                    log(Level.ERROR, "ID " + desiredID + " already exists");
+                    return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("ID " + desiredID + " already exists").build();
+                }
                 TranslationSet ts = lexiconManager.createTranslationSet(author, prefix, baseIRI);
                 String json = translationSetHelper.toJson(ts);
                 log(Level.INFO, "translationSet " + ts.getTranslationSet() + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
@@ -1060,6 +1212,12 @@ public class LexiconCreation extends Service {
                     required = false)
             @QueryParam("author") String author,
             @ApiParam(
+                    name = "desiredID",
+                    value = "the ID name to assign to the created entity",
+                    example = "idName",
+                    required = false)
+            @QueryParam("desiredID") String desiredID,
+            @ApiParam(
                     name = "prefix",
                     value = "prefix of the namespace",
                     example = "myprefix",
@@ -1078,7 +1236,10 @@ public class LexiconCreation extends Service {
             try {
                 UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
                 utilityManager.validateNamespace(prefix, baseIRI);
-
+                if (!isUniqueID(baseIRI + desiredID)) {
+                    log(Level.ERROR, "ID " + desiredID + " already exists");
+                    return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("ID " + desiredID + " already exists").build();
+                }
                 FormRestriction fr = lexiconManager.createFormRestriction(_id, author, prefix, baseIRI);
                 String json = formRestrictionHelper.toJson(fr);
                 log(Level.INFO, "Form restriction " + fr.getFormRestriction() + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
@@ -1119,6 +1280,12 @@ public class LexiconCreation extends Service {
                     required = false)
             @QueryParam("author") String author,
             @ApiParam(
+                    name = "desiredID",
+                    value = "the ID name to assign to the created entity",
+                    example = "idName",
+                    required = false)
+            @QueryParam("desiredID") String desiredID,
+            @ApiParam(
                     name = "prefix",
                     value = "prefix of the namespace",
                     example = "myprefix",
@@ -1135,6 +1302,10 @@ public class LexiconCreation extends Service {
             try {
                 UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
                 utilityManager.validateNamespace(prefix, baseIRI);
+                if (!isUniqueID(baseIRI + desiredID)) {
+                    log(Level.ERROR, "ID " + desiredID + " already exists");
+                    return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("ID " + desiredID + " already exists").build();
+                }
                 DictionaryEntryComponent dec = lexiconManager.createDictionaryEntryComponent(author, prefix, baseIRI);
                 String json = dictionaryEntryComponentHelper.toJson(dec);
                 log(Level.INFO, "Lexicographic component " + dec.getComponent() + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
@@ -1152,4 +1323,10 @@ public class LexiconCreation extends Service {
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
+
+    private boolean isUniqueID(String desiredID) {
+        UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+        return utilityManager.isUniqueID(desiredID);
+    }
+
 }

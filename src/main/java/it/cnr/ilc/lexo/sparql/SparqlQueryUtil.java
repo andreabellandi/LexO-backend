@@ -36,11 +36,11 @@ public class SparqlQueryUtil {
     public static final String IS_LEXICON_LANGUAGE
             = SparqlPrefix.LIME.getSparqlPrefix() + "\n"
             + "ASK { <_ID_> a " + SparqlPrefix.LIME.getPrefix() + "Lexicon }";
-    
+
     public static final String DICTIONARY_HAS_ENTRY
             = SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
             + "ASK { <_ID_> " + SparqlPrefix.LEXICOG.getPrefix() + "entry ?entry }";
-    
+
     public static final String IS_DICTIONARY
             = SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
             + "ASK { <_ID_> a " + SparqlPrefix.LEXICOG.getPrefix() + "LexicographicResource }";
@@ -167,7 +167,7 @@ public class SparqlQueryUtil {
             + "SELECT ?" + SparqlVariable.LEXICON_LANGUAGE + " \n"
             + "WHERE { ?" + SparqlVariable.LEXICON + " " + SparqlPrefix.LIME.getPrefix() + "entry  <_ID_> ;\n"
             + "        " + SparqlPrefix.LIME.getPrefix() + "language ?" + SparqlVariable.LEXICON_LANGUAGE + " }";
-    
+
     public static final String DICTIONARY_LANGUAGE
             = SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
             + "SELECT ?" + SparqlVariable.DICT_LANGUAGE + " \n"
@@ -188,6 +188,9 @@ public class SparqlQueryUtil {
             = SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
             + "SELECT ?" + SparqlVariable.LABEL + " \n"
             + "WHERE { <_ID_> " + SparqlPrefix.RDFS.getPrefix() + "label ?" + SparqlVariable.LABEL + " }";
+
+    public static final String UNIQUE_ID
+            = "ASK { <_ID_> ?p ?o }";
 
     public static final String IS_COGNATE
             = SparqlPrefix.ETY.getSparqlPrefix() + "\n"
