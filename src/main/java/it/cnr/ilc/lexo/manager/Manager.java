@@ -17,7 +17,7 @@ public interface Manager {
 
     public final LexinfoManager lexinfoManager = ManagerFactory.getManager(LexinfoManager.class);
 
-    public static boolean getID(String iri) {
+    public static boolean IDAlreadyExists(String iri) {
         return RDFQueryUtil.evaluateBQuery(SparqlQueryUtil.UNIQUE_ID.replace("_ID_", iri));
     }
     

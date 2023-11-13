@@ -44,7 +44,7 @@ public class BibliographyManager implements Manager, Cached {
     public BibliographicItem createBibliographyReference(String leID, String author, Bibliography bibliography, String prefix, String baseIRI, String desiredID) throws ManagerException {
         setBibliography(bibliography);
         Timestamp tm = new Timestamp(System.currentTimeMillis());
-        String idBib = (desiredID != null ? (!desiredID.isEmpty() ? (Manager.getID(baseIRI + desiredID) ? baseIRI + desiredID : null) : idInstancePrefix + tm.toString()) : idInstancePrefix + tm.toString());
+        String idBib = (desiredID != null ? (!desiredID.isEmpty() ? (Manager.IDAlreadyExists(baseIRI + desiredID) ? null : desiredID) : idInstancePrefix + tm.toString()) : idInstancePrefix + tm.toString());
         if (idBib == null) throw new ManagerException("ID " + desiredID + " already exists");
         String created = timestampFormat.format(tm);
         String sparqlPrefix = "PREFIX " + prefix + ": <" + baseIRI + ">";
