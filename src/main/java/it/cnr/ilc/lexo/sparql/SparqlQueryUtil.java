@@ -191,6 +191,15 @@ public class SparqlQueryUtil {
 
     public static final String UNIQUE_ID
             = "ASK { <_ID_> ?p ?o }";
+    
+    public static final String INDIRECT_RELATION_TYPE 
+            = SparqlPrefix.ONTO.getSparqlPrefix() + "\n"
+            + SparqlPrefix.VARTRANS.getSparqlPrefix() + "\n"
+            + "SELECT ?" + SparqlVariable.TYPE + " \n"
+            + "FROM onto:explicit\n"
+            + "WHERE { <_ID_> a ?" + SparqlVariable.TYPE + " .\n"
+            + "        FILTER(STRSTARTS(STR(?" + SparqlVariable.TYPE + "), str(vartrans:)))\n"
+            + " }";
 
     public static final String IS_COGNATE
             = SparqlPrefix.ETY.getSparqlPrefix() + "\n"

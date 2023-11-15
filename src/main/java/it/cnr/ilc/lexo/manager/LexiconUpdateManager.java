@@ -654,10 +654,17 @@ public final class LexiconUpdateManager implements Manager, Cached {
         } else if (lru.getType().equals(EnumUtil.LinguisticRelation.LexicoSemanticRel.toString())) {
             // vartrans reified relation
             validateLexicoSemanticRel(lru.getRelation());
-            if (lru.getType().contains(OntoLexEntity.LexicoSemanticProperty.Category.toString())) {
-                validateLexicoSemanticValue(RelationCategory.LEXICAL_CATEGORY, lru.getValue());
-                validateLexicoSemanticValue(RelationCategory.SEMANTIC_CATEGORY, lru.getValue());
-                validateLexicoSemanticValue(RelationCategory.FORM_CATEGORY, lru.getValue());
+            if (lru.getRelation().contains(OntoLexEntity.LexicoSemanticProperty.Category.toString())) {
+                String type = ManagerFactory.getManager(UtilityManager.class).getIndirectRelationType(id);
+                if (type.equals(SparqlPrefix.VARTRANS.getUri() + "SenseRelation")) {
+                    validateLexicoSemanticValue(RelationCategory.SENSE_RELATION, lru.getValue());
+                } else if (type.equals(SparqlPrefix.VARTRANS.getUri() + "LexicalRelation")) {
+                    validateLexicoSemanticValue(RelationCategory.LEXICAL_RELATION, lru.getValue());
+                } else if (type.equals(SparqlPrefix.VARTRANS.getUri() + "TerminologicalRelation")) {
+                    // TODO
+                } else if (type.equals(SparqlPrefix.VARTRANS.getUri() + "Translation")) {
+                    // TODO
+                }
             } else {
                 if (!StringUtil.existsIRI(lru.getValue())) {
                     validateURL(lru.getValue());

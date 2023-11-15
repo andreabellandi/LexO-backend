@@ -611,8 +611,8 @@ public class SparqlSelectData {
             + SparqlPrefix.RDF.getSparqlPrefix() + "\n"
             + SparqlPrefix.SKOS.getSparqlPrefix() + "\n"
             + "SELECT \n"
-            + "?" + SparqlVariable.REIFIED_RELATION + " ?" + SparqlVariable.CATEGORY + " ?" + SparqlVariable.TYPE + " ?" + SparqlVariable.SOURCE
-            + " ?" + SparqlVariable.TARGET + " ?" + SparqlVariable.TARGET_LABEL + " ?" + SparqlVariable.DEFINITION + " ?" + SparqlVariable.NOTE + " ?" + SparqlVariable.LABEL + "\n"
+            + "?" + SparqlVariable.REIFIED_RELATION + " ?" + SparqlVariable.CATEGORY + " ?" + SparqlVariable.TYPE + " ?" + SparqlVariable.SOURCE + " ?" + SparqlVariable.SOURCE_LABEL
+            + " ?" + SparqlVariable.TARGET + " ?" + SparqlVariable.TARGET_LABEL + " ?" + SparqlVariable.NOTE + " ?" + SparqlVariable.LABEL + "\n"
             + "(GROUP_CONCAT(concat(str(?reifiedRelationPredicate),\"<>\",str(?reifiedRelationObject),\"<>\",str(?graph));SEPARATOR=\"---\") AS ?extra)\n"
             + "FROM NAMED onto:implicit\n"
             + "FROM NAMED onto:explicit\n"
@@ -621,15 +621,14 @@ public class SparqlSelectData {
             + "      luc:query \"lexicalEntryIRI:[IRI]\" ;\n"
             + "      luc:entities ?" + SparqlVariable.SOURCE + " .\n"
             + "    OPTIONAL { ?" + SparqlVariable.REIFIED_RELATION + " vartrans:source ?" + SparqlVariable.SOURCE + " .\n"
+            + "               ?" + SparqlVariable.SOURCE + " rdfs:label ?" + SparqlVariable.SOURCE_LABEL + " .\n"
             + "        OPTIONAL { ?" + SparqlVariable.REIFIED_RELATION + " vartrans:category ?" + SparqlVariable.CATEGORY + " }\n"
             + "        OPTIONAL { ?" + SparqlVariable.REIFIED_RELATION + " skos:note ?" + SparqlVariable.NOTE + " }\n"
             + "        OPTIONAL { ?" + SparqlVariable.REIFIED_RELATION + " rdfs:label ?" + SparqlVariable.LABEL + " }\n"
             + "        OPTIONAL { ?" + SparqlVariable.REIFIED_RELATION + " sesame:directType ?" + SparqlVariable.TYPE + " .\n"
             + "        FILTER(!STRSTARTS(STR(?" + SparqlVariable.TYPE + "), \"http://www.w3.org/ns/lemon/lexicog#\")) }\n"
             + "    	OPTIONAL { ?" + SparqlVariable.REIFIED_RELATION + " vartrans:target ?" + SparqlVariable.TARGET + " }\n"
-            + "    	OPTIONAL { ?" + SparqlVariable.TARGET + " rdfs:label ?" + SparqlVariable.TARGET_LABEL + " ;\n"
-            + "    					skos:definition ?" + SparqlVariable.DEFINITION + " .\n"
-            + "    	}\n"
+            + "    	OPTIONAL { ?" + SparqlVariable.TARGET + " rdfs:label ?" + SparqlVariable.TARGET_LABEL + " }\n"
             + "    	OPTIONAL { \n"
             + "        	GRAPH ?graph { ?" + SparqlVariable.REIFIED_RELATION + " ?reifiedRelationPredicate ?reifiedRelationObject . } \n"
             + "        	FILTER(!STRSTARTS(STR(?reifiedRelationPredicate), \"http://www.w3.org/ns/lemon/vartrans#\"))\n"
@@ -638,8 +637,8 @@ public class SparqlSelectData {
             + "    }\n"
             + "    FILTER(BOUND(?" + SparqlVariable.REIFIED_RELATION + "))\n"
             + "}\n"
-            + "GROUP BY ?" + SparqlVariable.REIFIED_RELATION + " ?" + SparqlVariable.CATEGORY + " ?" + SparqlVariable.TYPE + " ?" + SparqlVariable.SOURCE
-            + " ?" + SparqlVariable.TARGET + " ?" + SparqlVariable.TARGET_LABEL + " ?" + SparqlVariable.DEFINITION + " ?" + SparqlVariable.NOTE + " ?" + SparqlVariable.LABEL + "\n"
+            + "GROUP BY ?" + SparqlVariable.REIFIED_RELATION + " ?" + SparqlVariable.CATEGORY + " ?" + SparqlVariable.TYPE + " ?" + SparqlVariable.SOURCE + " ?" + SparqlVariable.SOURCE_LABEL
+            + " ?" + SparqlVariable.TARGET + " ?" + SparqlVariable.TARGET_LABEL + " ?" + SparqlVariable.NOTE + " ?" + SparqlVariable.LABEL + "\n"
             + "ORDER BY ?" + SparqlVariable.REIFIED_RELATION;
 
     public static final String DATA_FORM_CORE
@@ -895,7 +894,7 @@ public class SparqlSelectData {
             + "    OPTIONAL { GRAPH ?" + SparqlVariable.GRAPH + " { ?" + SparqlVariable.SENSE + " ?" + SparqlVariable.PROPERTY_NAME + " ?" + SparqlVariable.LEXICAL_ENTITY + " } .\n"
             + "               ?" + SparqlVariable.PROPERTY_NAME + " rdfs:subPropertyOf vartrans:senseRel . \n"
             + "               OPTIONAL { "
-            + "                               GRAPH ?_graph { ?" + SparqlVariable.LEXICAL_ENTITY + " rdfs:label|skos:definition ?" + SparqlVariable.LABEL + " }\n"
+            + "                               GRAPH ?_graph { ?" + SparqlVariable.LEXICAL_ENTITY + " skos:definition ?" + SparqlVariable.LABEL + " }\n"
             + "                               FILTER(STRSTARTS(STR(?_graph), \"http://www.ontotext.com/explicit\")) "
             + "                        }\n"
             + "               OPTIONAL { ?" + SparqlVariable.LEXICAL_ENTITY + " sesame:directType ?_type .\n"
@@ -935,12 +934,12 @@ public class SparqlSelectData {
             + "        OPTIONAL { ?" + SparqlVariable.REIFIED_RELATION + " sesame:directType ?" + SparqlVariable.TYPE + " .\n"
             + "        FILTER(!STRSTARTS(STR(?" + SparqlVariable.TYPE + "), \"http://www.w3.org/ns/lemon/lexicog#\")) }\n"
             + "    	OPTIONAL { ?" + SparqlVariable.REIFIED_RELATION + " vartrans:target ?" + SparqlVariable.TARGET + " .\n"
-            + "    	         OPTIONAL { GRAPH ?gTarget { ?" + SparqlVariable.TARGET + " rdfs:label|skos:definition ?" + SparqlVariable.TARGET_LABEL + " }\n"
+            + "    	         OPTIONAL { GRAPH ?gTarget { ?" + SparqlVariable.TARGET + " skos:definition ?" + SparqlVariable.TARGET_LABEL + " }\n"
             + "                                              ?" + SparqlVariable.TARGET + " ontolex:isSenseOf [ rdfs:label ?" + SparqlVariable.TARGET_LEXICAL_ENTRY + "]\n "
             + "                             FILTER(STRSTARTS(STR(?gTarget), \"http://www.ontotext.com/explicit\")) }\n"
             + "         }\n"
             + "    	OPTIONAL { \n"
-            + "                    GRAPH ?gSource { ?" + SparqlVariable.SOURCE + " rdfs:label|skos:definition ?" + SparqlVariable.SOURCE_LABEL + " }\n"
+            + "                    GRAPH ?gSource { ?" + SparqlVariable.SOURCE + " skos:definition ?" + SparqlVariable.SOURCE_LABEL + " }\n"
             + "                    ?" + SparqlVariable.SOURCE + " ontolex:isSenseOf [ rdfs:label ?" + SparqlVariable.SOURCE_LEXICAL_ENTRY + "] \n"
             + "                     FILTER(STRSTARTS(STR(?gSource), \"http://www.ontotext.com/explicit\")) }\n"
             + "    	OPTIONAL { \n"

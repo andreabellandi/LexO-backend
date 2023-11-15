@@ -66,7 +66,8 @@ import it.cnr.ilc.lexo.service.helper.FormItemsHelper;
 import it.cnr.ilc.lexo.service.helper.FormRestrictionHelper;
 import it.cnr.ilc.lexo.service.helper.HelperException;
 import it.cnr.ilc.lexo.service.helper.ImageHelper;
-import it.cnr.ilc.lexo.service.helper.IndirectRelationHelper;
+import it.cnr.ilc.lexo.service.helper.IndirectLexicalRelationHelper;
+import it.cnr.ilc.lexo.service.helper.IndirectSenseRelationHelper;
 import it.cnr.ilc.lexo.service.helper.LanguageHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalConceptHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalConceptItemHelper;
@@ -125,7 +126,8 @@ public class LexiconData extends Service {
     private final LexicalSenseFilterHelper lexicalSenseFilterHelper = new LexicalSenseFilterHelper();
     private final FormItemsHelper formItemsHelper = new FormItemsHelper();
     private final DirectRelationHelper directRelationHelper = new DirectRelationHelper();
-    private final IndirectRelationHelper indirectRelationHelper = new IndirectRelationHelper();
+    private final IndirectLexicalRelationHelper indirectLexicalRelationHelper = new IndirectLexicalRelationHelper();
+    private final IndirectSenseRelationHelper indirectSenseRelationHelper = new IndirectSenseRelationHelper();
     private final LanguageHelper languageHelper = new LanguageHelper();
     private final LexicalEntryElementHelper lexicalEntryElementHelper = new LexicalEntryElementHelper();
     private final LexicalEntryCoreHelper lexicalEntryCoreHelper = new LexicalEntryCoreHelper();
@@ -202,7 +204,7 @@ public class LexiconData extends Service {
                 TupleQueryResult directRel = lexiconManager.getLexicalEntryVarTrans(_id, true);
                 List<LinkedEntity> le = directRelationHelper.newDataList(directRel);
                 TupleQueryResult indirectRel = lexiconManager.getLexicalEntryVarTrans(_id, false);
-                List<ReifiedRelation> rr = indirectRelationHelper.newDataList(indirectRel);
+                List<ReifiedRelation> rr = indirectLexicalRelationHelper.newDataList(indirectRel);
                 json = varTransDataHelper.toJson(lexiconManager.addRelations(le, rr));
             } else {
                 log(Level.ERROR, "lexical module " + module + " not available");
@@ -259,7 +261,7 @@ public class LexiconData extends Service {
                 TupleQueryResult directRel = lexiconManager.getFormVarTrans(_id, true);
                 List<LinkedEntity> le = directRelationHelper.newDataList(directRel);
                 TupleQueryResult indirectRel = lexiconManager.getFormVarTrans(_id, false);
-                List<ReifiedRelation> rr = indirectRelationHelper.newDataList(indirectRel);
+                List<ReifiedRelation> rr = indirectLexicalRelationHelper.newDataList(indirectRel);
                 json = varTransDataHelper.toJson(lexiconManager.addRelations(le, rr));
             } else {
                 log(Level.ERROR, "lexical module " + module + " not available");
@@ -340,7 +342,7 @@ public class LexiconData extends Service {
                 TupleQueryResult directRel = lexiconManager.getLexicalSenseVarTrans(_id, true);
                 List<LinkedEntity> le = directRelationHelper.newDataList(directRel);
                 TupleQueryResult indirectRel = lexiconManager.getLexicalSenseVarTrans(_id, false);
-                List<ReifiedRelation> rr = indirectRelationHelper.newDataList(indirectRel);
+                List<ReifiedRelation> rr = indirectSenseRelationHelper.newDataList(indirectRel);
                 json = varTransDataHelper.toJson(lexiconManager.addRelations(le, rr));
             } else {
                 log(Level.ERROR, "lexical module " + module + " not available");

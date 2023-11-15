@@ -285,6 +285,18 @@ public final class UtilityManager implements Manager, Cached {
         String query = SparqlQueryUtil.UNIQUE_ID.replaceAll("_ID_", id);
         return RDFQueryUtil.evaluateBQuery(query);
     }
+    
+    public String getIndirectRelationType(String id) {
+        String type = null;
+        try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(SparqlQueryUtil.INDIRECT_RELATION_TYPE.replace("_ID_", id))) {
+            while (result.hasNext()) {
+                BindingSet bs = result.next();
+                type = bs.getBinding(SparqlVariable.TYPE).getValue().stringValue();
+            }
+        } catch (QueryEvaluationException qee) {
+        }
+        return type;
+    }
 
     public void validateNamespace(String prefix, String baseIRI) throws ManagerException {
         if (prefix == null || baseIRI == null) {

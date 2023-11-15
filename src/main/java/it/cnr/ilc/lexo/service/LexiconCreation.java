@@ -46,7 +46,7 @@ import it.cnr.ilc.lexo.service.helper.LexicalEntryCoreHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalSenseCoreHelper;
 import it.cnr.ilc.lexo.service.helper.DirectRelationHelper;
 import it.cnr.ilc.lexo.service.helper.FormRestrictionHelper;
-import it.cnr.ilc.lexo.service.helper.IndirectRelationHelper;
+import it.cnr.ilc.lexo.service.helper.IndirectLexicalRelationHelper;
 import it.cnr.ilc.lexo.service.helper.TranslationSetHelper;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -87,7 +87,7 @@ public class LexiconCreation extends Service {
     private final ComponentHelper componentHelper = new ComponentHelper();
     private final CollocationHelper collocationHelper = new CollocationHelper();
     private final FormRestrictionHelper formRestrictionHelper = new FormRestrictionHelper();
-    private final IndirectRelationHelper indirectLexicalRelationHelper = new IndirectRelationHelper();
+    private final IndirectLexicalRelationHelper indirectLexicalRelationHelper = new IndirectLexicalRelationHelper();
     private final TranslationSetHelper translationSetHelper = new TranslationSetHelper();
     private final LexicalConceptHelper lexicalConceptHelper = new LexicalConceptHelper();
     private final ConceptSetHelper conceptSetHelper = new ConceptSetHelper();

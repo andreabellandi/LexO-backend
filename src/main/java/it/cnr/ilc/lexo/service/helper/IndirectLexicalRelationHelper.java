@@ -13,7 +13,7 @@ import org.eclipse.rdf4j.query.BindingSet;
  *
  * @author andreabellandi
  */
-public class IndirectRelationHelper extends TripleStoreDataHelper<ReifiedRelation> {
+public class IndirectLexicalRelationHelper extends TripleStoreDataHelper<ReifiedRelation> {
 
     @Override
     public void fillData(ReifiedRelation data, BindingSet bs) {
@@ -23,18 +23,20 @@ public class IndirectRelationHelper extends TripleStoreDataHelper<ReifiedRelatio
         data.setRelation(getStringValue(bs, SparqlVariable.REIFIED_RELATION));
         data.setSource(getStringValue(bs, SparqlVariable.SOURCE));
         data.setTarget(getStringValue(bs, SparqlVariable.TARGET));
-        data.setTargetLabel(getStringValue(bs, SparqlVariable.TARGET_LABEL));
-        data.setSourceLabel(getStringValue(bs, SparqlVariable.SOURCE_LABEL));
+        data.setTargetLabel(!getStringValue(bs, SparqlVariable.TARGET_LABEL).isEmpty() ?
+                getLiteralLabel(bs, SparqlVariable.TARGET_LABEL) + "@" + getLiteralLanguage(bs, SparqlVariable.TARGET_LABEL) : "");
+        data.setSourceLabel(!getStringValue(bs, SparqlVariable.SOURCE_LABEL).isEmpty() ?
+                getLiteralLabel(bs, SparqlVariable.SOURCE_LABEL) + "@" + getLiteralLanguage(bs, SparqlVariable.SOURCE_LABEL) : "");
         data.setType(getStringValue(bs, SparqlVariable.CATEGORY));
         data.setConfidence(getDoubleNumber(bs, SparqlVariable.CONFIDENCE));
         data.setCreationDate(getStringValue(bs, SparqlVariable.CREATION_DATE));
         data.setCreator(getStringValue(bs, SparqlVariable.COMPONENT_CREATION_AUTHOR));
         data.setLastUpdate(getStringValue(bs, SparqlVariable.LAST_UPDATE));
         data.setCategory(getStringValue(bs, SparqlVariable.CATEGORY));
-        data.setSourceLexicalEntry(!getStringValue(bs, SparqlVariable.SOURCE_LEXICAL_ENTRY).isEmpty() ?
-                getLiteralLabel(bs, SparqlVariable.SOURCE_LEXICAL_ENTRY) + "@" + getLiteralLanguage(bs, SparqlVariable.SOURCE_LEXICAL_ENTRY) : "");
-        data.setTargetLexicalEntry(!getStringValue(bs, SparqlVariable.TARGET_LEXICAL_ENTRY).isEmpty() ?
-                getLiteralLabel(bs, SparqlVariable.TARGET_LEXICAL_ENTRY) + "@" + getLiteralLanguage(bs, SparqlVariable.TARGET_LEXICAL_ENTRY)  : "");
+        data.setSourceLexicalEntry(!getStringValue(bs, SparqlVariable.TARGET_LABEL).isEmpty() ?
+                getLiteralLabel(bs, SparqlVariable.TARGET_LABEL) + "@" + getLiteralLanguage(bs, SparqlVariable.TARGET_LABEL) : "");
+        data.setTargetLexicalEntry(!getStringValue(bs, SparqlVariable.SOURCE_LABEL).isEmpty() ?
+                getLiteralLabel(bs, SparqlVariable.SOURCE_LABEL) + "@" + getLiteralLanguage(bs, SparqlVariable.SOURCE_LABEL) : "");
     }
 
     @Override
