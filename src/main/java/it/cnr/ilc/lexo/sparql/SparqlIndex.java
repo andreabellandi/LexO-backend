@@ -37,6 +37,14 @@ public class SparqlIndex {
             + "      ],\n"
             + "      \"analyzed\": false\n"
             + "     },\n"
+            + "     {   \n"
+            + "      \"fieldName\": \"writtenLexicalForm\",\n"
+            + "      \"propertyChain\": [\n"
+            + "        \"http://www.w3.org/ns/lemon/ontolex#lexicalForm\",\n"
+            + "        \"http://www.w3.org/ns/lemon/ontolex#writtenRep\"\n"
+            + "      ],\n"
+            + "      \"analyzed\": false\n"
+            + "     },\n"
             + "     {\n"
             + "      \"fieldName\": \"writtenCanonicalForm\",\n"
             + "      \"propertyChain\": [\n"
@@ -96,7 +104,7 @@ public class SparqlIndex {
             + "          ]\n"
             + "     }\n"
             + "   ],\n"
-                // lexical entries having not a  rdfs:label are not indexed 
+            // lexical entries having not a  rdfs:label are not indexed 
             + "   \"documentFilter\": \"bound(?lexicalEntryLabel)\""
             + " }\n"
             + " ''' .\n"

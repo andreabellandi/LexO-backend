@@ -6,17 +6,12 @@
 package it.cnr.ilc.lexo.manager;
 
 import com.github.jsonldjava.shaded.com.google.common.io.Files;
-import it.cnr.ilc.lexo.LexOProperties;
-import it.cnr.ilc.lexo.service.Configuration;
 import it.cnr.ilc.lexo.service.data.RepositoryData;
 import it.cnr.ilc.lexo.sparql.SparqlRepositoryConfiguration;
 import it.cnr.ilc.lexo.util.EnumUtil;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;

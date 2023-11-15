@@ -160,9 +160,9 @@ public class LexiconDataManager implements Manager, Cached {
     }
 
     private String getSearchField(String formType, String textSearch) {
-        return formType.isEmpty() ? "lexicalEntryLabel:" + textSearch + " OR writtenCanonicalForm:" + textSearch + " OR writtenOtherForm:" + textSearch
+        return formType.isEmpty() ? "lexicalEntryLabel:" + textSearch + " OR writtenCanonicalForm:" + textSearch + " OR writtenOtherForm:" + textSearch + " OR writtenLexicalForm:" + textSearch
                 : (formType.equals(EnumUtil.FormTypes.Entry.toString()) ? "lexicalEntryLabel:" + textSearch
-                : (formType.equals(EnumUtil.FormTypes.Flexed.toString()) ? "writtenCanonicalForm:" + textSearch + " OR writtenOtherForm:" + textSearch : ""));
+                : (formType.equals(EnumUtil.FormTypes.Flexed.toString()) ? "writtenCanonicalForm:" + textSearch + " OR writtenOtherForm:" + textSearch + " OR writtenLexicalForm:" + textSearch : ""));
     }
 
     private String getSearchLexicalSenseField(String lsField, String textSearch) {
