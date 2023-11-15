@@ -226,7 +226,37 @@ public class Configuration extends Service {
         }
     }
     
-    
+    @GET
+    @Path("updateIndex")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "updateIndex",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Update repository indexes",
+            notes = "Update repository indexes")
+    public Response updateIndex(
+            @HeaderParam("Authorization") String key,
+            @ApiParam(
+                    name = "repositoryID",
+                    value = "Repository name",
+                    required = true)
+            @QueryParam("repositoryID") String repositoryID) {
+        try {
+            checkKey(key);
+            log(Level.INFO, "GET update indexes of " + repositoryID + " repository");
+            configManager.updateIndex(repositoryID);
+            return Response.ok()
+                    .type(MediaType.TEXT_PLAIN)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
+        } catch (AuthorizationException | ServiceException ex) {
+            log(Level.ERROR, "GET update indexes of " + repositoryID + " repository: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
+        }
+
+    }
     
 //    @GET
 //    @Path("create")

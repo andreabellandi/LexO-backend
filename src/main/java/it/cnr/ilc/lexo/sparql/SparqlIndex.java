@@ -15,7 +15,7 @@ public class SparqlIndex {
             = SparqlPrefix.INST.getSparqlPrefix() + "\n"
             + SparqlPrefix.LUC.getSparqlPrefix() + "\n"
             + "INSERT DATA {\n"
-            + "     inst:" + SparqlVariable.LEXICAL_ENTRY_INDEX + " :createConnector '''\n"
+            + "     inst:" + SparqlVariable.LEXICAL_ENTRY_INDEX + " luc:createConnector '''\n"
             + "{\n"
             + "   \"types\": [\n"
             + "     \"http://www.w3.org/ns/lemon/ontolex#LexicalEntry\"\n"
@@ -112,9 +112,9 @@ public class SparqlIndex {
 
     public static final String FORM_INDEX
             = "PREFIX inst: <http://www.ontotext.com/connectors/lucene/instance#>\n"
-            + "PREFIX : <http://www.ontotext.com/connectors/lucene#>\n"
+            + "PREFIX luc: <http://www.ontotext.com/connectors/lucene#>\n"
             + "INSERT DATA {\n"
-            + "     inst:formIndex :createConnector '''\n"
+            + "     inst:formIndex luc:createConnector '''\n"
             + " {\n"
             + "   \"types\": [\n"
             + "     \"http://www.w3.org/ns/lemon/ontolex#Form\"\n"
@@ -191,9 +191,9 @@ public class SparqlIndex {
 
     public static final String LEXICAL_SENSE_INDEX = ""
             + "PREFIX inst: <http://www.ontotext.com/connectors/lucene/instance#>\n"
-            + "PREFIX : <http://www.ontotext.com/connectors/lucene#>\n"
+            + "PREFIX luc: <http://www.ontotext.com/connectors/lucene#>\n"
             + "INSERT DATA {\n"
-            + "     inst:lexicalSenseIndex :createConnector '''\n"
+            + "     inst:lexicalSenseIndex luc:createConnector '''\n"
             + " {\n"
             + "   \"types\": [\n"
             + "     \"http://www.w3.org/ns/lemon/ontolex#LexicalSense\"\n"
@@ -270,14 +270,21 @@ public class SparqlIndex {
 
     public static final String DELETE_INDEX
             = SparqlPrefix.INST.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LUC.getSparqlPrefix() + "\n"
             + "INSERT DATA {\n"
-            + "  inst:[INDEX_NAME] :dropConnector \"\" .\n"
+            + "  inst:_INDEX_NAME_ luc:dropConnector \"\" .\n"
+            + "}";
+
+    public static final String CONNECTORS
+            = SparqlPrefix.LUC.getSparqlPrefix() + "\n"
+            + "SELECT ?" + SparqlVariable.CONNECTOR_NAME + " {\n"
+            + "  ?connector luc:listConnectors ?" + SparqlVariable.CONNECTOR_NAME + " .\n"
             + "}";
 
     public static String CONCEPT_REFERENCE_INDEX = "PREFIX inst: <http://www.ontotext.com/connectors/lucene/instance#>\n"
-            + "PREFIX : <http://www.ontotext.com/connectors/lucene#>\n"
+            + "PREFIX luc: <http://www.ontotext.com/connectors/lucene#>\n"
             + "INSERT DATA {\n"
-            + "     inst:conceptReferenceIndex :createConnector '''\n"
+            + "     inst:conceptReferenceIndex luc:createConnector '''\n"
             + " {\n"
             + "   \"types\": [\n"
             + "     \"http://www.w3.org/ns/lemon/ontolex#LexicalSense\"\n"
@@ -306,9 +313,9 @@ public class SparqlIndex {
             + " }";
 
     public static String ETYMOLOGY_INDEX = "PREFIX inst: <http://www.ontotext.com/connectors/lucene/instance#>\n"
-            + "PREFIX : <http://www.ontotext.com/connectors/lucene#>\n"
+            + "PREFIX luc: <http://www.ontotext.com/connectors/lucene#>\n"
             + "INSERT DATA {\n"
-            + "     inst:etymologyIndex :createConnector '''\n"
+            + "     inst:etymologyIndex luc:createConnector '''\n"
             + " {\n"
             + "   \"types\": [\n"
             + "     \"http://lari-datasets.ilc.cnr.it/lemonEty#Etymology\"\n"
@@ -344,9 +351,9 @@ public class SparqlIndex {
             + " }";
 
     public static String COMPONENT_INDEX = "PREFIX inst: <http://www.ontotext.com/connectors/lucene/instance#>\n"
-            + "PREFIX : <http://www.ontotext.com/connectors/lucene#>\n"
+            + "PREFIX luc: <http://www.ontotext.com/connectors/lucene#>\n"
             + "INSERT DATA {\n"
-            + "     inst:componentIndex :createConnector '''\n"
+            + "     inst:componentIndex luc:createConnector '''\n"
             + " {\n"
             + "   \"types\": [\n"
             + "     \"http://www.w3.org/ns/lemon/decomp#Component\"\n"
@@ -391,9 +398,9 @@ public class SparqlIndex {
             + " }";
 
     public static String LEXICAL_CONCEPT_INDEX = "PREFIX inst: <http://www.ontotext.com/connectors/lucene/instance#>\n"
-            + "PREFIX : <http://www.ontotext.com/connectors/lucene#>\n"
+            + "PREFIX luc: <http://www.ontotext.com/connectors/lucene#>\n"
             + "INSERT DATA {\n"
-            + "     inst:lexicalConceptIndex :createConnector '''\n"
+            + "     inst:lexicalConceptIndex luc:createConnector '''\n"
             + " {\n"
             + "   \"types\": [\n"
             + "     \"http://www.w3.org/ns/lemon/ontolex#LexicalConcept\"\n"
@@ -477,9 +484,9 @@ public class SparqlIndex {
             + " }";
 
     public static String CONCEPT_SET_INDEX = "PREFIX inst: <http://www.ontotext.com/connectors/lucene/instance#>\n"
-            + "            PREFIX : <http://www.ontotext.com/connectors/lucene#>\n"
+            + "            PREFIX luc: <http://www.ontotext.com/connectors/lucene#>\n"
             + "            INSERT DATA {\n"
-            + "                 inst:conceptSetIndex :createConnector '''\n"
+            + "                 inst:conceptSetIndex luc:createConnector '''\n"
             + "             {\n"
             + "               \"types\": [\n"
             + "                 \"http://www.w3.org/ns/lemon/ontolex#ConceptSet\"\n"

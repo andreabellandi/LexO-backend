@@ -23,6 +23,7 @@ public class SparqlVariable {
 
     // varibale names
     public static final String TOTAL_HITS = "totalHits";
+    public static final String CONNECTOR_NAME = "connectorName";
 
     // graph
     public static final String GRAPH = "graph";

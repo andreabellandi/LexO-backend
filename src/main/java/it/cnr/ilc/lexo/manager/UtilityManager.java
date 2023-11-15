@@ -5,6 +5,7 @@
  */
 package it.cnr.ilc.lexo.manager;
 
+import it.cnr.ilc.lexo.sparql.SparqlIndex;
 import it.cnr.ilc.lexo.sparql.SparqlQueryUtil;
 import it.cnr.ilc.lexo.sparql.SparqlVariable;
 import it.cnr.ilc.lexo.util.RDFQueryUtil;
@@ -55,6 +56,21 @@ public final class UtilityManager implements Manager, Cached {
         return RDFQueryUtil.evaluateBQuery(query);
     }
 
+    public ArrayList<String> getConnectors() throws QueryEvaluationException {
+        String query = SparqlIndex.CONNECTORS;
+        ArrayList<String> connectors = new ArrayList();
+        try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {
+            while (result.hasNext()) {
+                BindingSet bs = result.next();
+                if (bs.getBinding(SparqlVariable.CONNECTOR_NAME) != null) {
+                    connectors.add(bs.getBinding(SparqlVariable.LEXICON_LANGUAGE).getValue().stringValue());
+                }
+            }
+        } catch (QueryEvaluationException qee) {
+        }
+        return connectors;
+    }
+
     public String getLanguage(String id) throws QueryEvaluationException {
         String query = SparqlQueryUtil.LANGUAGE.replaceAll("_ID_", id);
         try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {
@@ -66,7 +82,7 @@ public final class UtilityManager implements Manager, Cached {
         }
         return null;
     }
-    
+
     public String getDictLanguage(String id) throws QueryEvaluationException {
         String query = SparqlQueryUtil.DICTIONARY_LANGUAGE.replaceAll("_ID_", id);
         try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {
@@ -155,7 +171,7 @@ public final class UtilityManager implements Manager, Cached {
         }
         return 1;
     }
-    
+
     public boolean dictionaryHasEntry(String id) throws QueryEvaluationException {
         String query = SparqlQueryUtil.DICTIONARY_HAS_ENTRY.replaceAll("_ID_", id);
         return RDFQueryUtil.evaluateBQuery(query);
@@ -165,7 +181,7 @@ public final class UtilityManager implements Manager, Cached {
         String query = SparqlQueryUtil.IS_LEXICON_LANGUAGE.replaceAll("_ID_", id);
         return RDFQueryUtil.evaluateBQuery(query);
     }
-    
+
     public boolean isDictionary(String id) throws QueryEvaluationException {
         String query = SparqlQueryUtil.IS_DICTIONARY.replaceAll("_ID_", id);
         return RDFQueryUtil.evaluateBQuery(query);
@@ -175,7 +191,7 @@ public final class UtilityManager implements Manager, Cached {
         String query = SparqlQueryUtil.HAS_LEXICALENTRY_CHILDREN.replaceAll("_ID_", id);
         return RDFQueryUtil.evaluateBQuery(query);
     }
-    
+
     public boolean hasDictionaryEntryComponents(String id) throws QueryEvaluationException {
         String query = SparqlQueryUtil.HAS_DICTIONARYENTRY_COMPONENTS.replaceAll("_ID_", id);
         return RDFQueryUtil.evaluateBQuery(query);
@@ -185,7 +201,7 @@ public final class UtilityManager implements Manager, Cached {
         String query = SparqlQueryUtil.IS_LEXICALENTRY_ID.replaceAll("_ID_", id);
         return RDFQueryUtil.evaluateBQuery(query);
     }
-    
+
     public boolean isDictEntryComponent(String id) throws QueryEvaluationException {
         String query = SparqlQueryUtil.IS_DICTENTRY_COMPONENT_ID.replaceAll("_ID_", id);
         return RDFQueryUtil.evaluateBQuery(query);
@@ -200,7 +216,7 @@ public final class UtilityManager implements Manager, Cached {
         String query = SparqlQueryUtil.IS_LEXICALENTRY_ID_OR_COMPONENT_ID.replaceAll("_ID_", id);
         return RDFQueryUtil.evaluateBQuery(query);
     }
-    
+
     public boolean isAdmissibleHeadOfCollocation(String id) throws QueryEvaluationException {
         String query = SparqlQueryUtil.IS_ADMISSIBLE_HEAD_OF_COLLOCATION_ID.replaceAll("_ID_", id);
         return RDFQueryUtil.evaluateBQuery(query);
@@ -210,22 +226,22 @@ public final class UtilityManager implements Manager, Cached {
         String query = SparqlQueryUtil.IS_COMPONENT_ID.replaceAll("_ID_", id);
         return RDFQueryUtil.evaluateBQuery(query);
     }
-    
+
     public boolean isCollocation(String id) throws QueryEvaluationException {
         String query = SparqlQueryUtil.IS_COLLOCATION_ID.replaceAll("_ID_", id);
         return RDFQueryUtil.evaluateBQuery(query);
     }
-    
+
     public boolean isFormRestriction(String id) throws QueryEvaluationException {
         String query = SparqlQueryUtil.IS_FORMRESTRICTION_ID.replaceAll("_ID_", id);
         return RDFQueryUtil.evaluateBQuery(query);
     }
-    
+
     public boolean isLexicoSemanticRelation(String id) throws QueryEvaluationException {
         String query = SparqlQueryUtil.IS_LEXICOSEMANTIC_RELATION_ID.replaceAll("_ID_", id);
         return RDFQueryUtil.evaluateBQuery(query);
     }
-    
+
     public boolean isTranslationSet(String id) throws QueryEvaluationException {
         String query = SparqlQueryUtil.IS_TRANSLATIONSET_ID.replaceAll("_ID_", id);
         return RDFQueryUtil.evaluateBQuery(query);
@@ -250,7 +266,7 @@ public final class UtilityManager implements Manager, Cached {
         String query = SparqlQueryUtil.EXISTS_LANGUAGE.replaceAll("_LANG_", lang);
         return RDFQueryUtil.evaluateBQuery(query);
     }
-    
+
     public boolean dictionaryLanguageExists(String lang) throws QueryEvaluationException {
         String query = SparqlQueryUtil.EXISTS_DICT_LANGUAGE.replaceAll("_LANG_", lang);
         return RDFQueryUtil.evaluateBQuery(query);
@@ -280,12 +296,12 @@ public final class UtilityManager implements Manager, Cached {
         String query = SparqlQueryUtil.IS_COGNATE.replaceAll("_ID_", id).replace("_COG_NUMBER_", String.valueOf(n));
         return RDFQueryUtil.evaluateBQuery(query);
     }
-    
+
     public boolean isUniqueID(String id) {
         String query = SparqlQueryUtil.UNIQUE_ID.replaceAll("_ID_", id);
         return RDFQueryUtil.evaluateBQuery(query);
     }
-    
+
     public String getIndirectRelationType(String id) {
         String type = null;
         try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(SparqlQueryUtil.INDIRECT_RELATION_TYPE.replace("_ID_", id))) {
