@@ -37,32 +37,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class Configuration extends Service {
 
     private final ConfigurationManager configManager = ManagerFactory.getManager(ConfigurationManager.class);
-
-    @GET
-    @Path("list")
-    @Produces(MediaType.APPLICATION_JSON)
-    @RequestMapping(
-            method = RequestMethod.GET,
-            value = "list",
-            produces = "application/json; charset=UTF-8")
-    @ApiOperation(value = "Get all repositories in the active location or another location",
-            notes = "Get all repositories in the active location or another location")
-    public Response getRepositories(
-            @HeaderParam("Authorization") String key) {
-        try {
-            checkKey(key);
-            log(Level.INFO, "GET repositories list");
-            Response response = configManager.restCall(LexOProperties.getProperty("repository.url") + "rest/" + "repositories", "GET", null);
-            return Response.ok(response.readEntity(String.class))
-                    .type(MediaType.TEXT_PLAIN)
-                    .header("Access-Control-Allow-Headers", "content-type")
-                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                    .build();
-        } catch (AuthorizationException | ServiceException | URISyntaxException | IOException | ManagerException ex) {
-            log(Level.ERROR, "GET repositories list: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
-            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
-        }
-    }
+    private final String repositoryID = LexOProperties.getProperty("GraphDb.repository");
 
     @POST
     @Path("create")
@@ -105,12 +80,7 @@ public class Configuration extends Service {
     @ApiOperation(value = "Get repository configuration as JSON",
             notes = "Get repository configuration as JSON")
     public Response getRepositoryConfiguration(
-            @HeaderParam("Authorization") String key,
-            @ApiParam(
-                    name = "repositoryID",
-                    value = "Repository name",
-                    required = true)
-            @QueryParam("repositoryID") String repositoryID) {
+            @HeaderParam("Authorization") String key) {
         try {
             checkKey(key);
             log(Level.INFO, "GET configuration of " + repositoryID + " repository");
@@ -137,12 +107,7 @@ public class Configuration extends Service {
     @ApiOperation(value = "Get repository size",
             notes = "Get repository size")
     public Response getRepositorySize(
-            @HeaderParam("Authorization") String key,
-            @ApiParam(
-                    name = "repositoryID",
-                    value = "Repository name",
-                    required = true)
-            @QueryParam("repositoryID") String repositoryID) {
+            @HeaderParam("Authorization") String key) {
         try {
             checkKey(key);
             log(Level.INFO, "GET size of " + repositoryID + " repository");
@@ -168,12 +133,7 @@ public class Configuration extends Service {
     @ApiOperation(value = "Delete a repository in an attached RDF4J location",
             notes = "Delete a repository in an attached RDF4J location")
     public Response deleteRepository(
-            @HeaderParam("Authorization") String key,
-            @ApiParam(
-                    name = "repositoryID",
-                    value = "Repository name",
-                    required = true)
-            @QueryParam("repositoryID") String repositoryID) {
+            @HeaderParam("Authorization") String key) {
         try {
             checkKey(key);
             log(Level.INFO, "DELETE " + repositoryID + " repository");
@@ -200,11 +160,6 @@ public class Configuration extends Service {
             notes = "Restart a repository")
     public Response restartRepository(
             @HeaderParam("Authorization") String key,
-            @ApiParam(
-                    name = "repositoryID",
-                    value = "Repository name",
-                    required = true)
-            @QueryParam("repositoryID") String repositoryID,
             @ApiParam(
                     name = "sync",
                     value = "Restart it synchronously",
@@ -236,12 +191,7 @@ public class Configuration extends Service {
     @ApiOperation(value = "Update repository indexes",
             notes = "Update repository indexes")
     public Response updateIndex(
-            @HeaderParam("Authorization") String key,
-            @ApiParam(
-                    name = "repositoryID",
-                    value = "Repository name",
-                    required = true)
-            @QueryParam("repositoryID") String repositoryID) {
+            @HeaderParam("Authorization") String key) {
         try {
             checkKey(key);
             log(Level.INFO, "GET update indexes of " + repositoryID + " repository");

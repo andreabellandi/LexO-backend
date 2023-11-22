@@ -6,6 +6,7 @@
 package it.cnr.ilc.lexo.manager;
 
 import com.github.jsonldjava.shaded.com.google.common.io.Files;
+import it.cnr.ilc.lexo.LexOProperties;
 import it.cnr.ilc.lexo.service.data.RepositoryData;
 import it.cnr.ilc.lexo.sparql.SparqlIndex;
 import it.cnr.ilc.lexo.sparql.SparqlInsertData;
@@ -34,6 +35,7 @@ import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 public class ConfigurationManager implements Manager, Cached {
 
     private final DomainManager domainManager = ManagerFactory.getDomainManager();
+    private final String repoName = LexOProperties.getProperty("GraphDb.repository");
 
     @Override
     public void reloadCache() {
