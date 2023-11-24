@@ -437,7 +437,7 @@ public class LexiconData extends Service {
     }
 
     @GET
-    @Path("dictionaryEntryComponents") 
+    @Path("dictionaryEntryComponents")
     @Produces(MediaType.APPLICATION_JSON)
     @RequestMapping(
             method = RequestMethod.GET,
@@ -659,9 +659,15 @@ public class LexiconData extends Service {
             userCheck(key);
             log(Level.INFO, "lexicon/data/lexicalEntries\n" + LogUtil.getLogFromPayload(lef));
             TupleQueryResult lexicalEnties = lexiconManager.getFilterdLexicalEntries(lef);
-            List<LexicalEntryItem> entries = lexicalEntryFilterHelper.newDataList(lexicalEnties);
-            HitsDataList hdl = new HitsDataList(lexicalEntryFilterHelper.getTotalHits(), entries);
-            String json = lexicalEntryFilterHelper.toJson(hdl);
+            String json = "";
+            if (lexicalEnties != null) {
+                List<LexicalEntryItem> entries = lexicalEntryFilterHelper.newDataList(lexicalEnties);
+                HitsDataList hdl = new HitsDataList(lexicalEntryFilterHelper.getTotalHits(), entries);
+                json = lexicalEntryFilterHelper.toJson(hdl);
+            } else {
+                HitsDataList hdl = new HitsDataList(0, new ArrayList<>());
+                json = lexicalEntryFilterHelper.toJson(hdl);
+            }
             return Response.ok(json)
                     .type(MediaType.TEXT_PLAIN)
                     .header("Access-Control-Allow-Headers", "content-type")
