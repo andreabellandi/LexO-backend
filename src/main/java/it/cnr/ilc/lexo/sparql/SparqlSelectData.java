@@ -1159,7 +1159,7 @@ public class SparqlSelectData {
             + " ?" + SparqlVariable.LABEL + " ?" + SparqlVariable.CREATOR + " ?" + SparqlVariable.CREATION_DATE
             + " ?" + SparqlVariable.LAST_UPDATE + " ?" + SparqlVariable.NOTE + " ?" + SparqlVariable.CONFIDENCE + " ?" + SparqlVariable.HEAD + " ?" + SparqlVariable.FREQUENCY;
 
-    public static final String DATA_LINGUISTIC_RELATION
+    public static final String OLD___DATA_LINGUISTIC_RELATION
             = SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
             + SparqlPrefix.ONTO.getSparqlPrefix() + "\n"
             + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
@@ -1175,12 +1175,41 @@ public class SparqlSelectData {
             + "   { \n"
             + "      GRAPH ?graph { <_ID_> ?relation ?" + SparqlVariable.TARGET + " . \n"
             + "                                             FILTER (regex(str(?relation), \"_RELATION_\")) }\n"
-            + "    OPTIONAL { ?" + SparqlVariable.TARGET + " " + SparqlPrefix.RDFS.getPrefix() + "label|" + SparqlPrefix.SKOS.getPrefix() + "definition ?" + SparqlVariable.LABEL + " . }\n"
+            + "    OPTIONAL { GRAPH ?_graph {\n"
+            + "                ?" + SparqlVariable.TARGET + " " + SparqlPrefix.RDFS.getPrefix() + "label|" + SparqlPrefix.SKOS.getPrefix() + "definition ?" + SparqlVariable.LABEL + " . } "
+            + "    }\n"
             + "    OPTIONAL { ?" + SparqlVariable.TARGET + " " + SparqlPrefix.SESAME.getPrefix() + "directType ?_type . \n"
             + "    FILTER (!regex(str(?_type), \"http://www.w3.org/2000/01/rdf-schema#|http://www.w3.org/1999/02/22-rdf-syntax-ns#|http://www.w3.org/2002/07/owl#\")) }\n"
             + "    FILTER (!regex(str(?relation), \"http://www.ontologydesignpatterns.org/cp/owl/semiotics.owl#\"))\n"
+            + "    FILTER (regex(str(?_graph), \"http://www.ontotext.com/explicit\"))\n"
             + "    BIND(?relation AS ?" + SparqlVariable.LINK + ")\n"
             + "   } GROUP BY ?" + SparqlVariable.TARGET + " ?" + SparqlVariable.LABEL + " ?graph ?" + SparqlVariable.LINK + "\n"
+            + "ORDER BY ?graph";
+
+    public static final String DATA_LINGUISTIC_RELATION
+            = SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTO.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.SESAME.getSparqlPrefix() + "\n"
+            + SparqlPrefix.SKOS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDF.getSparqlPrefix() + "\n"
+            + SparqlPrefix.OWL.getSparqlPrefix() + "\n"
+            + "SELECT ?graph ?" + SparqlVariable.TARGET + " ?" + SparqlVariable.LINK + " \n"
+            + "(GROUP_CONCAT(distinct concat(str(?_type));SEPARATOR=\";\") AS ?" + SparqlVariable.TYPE + ")\n"
+            + "(GROUP_CONCAT(distinct concat(str(?property),\"-:-\",str(?_label), \"@\", lang(?_label));SEPARATOR=\"-;-\") AS ?" + SparqlVariable.LABEL + ")\n"
+            + "FROM NAMED " + SparqlPrefix.ONTO.getPrefix() + "explicit\n"
+            + "FROM NAMED " + SparqlPrefix.ONTO.getPrefix() + "implicit\n"
+            + "   { \n"
+            + "      GRAPH ?graph { <_ID_> ?relation ?" + SparqlVariable.TARGET + " . \n"
+            + "        FILTER (regex(str(?relation), \"_RELATION_\")) }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.TARGET + " ?property ?_label . \n"
+            + "        FILTER(regex(str(?property), \"" + SparqlPrefix.RDFS.getPrefix() + "label|" + SparqlPrefix.SKOS.getPrefix() + "definition\")) }  \n"
+            + "    OPTIONAL { ?" + SparqlVariable.TARGET + " sesame:directType ?_type . \n"
+            + "    FILTER (!regex(str(?_type), \"" + SparqlPrefix.RDFS.getPrefix() + "|" + SparqlPrefix.RDF.getPrefix() + "|" + SparqlPrefix.OWL.getPrefix() + "\")) }\n"
+            + "    FILTER (!regex(str(?relation), \"http://www.ontologydesignpatterns.org/cp/owl/semiotics.owl#\"))\n"
+            + "    BIND(?relation AS ?" + SparqlVariable.LINK + ")\n"
+            + "   } GROUP BY ?" + SparqlVariable.TARGET + " ?graph ?" + SparqlVariable.LINK + "\n"
             + "ORDER BY ?graph";
 
     public static final String DATA_LEXICAL_CONCEPT_RELATION
@@ -1381,7 +1410,7 @@ public class SparqlSelectData {
             + " ?" + SparqlVariable.LABEL + "\n"
             + "where { <_ID_> " + SparqlPrefix.RDFS.getPrefix() + "label ?" + SparqlVariable.LABEL + " .\n"
             + "}";
-    
+
     public static final String DICTIONARY_ENTRY_LANGUAGE
             = SparqlPrefix.LIME.getSparqlPrefix() + "\n"
             + "SELECT"
@@ -1968,8 +1997,8 @@ public class SparqlSelectData {
             + "FROM onto:explicit\n"
             + "WHERE {\n"
             + "BIND (<_ID_> AS ?" + SparqlVariable.DICT_ELEMENT + ")\n"
-            + "     ?" + SparqlVariable.DICT_ELEMENT + " a ?" + SparqlVariable.DICT_ELEMENT_TYPE + " .\n" +
-"                   FILTER (STRSTARTS(STR(?" + SparqlVariable.DICT_ELEMENT_TYPE + "), \"http://www.w3.org/ns/lemon/lexicog#\"))"
+            + "     ?" + SparqlVariable.DICT_ELEMENT + " a ?" + SparqlVariable.DICT_ELEMENT_TYPE + " .\n"
+            + "                   FILTER (STRSTARTS(STR(?" + SparqlVariable.DICT_ELEMENT_TYPE + "), \"http://www.w3.org/ns/lemon/lexicog#\"))"
             + "    OPTIONAL { ?" + SparqlVariable.DICT_ELEMENT + " rdfs:label ?" + SparqlVariable.LABEL + " }\n"
             + "    OPTIONAL { ?" + SparqlVariable.DICT_ELEMENT + " lexinfo:confidence ?" + SparqlVariable.CONFIDENCE + " }\n"
             + "    OPTIONAL { ?" + SparqlVariable.DICT_ELEMENT + " lexicog:describes ?" + SparqlVariable.DESCRIBE + " \n"

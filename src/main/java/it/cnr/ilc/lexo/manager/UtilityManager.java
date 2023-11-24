@@ -82,6 +82,18 @@ public final class UtilityManager implements Manager, Cached {
         }
         return null;
     }
+    
+    public String getFormLanguage(String id) throws QueryEvaluationException {
+        String query = SparqlQueryUtil.FORM_LANGUAGE.replaceAll("_ID_", id);
+        try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {
+            while (result.hasNext()) {
+                BindingSet bs = result.next();
+                return (bs.getBinding(SparqlVariable.LEXICON_LANGUAGE) != null) ? bs.getBinding(SparqlVariable.LEXICON_LANGUAGE).getValue().stringValue() : null;
+            }
+        } catch (QueryEvaluationException qee) {
+        }
+        return null;
+    }
 
     public String getDictLanguage(String id) throws QueryEvaluationException {
         String query = SparqlQueryUtil.DICTIONARY_LANGUAGE.replaceAll("_ID_", id);

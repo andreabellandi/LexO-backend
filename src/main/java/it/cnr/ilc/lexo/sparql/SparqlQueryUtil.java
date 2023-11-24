@@ -168,6 +168,14 @@ public class SparqlQueryUtil {
             + "WHERE { ?" + SparqlVariable.LEXICON + " " + SparqlPrefix.LIME.getPrefix() + "entry  <_ID_> ;\n"
             + "        " + SparqlPrefix.LIME.getPrefix() + "language ?" + SparqlVariable.LEXICON_LANGUAGE + " }";
 
+    public static final String FORM_LANGUAGE
+            = SparqlPrefix.LIME.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
+            + "SELECT ?" + SparqlVariable.LEXICON_LANGUAGE + " \n"
+            + "WHERE { ?" + SparqlVariable.LEXICAL_ENTRY + " " + SparqlPrefix.ONTOLEX.getPrefix() + "lexicalForm  <_ID_> .\n"
+            + "        ?" + SparqlVariable.LEXICON + " " + SparqlPrefix.LIME.getPrefix() + "entry ?" + SparqlVariable.LEXICAL_ENTRY + " ; \n"
+            + "                                        " + SparqlPrefix.LIME.getPrefix() + "language ?" + SparqlVariable.LEXICON_LANGUAGE + " . }";
+
     public static final String DICTIONARY_LANGUAGE
             = SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
             + "SELECT ?" + SparqlVariable.DICT_LANGUAGE + " \n"
@@ -191,8 +199,8 @@ public class SparqlQueryUtil {
 
     public static final String UNIQUE_ID
             = "ASK { <_ID_> ?p ?o }";
-    
-    public static final String INDIRECT_RELATION_TYPE 
+
+    public static final String INDIRECT_RELATION_TYPE
             = SparqlPrefix.ONTO.getSparqlPrefix() + "\n"
             + SparqlPrefix.VARTRANS.getSparqlPrefix() + "\n"
             + "SELECT ?" + SparqlVariable.TYPE + " \n"

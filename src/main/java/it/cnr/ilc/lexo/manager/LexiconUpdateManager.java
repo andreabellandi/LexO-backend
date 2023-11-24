@@ -274,8 +274,8 @@ public final class LexiconUpdateManager implements Manager, Cached {
         validateLexicalEntryAttribute(leu.getRelation());
         if (leu.getRelation().equals(OntoLexEntity.LexicalEntryAttributes.Label.toString())) {
             String lang = ManagerFactory.getManager(UtilityManager.class).getLanguage(id);
-            return updateLexicalEntry(id, leu.getRelation(),
-                    (lang != null) ? ("\"" + leu.getValue() + "\"@" + lang) : "\"" + leu.getValue() + "\"", "?" + SparqlVariable.TARGET);
+            if (lang == null) throw new ManagerException("The language of the lexical entry could not be found");
+            return updateLexicalEntry(id, leu.getRelation(), "\"" + leu.getValue() + "\"@" + lang, "?" + SparqlVariable.TARGET);
         } else if (leu.getRelation().equals(OntoLexEntity.LexicalEntryAttributes.Type.toString())) {
             validateLexicalEntryType(leu.getValue());
             return updateLexicalEntry(id, leu.getRelation(), "<" + leu.getValue() + ">", "<" + type + ">");
@@ -484,29 +484,29 @@ public final class LexiconUpdateManager implements Manager, Cached {
         } else if (fu.getRelation().equals(OntoLexEntity.FormAttributes.Note.toString())) {
             return updateForm(id, fu.getRelation(), "\"" + fu.getValue() + "\"");
         } else if (fu.getRelation().equals(OntoLexEntity.FormAttributes.WrittenRep.toString())) {
-            String lang = utilityManager.getLanguage(id);
-            return updateForm(id, fu.getRelation(),
-                    (lang != null) ? ("\"" + fu.getValue() + "\"@" + lang) : "\"" + fu.getValue() + "\"");
+            String lang = utilityManager.getFormLanguage(id);
+            if (lang == null) throw new ManagerException("The language of the form could not be found");
+            return updateForm(id, fu.getRelation(), ("\"" + fu.getValue() + "\"@" + lang));
         } else if (fu.getRelation().equals(OntoLexEntity.FormAttributes.PhoneticRep.toString())) {
-            String lang = utilityManager.getLanguage(id);
-            return updateForm(id, fu.getRelation(),
-                    (lang != null) ? ("\"" + fu.getValue() + "\"@" + lang) : "\"" + fu.getValue() + "\"");
+            String lang = utilityManager.getFormLanguage(id);
+            if (lang == null) throw new ManagerException("The language of the form could not be found");
+            return updateForm(id, fu.getRelation(), ("\"" + fu.getValue() + "\"@" + lang));
         } else if (fu.getRelation().equals(OntoLexEntity.FormAttributes.Transliteration.toString())) {
-            String lang = utilityManager.getLanguage(id);
-            return updateForm(id, fu.getRelation(),
-                    (lang != null) ? ("\"" + fu.getValue() + "\"@" + lang) : "\"" + fu.getValue() + "\"");
+            String lang = utilityManager.getFormLanguage(id);
+            if (lang == null) throw new ManagerException("The language of the form could not be found");
+            return updateForm(id, fu.getRelation(), ("\"" + fu.getValue() + "\"@" + lang));
         } else if (fu.getRelation().equals(OntoLexEntity.FormAttributes.Segmentation.toString())) {
-            String lang = utilityManager.getLanguage(id);
-            return updateForm(id, fu.getRelation(),
-                    (lang != null) ? ("\"" + fu.getValue() + "\"@" + lang) : "\"" + fu.getValue() + "\"");
+            String lang = utilityManager.getFormLanguage(id);
+            if (lang == null) throw new ManagerException("The language of the form could not be found");
+            return updateForm(id, fu.getRelation(), ("\"" + fu.getValue() + "\"@" + lang));
         } else if (fu.getRelation().equals(OntoLexEntity.FormAttributes.Pronunciation.toString())) {
-            String lang = utilityManager.getLanguage(id);
-            return updateForm(id, fu.getRelation(),
-                    (lang != null) ? ("\"" + fu.getValue() + "\"@" + lang) : "\"" + fu.getValue() + "\"");
+            String lang = utilityManager.getFormLanguage(id);
+            if (lang == null) throw new ManagerException("The language of the form could not be found");
+            return updateForm(id, fu.getRelation(), ("\"" + fu.getValue() + "\"@" + lang));
         } else if (fu.getRelation().equals(OntoLexEntity.FormAttributes.Romanization.toString())) {
-            String lang = utilityManager.getLanguage(id);
-            return updateForm(id, fu.getRelation(),
-                    (lang != null) ? ("\"" + fu.getValue() + "\"@" + lang) : "\"" + fu.getValue() + "\"");
+            String lang = utilityManager.getFormLanguage(id);
+            if (lang == null) throw new ManagerException("The language of the form could not be found");
+            return updateForm(id, fu.getRelation(), ("\"" + fu.getValue() + "\"@" + lang));
         } else if (fu.getRelation().equals(OntoLexEntity.LanguageAttributes.Confidence.toString())) {
             validateConfidenceValue(fu.getValue());
             return updateForm(id, fu.getRelation(), fu.getValue());
@@ -1011,8 +1011,8 @@ public final class LexiconUpdateManager implements Manager, Cached {
         validateDictionaryEntryAttribute(leu.getRelation());
         if (leu.getRelation().equals(OntoLexEntity.LexicalEntryAttributes.Label.toString())) {
             String lang = ManagerFactory.getManager(UtilityManager.class).getDictLanguage(id);
-            return updateDictionaryEntry(id, leu.getRelation(),
-                    (lang != null) ? ("\"" + leu.getValue() + "\"@" + lang) : "\"" + leu.getValue() + "\"", "?" + SparqlVariable.TARGET);
+            if (lang == null) throw new ManagerException("The language of the dictionary entry could not be found");
+            return updateDictionaryEntry(id, leu.getRelation(), "\"" + leu.getValue() + "\"@" + lang, "?" + SparqlVariable.TARGET);
         } else if (leu.getRelation().equals(OntoLexEntity.LexicalEntryAttributes.Language.toString())) {
             validateLexicalEntryLanguage(leu.getValue());
             return updateLanguage(id, leu);
