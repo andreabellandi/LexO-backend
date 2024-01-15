@@ -293,8 +293,8 @@
                 <db.user>root</db.user>
                 <db.password>root</db.password>
                 <graphdb.url>http://localhost:7200</graphdb.url>
-                <!--                <graphdb.repository>ItAnt</graphdb.repository>-->
-                <graphdb.repository>dictionary</graphdb.repository>
+                                <graphdb.repository>ItAnt</graphdb.repository>
+                <!--<graphdb.repository>dictionary</graphdb.repository>-->
                 <!--<graphdb.repository>TEST_NEW_SERVICES</graphdb.repository>-->
                 <graphdb.poolSize>5</graphdb.poolSize>
             </properties>

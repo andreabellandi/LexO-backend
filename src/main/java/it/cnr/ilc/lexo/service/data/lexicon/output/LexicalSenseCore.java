@@ -22,6 +22,10 @@ public class LexicalSenseCore extends Entity implements Data {
 
     @ApiModelProperty(value = "sense IRI", example = "namespace:USem73621abolizione")
     private String sense;
+    @ApiModelProperty(value = "lexical entry IRI")
+    private String lexicalEntry;
+    @ApiModelProperty(value = "lexical entry label")
+    private String lexicalEntryLabel;
     @ApiModelProperty(value = "a list of definition properties")
     private List<Property> definition;
     @ApiModelProperty(value = "example of usage")
@@ -37,7 +41,6 @@ public class LexicalSenseCore extends Entity implements Data {
 //    @ApiModelProperty(value = "short IRI of the concept denoted by", example = "conceptID")
 //    private String conceptInstanceName;
 
-
     private String description;
     private String explanation;
     private String gloss;
@@ -46,6 +49,22 @@ public class LexicalSenseCore extends Entity implements Data {
 
     public String getSense() {
         return sense;
+    }
+
+    public String getLexicalEntry() {
+        return lexicalEntry;
+    }
+
+    public void setLexicalEntry(String lexicalEntry) {
+        this.lexicalEntry = lexicalEntry;
+    }
+
+    public String getLexicalEntryLabel() {
+        return lexicalEntryLabel;
+    }
+
+    public void setLexicalEntryLabel(String lexicalEntryLabel) {
+        this.lexicalEntryLabel = lexicalEntryLabel;
     }
 
     public void setSense(String sense) {
@@ -91,7 +110,7 @@ public class LexicalSenseCore extends Entity implements Data {
     public void setNote(String note) {
         this.note = note;
     }
-    
+
     public String getConcept() {
         return concept;
     }
@@ -139,6 +158,5 @@ public class LexicalSenseCore extends Entity implements Data {
     public void setSenseTranslation(String senseTranslation) {
         this.senseTranslation = senseTranslation;
     }
-
 
 }

@@ -832,6 +832,8 @@ public class SparqlSelectData {
             + " ?" + SparqlVariable.SENSE_CREATION_AUTHOR
             + " ?" + SparqlVariable.CREATION_DATE
             + " ?" + SparqlVariable.SENSE_TOPIC
+            + " ?" + SparqlVariable.LEXICAL_ENTRY
+            + " ?" + SparqlVariable.LABEL
             + " ?confidence"
             + " ?" + SparqlVariable.LAST_UPDATE + "\n"
             + "FROM onto:explicit\n"
@@ -839,6 +841,8 @@ public class SparqlSelectData {
             + "  ?search a " + SparqlPrefix.INST.getPrefix() + SparqlVariable.LEXICAL_SENSE_INDEX + " ;\n"
             + "      " + SparqlPrefix.LUC.getPrefix() + "query \"lexicalSenseIRI:[IRI]\" ;\n"
             + "      " + SparqlPrefix.LUC.getPrefix() + "entities ?" + SparqlVariable.SENSE + " .\n"
+            + " ?" + SparqlVariable.LEXICAL_ENTRY + " ontolex:sense ?" + SparqlVariable.SENSE + " ; \n"
+            + " rdfs:label ?" + SparqlVariable.LABEL + " .\n"
             // custom variable
             + "    OPTIONAL { ?" + SparqlVariable.SENSE + " " + SparqlPrefix.LEXINFO.getPrefix() + "confidence ?confidence . }\n"
             + "    OPTIONAL { ?" + SparqlVariable.SENSE + " " + SparqlPrefix.SKOS.getPrefix() + "definition ?" + SparqlVariable.SENSE_DEFINITION + " . }\n"
@@ -1743,7 +1747,7 @@ public class SparqlSelectData {
             + "      ?search a inst:lexicalConceptIndex ;\n"
             + "      luc:query \"lexicalConceptIRI:\\\"_LEXICALCONCEPT_\\\"\" ;\n"
             + "      luc:offset \"0\" ;\n"
-            + "      luc:limit \"500\" ;\n"
+            + "      luc:limit \"5000\" ;\n"
             + "      luc:entities ?" + SparqlVariable.LEXICAL_CONCEPT + " .\n"
             + "    ?child skos:narrower ?" + SparqlVariable.LEXICAL_CONCEPT + " .\n"
             + "  OPTIONAL { ?child <_LABELPROPERTY_> ?" + SparqlVariable.LABEL + " .\n"
@@ -1777,7 +1781,7 @@ public class SparqlSelectData {
             + "    ?search a inst:lexicalConceptIndex ;\n"
             + "      luc:query \"label:*\" ;\n"
             + "      luc:offset \"0\" ;\n"
-            + "      luc:limit \"500\" ;\n"
+            + "      luc:limit \"50000\" ;\n"
             + "      luc:entities ?" + SparqlVariable.CHILD + " .\n"
             + "  OPTIONAL { ?" + SparqlVariable.CHILD + " <_LABELPROPERTY_> ?" + SparqlVariable.LABEL + " .\n"
             + "    FILTER (lang(?" + SparqlVariable.LABEL + ") = \"_DEFAULTLANGUAGE_\") }\n"
@@ -1810,7 +1814,7 @@ public class SparqlSelectData {
             + "    ?search a inst:lexicalConceptIndex ;\n"
             + "      luc:query \"inScheme:\\\"_LEXICALCONCEPT_\\\"\";\n"
             + "      luc:offset \"0\" ;\n"
-            + "      luc:limit \"500\" ;\n"
+            + "      luc:limit \"5000\" ;\n"
             + "      luc:entities ?" + SparqlVariable.CHILD + " .\n"
             + "  OPTIONAL { ?" + SparqlVariable.CHILD + " <_LABELPROPERTY_> ?" + SparqlVariable.LABEL + " .\n"
             + "    FILTER (lang(?" + SparqlVariable.LABEL + ") = \"_DEFAULTLANGUAGE_\") }\n"
@@ -2023,4 +2027,10 @@ public class SparqlSelectData {
             + SparqlVariable.TYPE + " ?" + SparqlVariable.DESCRIBE_LABEL
             + " ?" + SparqlVariable.CREATOR + " ?" + SparqlVariable.CREATION_DATE + " ?" + SparqlVariable.LAST_UPDATE
             + " ?" + SparqlVariable.CONFIDENCE;
+
+    public static final String GET_RESOURCE_MODEL
+            = SparqlPrefix.LIME.getSparqlPrefix() + "\n"
+            + "SELECT DISTINCT ?" + SparqlVariable.VALUE + "\n"
+            + "WHERE {\n"
+            + " ?x lime:linguisticCatalog ?" + SparqlVariable.VALUE + " }";
 }
