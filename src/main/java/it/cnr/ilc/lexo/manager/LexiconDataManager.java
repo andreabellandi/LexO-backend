@@ -65,12 +65,13 @@ public class LexiconDataManager implements Manager, Cached {
         counting.setCount(value);
         return counting;
     }
-
+    
     public TupleQueryResult getFilterdLexicalEntries(LexicalEntryFilter lef) throws ManagerException {
         logger.info(lef.toString());
         Manager.validateWithEnum("formType", FormTypes.class, lef.getFormType());
         Manager.validateWithEnum("status", LexicalEntryStatus.class, lef.getStatus());
         Manager.validateWithEnum("type", LexicalEntryTypes.class, lef.getType());
+        if (lef.getSearchMode().isEmpty()) lef.setSearchMode("equals");
         String filter = createFilter(lef);
         int limit = lef.getLimit();
         int offset = lef.getOffset();
@@ -204,6 +205,7 @@ public class LexiconDataManager implements Manager, Cached {
 
     public TupleQueryResult getFilterdForms(FormFilter ff) throws ManagerException {
         Manager.validateWithEnum("formRepresentationType", EnumUtil.FormRepresentationType.class, ff.getRepresentationType());
+        if (ff.getSearchMode().isEmpty()) ff.setSearchMode("equals");
         String filter = createFilter(ff);
         int limit = ff.getLimit();
         int offset = ff.getOffset();
@@ -300,6 +302,7 @@ public class LexiconDataManager implements Manager, Cached {
     public TupleQueryResult getFilterdLexicalSenses(LexicalSenseFilter lsf) throws ManagerException {
         Manager.validateWithEnum("status", LexicalEntryStatus.class, lsf.getStatus());
         Manager.validateWithEnum("type", LexicalEntryTypes.class, lsf.getType());
+        if (lsf.getSearchMode().isEmpty()) lsf.setSearchMode("equals");
         if (lsf.getFormType() != null && !lsf.getFormType().isEmpty()) {
             String query = filterLexicalSensesByForm(lsf);
             return RDFQueryUtil.evaluateTQuery(query);
@@ -541,6 +544,7 @@ public class LexiconDataManager implements Manager, Cached {
 
     public TupleQueryResult getFilterdLexicalConcepts(LexicalConceptFilter lcf) throws ManagerException {
         Manager.validateWithEnum("field", LexicalConceptSearchFilter.class, lcf.getLabelType());
+        if (lcf.getSearchMode().isEmpty()) lcf.setSearchMode("equals");
         String filter = createFilter(lcf);
         int limit = lcf.getLimit();
         int offset = lcf.getOffset();
