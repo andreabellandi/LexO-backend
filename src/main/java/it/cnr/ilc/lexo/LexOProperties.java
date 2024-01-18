@@ -45,4 +45,8 @@ public class LexOProperties {
     public static String getProperty(String key, String defaultValue) {
         return PROPERTIES.getProperty(key, defaultValue);
     }
+    
+    public static void setProperty(String key, String defaultValue) {
+        PROPERTIES.put(key, defaultValue);
+    }
 }

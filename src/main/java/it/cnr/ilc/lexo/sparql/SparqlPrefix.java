@@ -24,6 +24,9 @@ public class SparqlPrefix {
     public static Namespace TRCAT = new Namespace("trcat:", "http://purl.org/net/translation-categories#");
     public static Namespace LEXICOG = new Namespace("lexicog:", "http://www.w3.org/ns/lemon/lexicog#");
 
+    // wordnet
+    public static Namespace WORDNET = new Namespace("wn:", "https://globalwordnet.github.io/schemas/wn#");
+    
     // metadata
     public static Namespace DCT = new Namespace("dct:", "http://purl.org/dc/terms/");
     public static Namespace LOC = new Namespace("loc:", "http://id.loc.gov/vocabulary/relators/");

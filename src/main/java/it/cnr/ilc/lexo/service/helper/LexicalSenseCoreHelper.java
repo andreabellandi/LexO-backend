@@ -30,6 +30,10 @@ public class LexicalSenseCoreHelper extends TripleStoreDataHelper<LexicalSenseCo
         data.setUsage(getStringValue(bs, SparqlVariable.SENSE_USAGE));
         data.setTopic(getStringValue(bs, SparqlVariable.SENSE_TOPIC));
         data.setConfidence(getDoubleNumber(bs, SparqlVariable.CONFIDENCE));
+        data.setLexicalEntry(getStringValue(bs, SparqlVariable.LEXICAL_ENTRY));
+        String label = getLiteralLabel(bs, SparqlVariable.LABEL);
+        String lang = getLiteralLanguage(bs, SparqlVariable.LABEL);
+        data.setLexicalEntryLabel(label.isEmpty() ? "" : label + (lang.isEmpty() ? "" : "@" + lang));
         List<Property> properties = new ArrayList();
         properties.add(new Property(SparqlVariable.SENSE_DEFINITION, getStringValue(bs, SparqlVariable.SENSE_DEFINITION)));
         properties.add(new Property(SparqlVariable.SENSE_DESCRIPTION, getStringValue(bs, SparqlVariable.SENSE_DESCRIPTION)));
