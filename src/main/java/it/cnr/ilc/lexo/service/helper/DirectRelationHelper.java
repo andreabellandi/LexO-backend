@@ -22,9 +22,33 @@ public class DirectRelationHelper extends TripleStoreDataHelper<LinkedEntity> {
         data.setInferred(getStringValue(bs, SparqlVariable.GRAPH).contains("implicit"));
         String label = getLiteralLabel(bs, SparqlVariable.LABEL);
         String lang = getLiteralLanguage(bs, SparqlVariable.LABEL);
-        data.setLabel(label.isEmpty() ? "" : label + (lang.isEmpty() ? "" : "@" + lang));
+        String lemmaLabel = getLiteralLabel(bs, SparqlVariable.LEXICAL_ENTRY);
+        String lemmaLang = getLiteralLanguage(bs, SparqlVariable.LEXICAL_ENTRY);
+        data.setLabel(getLabel(label, lang, lemmaLabel, lemmaLang));
+//        data.setLabel(label.isEmpty() ? "" : label + (lang.isEmpty() ? "" : "@" + lang));
         data.setEntity(getStringValue(bs, SparqlVariable.LEXICAL_ENTITY));
         data.setLink(getStringValue(bs, SparqlVariable.PROPERTY_NAME));
+    }
+
+    private String getLabel(String label, String lang, String lemmaLabel, String lemmaLang) {
+        String ret = "";
+        if (!lemmaLabel.isEmpty()) {
+            ret = lemmaLabel;
+        }
+        if (!lemmaLang.isEmpty()) {
+            ret = ret + "@" + lemmaLang;
+        }
+        if (!label.isEmpty()) {
+            if (!lemmaLabel.isEmpty()) {
+                ret = ret + " - " + label;
+            } else {
+                ret = label;
+            }
+        }
+        if (!lang.isEmpty()) {
+            ret = ret + "@" + lang;
+        }
+        return ret;
     }
 
     @Override
