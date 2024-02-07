@@ -17,6 +17,8 @@ import org.eclipse.rdf4j.model.Namespace;
 import org.eclipse.rdf4j.model.Resource;
 import org.eclipse.rdf4j.model.util.Values;
 import org.eclipse.rdf4j.query.BooleanQuery;
+import org.eclipse.rdf4j.query.GraphQuery;
+import org.eclipse.rdf4j.query.GraphQueryResult;
 import org.eclipse.rdf4j.query.MalformedQueryException;
 import org.eclipse.rdf4j.query.QueryEvaluationException;
 import org.eclipse.rdf4j.query.QueryLanguage;
@@ -84,6 +86,24 @@ public class RDFQueryUtil {
             GraphDbUtil.releaseConnection(conn);
         }
         return tqr;
+    }
+    
+    public static GraphQueryResult evaluateGQuery(String query) {
+        GraphQueryResult gqr = null;
+
+        RepositoryConnection conn = GraphDbUtil.getConnection();
+        try {
+            if (null != conn) {
+                GraphQuery graphQuery = conn.prepareGraphQuery(QueryLanguage.SPARQL,
+                        query);
+                gqr = graphQuery.evaluate();
+            }
+        } catch (MalformedQueryException | QueryEvaluationException | RepositoryException e) {
+            logger.error("", e);
+        } finally {
+            GraphDbUtil.releaseConnection(conn);
+        }
+        return gqr;
     }
 
     public static boolean evaluateBQuery(String query) {

@@ -7,13 +7,14 @@ package it.cnr.ilc.lexo.service.data.lexicon.output;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import it.cnr.ilc.lexo.service.data.Data;
 
 /**
  *
  * @author andreabellandi
  */
 @ApiModel(description = "Output model representing a property")
-public class Property {
+public class Property implements Data {
 
     @ApiModelProperty(value = "property id", example = "writtenRep")
     private String propertyID;

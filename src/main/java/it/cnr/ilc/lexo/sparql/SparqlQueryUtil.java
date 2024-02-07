@@ -225,4 +225,7 @@ public class SparqlQueryUtil {
             = SparqlPrefix.FOAF.getSparqlPrefix() + "\n"
             + "SELECT ?" + SparqlVariable.IDENTIFIER + " \n"
             + "WHERE { <_ID_> foaf:depiction ?" + SparqlVariable.IDENTIFIER + " }";
+    
+    public static final String SYSTEM_INFO  = "DESCRIBE <http://www.ontotext.com/SYSINFO> FROM <http://www.ontotext.com/SYSINFO>";
+    
 }
