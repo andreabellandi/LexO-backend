@@ -6,6 +6,7 @@
 package it.cnr.ilc.lexo.manager;
 
 import it.cnr.ilc.lexo.LexOProperties;
+import it.cnr.ilc.lexo.service.data.lexicon.input.DictionaryEntryFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.input.FormBySenseFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.input.FormFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalConceptFilter;
@@ -83,6 +84,22 @@ public class LexiconDataManager implements Manager, Cached {
         return RDFQueryUtil.evaluateTQuery(query);
     }
     
+    public TupleQueryResult getFilterdDictionaryEntries(DictionaryEntryFilter def) throws ManagerException {
+        logger.info(def.toString());
+//        Manager.validateWithEnum("formType", FormTypes.class, lef.getFormType());
+        Manager.validateWithEnum("status", LexicalEntryStatus.class, def.getStatus());
+        if (def.getSearchMode().isEmpty()) def.setSearchMode("equals");
+        String filter = createFilter(def);
+        int limit = def.getLimit();
+        int offset = def.getOffset();
+        String query = SparqlSelectData.DATA_DICTIONARY_ENTRIES.replace("[FILTER]", filter)
+//                .replace("_TYPE_", lef.getType())
+                .replace("[LIMIT]", String.valueOf(limit))
+                .replace("[OFFSET]", String.valueOf(offset));
+
+        return RDFQueryUtil.evaluateTQuery(query);
+    }
+    
     private String createFilter(LexicalEntryFilter lef) {
         lef.setText(StringUtil.escapeMetaCharacters(lef.getText()));
         String text = lef.getText().isEmpty() ? "*" : lef.getText();
@@ -95,6 +112,20 @@ public class LexiconDataManager implements Manager, Cached {
         filter = filter + (!lef.getPos().isEmpty() ? " AND pos:" + "\\\"" + lef.getPos() + "\\\"" : "");
         filter = filter + (!lef.getType().isEmpty() ? " AND type:" + "\\\"" + lef.getType() + "\\\"" : "");
         filter = filter + (!lef.getStatus().isEmpty() ? " AND status:" + lef.getStatus() : "");
+        return filter;
+    }
+    
+    private String createFilter(DictionaryEntryFilter def) {
+        def.setText(StringUtil.escapeMetaCharacters(def.getText()));
+        String text = def.getText().isEmpty() ? "*" : def.getText();
+        String filter = "(" + (def.getSearchMode().equals(EnumUtil.SearchModes.Equals.toString()) ? "dictionaryEntryLabel: " + text
+                : (def.getSearchMode().equals(EnumUtil.SearchModes.StartsWith.toString()) ? "dictionaryEntryLabel: " + text + "*"
+                : (def.getSearchMode().equals(EnumUtil.SearchModes.Contains.toString()) ? "dictionaryEntryLabel: *" + text + "*"
+                : "dictionaryEntryLabel: *" + text))) + ")";
+        filter = filter + (!def.getLang().isEmpty() ? " AND writtenFormLanguage:" + def.getLang() : "");
+        filter = filter + (!def.getAuthor().isEmpty() ? " AND author:" + def.getAuthor() : "");
+//        filter = filter + (!def.getPos().isEmpty() ? " AND pos:" + "\\\"" + def.getPos() + "\\\"" : "");
+        filter = filter + (!def.getStatus().isEmpty() ? " AND status:" + def.getStatus() : "");
         return filter;
     }
 

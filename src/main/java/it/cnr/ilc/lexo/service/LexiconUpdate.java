@@ -147,11 +147,10 @@ public class LexiconUpdate extends Service {
                 checkKey(key);
                 String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
                 UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
-                String type = utilityManager.getLexicalEntryType(_id);
-                if (type == null) {
+                if (!utilityManager.isDictionaryEntry(_id)) {
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " does not exist").build();
                 } 
-                return Response.ok(lexiconManager.updateDictionaryEntry(_id, deu, author, type))
+                return Response.ok(lexiconManager.updateDictionaryEntry(_id, deu, author))
                         .type(MediaType.TEXT_PLAIN)
                         .header("Access-Control-Allow-Headers", "content-type")
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")

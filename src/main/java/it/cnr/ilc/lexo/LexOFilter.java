@@ -68,14 +68,14 @@ public class LexOFilter implements Filter {
     }
 
     private void setResourceModel() {
-        ArrayList<String> models = new ArrayList();
+        ArrayList<String> model = new ArrayList();
         try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(SparqlSelectData.GET_RESOURCE_MODEL)) {
             while (result.hasNext()) {
                 BindingSet bs = result.next();
-                models.add(bs.getBinding(SparqlVariable.VALUE).getValue().stringValue());
+                model.add(bs.getBinding(SparqlVariable.VALUE).getValue().stringValue());
             }
-            if (models.size() == 1) {
-                LexOProperties.setProperty("resourceModel", models.get(0));
+            if (model.size() == 1) {
+                LexOProperties.setProperty("resourceModel", model.get(0));
             }
             LexOProperties.load();
         } catch (QueryEvaluationException qee) {

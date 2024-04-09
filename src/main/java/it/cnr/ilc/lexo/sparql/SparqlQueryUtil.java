@@ -48,6 +48,10 @@ public class SparqlQueryUtil {
     public static final String IS_LEXICALENTRY_ID
             = SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
             + "ASK { <_ID_> a " + SparqlPrefix.ONTOLEX.getPrefix() + "LexicalEntry }";
+    
+    public static final String IS_DICTIONARYENTRY_ID
+            = SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
+            + "ASK { <_ID_> a " + SparqlPrefix.LEXICOG.getPrefix() + "Entry }";
 
     public static final String IS_DICTENTRY_COMPONENT_ID
             = SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
@@ -63,6 +67,7 @@ public class SparqlQueryUtil {
             + "WHERE { <_ID_> rdf:type ?" + SparqlVariable.LEXICAL_ENTRY_TYPE + " .\n"
             + "FILTER(regex(str(?" + SparqlVariable.LEXICAL_ENTRY_TYPE + "),\""
             + SparqlPrefix.ONTOLEX.getUri() + "|" + SparqlPrefix.ETY.getUri() + "\")) }";
+    
 
     public static final String IS_COMPONENT_ID
             = SparqlPrefix.DECOMP.getSparqlPrefix() + "\n"

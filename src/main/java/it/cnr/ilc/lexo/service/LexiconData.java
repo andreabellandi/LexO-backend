@@ -15,6 +15,7 @@ import it.cnr.ilc.lexo.manager.ManagerException;
 import it.cnr.ilc.lexo.manager.ManagerFactory;
 import it.cnr.ilc.lexo.manager.SKOSManager;
 import it.cnr.ilc.lexo.manager.UtilityManager;
+import it.cnr.ilc.lexo.service.data.lexicon.input.DictionaryEntryFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.input.FormFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalConceptFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.output.FormItem;
@@ -28,6 +29,7 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.Component;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ComponentItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ConceptSetItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.DictionaryEntryComponent;
+import it.cnr.ilc.lexo.service.data.lexicon.output.DictionaryEntryItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.EtymologicalLink;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Etymology;
 import it.cnr.ilc.lexo.service.data.lexicon.output.EtymologyItem;
@@ -56,6 +58,7 @@ import it.cnr.ilc.lexo.service.helper.ComponentHelper;
 import it.cnr.ilc.lexo.service.helper.ConceptSetHelper;
 import it.cnr.ilc.lexo.service.helper.ConceptSetItemHelper;
 import it.cnr.ilc.lexo.service.helper.DictionaryEntryComponentHelper;
+import it.cnr.ilc.lexo.service.helper.DictionaryEntryFilterHelper;
 import it.cnr.ilc.lexo.service.helper.DirectRelationHelper;
 import it.cnr.ilc.lexo.service.helper.EtymologicalLinkHelper;
 import it.cnr.ilc.lexo.service.helper.EtymologyFilterHelper;
@@ -123,6 +126,7 @@ public class LexiconData extends Service {
 
     private final LexiconDataManager lexiconManager = ManagerFactory.getManager(LexiconDataManager.class);
     private final LexicalEntryFilterHelper lexicalEntryFilterHelper = new LexicalEntryFilterHelper();
+    private final DictionaryEntryFilterHelper dictionaryEntryFilterHelper = new DictionaryEntryFilterHelper();
     private final LexicalSenseFilterHelper lexicalSenseFilterHelper = new LexicalSenseFilterHelper();
     private final FormItemsHelper formItemsHelper = new FormItemsHelper();
     private final DirectRelationHelper directRelationHelper = new DirectRelationHelper();
@@ -444,7 +448,7 @@ public class LexiconData extends Service {
             value = "dictionaryEntryComponents",
             produces = "application/json; charset=UTF-8")
     @ApiOperation(value = "Dictionary entry component",
-            notes = "This method returns the lements belonging to a given dictionary entry component")
+            notes = "This method returns the elements belonging to a given dictionary entry component")
     public Response dictionaryEntryComponents(
             @HeaderParam("Authorization") String key,
             @ApiParam(
@@ -667,6 +671,41 @@ public class LexiconData extends Service {
             } else {
                 HitsDataList hdl = new HitsDataList(0, new ArrayList<>());
                 json = lexicalEntryFilterHelper.toJson(hdl);
+            }
+            return Response.ok(json)
+                    .type(MediaType.TEXT_PLAIN)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
+        } catch (ManagerException | AuthorizationException | ServiceException ex) {
+            log(Level.ERROR, ex.getMessage());
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        }
+    }
+    
+    @POST
+    @Path("dictionaryEntries")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.POST,
+            value = "dictionaryEntries",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Dictionary entries list",
+            notes = "This method returns a list of dictionary entries according to the input filter")
+    public Response dictionaryEntryList(@HeaderParam("Authorization") String key, DictionaryEntryFilter def) throws HelperException {
+        try {
+            userCheck(key);
+            log(Level.INFO, "lexicon/data/dictionaryEntries\n" + LogUtil.getLogFromPayload(def));
+            TupleQueryResult dictionaryEntries = lexiconManager.getFilterdDictionaryEntries(def);
+            String json = "";
+            if (dictionaryEntries != null) {
+                List<DictionaryEntryItem> entries = dictionaryEntryFilterHelper.newDataList(dictionaryEntries);
+                HitsDataList hdl = new HitsDataList(dictionaryEntryFilterHelper.getTotalHits(), entries);
+                json = dictionaryEntryFilterHelper.toJson(hdl);
+            } else {
+                HitsDataList hdl = new HitsDataList(0, new ArrayList<>());
+                json = dictionaryEntryFilterHelper.toJson(hdl);
             }
             return Response.ok(json)
                     .type(MediaType.TEXT_PLAIN)

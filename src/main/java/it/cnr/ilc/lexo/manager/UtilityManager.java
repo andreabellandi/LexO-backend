@@ -145,6 +145,11 @@ public final class UtilityManager implements Manager, Cached {
         }
         return null;
     }
+    
+    public boolean isDictionaryEntry(String id) throws QueryEvaluationException {
+        String query = SparqlQueryUtil.IS_DICTIONARYENTRY_ID.replaceAll("_ID_", id);
+        return RDFQueryUtil.evaluateBQuery(query);
+    }
 
     public String bibliographyById(String id, String itemKey) throws QueryEvaluationException {
         String query = SparqlQueryUtil.BIBLIOGRAFY_BY_ITEMKEY.replaceAll("_ID_", id).replaceAll("_ITEMKEY_", itemKey);

@@ -34,7 +34,6 @@ import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
  */
 public class ConfigurationManager implements Manager, Cached {
 
-    private final DomainManager domainManager = ManagerFactory.getDomainManager();
     private final String repoName = LexOProperties.getProperty("GraphDb.repository");
 
     @Override
@@ -80,7 +79,7 @@ public class ConfigurationManager implements Manager, Cached {
 
     private File getAttachedFile(RepositoryData rd) throws ManagerException, IOException {
         validateRuleset(rd.getRuleset());
-        String content = SparqlRepositoryConfiguration.REPOSITORY_CONFIGURATION.replace("_REPO_ID_", rd.getRepoID())
+        String content = SparqlRepositoryConfiguration.REPOSITORY_CONFIGURATION.replace("_REPO_ID_", repoName)
                 .replace("_REPO_LABEL_", rd.getLabelID())
                 .replace("_BASE_URL_", rd.getBaseUrl())
                 .replace("_RULESET_", rd.getRuleset());

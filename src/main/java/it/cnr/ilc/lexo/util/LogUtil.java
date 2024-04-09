@@ -1,6 +1,7 @@
 package it.cnr.ilc.lexo.util;
 
 import it.cnr.ilc.lexo.service.data.RepositoryData;
+import it.cnr.ilc.lexo.service.data.lexicon.input.DictionaryEntryFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.input.ExportSetting;
 import it.cnr.ilc.lexo.service.data.lexicon.input.FormFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalConceptFilter;
@@ -35,6 +36,9 @@ public class LogUtil {
         } else if (payload.getClass().getName().contains("RepositoryData")) {
             RepositoryData rd = (RepositoryData) payload;
             log = getLog(rd);
+        } else if (payload.getClass().getName().contains("DictionaryEntryFilter")) {
+            DictionaryEntryFilter def = (DictionaryEntryFilter) payload;
+            log = getLog(def);
         }
         return log;
     }
@@ -51,6 +55,20 @@ public class LogUtil {
                 + "   status: " + lef.getStatus() + "\n"
                 + "   limit: " + lef.getLimit() + "\n"
                 + "   offset: " + lef.getOffset() + "\n"
+                + "}";
+    }
+    
+    private static String getLog(DictionaryEntryFilter def) {
+        return "{\n"
+                + "   text: " + def.getText() + "\n"
+                + "   search mode: " + def.getSearchMode() + "\n"
+                + "   author: " + def.getAuthor() + "\n"
+//                + "   formType: " + def.getFormType() + "\n"
+                + "   lang: " + def.getLang() + "\n"
+                + "   pos: " + def.getPos() + "\n"
+                + "   status: " + def.getStatus() + "\n"
+                + "   limit: " + def.getLimit() + "\n"
+                + "   offset: " + def.getOffset() + "\n"
                 + "}";
     }
 
@@ -105,7 +123,7 @@ public class LogUtil {
 
     private static String getLog(RepositoryData rd) {
         return "{\n"
-                + "   repo ID: " + rd.getRepoID() + "\n"
+//                + "   repo ID: " + rd.getRepoID() + "\n"
                 + "   description: " + rd.getLabelID() + "\n"
                 + "   base url: " + rd.getBaseUrl() + "\n"
                 + "   ruleset name: " + rd.getRuleset() + "\n"

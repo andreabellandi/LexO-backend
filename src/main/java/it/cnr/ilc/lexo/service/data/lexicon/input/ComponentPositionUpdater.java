@@ -16,9 +16,9 @@ import io.swagger.annotations.ApiModelProperty;
 public class ComponentPositionUpdater {
 
     @ApiModelProperty(value = "the type of relation", allowEmptyValue = false,
-            allowableValues = "decomp")
+            allowableValues = "decomp, lexicog")
     private String type;
-    @ApiModelProperty(value = "position relation", allowEmptyValue = false)
+    @ApiModelProperty(value = "position relation", allowEmptyValue = false, allowableValues = "_n, member")
     private String relation;
     @ApiModelProperty(value = "component id", allowEmptyValue = false)
     private String component;

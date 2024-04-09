@@ -111,6 +111,18 @@ public abstract class TripleStoreDataHelper<D extends Data> extends Helper<D> {
         return types;
     }
     
+    public ArrayList<String> getPosList(BindingSet bs, String _pos) {
+        ArrayList<String> posList = new ArrayList();
+        if (!_pos.isEmpty()) {
+            for (String t : _pos.split(";")) {
+                if (t.contains("#")) {
+                    posList.add(t.split("#")[1].trim());
+                }
+            }
+        }
+        return posList;
+    }
+    
     public ArrayList<String> getCatalogs(BindingSet bs, String _cats) {
         ArrayList<String> types = new ArrayList();
         if (!_cats.isEmpty()) {

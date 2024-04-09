@@ -15,8 +15,8 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel(description = "Input model for creating and configuring a new repository")
 public class RepositoryData implements Data {
 
-    @ApiModelProperty(value = "repository ID", allowEmptyValue = false)
-    private String repoID;
+//    @ApiModelProperty(value = "repository ID", allowEmptyValue = false)
+//    private String repoID;
     @ApiModelProperty(value = "repository description", allowEmptyValue = true)
     private String labelID;
     @ApiModelProperty(value = "specifies the default namespace for the main persistence file.", allowEmptyValue = true)
@@ -25,13 +25,13 @@ public class RepositoryData implements Data {
             allowEmptyValue = true, allowableValues = "rdfs, owl-horst, owl-max, and owl2-rl, rdfs-optimized, owl-horst-optimized, owl-max-optimized, owl2-rl-optimized")
     private String ruleset;
 
-    public String getRepoID() {
-        return repoID;
-    }
-
-    public void setRepoID(String repoID) {
-        this.repoID = repoID;
-    }
+//    public String getRepoID() {
+//        return repoID;
+//    }
+//
+//    public void setRepoID(String repoID) {
+//        this.repoID = repoID;
+//    }
 
     public String getLabelID() {
         return labelID;

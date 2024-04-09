@@ -108,7 +108,7 @@ public class SparqlUpdateData {
             + "    OPTIONAL { ?" + SparqlVariable.DICT_ELEMENT + " " + SparqlPrefix.LEXICOG.getPrefix() + "entry <_ID_> } \n"
             + "};\n"
             + "INSERT { ?" + SparqlVariable.DICT_ELEMENT + " " + SparqlPrefix.LEXICOG.getPrefix() + "entry <_ID_> }\n"
-            + "WHERE { ?" + SparqlVariable.DICT_ELEMENT + " " + SparqlPrefix.LIME.getPrefix() + "language \"_LANG_\" };\n"
+            + "WHERE { ?" + SparqlVariable.DICT_ELEMENT + " " + SparqlPrefix.DCT.getPrefix() + "language \"_LANG_\" };\n"
             + "DELETE { <_ID_> " + SparqlPrefix.RDFS.getPrefix() + "label ?" + SparqlVariable.LABEL + " ;\n"
             + "         " + SparqlPrefix.DCT.getPrefix() + "modified ?modified . } \n"
             + "INSERT { <_ID_> " + SparqlPrefix.RDFS.getPrefix() + "label \"_LABEL_\"@_LANG_ ;\n"

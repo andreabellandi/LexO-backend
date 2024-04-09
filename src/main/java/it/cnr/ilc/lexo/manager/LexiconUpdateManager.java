@@ -1007,14 +1007,14 @@ public final class LexiconUpdateManager implements Manager, Cached {
         return lastupdate;
     }
 
-    public String updateDictionaryEntry(String id, DictionaryEntryUpdater leu, String user, String type) throws ManagerException {
+    public String updateDictionaryEntry(String id, DictionaryEntryUpdater leu, String user) throws ManagerException {
         validateDictionaryEntryAttribute(leu.getRelation());
         if (leu.getRelation().equals(OntoLexEntity.LexicalEntryAttributes.Label.toString())) {
             String lang = ManagerFactory.getManager(UtilityManager.class).getDictLanguage(id);
             if (lang == null) throw new ManagerException("The language of the dictionary entry could not be found");
             return updateDictionaryEntry(id, leu.getRelation(), "\"" + leu.getValue() + "\"@" + lang, "?" + SparqlVariable.TARGET);
         } else if (leu.getRelation().equals(OntoLexEntity.LexicalEntryAttributes.Language.toString())) {
-            validateLexicalEntryLanguage(leu.getValue());
+//            validateLexicalEntryLanguage(leu.getValue());
             return updateLanguage(id, leu);
         } else if (leu.getRelation().equals(OntoLexEntity.LexicalEntryAttributes.Note.toString())) {
             return updateDictionaryEntry(id, leu.getRelation(), "\"" + leu.getValue() + "\"", "?" + SparqlVariable.TARGET);

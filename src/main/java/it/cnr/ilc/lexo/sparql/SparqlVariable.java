@@ -13,6 +13,7 @@ public class SparqlVariable {
 
     // index names
     public static final String LEXICAL_ENTRY_INDEX = "lexicalEntryIndex";
+    public static final String DICTIONARY_ENTRY_INDEX = "dictionaryEntryIndex";
     public static final String FORM_INDEX = "formIndex";
     public static final String LEXICAL_SENSE_INDEX = "lexicalSenseIndex";
     public static final String ETYMOLOGY_INDEX = "etymologyIndex";
@@ -48,6 +49,13 @@ public class SparqlVariable {
     public static final String LEXICAL_ENTRY_SUBTERM = "subterm";
     public static final String LEXICAL_ENTRY_CONSTITUENT = "constituent";
     public static final String LEXICAL_ENTRY_ETYMOLOGY = "etymology";
+    
+    public static final String DICTIONARY_ENTRY = "lexicalEntry";
+    public static final String DICTIONARY_ENTRY_STATUS = "status";
+    public static final String DICTIONARY_ENTRY_REVISOR = "revisor";
+    public static final String DICTIONARY_ENTRY_COMPLETING_AUTHOR = "author";
+    public static final String DICTIONARY_ENTRY_CREATION_AUTHOR = "creator";
+    public static final String DICTIONARY_ENTRY_POS = "pos";
 
     public static final String SOURCE_LEXICAL_ENTRY = "sourceLexicalEntry";
     public static final String TARGET_LEXICAL_ENTRY = "targetLexicalEntry";
