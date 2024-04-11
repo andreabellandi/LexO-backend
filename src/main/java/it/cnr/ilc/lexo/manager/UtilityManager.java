@@ -63,7 +63,7 @@ public final class UtilityManager implements Manager, Cached {
             while (result.hasNext()) {
                 BindingSet bs = result.next();
                 if (bs.getBinding(SparqlVariable.CONNECTOR_NAME) != null) {
-                    connectors.add(bs.getBinding(SparqlVariable.LEXICON_LANGUAGE).getValue().stringValue());
+                    connectors.add(bs.getBinding(SparqlVariable.CONNECTOR_NAME).getValue().stringValue());
                 }
             }
         } catch (QueryEvaluationException qee) {
