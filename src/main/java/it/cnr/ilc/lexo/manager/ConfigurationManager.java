@@ -104,6 +104,7 @@ public class ConfigurationManager implements Manager, Cached {
         ArrayList<String> connectors = ManagerFactory.getManager(UtilityManager.class).getConnectors();
         if (!connectors.isEmpty()) {
             deleteIndex(connectors, SparqlVariable.LEXICAL_ENTRY_INDEX);
+            deleteIndex(connectors, SparqlVariable.DICTIONARY_ENTRY_INDEX);
             deleteIndex(connectors, SparqlVariable.FORM_INDEX);
             deleteIndex(connectors, SparqlVariable.LEXICAL_SENSE_INDEX);
             deleteIndex(connectors, SparqlVariable.LEXICAL_CONCEPT_INDEX);
@@ -113,6 +114,7 @@ public class ConfigurationManager implements Manager, Cached {
             deleteIndex(connectors, SparqlVariable.CONCEPT_SET_INDEX);
         }
         RDFQueryUtil.update(SparqlIndex.LEXICAL_ENTRY_INDEX);
+        RDFQueryUtil.update(SparqlIndex.DICTIONARY_ENTRY_INDEX);
         RDFQueryUtil.update(SparqlIndex.FORM_INDEX);
         RDFQueryUtil.update(SparqlIndex.LEXICAL_SENSE_INDEX);
         RDFQueryUtil.update(SparqlIndex.COMPONENT_INDEX);
