@@ -19,7 +19,7 @@ public class SparqlSelectStatistics {
             + " ?"
             + SparqlVariable.LABEL_COUNT
             + " WHERE {\n"
-            + "  ?r a inst:lexicalEntryIndex ;\n"
+            + "  ?r a inst:_INDEX_ ;\n"
             + "    luc:facetFields \"author\" ;\n"
             + "    luc:facets _:f .\n"
             + "  _:f luc:facetValue ?" + SparqlVariable.LABEL + " .\n"
@@ -50,8 +50,8 @@ public class SparqlSelectStatistics {
             + " ?"
             + SparqlVariable.LABEL_COUNT
             + " WHERE {\n"
-            + "  ?r a inst:lexicalEntryIndex ;\n"
-            + "    luc:facetFields \"writtenFormLanguage\" ;\n"
+            + "  ?r a inst:_INDEX_ ;\n"
+            + "    luc:facetFields \"_LANG_FIELD_\" ;\n"
             + "    luc:facets _:f .\n"
             + "  _:f luc:facetValue ?" + SparqlVariable.LABEL + " .\n"
             + "  _:f luc:facetCount ?" + SparqlVariable.LABEL_COUNT + " .\n"
@@ -83,7 +83,7 @@ public class SparqlSelectStatistics {
             + " ?"
             + SparqlVariable.LABEL_COUNT
             + " WHERE {\n"
-            + "  ?r a inst:lexicalEntryIndex ;\n"
+            + "  ?r a inst:_INDEX_ ;\n"
             + "    luc:facetFields \"status\" ;\n"
             + "    luc:facets _:f .\n"
             + "  _:f luc:facetValue ?" + SparqlVariable.LABEL + " .\n"
@@ -96,6 +96,14 @@ public class SparqlSelectStatistics {
             + "WHERE { ?" + SparqlVariable.LEXICON + " a " + SparqlPrefix.LIME.getPrefix() + "Lexicon ;\n"
             + "                 " + SparqlPrefix.LIME.getPrefix() + "language ?" + SparqlVariable.LEXICON_LANGUAGE + " . }\n"
             + "ORDER BY ?" + SparqlVariable.LEXICON_LANGUAGE + "";
+    
+    public static final String STATISTICS_DICT_LANGUAGES_LIST
+            = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
+            + "SELECT DISTINCT ?" + SparqlVariable.DICT_LANGUAGE + "\n"
+            + "WHERE { ?" + SparqlVariable.DICT_ELEMENT + " a " + SparqlPrefix.LEXICOG.getPrefix() + "LexicographicResource ;\n"
+            + "                 " + SparqlPrefix.DCT.getPrefix() + "language ?" + SparqlVariable.DICT_LANGUAGE + " . }\n"
+            + "ORDER BY ?" + SparqlVariable.DICT_LANGUAGE + "";
 
     public static final String METADATA
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
@@ -103,7 +111,7 @@ public class SparqlSelectStatistics {
             + SparqlPrefix.VS.getSparqlPrefix() + "\n"
             + SparqlPrefix.LOC.getSparqlPrefix() + "\n"
             + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
-            + "SELECT ?" + SparqlVariable.LEXICAL_ENTITY +  " ?" + SparqlVariable.CREATION_DATE + " ?" + SparqlVariable.COMPLETION_DATE + " ?" + SparqlVariable.REVISION_DATE
+            + "SELECT ?" + SparqlVariable.LEXICAL_ENTITY + " ?" + SparqlVariable.CREATION_DATE + " ?" + SparqlVariable.COMPLETION_DATE + " ?" + SparqlVariable.REVISION_DATE
             + " ?" + SparqlVariable.LAST_UPDATE + " ?" + SparqlVariable.NOTE + " ?" + SparqlVariable.CONFIDENCE
             + " ?" + SparqlVariable.LEXICAL_ENTRY_STATUS + " ?" + SparqlVariable.LEXICAL_ENTRY_CREATION_AUTHOR + " ?" + SparqlVariable.LEXICAL_ENTRY_COMPLETING_AUTHOR
             + " ?" + SparqlVariable.LEXICAL_ENTRY_REVISOR + " ?" + SparqlVariable.SOURCE + "\n"
@@ -121,4 +129,5 @@ public class SparqlSelectStatistics {
             + "    OPTIONAL {?" + SparqlVariable.LEXICAL_ENTITY + " dct:author ?" + SparqlVariable.LEXICAL_ENTRY_COMPLETING_AUTHOR + " . }\n"
             + "    OPTIONAL {?" + SparqlVariable.LEXICAL_ENTITY + " loc:rev ?" + SparqlVariable.LEXICAL_ENTRY_REVISOR + " . }\n"
             + "}";
-}
+
+    }

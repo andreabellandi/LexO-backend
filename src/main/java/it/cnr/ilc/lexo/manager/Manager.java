@@ -144,5 +144,19 @@ public interface Manager {
             throw new ManagerException(lang + " language does not exist");
         }
     }
+    
+    public static void validateDictLanguage(String lang) throws ManagerException {
+        DictionaryStatisticsManager dictionaryStatisticsManager = ManagerFactory.getManager(DictionaryStatisticsManager.class);
+        dictionaryStatisticsManager.reloadCache();
+        boolean found = false;
+        for (String l : dictionaryStatisticsManager.getDictionaryLanguages()) {
+            if (l.equals(lang)) {
+                found = true;
+            }
+        }
+        if (!found) {
+            throw new ManagerException(lang + " language does not exist");
+        }
+    }
 
 }

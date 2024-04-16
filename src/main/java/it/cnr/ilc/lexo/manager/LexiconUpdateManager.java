@@ -154,6 +154,10 @@ public final class LexiconUpdateManager implements Manager, Cached {
     public void validateLexicalEntryLanguage(String lang) throws ManagerException {
         Manager.validateLanguage(lang);
     }
+    
+    public void validateDictionaryEntryLanguage(String lang) throws ManagerException {
+        Manager.validateDictLanguage(lang);
+    }
 
     public void validateGenericReferenceRelation(String relation) throws ManagerException {
         Manager.validateWithEnum("relation", EnumUtil.GenericRelationReference.class, relation);
@@ -1014,7 +1018,7 @@ public final class LexiconUpdateManager implements Manager, Cached {
             if (lang == null) throw new ManagerException("The language of the dictionary entry could not be found");
             return updateDictionaryEntry(id, leu.getRelation(), "\"" + leu.getValue() + "\"@" + lang, "?" + SparqlVariable.TARGET);
         } else if (leu.getRelation().equals(OntoLexEntity.LexicalEntryAttributes.Language.toString())) {
-//            validateLexicalEntryLanguage(leu.getValue());
+            validateDictionaryEntryLanguage(leu.getValue());
             return updateLanguage(id, leu);
         } else if (leu.getRelation().equals(OntoLexEntity.LexicalEntryAttributes.Note.toString())) {
             return updateDictionaryEntry(id, leu.getRelation(), "\"" + leu.getValue() + "\"", "?" + SparqlVariable.TARGET);

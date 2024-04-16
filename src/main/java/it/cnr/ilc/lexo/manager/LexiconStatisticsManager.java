@@ -33,8 +33,6 @@ public final class LexiconStatisticsManager implements Manager, Cached {
     @Override
     public void reloadCache() {
         languages.clear();
-//        TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL, SparqlSelectStatistics.STATISTICS_LANGUAGES_LIST);
-//        try (TupleQueryResult result = tupleQuery.evaluate()) {
         try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(SparqlSelectStatistics.STATISTICS_LANGUAGES_LIST)) {
             while (result.hasNext()) {
                 BindingSet bs = result.next();
@@ -47,7 +45,6 @@ public final class LexiconStatisticsManager implements Manager, Cached {
     }
 
     public TupleQueryResult getTypes() {
-//        TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL, SparqlSelectStatistics.STATISTICS_TYPES);
         return RDFQueryUtil.evaluateTQuery(SparqlSelectStatistics.STATISTICS_TYPES);
     }
 
@@ -62,16 +59,17 @@ public final class LexiconStatisticsManager implements Manager, Cached {
 
     public TupleQueryResult getStates() {
 //        TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL, SparqlSelectStatistics.STATISTICS_STATUS);
-        return RDFQueryUtil.evaluateTQuery(SparqlSelectStatistics.STATISTICS_STATUS);
+        return RDFQueryUtil.evaluateTQuery(SparqlSelectStatistics.STATISTICS_STATUS.replace("_INDEX_", SparqlVariable.LEXICAL_ENTRY_INDEX));
     }
 
     public TupleQueryResult getAuthors() {
 //        TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL, SparqlSelectStatistics.STATISTICS_AUTHORS);
-        return RDFQueryUtil.evaluateTQuery(SparqlSelectStatistics.STATISTICS_AUTHORS);
+        return RDFQueryUtil.evaluateTQuery(SparqlSelectStatistics.STATISTICS_AUTHORS.replace("_INDEX_", SparqlVariable.LEXICAL_ENTRY_INDEX));
     }
 
     public TupleQueryResult getLanguages() {
 //        TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL, SparqlSelectStatistics.STATISTICS_LANGUAGES);
-        return RDFQueryUtil.evaluateTQuery(SparqlSelectStatistics.STATISTICS_LANGUAGES);
+        return RDFQueryUtil.evaluateTQuery(SparqlSelectStatistics.STATISTICS_LANGUAGES.replace("_INDEX_", SparqlVariable.LEXICAL_ENTRY_INDEX)
+        .replace("_LANG_FIELD_", "writtenFormLanguage"));
     }
 }
