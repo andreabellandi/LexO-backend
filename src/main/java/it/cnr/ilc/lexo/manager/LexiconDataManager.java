@@ -127,7 +127,7 @@ public class LexiconDataManager implements Manager, Cached {
                 : (def.getSearchMode().equals(EnumUtil.SearchModes.StartsWith.toString()) ? "dictionaryEntryLabel: " + text + "*"
                 : (def.getSearchMode().equals(EnumUtil.SearchModes.Contains.toString()) ? "dictionaryEntryLabel: *" + text + "*"
                 : "dictionaryEntryLabel: *" + text))) + ")";
-        filter = filter + (!def.getLang().isEmpty() ? " AND writtenFormLanguage:" + def.getLang() : "");
+        filter = filter + (!def.getLang().isEmpty() ? " AND entryLanguage:" + def.getLang() : "");
         filter = filter + (!def.getAuthor().isEmpty() ? " AND author:" + def.getAuthor() : "");
 //        filter = filter + (!def.getPos().isEmpty() ? " AND pos:" + "\\\"" + def.getPos() + "\\\"" : "");
         filter = filter + (!def.getStatus().isEmpty() ? " AND status:" + def.getStatus() : "");

@@ -102,6 +102,7 @@ public class SparqlUpdateData {
     public static final String UPDATE_DICTIONARY_ENTRY_LANGUAGE
             = SparqlPrefix.LIME.getSparqlPrefix() + "\n"
             + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
+             + SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
             + SparqlPrefix.DCT.getSparqlPrefix() + "\n"
             + "DELETE { ?" + SparqlVariable.DICT_ELEMENT + " " + SparqlPrefix.LEXICOG.getPrefix() + "entry <_ID_> }\n"
             + "WHERE { \n"

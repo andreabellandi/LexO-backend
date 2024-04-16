@@ -143,7 +143,7 @@ public class LexiconCreation extends Service {
                 log(Level.INFO, "Language label " + lang + " already exists");
                 return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("Language label " + lang + " already exists").build();
             }
-            Dictionary d = lexiconManager.createDictionary(prefix, baseIRI, author, lang, desiredID);
+            Dictionary d = lexiconManager.createDictionary(prefix, baseIRI, getUser(author), lang, desiredID);
             String json = dictionaryHelper.toJson(d);
             log(Level.INFO, "Dictionary for language " + lang + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
             return Response.ok(json)

@@ -159,7 +159,7 @@ public class SparqlSelectData {
             + " ?" + SparqlVariable.COMPLETION_DATE
             + " ?confidence"
             + "\n"
-            + "(GROUP_CONCAT(distinct str(?_" + SparqlVariable.DICTIONARY_ENTRY_POS + ");SEPARATOR=\";\") AS ?" + SparqlVariable.DICTIONARY_ENTRY_POS + ")\n"
+            + "#(GROUP_CONCAT(distinct str(?_" + SparqlVariable.DICTIONARY_ENTRY_POS + ");SEPARATOR=\";\") AS ?" + SparqlVariable.DICTIONARY_ENTRY_POS + ")\n"
             + "FROM onto:explicit WHERE {\n"
             + "  ?search a inst:" + SparqlVariable.DICTIONARY_ENTRY_INDEX + " ;\n"
             + "      luc:query \"[FILTER]\" ;\n"
@@ -193,6 +193,7 @@ public class SparqlSelectData {
             + SparqlVariable.TOTAL_HITS + " ?"
             + SparqlVariable.CREATION_DATE + " ?"
             + SparqlVariable.LAST_UPDATE + " ?"
+            + SparqlVariable.IMAGE + " ?"
             + SparqlVariable.DICTIONARY_ENTRY_COMPLETING_AUTHOR + " ?"
             + SparqlVariable.REVISION_DATE + " ?"
             + SparqlVariable.COMPLETION_DATE
@@ -1496,12 +1497,9 @@ public class SparqlSelectData {
             + "}";
 
     public static final String DICTIONARY_ENTRY_LANGUAGE
-            = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
-            + SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
-            + "SELECT"
+            = "SELECT"
             + " ?" + SparqlVariable.LABEL + "\n"
-            + "WHERE { ?dict " + SparqlPrefix.LEXICOG.getPrefix() + "entry <_ID_> ;\n" 
-            + " " + SparqlPrefix.DCT.getPrefix() + "language ?" + SparqlVariable.LABEL + " .\n"
+            + "where { <_ID_> " + SparqlPrefix.RDFS.getPrefix() + "label ?" + SparqlVariable.LABEL + " .\n"
             + "}";
 
     public static final String LEXICON_ENTRY_STATUS

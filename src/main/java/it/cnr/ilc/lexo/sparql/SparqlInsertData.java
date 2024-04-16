@@ -59,6 +59,7 @@ public class SparqlInsertData {
     public static final String CREATE_DICTIONARY
             = SparqlPrefix.LIME.getSparqlPrefix() + "\n"
             + SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
             + "_PREFIX_ \n"
             + "INSERT DATA { \n"
             + "<_ID_> a " + SparqlPrefix.LEXICOG.getPrefix() + "LexicographicResource ;\n"

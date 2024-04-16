@@ -183,9 +183,10 @@ public class SparqlQueryUtil {
 
     public static final String DICTIONARY_LANGUAGE
             = SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
+             + SparqlPrefix.DCT.getSparqlPrefix() + "\n"
             + "SELECT ?" + SparqlVariable.DICT_LANGUAGE + " \n"
             + "WHERE { ?" + SparqlVariable.DICT_ELEMENT + " " + SparqlPrefix.LEXICOG.getPrefix() + "entry  <_ID_> ;\n"
-            + "        " + SparqlPrefix.LIME.getPrefix() + "language ?" + SparqlVariable.DICT_LANGUAGE + " }";
+            + "        " + SparqlPrefix.DCT.getPrefix() + "language ?" + SparqlVariable.DICT_LANGUAGE + " }";
 
     public static final String LEXICAL_ENTRY_BY_FORM
             = SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
