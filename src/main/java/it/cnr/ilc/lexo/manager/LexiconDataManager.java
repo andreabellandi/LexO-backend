@@ -29,6 +29,7 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.VarTransData;
 import it.cnr.ilc.lexo.service.data.output.Label;
 import it.cnr.ilc.lexo.sparql.SparqlPrefix;
 import it.cnr.ilc.lexo.sparql.SparqlSelectData;
+import it.cnr.ilc.lexo.sparql.SparqlSelectStatistics;
 import it.cnr.ilc.lexo.sparql.SparqlVariable;
 import it.cnr.ilc.lexo.util.EnumUtil;
 import it.cnr.ilc.lexo.util.EnumUtil.FormTypes;
@@ -66,13 +67,15 @@ public class LexiconDataManager implements Manager, Cached {
         counting.setCount(value);
         return counting;
     }
-    
+
     public TupleQueryResult getFilterdLexicalEntries(LexicalEntryFilter lef) throws ManagerException {
         logger.info(lef.toString());
         Manager.validateWithEnum("formType", FormTypes.class, lef.getFormType());
         Manager.validateWithEnum("status", LexicalEntryStatus.class, lef.getStatus());
         Manager.validateWithEnum("type", LexicalEntryTypes.class, lef.getType());
-        if (lef.getSearchMode().isEmpty()) lef.setSearchMode("equals");
+        if (lef.getSearchMode().isEmpty()) {
+            lef.setSearchMode("equals");
+        }
         String filter = createFilter(lef);
         int limit = lef.getLimit();
         int offset = lef.getOffset();
@@ -83,23 +86,25 @@ public class LexiconDataManager implements Manager, Cached {
 
         return RDFQueryUtil.evaluateTQuery(query);
     }
-    
+
     public TupleQueryResult getFilterdDictionaryEntries(DictionaryEntryFilter def) throws ManagerException {
         logger.info(def.toString());
 //        Manager.validateWithEnum("formType", FormTypes.class, lef.getFormType());
         Manager.validateWithEnum("status", LexicalEntryStatus.class, def.getStatus());
-        if (def.getSearchMode().isEmpty()) def.setSearchMode("equals");
+        if (def.getSearchMode().isEmpty()) {
+            def.setSearchMode("equals");
+        }
         String filter = createFilter(def);
         int limit = def.getLimit();
         int offset = def.getOffset();
         String query = SparqlSelectData.DATA_DICTIONARY_ENTRIES.replace("[FILTER]", filter)
-//                .replace("_TYPE_", lef.getType())
+                //                .replace("_TYPE_", lef.getType())
                 .replace("[LIMIT]", String.valueOf(limit))
                 .replace("[OFFSET]", String.valueOf(offset));
 
         return RDFQueryUtil.evaluateTQuery(query);
     }
-    
+
     private String createFilter(LexicalEntryFilter lef) {
         lef.setText(StringUtil.escapeMetaCharacters(lef.getText()));
         String text = lef.getText().isEmpty() ? "*" : lef.getText();
@@ -114,7 +119,7 @@ public class LexiconDataManager implements Manager, Cached {
         filter = filter + (!lef.getStatus().isEmpty() ? " AND status:" + lef.getStatus() : "");
         return filter;
     }
-    
+
     private String createFilter(DictionaryEntryFilter def) {
         def.setText(StringUtil.escapeMetaCharacters(def.getText()));
         String text = def.getText().isEmpty() ? "*" : def.getText();
@@ -236,7 +241,9 @@ public class LexiconDataManager implements Manager, Cached {
 
     public TupleQueryResult getFilterdForms(FormFilter ff) throws ManagerException {
         Manager.validateWithEnum("formRepresentationType", EnumUtil.FormRepresentationType.class, ff.getRepresentationType());
-        if (ff.getSearchMode().isEmpty()) ff.setSearchMode("equals");
+        if (ff.getSearchMode().isEmpty()) {
+            ff.setSearchMode("equals");
+        }
         String filter = createFilter(ff);
         int limit = ff.getLimit();
         int offset = ff.getOffset();
@@ -333,7 +340,9 @@ public class LexiconDataManager implements Manager, Cached {
     public TupleQueryResult getFilterdLexicalSenses(LexicalSenseFilter lsf) throws ManagerException {
         Manager.validateWithEnum("status", LexicalEntryStatus.class, lsf.getStatus());
         Manager.validateWithEnum("type", LexicalEntryTypes.class, lsf.getType());
-        if (lsf.getSearchMode().isEmpty()) lsf.setSearchMode("equals");
+        if (lsf.getSearchMode().isEmpty()) {
+            lsf.setSearchMode("equals");
+        }
         if (lsf.getFormType() != null && !lsf.getFormType().isEmpty()) {
             String query = filterLexicalSensesByForm(lsf);
             return RDFQueryUtil.evaluateTQuery(query);
@@ -376,29 +385,32 @@ public class LexiconDataManager implements Manager, Cached {
         String query = "";
         if (directRelations) {
             query = SparqlSelectData.DATA_LEXICAL_ENTRY_DIRECT_VARTRANS.replace("[IRI]", "\\\"" + lexicalEntryID + "\\\"");
-        } else
-            query = SparqlSelectData.DATA_LEXICAL_ENTRY_INDIRECT_VARTRANS.replace("[IRI]", "\\\"" + lexicalEntryID + "\\\"");;
+        } else {
+            query = SparqlSelectData.DATA_LEXICAL_ENTRY_INDIRECT_VARTRANS.replace("[IRI]", "\\\"" + lexicalEntryID + "\\\"");
+        };
         return RDFQueryUtil.evaluateTQuery(query);
     }
-    
+
     public TupleQueryResult getFormVarTrans(String formID, boolean directRelations) throws ManagerException {
         String query = "";
         if (directRelations) {
             query = SparqlSelectData.DATA_FORM_DIRECT_VARTRANS.replace("[IRI]", "\\\"" + formID + "\\\"");
-        } else
-            query = SparqlSelectData.DATA_FORM_INDIRECT_VARTRANS.replace("[IRI]", "\\\"" + formID + "\\\"");;
+        } else {
+            query = SparqlSelectData.DATA_FORM_INDIRECT_VARTRANS.replace("[IRI]", "\\\"" + formID + "\\\"");
+        };
         return RDFQueryUtil.evaluateTQuery(query);
     }
-    
+
     public TupleQueryResult getLexicalSenseVarTrans(String lexicalSenseID, boolean directRelations) throws ManagerException {
         String query = "";
         if (directRelations) {
             query = SparqlSelectData.DATA_LEXICAL_SENSE_DIRECT_VARTRANS.replace("[IRI]", "\\\"" + lexicalSenseID + "\\\"");
-        } else
-            query = SparqlSelectData.DATA_LEXICAL_SENSE_INDIRECT_VARTRANS.replace("[IRI]", "\\\"" + lexicalSenseID + "\\\"");;
+        } else {
+            query = SparqlSelectData.DATA_LEXICAL_SENSE_INDIRECT_VARTRANS.replace("[IRI]", "\\\"" + lexicalSenseID + "\\\"");
+        };
         return RDFQueryUtil.evaluateTQuery(query);
     }
-    
+
     public VarTransData addRelations(List<LinkedEntity> les, List<ReifiedRelation> rrs) {
         VarTransData vtd = new VarTransData();
         vtd.setDirectRelations(les);
@@ -410,8 +422,8 @@ public class LexiconDataManager implements Manager, Cached {
         String query = SparqlSelectData.DATA_COMPONENT.replace("[IRI]", "\\\"" + componentID + "\\\"");
         return RDFQueryUtil.evaluateTQuery(query);
     }
-    
-     public TupleQueryResult getCollocations(String id) throws ManagerException {
+
+    public TupleQueryResult getCollocations(String id) throws ManagerException {
         String query = SparqlSelectData.DATA_COLLOCATIONS.replace("_ID_", id);
         return RDFQueryUtil.evaluateTQuery(query);
     }
@@ -536,12 +548,12 @@ public class LexiconDataManager implements Manager, Cached {
         String query = SparqlSelectData.DATA_FORM_RESTRICTION.replace("_ID_", senseID);
         return RDFQueryUtil.evaluateTQuery(query);
     }
-    
+
     public TupleQueryResult getEtymology(String etymologyID) throws ManagerException {
         String query = SparqlSelectData.DATA_ETYMOLOGY.replace("[IRI]", "\\\"" + etymologyID + "\\\"");
         return RDFQueryUtil.evaluateTQuery(query);
     }
-    
+
     public TupleQueryResult getDictEntryComponents(String id) throws ManagerException {
         String query = SparqlSelectData.DATA_DICT_ENTRY_COMPONENTS.replace("_ID_", id);
         return RDFQueryUtil.evaluateTQuery(query);
@@ -568,6 +580,10 @@ public class LexiconDataManager implements Manager, Cached {
         }
     }
 
+    public TupleQueryResult getMetadata(String id) {
+        return RDFQueryUtil.evaluateTQuery(SparqlSelectStatistics.METADATA.replace("_ID_", id));
+    }
+
     public TupleQueryResult getImages(String lexicalEntityID) {
         String query = SparqlSelectData.DATA_IMAGES.replaceAll("_LEID_", lexicalEntityID);
         return RDFQueryUtil.evaluateTQuery(query);
@@ -575,7 +591,9 @@ public class LexiconDataManager implements Manager, Cached {
 
     public TupleQueryResult getFilterdLexicalConcepts(LexicalConceptFilter lcf) throws ManagerException {
         Manager.validateWithEnum("field", LexicalConceptSearchFilter.class, lcf.getLabelType());
-        if (lcf.getSearchMode().isEmpty()) lcf.setSearchMode("equals");
+        if (lcf.getSearchMode().isEmpty()) {
+            lcf.setSearchMode("equals");
+        }
         String filter = createFilter(lcf);
         int limit = lcf.getLimit();
         int offset = lcf.getOffset();

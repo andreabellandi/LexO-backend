@@ -5,6 +5,8 @@
  */
 package it.cnr.ilc.lexo.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -14,8 +16,11 @@ import it.cnr.ilc.lexo.manager.ManagerException;
 import it.cnr.ilc.lexo.manager.ManagerFactory;
 import it.cnr.ilc.lexo.service.data.RepositoryData;
 import it.cnr.ilc.lexo.util.LogUtil;
+import it.cnr.ilc.lexo.util.RDFQueryUtil;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Iterator;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -25,8 +30,12 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.apache.log4j.Level;
+import org.eclipse.rdf4j.model.Namespace;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
  *
@@ -39,6 +48,14 @@ public class Configuration extends Service {
     private final ConfigurationManager configManager = ManagerFactory.getManager(ConfigurationManager.class);
     private final String repositoryID = LexOProperties.getProperty("GraphDb.repository");
 
+     private void userCheck(String key) throws AuthorizationException, ServiceException {
+        if (LexOProperties.getProperty("keycloack.freeViewer") != null) {
+            if (!LexOProperties.getProperty("keycloack.freeViewer").equals("true")) {
+                checkKey(key);
+            }
+        }
+    }
+     
     @POST
     @Path("create")
     @Produces(MediaType.APPLICATION_JSON)
@@ -206,6 +223,48 @@ public class Configuration extends Service {
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
 
+    }
+    
+    @GET
+    @Path("namespaces")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "/namespaces",
+            produces = "application/json; charset=UTF-8")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    @ApiOperation(value = "Namepsaces repository",
+            notes = "This method returns all the namespaces definined in the repository")
+    public Response namespaces(@HeaderParam("Authorization") String key) {
+        try {
+            userCheck(key);
+            log(org.apache.log4j.Level.INFO, "repository/namespaces");
+            String json = "";
+            try {
+                Iterator<Namespace> nsit = RDFQueryUtil.getNamespaces().iterator();
+                ArrayList<it.cnr.ilc.lexo.service.data.lexicon.output.Namespace> nsList = new ArrayList();
+                while (nsit.hasNext()) {
+                    Namespace ns = nsit.next();
+                    it.cnr.ilc.lexo.service.data.lexicon.output.Namespace _ns = new it.cnr.ilc.lexo.service.data.lexicon.output.Namespace();
+                    _ns.setBase(ns.getName());
+                    _ns.setPrefix(ns.getPrefix());
+                    nsList.add(_ns);
+                }
+                json = new ObjectMapper().writeValueAsString(nsList);
+            } catch (JsonProcessingException ex) {
+                log(org.apache.log4j.Level.ERROR, "repository/namespaces: " + ex.getMessage());
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            }
+            return Response.ok(json)
+                    .type(MediaType.TEXT_PLAIN)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
+        } catch (AuthorizationException | ServiceException ex) {
+            log(org.apache.log4j.Level.ERROR, ex.getMessage());
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        }
     }
     
 //    @GET

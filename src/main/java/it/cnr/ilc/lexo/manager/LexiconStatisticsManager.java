@@ -48,10 +48,6 @@ public final class LexiconStatisticsManager implements Manager, Cached {
         return RDFQueryUtil.evaluateTQuery(SparqlSelectStatistics.STATISTICS_TYPES);
     }
 
-    public TupleQueryResult getMetadata(String id) {
-        return RDFQueryUtil.evaluateTQuery(SparqlSelectStatistics.METADATA.replace("_ID_", id));
-    }
-
     public TupleQueryResult getPos() {
 //        TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL, SparqlSelectStatistics.STATISTICS_POS);
         return RDFQueryUtil.evaluateTQuery(SparqlSelectStatistics.STATISTICS_POS);

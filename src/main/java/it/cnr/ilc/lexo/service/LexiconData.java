@@ -49,6 +49,7 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalSenseCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalSenseItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LinkedEntity;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LinkedEntityByBibliography;
+import it.cnr.ilc.lexo.service.data.lexicon.output.Metadata;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ReifiedRelation;
 import it.cnr.ilc.lexo.service.helper.BibliographyHelper;
 import it.cnr.ilc.lexo.service.helper.BibliographyListHelper;
@@ -82,6 +83,7 @@ import it.cnr.ilc.lexo.service.helper.LexicalSenseCoreHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalSenseFilterHelper;
 import it.cnr.ilc.lexo.service.helper.LinkedEntityByBibliographyHelper;
 import it.cnr.ilc.lexo.service.helper.LinkedEntityHelper;
+import it.cnr.ilc.lexo.service.helper.MetadataHelper;
 import it.cnr.ilc.lexo.service.helper.VarTransDataHelper;
 import it.cnr.ilc.lexo.sparql.SparqlVariable;
 import it.cnr.ilc.lexo.util.EnumUtil;
@@ -159,6 +161,7 @@ public class LexiconData extends Service {
     private final ConceptSetHelper conceptSetHelper = new ConceptSetHelper();
     private final SKOSManager skosManager = ManagerFactory.getManager(SKOSManager.class);
     private final VarTransDataHelper varTransDataHelper = new VarTransDataHelper();
+    private final MetadataHelper metadataHelper = new MetadataHelper();
 
     private void userCheck(String key) throws AuthorizationException, ServiceException {
         if (LexOProperties.getProperty("keycloack.freeViewer") != null) {
@@ -1367,6 +1370,40 @@ public class LexiconData extends Service {
         } catch (IOException ex) {
             log(Level.ERROR, ex.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        }
+    }
+    
+    @GET
+    @Path("metadata")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "/metadata",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Lexical entity metadata",
+            notes = "This method returns the lexical entity metadata")
+        
+    public Response metadata(@HeaderParam("Authorization") String key,
+            @ApiParam(
+                    name = "id",
+                    value = "lexical entity ID",
+                    required = true)
+            @QueryParam("id") String id) {
+        try {
+            userCheck(key);
+            String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
+            log(org.apache.log4j.Level.INFO, "statistics/lexicon/metadata of " + _id);
+            TupleQueryResult _metadata = lexiconManager.getMetadata(_id);
+            Metadata metadata = metadataHelper.newData(_metadata);
+            String json = metadataHelper.toJson(metadata);
+            return Response.ok(json)
+                    .type(MediaType.TEXT_PLAIN)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
+        } catch (AuthorizationException | ServiceException | UnsupportedEncodingException ex) {
+            log(org.apache.log4j.Level.ERROR, ex.getMessage());
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }
     }
 
