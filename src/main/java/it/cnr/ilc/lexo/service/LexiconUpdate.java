@@ -45,7 +45,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * @author andreabellandi
  */
 @Path("lexicon/update")
-@Api("Lexicon update")
+@Api("Update")
 public class LexiconUpdate extends Service {
 
     private final LexiconUpdateManager lexiconManager = ManagerFactory.getManager(LexiconUpdateManager.class);

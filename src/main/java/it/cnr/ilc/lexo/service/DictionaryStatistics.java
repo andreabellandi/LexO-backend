@@ -5,34 +5,21 @@
  */
 package it.cnr.ilc.lexo.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import it.cnr.ilc.lexo.LexOProperties;
 import it.cnr.ilc.lexo.manager.DictionaryStatisticsManager;
-import it.cnr.ilc.lexo.manager.LexiconStatisticsManager;
 import it.cnr.ilc.lexo.manager.ManagerFactory;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Counting;
-import it.cnr.ilc.lexo.service.data.lexicon.output.Metadata;
 import it.cnr.ilc.lexo.service.helper.CountingHelper;
 import it.cnr.ilc.lexo.service.helper.MetadataHelper;
-import it.cnr.ilc.lexo.util.RDFQueryUtil;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.eclipse.rdf4j.model.Namespace;
 import org.eclipse.rdf4j.query.TupleQueryResult;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,8 +31,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  *
  * @author andreabellandi
  */
-@Path("dictionary/statistics")
-@Api("Dictionary statistics")
+@Path("statistics/dictionary")
+@Api("Statistics")
 public class DictionaryStatistics extends Service {
 
     private final DictionaryStatisticsManager dictionaryManager = ManagerFactory.getManager(DictionaryStatisticsManager.class);
@@ -74,7 +61,7 @@ public class DictionaryStatistics extends Service {
     public Response status(@HeaderParam("Authorization") String key) {
         try {
             userCheck(key);
-            log(org.apache.log4j.Level.INFO, "dictionary/statistics/status");
+            log(org.apache.log4j.Level.INFO, "statistics/dictionary/status");
             TupleQueryResult dictionaryEntryStates = dictionaryManager.getStates();
             List<Counting> status = countingHelper.newDataList(dictionaryEntryStates);
             String json = countingHelper.toJson(status);
@@ -103,7 +90,7 @@ public class DictionaryStatistics extends Service {
     public Response authors(@HeaderParam("Authorization") String key) {
         try {
             userCheck(key);
-            log(org.apache.log4j.Level.INFO, "dictionary/statistics/authors");
+            log(org.apache.log4j.Level.INFO, "statistics/dictionary/authors");
             TupleQueryResult dictionaryEntryAuthors = dictionaryManager.getAuthors();
             List<Counting> authors = countingHelper.newDataList(dictionaryEntryAuthors);
             String json = countingHelper.toJson(authors);
@@ -132,7 +119,7 @@ public class DictionaryStatistics extends Service {
     public Response languages(@HeaderParam("Authorization") String key) {
         try {
             userCheck(key);
-            log(org.apache.log4j.Level.INFO, "dictionary/statistics/languages");
+            log(org.apache.log4j.Level.INFO, "statistics/dictionary/languages");
             TupleQueryResult languages = dictionaryManager.getLanguages();
             List<Counting> langs = countingHelper.newDataList(languages);
             String json = countingHelper.toJson(langs);
@@ -161,7 +148,7 @@ public class DictionaryStatistics extends Service {
     public Response pos(@HeaderParam("Authorization") String key) {
 //        try {
 //            userCheck(key);
-//            log(org.apache.log4j.Level.INFO, "dictionary/statistics/pos");
+//            log(org.apache.log4j.Level.INFO, "statistics/dictionary/pos");
 //            TupleQueryResult _pos = dictionaryManager.getPos();
 //            List<Counting> pos = countingHelper.newDataList(_pos);
 //            String json = countingHelper.toJson(pos);

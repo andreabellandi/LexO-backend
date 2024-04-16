@@ -118,7 +118,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * @author andreabellandi
  */
 @Path("lexicon/data")
-@Api("Lexicon data")
+@Api("Data")
 public class LexiconData extends Service {
 
     private static final Logger logger = LoggerFactory.getLogger(LexiconData.class);

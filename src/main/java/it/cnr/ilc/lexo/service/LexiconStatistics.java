@@ -43,8 +43,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  *
  * @author andreabellandi
  */
-@Path("lexicon/statistics")
-@Api("Lexicon statistics")
+@Path("statistics/lexicon")
+@Api("Statistics")
 public class LexiconStatistics extends Service {
 
     private final LexiconStatisticsManager lexiconManager = ManagerFactory.getManager(LexiconStatisticsManager.class);
@@ -72,7 +72,7 @@ public class LexiconStatistics extends Service {
     public Response types(@HeaderParam("Authorization") String key) {
         try {
             userCheck(key);
-            log(org.apache.log4j.Level.INFO, "lexicon/statistics/types");
+            log(org.apache.log4j.Level.INFO, "statistics/lexicon/types");
             TupleQueryResult lexicalEntryTypes = lexiconManager.getTypes();
             List<Counting> types = countingHelper.newDataList(lexicalEntryTypes);
             String json = countingHelper.toJson(types);
@@ -101,7 +101,7 @@ public class LexiconStatistics extends Service {
     public Response status(@HeaderParam("Authorization") String key) {
         try {
             userCheck(key);
-            log(org.apache.log4j.Level.INFO, "lexicon/statistics/status");
+            log(org.apache.log4j.Level.INFO, "statistics/lexicon/status");
             TupleQueryResult lexicalEntryStates = lexiconManager.getStates();
             List<Counting> status = countingHelper.newDataList(lexicalEntryStates);
             String json = countingHelper.toJson(status);
@@ -130,7 +130,7 @@ public class LexiconStatistics extends Service {
     public Response authors(@HeaderParam("Authorization") String key) {
         try {
             userCheck(key);
-            log(org.apache.log4j.Level.INFO, "lexicon/statistics/authors");
+            log(org.apache.log4j.Level.INFO, "statistics/lexicon/authors");
             TupleQueryResult lexicalEntryAuthors = lexiconManager.getAuthors();
             List<Counting> authors = countingHelper.newDataList(lexicalEntryAuthors);
             String json = countingHelper.toJson(authors);
@@ -159,7 +159,7 @@ public class LexiconStatistics extends Service {
     public Response languages(@HeaderParam("Authorization") String key) {
         try {
             userCheck(key);
-            log(org.apache.log4j.Level.INFO, "lexicon/statistics/languages");
+            log(org.apache.log4j.Level.INFO, "statistics/lexicon/languages");
             TupleQueryResult languages = lexiconManager.getLanguages();
             List<Counting> langs = countingHelper.newDataList(languages);
             String json = countingHelper.toJson(langs);
@@ -188,7 +188,7 @@ public class LexiconStatistics extends Service {
     public Response pos(@HeaderParam("Authorization") String key) {
         try {
             userCheck(key);
-            log(org.apache.log4j.Level.INFO, "lexicon/statistics/pos");
+            log(org.apache.log4j.Level.INFO, "statistics/lexicon/pos");
             TupleQueryResult _pos = lexiconManager.getPos();
             List<Counting> pos = countingHelper.newDataList(_pos);
             String json = countingHelper.toJson(pos);
@@ -217,7 +217,7 @@ public class LexiconStatistics extends Service {
     public Response namespaces(@HeaderParam("Authorization") String key) {
         try {
             userCheck(key);
-            log(org.apache.log4j.Level.INFO, "lexicon/statistics/namespaces");
+            log(org.apache.log4j.Level.INFO, "statistics/lexicon/namespaces");
             String json = "";
             try {
                 Iterator<Namespace> nsit = RDFQueryUtil.getNamespaces().iterator();
@@ -264,7 +264,7 @@ public class LexiconStatistics extends Service {
         try {
             userCheck(key);
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
-            log(org.apache.log4j.Level.INFO, "lexicon/statistics/metadata of " + _id);
+            log(org.apache.log4j.Level.INFO, "statistics/lexicon/metadata of " + _id);
             TupleQueryResult _metadata = lexiconManager.getMetadata(_id);
             Metadata metadata = metadataHelper.newData(_metadata);
             String json = metadataHelper.toJson(metadata);

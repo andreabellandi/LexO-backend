@@ -69,7 +69,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * @author andreabellandi
  */
 @Path("lexicon/creation")
-@Api("Lexicon creation")
+@Api("Creation")
 public class LexiconCreation extends Service {
 
     private final LexiconCreationManager lexiconManager = ManagerFactory.getManager(LexiconCreationManager.class);
