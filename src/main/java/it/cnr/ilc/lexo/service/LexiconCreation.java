@@ -68,7 +68,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  *
  * @author andreabellandi
  */
-@Path("lexicon/creation")
+@Path("create")
 @Api("Creation")
 public class LexiconCreation extends Service {
 
@@ -136,7 +136,7 @@ public class LexiconCreation extends Service {
             @QueryParam("baseIRI") String baseIRI) {
         try {
             checkKey(key);
-            log(Level.INFO, "lexicon/creation/dictionary: lang=" + lang);
+            log(Level.INFO, "create/dictionary: lang=" + lang);
             UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
             utilityManager.validateNamespace(prefix, baseIRI);
             if (utilityManager.dictionaryLanguageExists(lang)) {
@@ -152,23 +152,23 @@ public class LexiconCreation extends Service {
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
         } catch (ManagerException ex) {
-            log(Level.ERROR, "lexicon/creation/dictionary: " + ex.getMessage());
+            log(Level.ERROR, "create/dictionary: " + ex.getMessage());
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         } catch (AuthorizationException | ServiceException ex) {
-            log(Level.ERROR, "lexicon/creation/dictionary: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            log(Level.ERROR, "create/dictionary: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
 
     @GET
-    @Path("language")
+    @Path("lexicon/language")
     @Produces(MediaType.APPLICATION_JSON)
     @RequestMapping(
             method = RequestMethod.GET,
-            value = "language",
+            value = "lexicon/language",
             produces = "application/json; charset=UTF-8")
-    @ApiOperation(value = "Language creation",
-            notes = "This method creates a new language and returns its id and some metadata")
+    @ApiOperation(value = "Lexicon language creation",
+            notes = "This method creates a new lexicon language and returns its id and some metadata")
     public Response language(
             @HeaderParam("Authorization") String key,
             @ApiParam(
@@ -203,7 +203,7 @@ public class LexiconCreation extends Service {
             @QueryParam("baseIRI") String baseIRI) {
         try {
             checkKey(key);
-            log(Level.INFO, "lexicon/creation/language: lang=" + lang);
+            log(Level.INFO, "create/lexicon/language: lang=" + lang);
             UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
             utilityManager.validateNamespace(prefix, baseIRI);
             if (utilityManager.languageExists(lang)) {
@@ -219,10 +219,10 @@ public class LexiconCreation extends Service {
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
         } catch (ManagerException ex) {
-            log(Level.ERROR, "lexicon/creation/language: " + ex.getMessage());
+            log(Level.ERROR, "create/lexicon/language: " + ex.getMessage());
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         } catch (AuthorizationException | ServiceException ex) {
-            log(Level.ERROR, "lexicon/creation/language: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            log(Level.ERROR, "create/lexicon/language: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
 
@@ -265,7 +265,7 @@ public class LexiconCreation extends Service {
             @QueryParam("baseIRI") String baseIRI) {
         try {
             checkKey(key);
-            log(Level.INFO, "lexicon/creation/lexicalEntry");
+            log(Level.INFO, "create/lexicalEntry");
             UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
             utilityManager.validateNamespace(prefix, baseIRI);
             LexicalEntryCore lec = lexiconManager.createLexicalEntry(author, prefix, baseIRI, desiredID);
@@ -277,10 +277,10 @@ public class LexiconCreation extends Service {
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
         } catch (ManagerException ex) {
-            log(Level.ERROR, "lexicon/creation/lexicalEntry: " + ex.getMessage());
+            log(Level.ERROR, "create/lexicalEntry: " + ex.getMessage());
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         } catch (AuthorizationException | ServiceException ex) {
-            log(Level.ERROR, "lexicon/creation/lexicalEntry: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            log(Level.ERROR, "create/lexicalEntry: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
@@ -322,7 +322,7 @@ public class LexiconCreation extends Service {
             @QueryParam("baseIRI") String baseIRI) {
         try {
             checkKey(key);
-            log(Level.INFO, "lexicon/creation/dictionaryEntry");
+            log(Level.INFO, "create/dictionaryEntry");
             UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
             utilityManager.validateNamespace(prefix, baseIRI);
             DictionaryEntryComponent dec = lexiconManager.createDictionaryEntry(author, prefix, baseIRI, desiredID);
@@ -334,10 +334,10 @@ public class LexiconCreation extends Service {
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
         } catch (ManagerException ex) {
-            log(Level.ERROR, "lexicon/creation/dictionaryEntry: " + ex.getMessage());
+            log(Level.ERROR, "create/dictionaryEntry: " + ex.getMessage());
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         } catch (AuthorizationException | ServiceException ex) {
-            log(Level.ERROR, "lexicon/creation/dictionaryEntry: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            log(Level.ERROR, "create/dictionaryEntry: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
@@ -382,7 +382,7 @@ public class LexiconCreation extends Service {
                     required = true)
             @QueryParam("baseIRI") String baseIRI) {
         try {
-            log(Level.INFO, "lexicon/creation/form of the lexical entry: " + URLDecoder.decode(lexicalEntryID, StandardCharsets.UTF_8.name()));
+            log(Level.INFO, "create/form of the lexical entry: " + URLDecoder.decode(lexicalEntryID, StandardCharsets.UTF_8.name()));
             checkKey(key);
 //            if (checkPermissions(UserRightManager.Operation.WRITE)) {
             String _lexicalEntryID = URLDecoder.decode(lexicalEntryID, StandardCharsets.UTF_8.name());
@@ -390,12 +390,12 @@ public class LexiconCreation extends Service {
                 UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
                 utilityManager.validateNamespace(prefix, baseIRI);
                 if (!utilityManager.isLexicalEntry(_lexicalEntryID)) {
-                    log(Level.ERROR, "lexicon/creation/form: " + "IRI " + _lexicalEntryID + " does not exist");
+                    log(Level.ERROR, "create/form: " + "IRI " + _lexicalEntryID + " does not exist");
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _lexicalEntryID + " does not exist").build();
                 }
                 String lang = utilityManager.getLanguage(_lexicalEntryID);
                 if (lang == null) {
-                    log(Level.ERROR, "lexicon/creation/form: form cannot be created: the lexical entry language must be set first");
+                    log(Level.ERROR, "create/form: form cannot be created: the lexical entry language must be set first");
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("form cannot be created: the lexical entry language must be set first").build();
                 }
                 FormCore fc = lexiconManager.createForm(_lexicalEntryID, getUser(author), lang, prefix, baseIRI, desiredID);
@@ -407,18 +407,18 @@ public class LexiconCreation extends Service {
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
             } catch (ManagerException ex) {
-                log(Level.ERROR, "lexicon/creation/form: " + ex.getMessage());
+                log(Level.ERROR, "create/form: " + ex.getMessage());
                 return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
             }
 //            } else {
-//                log(Level.ERROR, "lexicon/creation/form: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+//                log(Level.ERROR, "create/form: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
 //                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
 //            }
         } catch (UnsupportedEncodingException ex) {
-            log(Level.ERROR, "lexicon/creation/form: " + ex.getMessage());
+            log(Level.ERROR, "create/form: " + ex.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         } catch (AuthorizationException | ServiceException ex) {
-            log(Level.ERROR, "lexicon/creation/form: " + ex.getMessage());
+            log(Level.ERROR, "create/form: " + ex.getMessage());
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }
     }
@@ -466,7 +466,7 @@ public class LexiconCreation extends Service {
             @QueryParam("baseIRI") String baseIRI) {
         try {
             checkKey(key);
-            log(Level.INFO, "lexicon/creation/lexicalSense of the lexical entry: " + URLDecoder.decode(lexicalEntryID, StandardCharsets.UTF_8.name()));
+            log(Level.INFO, "create/lexicalSense of the lexical entry: " + URLDecoder.decode(lexicalEntryID, StandardCharsets.UTF_8.name()));
             String _lexicalEntryID = URLDecoder.decode(lexicalEntryID, StandardCharsets.UTF_8.name());
             try {
                 UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
@@ -483,14 +483,14 @@ public class LexiconCreation extends Service {
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
             } catch (ManagerException ex) {
-                log(Level.ERROR, "lexicon/creation/lexicalSense: " + ex.getMessage());
+                log(Level.ERROR, "create/lexicalSense: " + ex.getMessage());
                 return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
             }
         } catch (UnsupportedEncodingException ex) {
-            log(Level.ERROR, "lexicon/creation/lexicalSense: " + ex.getMessage());
+            log(Level.ERROR, "create/lexicalSense: " + ex.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         } catch (AuthorizationException | ServiceException ex) {
-            log(Level.ERROR, "lexicon/creation/bibliography: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            log(Level.ERROR, "create/bibliography: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
@@ -537,13 +537,13 @@ public class LexiconCreation extends Service {
             @QueryParam("baseIRI") String baseIRI) {
         try {
             checkKey(key);
-            log(Level.INFO, "lexicon/creation/component of the lexical entry: " + URLDecoder.decode(id, StandardCharsets.UTF_8.name()));
+            log(Level.INFO, "create/component of the lexical entry: " + URLDecoder.decode(id, StandardCharsets.UTF_8.name()));
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
             try {
                 UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
                 utilityManager.validateNamespace(prefix, baseIRI);
                 if (!utilityManager.isLexicalEntryOrComponent(_id)) {
-                    log(Level.ERROR, "lexicon/creation/component: " + "IRI " + _id + " is not neither a lexical entry nor a component");
+                    log(Level.ERROR, "create/component: " + "IRI " + _id + " is not neither a lexical entry nor a component");
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " is not neither a lexical entry nor a component").build();
                 }
                 Component comp = lexiconManager.createComponent(_id, author, prefix, baseIRI, desiredID);
@@ -555,14 +555,14 @@ public class LexiconCreation extends Service {
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
             } catch (ManagerException ex) {
-                log(Level.ERROR, "lexicon/creation/component: " + ex.getMessage());
+                log(Level.ERROR, "create/component: " + ex.getMessage());
                 return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
             }
         } catch (UnsupportedEncodingException ex) {
-            log(Level.ERROR, "lexicon/creation/component: " + ex.getMessage());
+            log(Level.ERROR, "create/component: " + ex.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         } catch (AuthorizationException | ServiceException ex) {
-            log(Level.ERROR, "lexicon/creation/component: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            log(Level.ERROR, "create/component: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
@@ -609,13 +609,13 @@ public class LexiconCreation extends Service {
             @QueryParam("baseIRI") String baseIRI) {
         try {
             checkKey(key);
-            log(Level.INFO, "lexicon/creation/collocation having the following lexical entity as head: " + URLDecoder.decode(id, StandardCharsets.UTF_8.name()));
+            log(Level.INFO, "create/collocation having the following lexical entity as head: " + URLDecoder.decode(id, StandardCharsets.UTF_8.name()));
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
             try {
                 UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
                 utilityManager.validateNamespace(prefix, baseIRI);
                 if (!utilityManager.isAdmissibleHeadOfCollocation(_id)) {
-                    log(Level.ERROR, "lexicon/creation/collocation: " + "IRI " + _id + " is not an admissible head of collocation");
+                    log(Level.ERROR, "create/collocation: " + "IRI " + _id + " is not an admissible head of collocation");
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " is not an admissible head of collocation").build();
                 }
                 Collocation col = lexiconManager.createCollocation(_id, author, prefix, baseIRI, desiredID);
@@ -627,14 +627,14 @@ public class LexiconCreation extends Service {
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
             } catch (ManagerException ex) {
-                log(Level.ERROR, "lexicon/creation/collocation: " + ex.getMessage());
+                log(Level.ERROR, "create/collocation: " + ex.getMessage());
                 return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
             }
         } catch (UnsupportedEncodingException ex) {
-            log(Level.ERROR, "lexicon/creation/collocation: " + ex.getMessage());
+            log(Level.ERROR, "create/collocation: " + ex.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         } catch (AuthorizationException | ServiceException ex) {
-            log(Level.ERROR, "lexicon/creation/collocation: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            log(Level.ERROR, "create/collocation: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
@@ -682,18 +682,18 @@ public class LexiconCreation extends Service {
             @QueryParam("baseIRI") String baseIRI) {
         try {
             checkKey(key);
-            log(Level.INFO, "lexicon/creation/etymology of the lexical entry: " + URLDecoder.decode(lexicalEntryID, StandardCharsets.UTF_8.name()));
+            log(Level.INFO, "create/etymology of the lexical entry: " + URLDecoder.decode(lexicalEntryID, StandardCharsets.UTF_8.name()));
             String _lexicalEntryID = URLDecoder.decode(lexicalEntryID, StandardCharsets.UTF_8.name());
             try {
                 UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
                 utilityManager.validateNamespace(prefix, baseIRI);
                 if (!utilityManager.isLexicalEntry(_lexicalEntryID)) {
-                    log(Level.ERROR, "lexicon/creation/etymology: " + "IRI " + _lexicalEntryID + " does not exist");
+                    log(Level.ERROR, "create/etymology: " + "IRI " + _lexicalEntryID + " does not exist");
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _lexicalEntryID + " does not exist").build();
                 }
                 String label = utilityManager.getLabel(_lexicalEntryID);
                 if (label == null) {
-                    log(Level.ERROR, "lexicon/creation/etymology: " + "etymology cannot be created: the lexical entry label is not definied");
+                    log(Level.ERROR, "create/etymology: " + "etymology cannot be created: the lexical entry label is not definied");
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("etymology cannot be created: the lexical entry label is not definied").build();
                 }
                 Etymology e = lexiconManager.createEtymology(_lexicalEntryID, author, label, prefix, baseIRI, desiredID);
@@ -705,14 +705,14 @@ public class LexiconCreation extends Service {
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
             } catch (ManagerException ex) {
-                log(Level.ERROR, "lexicon/creation/etymology: " + ex.getMessage());
+                log(Level.ERROR, "create/etymology: " + ex.getMessage());
                 return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
             }
         } catch (UnsupportedEncodingException ex) {
-            log(Level.ERROR, "lexicon/creation/etymology: " + ex.getMessage());
+            log(Level.ERROR, "create/etymology: " + ex.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         } catch (AuthorizationException | ServiceException ex) {
-            log(Level.ERROR, "lexicon/creation/etymology: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            log(Level.ERROR, "create/etymology: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
@@ -765,23 +765,23 @@ public class LexiconCreation extends Service {
             @QueryParam("baseIRI") String baseIRI) {
         try {
             checkKey(key);
-            log(Level.INFO, "lexicon/creation/etymologicalLink of the lexical entry: " + URLDecoder.decode(lexicalEntryID, StandardCharsets.UTF_8.name()));
+            log(Level.INFO, "create/etymologicalLink of the lexical entry: " + URLDecoder.decode(lexicalEntryID, StandardCharsets.UTF_8.name()));
             String _lexicalEntryID = URLDecoder.decode(lexicalEntryID, StandardCharsets.UTF_8.name());
             try {
                 UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
                 utilityManager.validateNamespace(prefix, baseIRI);
                 if (!utilityManager.isLexicalEntry(_lexicalEntryID)) {
-                    log(Level.ERROR, "lexicon/creation/etymologicalLink: " + "IRI " + _lexicalEntryID + " does not exist");
+                    log(Level.ERROR, "create/etymologicalLink: " + "IRI " + _lexicalEntryID + " does not exist");
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _lexicalEntryID + " does not exist").build();
                 }
                 String label = utilityManager.getLabel(_lexicalEntryID);
                 if (label == null) {
-                    log(Level.ERROR, "lexicon/creation/etymologicalLink: " + "etymology cannot be created: the lexical entry label is not definied");
+                    log(Level.ERROR, "create/etymologicalLink: " + "etymology cannot be created: the lexical entry label is not definied");
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("etymology cannot be created: the lexical entry label is not definied").build();
                 }
                 String _etymologyID = URLDecoder.decode(etymologyID, StandardCharsets.UTF_8.name());
                 if (!utilityManager.isEtymology(_etymologyID)) {
-                    log(Level.ERROR, "lexicon/creation/etymologicalLink: " + "IRI " + _etymologyID + " does not exist");
+                    log(Level.ERROR, "create/etymologicalLink: " + "IRI " + _etymologyID + " does not exist");
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _etymologyID + " does not exist").build();
                 }
                 EtymologicalLink el = lexiconManager.createEtymologicalLink(_lexicalEntryID, author, _etymologyID, prefix, baseIRI, desiredID);
@@ -793,14 +793,14 @@ public class LexiconCreation extends Service {
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
             } catch (ManagerException ex) {
-                log(Level.ERROR, "lexicon/creation/etymologicalLink: " + ex.getMessage());
+                log(Level.ERROR, "create/etymologicalLink: " + ex.getMessage());
                 return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
             }
         } catch (UnsupportedEncodingException ex) {
-            log(Level.ERROR, "lexicon/creation/etymologicalLink: " + ex.getMessage());
+            log(Level.ERROR, "create/etymologicalLink: " + ex.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         } catch (AuthorizationException | ServiceException ex) {
-            log(Level.ERROR, "lexicon/creation/etymologicalLink: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            log(Level.ERROR, "create/etymologicalLink: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
@@ -850,13 +850,13 @@ public class LexiconCreation extends Service {
 
         try {
             checkKey(key);
-            log(Level.INFO, "lexicon/creation/bibliography of the entity: " + URLDecoder.decode(id, StandardCharsets.UTF_8.name()));
+            log(Level.INFO, "create/bibliography of the entity: " + URLDecoder.decode(id, StandardCharsets.UTF_8.name()));
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
             try {
                 UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
                 utilityManager.validateNamespace(prefix, baseIRI);
                 if ((bibliography.getId() == null || bibliography.getId().isEmpty())) {
-                    log(Level.ERROR, "lexicon/creation/bibliography: " + "id of bibliography must be defined");
+                    log(Level.ERROR, "create/bibliography: " + "id of bibliography must be defined");
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("id of bibliography must be defined").build();
                 }
                 BibliographicItem bi = bibliographyManager.createBibliographyReference(_id, author, bibliography, prefix, baseIRI, desiredID);
@@ -868,14 +868,14 @@ public class LexiconCreation extends Service {
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
             } catch (ManagerException ex) {
-                log(Level.ERROR, "lexicon/creation/bibliography: " + ex.getMessage());
+                log(Level.ERROR, "create/bibliography: " + ex.getMessage());
                 return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
             }
         } catch (UnsupportedEncodingException ex) {
-            log(Level.ERROR, "lexicon/creation/bibliography: " + ex.getMessage());
+            log(Level.ERROR, "create/bibliography: " + ex.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         } catch (AuthorizationException | ServiceException ex) {
-            log(Level.ERROR, "lexicon/creation/bibliography: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            log(Level.ERROR, "create/bibliography: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
 
@@ -918,7 +918,7 @@ public class LexiconCreation extends Service {
             @QueryParam("baseIRI") String baseIRI) {
         try {
             checkKey(key);
-            log(Level.INFO, "lexicon/creation/lexicalConcept");
+            log(Level.INFO, "create/lexicalConcept");
             UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
             utilityManager.validateNamespace(prefix, baseIRI);
             LexicalConcept lc = skosManager.createLexicalConcept(author, prefix, baseIRI, desiredID);
@@ -930,10 +930,10 @@ public class LexiconCreation extends Service {
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
         } catch (ManagerException ex) {
-            log(Level.ERROR, "lexicon/creation/lexicalConcept: " + ex.getMessage());
+            log(Level.ERROR, "create/lexicalConcept: " + ex.getMessage());
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         } catch (AuthorizationException | ServiceException ex) {
-            log(Level.ERROR, "lexicon/creation/lexicalConcept: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            log(Level.ERROR, "create/lexicalConcept: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
@@ -975,7 +975,7 @@ public class LexiconCreation extends Service {
             @QueryParam("baseIRI") String baseIRI) {
         try {
             checkKey(key);
-            log(Level.INFO, "lexicon/creation/conceptSet");
+            log(Level.INFO, "create/conceptSet");
             UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
             utilityManager.validateNamespace(prefix, baseIRI);
             ConceptSet cs = skosManager.createConceptSet(author, prefix, baseIRI, desiredID);
@@ -987,10 +987,10 @@ public class LexiconCreation extends Service {
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
         } catch (ManagerException ex) {
-            log(Level.ERROR, "lexicon/creation/conceptSet: " + ex.getMessage());
+            log(Level.ERROR, "create/conceptSet: " + ex.getMessage());
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         } catch (AuthorizationException | ServiceException ex) {
-            log(Level.ERROR, "lexicon/creation/bibliography: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            log(Level.ERROR, "create/bibliography: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
@@ -1043,7 +1043,7 @@ public class LexiconCreation extends Service {
             @QueryParam("baseIRI") String baseIRI) {
         try {
             checkKey(key);
-            log(Level.INFO, "lexicon/creation/lexicoSemanticRelation of the lexical entity: " + URLDecoder.decode(id, StandardCharsets.UTF_8.name()));
+            log(Level.INFO, "create/lexicoSemanticRelation of the lexical entity: " + URLDecoder.decode(id, StandardCharsets.UTF_8.name()));
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
             String _type = URLDecoder.decode(type, StandardCharsets.UTF_8.name());
             try {
@@ -1058,14 +1058,14 @@ public class LexiconCreation extends Service {
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
             } catch (ManagerException ex) {
-                log(Level.ERROR, "lexicon/creation/lexicoSemanticRelation: " + ex.getMessage());
+                log(Level.ERROR, "create/lexicoSemanticRelation: " + ex.getMessage());
                 return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
             }
         } catch (UnsupportedEncodingException ex) {
-            log(Level.ERROR, "lexicon/creation/lexicoSemanticRelation: " + ex.getMessage());
+            log(Level.ERROR, "create/lexicoSemanticRelation: " + ex.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         } catch (AuthorizationException | ServiceException ex) {
-            log(Level.ERROR, "lexicon/creation/lexicoSemanticRelation: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            log(Level.ERROR, "create/lexicoSemanticRelation: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
@@ -1107,7 +1107,7 @@ public class LexiconCreation extends Service {
             @QueryParam("baseIRI") String baseIRI) {
         try {
             checkKey(key);
-            log(Level.INFO, "lexicon/creation/translationSet");
+            log(Level.INFO, "create/translationSet");
             try {
                 TranslationSet ts = lexiconManager.createTranslationSet(author, prefix, baseIRI, desiredID);
                 String json = translationSetHelper.toJson(ts);
@@ -1118,11 +1118,11 @@ public class LexiconCreation extends Service {
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
             } catch (ManagerException ex) {
-                log(Level.ERROR, "lexicon/creation/translationSet: " + ex.getMessage());
+                log(Level.ERROR, "create/translationSet: " + ex.getMessage());
                 return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
             }
         } catch (AuthorizationException | ServiceException ex) {
-            log(Level.ERROR, "lexicon/creation/translationSet: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            log(Level.ERROR, "create/translationSet: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
@@ -1169,7 +1169,7 @@ public class LexiconCreation extends Service {
             @QueryParam("baseIRI") String baseIRI) {
         try {
             checkKey(key);
-            log(Level.INFO, "lexicon/creation/formRestriction of the following lexical sense: " + URLDecoder.decode(id, StandardCharsets.UTF_8.name()));
+            log(Level.INFO, "create/formRestriction of the following lexical sense: " + URLDecoder.decode(id, StandardCharsets.UTF_8.name()));
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
             try {
                 UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
@@ -1184,14 +1184,14 @@ public class LexiconCreation extends Service {
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
             } catch (ManagerException ex) {
-                log(Level.ERROR, "lexicon/creation/formRestriction: " + ex.getMessage());
+                log(Level.ERROR, "create/formRestriction: " + ex.getMessage());
                 return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
             }
         } catch (UnsupportedEncodingException ex) {
-            log(Level.ERROR, "lexicon/creation/formRestriction: " + ex.getMessage());
+            log(Level.ERROR, "create/formRestriction: " + ex.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         } catch (AuthorizationException | ServiceException ex) {
-            log(Level.ERROR, "lexicon/creation/formRestriction: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            log(Level.ERROR, "create/formRestriction: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
 
@@ -1246,11 +1246,11 @@ public class LexiconCreation extends Service {
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
             } catch (ManagerException ex) {
-                log(Level.ERROR, "lexicon/creation/lexicographicComponent: " + ex.getMessage());
+                log(Level.ERROR, "create/lexicographicComponent: " + ex.getMessage());
                 return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
             }
         } catch (AuthorizationException | ServiceException ex) {
-            log(Level.ERROR, "lexicon/creation/lexicographicComponent: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            log(Level.ERROR, "create/lexicographicComponent: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }

@@ -39,7 +39,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  *
  * @author andreabellandi
  */
-@Path("lexicon/delete")
+@Path("delete")
 @Api("Deletion")
 public class LexiconDeletion extends Service {
 

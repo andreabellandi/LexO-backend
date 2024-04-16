@@ -44,7 +44,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  *
  * @author andreabellandi
  */
-@Path("lexicon/update")
+@Path("update")
 @Api("Update")
 public class LexiconUpdate extends Service {
 

@@ -117,7 +117,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  *
  * @author andreabellandi
  */
-@Path("lexicon/data")
+@Path("data")
 @Api("Data")
 public class LexiconData extends Service {
 
@@ -195,7 +195,7 @@ public class LexiconData extends Service {
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
             String json = "";
             if (module.equals(EnumUtil.LexicalAspects.Core.toString())) {
-                log(Level.INFO, "lexicon/data/lexicalEntry <" + _id + "> with module: " + module);
+                log(Level.INFO, "data/lexicalEntry <" + _id + "> with module: " + module);
                 TupleQueryResult lexicalEntry = lexiconManager.getLexicalEntry(_id);
                 List<LexicalEntryCore> _lec = lexicalEntryCoreHelper.newDataList(lexicalEntry);
                 LexicalEntryCore lec = lexiconManager.getLexicalEntityTypes(_lec);
@@ -204,7 +204,7 @@ public class LexiconData extends Service {
                 lexiconManager.addLexicalEntityLink(lec, links);
                 json = lexicalEntryCoreHelper.toJson(lec);
             } else if (module.equals(EnumUtil.LexicalAspects.VarTrans.toString())) {
-                log(Level.INFO, "lexicon/data/lexicalEntry <" + _id + "> with module: " + module);
+                log(Level.INFO, "data/lexicalEntry <" + _id + "> with module: " + module);
                 TupleQueryResult directRel = lexiconManager.getLexicalEntryVarTrans(_id, true);
                 List<LinkedEntity> le = directRelationHelper.newDataList(directRel);
                 TupleQueryResult indirectRel = lexiconManager.getLexicalEntryVarTrans(_id, false);
@@ -252,7 +252,7 @@ public class LexiconData extends Service {
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
             String json = "";
             if (module.equals(EnumUtil.LexicalAspects.Core.toString())) {
-                log(Level.INFO, "lexicon/data/form <" + _id + "> with module: " + module);
+                log(Level.INFO, "data/form <" + _id + "> with module: " + module);
                 TupleQueryResult form = lexiconManager.getForm(_id, module);
                 List<FormCore> fc = formCoreHelper.newDataList(form);
                 FormCore _fc = lexiconManager.getMorphologyInheritance(fc);
@@ -261,7 +261,7 @@ public class LexiconData extends Service {
                 lexiconManager.addLexicalEntityLink(_fc, links);
                 json = formCoreHelper.toJson(_fc);
             } else if (module.equals(EnumUtil.LexicalAspects.VarTrans.toString())) {
-                log(Level.INFO, "lexicon/data/form <" + _id + "> with module: " + module);
+                log(Level.INFO, "data/form <" + _id + "> with module: " + module);
                 TupleQueryResult directRel = lexiconManager.getFormVarTrans(_id, true);
                 List<LinkedEntity> le = directRelationHelper.newDataList(directRel);
                 TupleQueryResult indirectRel = lexiconManager.getFormVarTrans(_id, false);
@@ -283,7 +283,7 @@ public class LexiconData extends Service {
 //        try { 
 //            userCheck(key);
 //            String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
-//            log(Level.INFO, "lexicon/data/form <" + _id + "> with module: " + module);
+//            log(Level.INFO, "data/form <" + _id + "> with module: " + module);
 //            long start = System.currentTimeMillis();
 //            TupleQueryResult form = lexiconManager.getForm(_id, module);
 //            if (module.equals(EnumUtil.LexicalAspects.Core.toString())) {
@@ -334,7 +334,7 @@ public class LexiconData extends Service {
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
             String json = "";
             if (module.equals(EnumUtil.LexicalAspects.Core.toString())) {
-                log(Level.INFO, "lexicon/data/lexicalSense <" + _id + "> with module: " + module);
+                log(Level.INFO, "data/lexicalSense <" + _id + "> with module: " + module);
                 TupleQueryResult lexicalSense = lexiconManager.getLexicalSense(_id);
                 LexicalSenseCore lsc = lexicalSenseCoreHelper.newData(lexicalSense);
                 TupleQueryResult lexicalEntityLinks = lexiconManager.getLexicalEntityLinks(_id);
@@ -342,7 +342,7 @@ public class LexiconData extends Service {
                 lexiconManager.addLexicalEntityLink(lsc, links);
                 json = lexicalSenseCoreHelper.toJson(lsc);
             } else if (module.equals(EnumUtil.LexicalAspects.VarTrans.toString())) {
-                log(Level.INFO, "lexicon/data/lexicalSense <" + _id + "> with module: " + module);
+                log(Level.INFO, "data/lexicalSense <" + _id + "> with module: " + module);
                 TupleQueryResult directRel = lexiconManager.getLexicalSenseVarTrans(_id, true);
                 List<LinkedEntity> le = directRelationHelper.newDataList(directRel);
                 TupleQueryResult indirectRel = lexiconManager.getLexicalSenseVarTrans(_id, false);
@@ -382,7 +382,7 @@ public class LexiconData extends Service {
         try {
             userCheck(key);
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
-            log(Level.INFO, "lexicon/data/formRestriction of " + _id);
+            log(Level.INFO, "data/formRestriction of " + _id);
             TupleQueryResult restriction = lexiconManager.getFormRestriction(_id);
             FormRestriction fr = formRestrictionHelper.newData(restriction);
             String json = formRestrictionHelper.toJson(fr);
@@ -416,7 +416,7 @@ public class LexiconData extends Service {
         try {
             userCheck(key);
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
-            log(Level.INFO, "lexicon/data/etymology <" + _id + ">");
+            log(Level.INFO, "data/etymology <" + _id + ">");
             String json = "";
             TupleQueryResult etymology = lexiconManager.getEtymology(_id);
             if (etymology.hasNext()) {
@@ -459,11 +459,11 @@ public class LexiconData extends Service {
         try {
             userCheck(key);
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
-            log(Level.INFO, "lexicon/data/dictionaryEntryComponents: <" + _id + ">");
+            log(Level.INFO, "data/dictionaryEntryComponents: <" + _id + ">");
             UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
             if (!utilityManager.isDictEntryComponent(_id)) {
-                log(Level.ERROR, "lexicon/data/dictionaryEntryComponents: <" + _id + "> is not neither an Entry nor a Lexicographic component");
-                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("lexicon/data/dictionaryEntryComponents: <"
+                log(Level.ERROR, "data/dictionaryEntryComponents: <" + _id + "> is not neither an Entry nor a Lexicographic component");
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("data/dictionaryEntryComponents: <"
                         + _id + "> is not neither an Entry nor a Lexicographic component").build();
             }
             TupleQueryResult comps = lexiconManager.getDictEntryComponents(_id);
@@ -499,7 +499,7 @@ public class LexiconData extends Service {
         try {
             userCheck(key);
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
-            log(Level.INFO, "lexicon/data/component <" + _id + ">");
+            log(Level.INFO, "data/component <" + _id + ">");
             TupleQueryResult _comp = lexiconManager.getComponent(_id);
             Component comp = componentHelper.newData(_comp);
             String json = componentHelper.toJson(comp);
@@ -533,7 +533,7 @@ public class LexiconData extends Service {
         try {
             userCheck(key);
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
-            log(Level.INFO, "lexicon/data/collocations <" + _id + ">");
+            log(Level.INFO, "data/collocations <" + _id + ">");
             TupleQueryResult _colls = lexiconManager.getCollocations(_id);
             List<Collocation> colls = collocationHelper.newDataList(_colls);
             String json = collocationHelper.toJson(colls);
@@ -567,7 +567,7 @@ public class LexiconData extends Service {
         try {
             userCheck(key);
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
-            log(Level.INFO, "lexicon/data/lexicalConcept <" + _id + ">");
+            log(Level.INFO, "data/lexicalConcept <" + _id + ">");
             TupleQueryResult _lc = skosManager.getLexicalConcept(_id);
             LexicalConcept lc = lexicalConceptHelper.newData(_lc);
             lexiconManager.setDefaultLanguage(lc);
@@ -604,7 +604,7 @@ public class LexiconData extends Service {
     public Response languages(@HeaderParam("Authorization") String key) throws HelperException {
         try {
             userCheck(key);
-            log(Level.INFO, "lexicon/data/languages");
+            log(Level.INFO, "data/languages");
             TupleQueryResult languages = lexiconManager.getLexiconLanguages();
             List<Language> entries = languageHelper.newDataList(languages);
             String json = languageHelper.toJson(entries);
@@ -632,7 +632,7 @@ public class LexiconData extends Service {
     public Response sensesList(@HeaderParam("Authorization") String key, LexicalSenseFilter lsf) throws HelperException {
         try {
             userCheck(key);
-            log(Level.INFO, "lexicon/data/filteredSenses\n" + LogUtil.getLogFromPayload(lsf));
+            log(Level.INFO, "data/filteredSenses\n" + LogUtil.getLogFromPayload(lsf));
             TupleQueryResult lexicalSenses = lexiconManager.getFilterdLexicalSenses(lsf);
             List<LexicalSenseItem> senses = lexicalSenseFilterHelper.newDataList(lexicalSenses);
             HitsDataList hdl = new HitsDataList(lexicalSenseFilterHelper.getTotalHits(), senses);
@@ -661,7 +661,7 @@ public class LexiconData extends Service {
     public Response entriesList(@HeaderParam("Authorization") String key, LexicalEntryFilter lef) throws HelperException {
         try {
             userCheck(key);
-            log(Level.INFO, "lexicon/data/lexicalEntries\n" + LogUtil.getLogFromPayload(lef));
+            log(Level.INFO, "data/lexicalEntries\n" + LogUtil.getLogFromPayload(lef));
             TupleQueryResult lexicalEnties = lexiconManager.getFilterdLexicalEntries(lef);
             String json = "";
             if (lexicalEnties != null) {
@@ -696,7 +696,7 @@ public class LexiconData extends Service {
     public Response dictionaryEntryList(@HeaderParam("Authorization") String key, DictionaryEntryFilter def) throws HelperException {
         try {
             userCheck(key);
-            log(Level.INFO, "lexicon/data/dictionaryEntries\n" + LogUtil.getLogFromPayload(def));
+            log(Level.INFO, "data/dictionaryEntries\n" + LogUtil.getLogFromPayload(def));
             TupleQueryResult dictionaryEntries = lexiconManager.getFilterdDictionaryEntries(def);
             String json = "";
             if (dictionaryEntries != null) {
@@ -731,7 +731,7 @@ public class LexiconData extends Service {
     public Response forms(@HeaderParam("Authorization") String key, FormFilter ff) throws HelperException {
         try {
             userCheck(key);
-            log(Level.INFO, "lexicon/data/filteredForms\n" + LogUtil.getLogFromPayload(ff));
+            log(Level.INFO, "data/filteredForms\n" + LogUtil.getLogFromPayload(ff));
             TupleQueryResult forms = lexiconManager.getFilterdForms(ff);
             List<FormItem> fi = formItemsHelper.newDataList(forms);
             HitsDataList hdl = new HitsDataList(formItemsHelper.getTotalHits(), fi);
@@ -768,7 +768,7 @@ public class LexiconData extends Service {
         try {
             userCheck(key);
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
-            log(Level.INFO, "lexicon/data/forms <" + _id + ">");
+            log(Level.INFO, "data/forms <" + _id + ">");
             TupleQueryResult _forms = lexiconManager.getForms(_id);
             List<FormItem> forms = formItemsHelper.newDataList(_forms);
             String json = formItemsHelper.toJson(forms);
@@ -803,7 +803,7 @@ public class LexiconData extends Service {
         try {
             userCheck(key);
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
-            log(Level.INFO, "lexicon/data/lexicalConcepts <" + _id + ">");
+            log(Level.INFO, "data/lexicalConcepts <" + _id + ">");
             TupleQueryResult _lc = skosManager.getLexicalConceptChildren(_id);
             List<LexicalConceptItem> lcs = lexicalConceptItemHelper.newDataList(_lc);
             HitsDataList hdl = new HitsDataList(lcs.size(), lcs);
@@ -832,7 +832,7 @@ public class LexiconData extends Service {
     public Response lexicalConceptsList(@HeaderParam("Authorization") String key, LexicalConceptFilter lcf) throws HelperException {
         try {
             userCheck(key);
-            log(Level.INFO, "lexicon/data/filteredLexicalConcepts\n" + LogUtil.getLogFromPayload(lcf));
+            log(Level.INFO, "data/filteredLexicalConcepts\n" + LogUtil.getLogFromPayload(lcf));
             TupleQueryResult lexicalConcepts = lexiconManager.getFilterdLexicalConcepts(lcf);
             List<LexicalConceptItem> lcs = lexicalConceptItemHelper.newDataList(lexicalConcepts);
             HitsDataList hdl = new HitsDataList(lexicalConceptItemHelper.getTotalHits(), lcs);
@@ -861,7 +861,7 @@ public class LexiconData extends Service {
             @HeaderParam("Authorization") String key) {
         try {
             userCheck(key);
-            log(Level.INFO, "lexicon/data/conceptSets");
+            log(Level.INFO, "data/conceptSets");
             TupleQueryResult _cs = skosManager.getConceptSets();
             List<ConceptSetItem> cs = conceptSetItemHelper.newDataList(_cs);
             HitsDataList hdl = new HitsDataList(cs.size(), cs);
@@ -897,7 +897,7 @@ public class LexiconData extends Service {
         try {
             userCheck(key);
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
-            log(Level.INFO, "lexicon/data/senses <" + _id + ">");
+            log(Level.INFO, "data/senses <" + _id + ">");
             TupleQueryResult _forms = lexiconManager.getLexicalSenses(_id);
             List<LexicalSenseItem> senses = lexicalSenseFilterHelper.newDataList(_forms);
             String json = lexicalSenseFilterHelper.toJson(senses);
@@ -931,7 +931,7 @@ public class LexiconData extends Service {
         try {
             userCheck(key);
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
-            log(Level.INFO, "lexicon/data/etymologies <" + _id + ">");
+            log(Level.INFO, "data/etymologies <" + _id + ">");
             TupleQueryResult _etys = lexiconManager.getEtymologies(_id);
             List<EtymologyItem> etys = etymologyFilterHelper.newDataList(_etys);
             String json = etymologyFilterHelper.toJson(etys);
@@ -966,7 +966,7 @@ public class LexiconData extends Service {
         try {
             userCheck(key);
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
-            log(Level.INFO, "lexicon/data/sensesByConcept <" + _id + ">");
+            log(Level.INFO, "data/sensesByConcept <" + _id + ">");
             TupleQueryResult _forms = lexiconManager.getLexicalSensesByConcept(_id);
             List<LexicalSenseItem> senses = lexicalSenseFilterHelper.newDataList(_forms);
             String json = lexicalSenseFilterHelper.toJson(senses);
@@ -1000,7 +1000,7 @@ public class LexiconData extends Service {
         try {
             userCheck(key);
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
-            log(Level.INFO, "lexicon/data/elements <" + _id + ">");
+            log(Level.INFO, "data/elements <" + _id + ">");
             TupleQueryResult _elements = lexiconManager.getElements(_id);
             LexicalEntryElementItem elements = lexicalEntryElementHelper.newData(_elements);
             String json = lexicalEntryElementHelper.toJson(elements);
@@ -1039,7 +1039,7 @@ public class LexiconData extends Service {
         try {
             userCheck(key);
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
-            log(Level.INFO, "lexicon/data/linguisticRelation <" + _id + ">");
+            log(Level.INFO, "data/linguisticRelation <" + _id + ">");
             TupleQueryResult lingRel = lexiconManager.getLinguisticRelation(_id, property);
             if (!lingRel.hasNext()) {
                 return Response.status(Response.Status.OK).type(MediaType.TEXT_PLAIN).entity("There are no instances of " + property).build();
@@ -1081,7 +1081,7 @@ public class LexiconData extends Service {
         try {
             userCheck(key);
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
-            log(Level.INFO, "lexicon/data/genericRelation <" + _id + ">");
+            log(Level.INFO, "data/genericRelation <" + _id + ">");
             TupleQueryResult genRel = lexiconManager.getGenericRelation(_id, property);
             if (!genRel.hasNext()) {
                 return Response.status(Response.Status.OK).type(MediaType.TEXT_PLAIN).entity("There are no instances of " + property).build();
@@ -1120,12 +1120,12 @@ public class LexiconData extends Service {
             userCheck(key);
             if (id != null) {
                 String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
-                log(Level.INFO, "lexicon/data/bilbiography <" + _id + ">");
+                log(Level.INFO, "data/bilbiography <" + _id + ">");
                 TupleQueryResult bib = bibliographyManager.getBibliography(_id);
                 List<BibliographicItem> bibs = bibliographyHelper.newDataList(bib);
                 json = bibliographyHelper.toJson(bibs);
             } else {
-                log(Level.INFO, "lexicon/data/bilbiography of all entities");
+                log(Level.INFO, "data/bilbiography of all entities");
                 TupleQueryResult bib = bibliographyManager.getBibliography(null);
                 List<Bibliography> bibs = bibliographyListHelper.newDataList(bib);
                 json = bibliographyListHelper.toJson(bibs);
@@ -1160,7 +1160,7 @@ public class LexiconData extends Service {
         String json = "";
         try {
             userCheck(key);
-            log(Level.INFO, "lexicon/data/entitiesByBibliography <" + id + ">");
+            log(Level.INFO, "data/entitiesByBibliography <" + id + ">");
             TupleQueryResult bib = bibliographyManager.getLexicalEntitiesByBibliography(id);
             List<LinkedEntityByBibliography> bibs = linkedEntityByBibliographyHelper.newDataList(bib);
             json = linkedEntityByBibliographyHelper.toJson(bibs);
@@ -1194,7 +1194,7 @@ public class LexiconData extends Service {
         try {
             userCheck(key);
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
-            log(Level.INFO, "lexicon/data/subTerms <" + _id + ">");
+            log(Level.INFO, "data/subTerms <" + _id + ">");
             String json = "";
             TupleQueryResult lexicalEnties = lexiconManager.getSubTerms(_id);
             if (lexicalEnties.hasNext()) {
@@ -1231,7 +1231,7 @@ public class LexiconData extends Service {
         try {
             userCheck(key);
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
-            log(Level.INFO, "lexicon/data/correspondsTo <" + _id + ">");
+            log(Level.INFO, "data/correspondsTo <" + _id + ">");
             String json = "";
             TupleQueryResult lexicalEntry = lexiconManager.getCorrespondsTo(_id);
             if (lexicalEntry.hasNext()) {
@@ -1268,7 +1268,7 @@ public class LexiconData extends Service {
         try {
             userCheck(key);
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
-            log(Level.INFO, "lexicon/data/constituents <" + _id + ">");
+            log(Level.INFO, "data/constituents <" + _id + ">");
             TupleQueryResult _comps = null;
             String json = "";
             UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class
@@ -1316,7 +1316,7 @@ public class LexiconData extends Service {
         try {
             userCheck(key);
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
-            log(Level.INFO, "lexicon/data/image/metadata <" + _id + ">");
+            log(Level.INFO, "data/image/metadata <" + _id + ">");
             TupleQueryResult _imgs = lexiconManager.getImages(_id);
             List<ImageDetail> images = imageHelper.newDataList(_imgs);
             String json = imageHelper.toJson(images);
@@ -1349,7 +1349,7 @@ public class LexiconData extends Service {
             @QueryParam("id") String id) {
         try {
             userCheck(key);
-            log(Level.INFO, "lexicon/data/image/content <" + id + ">");
+            log(Level.INFO, "data/image/content <" + id + ">");
             java.nio.file.Path path = Paths.get(id);
             String contentType = path.toUri().toURL().openConnection().getContentType();
             byte[] bytes = Files.readAllBytes(path);
