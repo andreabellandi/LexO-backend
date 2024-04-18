@@ -161,15 +161,15 @@ public class LexiconCreation extends Service {
     }
 
     @GET
-    @Path("lexicon/language")
+    @Path("lexicon")
     @Produces(MediaType.APPLICATION_JSON)
     @RequestMapping(
             method = RequestMethod.GET,
-            value = "lexicon/language",
+            value = "lexicon",
             produces = "application/json; charset=UTF-8")
     @ApiOperation(value = "Lexicon language creation",
             notes = "This method creates a new lexicon language and returns its id and some metadata")
-    public Response language(
+    public Response lexicon(
             @HeaderParam("Authorization") String key,
             @ApiParam(
                     name = "lang",

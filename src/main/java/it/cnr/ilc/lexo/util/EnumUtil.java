@@ -295,7 +295,7 @@ public class EnumUtil {
 
     public static enum PositionRelation {
         rdfListPosition(SparqlPrefix.RDF.getUri() + "_n"),
-        rdfsMemeber(SparqlPrefix.RDFS.getUri() + "member");
+        rdfsMember(SparqlPrefix.RDFS.getUri() + "member");
 
         private final String positionRelation;
 

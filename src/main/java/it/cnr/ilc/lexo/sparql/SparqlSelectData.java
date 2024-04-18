@@ -126,8 +126,7 @@ public class SparqlSelectData {
             //            + " ?"
             //            + SparqlVariable.LEXICAL_ENTRY_INSTANCE_NAME 
             + " ?confidence";
-    
-    
+
     public static final String DATA_DICTIONARY_ENTRIES
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
             + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
@@ -154,6 +153,7 @@ public class SparqlSelectData {
             + " ?" + SparqlVariable.CREATION_DATE
             + " ?" + SparqlVariable.LAST_UPDATE
             + " ?" + SparqlVariable.IMAGE
+            + " ?" + SparqlVariable.CHILD
             + " ?" + SparqlVariable.DICTIONARY_ENTRY_COMPLETING_AUTHOR
             + " ?" + SparqlVariable.REVISION_DATE
             + " ?" + SparqlVariable.COMPLETION_DATE
@@ -180,6 +180,7 @@ public class SparqlSelectData {
             + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " loc:rev ?" + SparqlVariable.LEXICAL_ENTRY_REVISOR + "} .\n"
             + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " vs:term_status ?" + SparqlVariable.LEXICAL_ENTRY_STATUS + "} .\n"
             + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " foaf:depiction ?_" + SparqlVariable.IMAGE + "} .\n"
+            + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " rdfs:member|rdf:rest*/rdf:first " + SparqlVariable.CHILD + " } .\n"
             + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " rdfs:member|rdf:rest*/rdf:first [ lexinfo:partOfSpeech ?_" + SparqlVariable.DICTIONARY_ENTRY_POS + "] } .\n"
             + "} GROUP BY ?"
             + SparqlVariable.DICTIONARY_ENTRY + " ?"
@@ -194,6 +195,7 @@ public class SparqlSelectData {
             + SparqlVariable.CREATION_DATE + " ?"
             + SparqlVariable.LAST_UPDATE + " ?"
             + SparqlVariable.IMAGE + " ?"
+            + SparqlVariable.CHILD + " ?"
             + SparqlVariable.DICTIONARY_ENTRY_COMPLETING_AUTHOR + " ?"
             + SparqlVariable.REVISION_DATE + " ?"
             + SparqlVariable.COMPLETION_DATE

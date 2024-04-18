@@ -26,12 +26,21 @@ public class DictionaryEntryItem extends Entity implements Data {
     private String completionDate;
     private String revisionDate;
     private ArrayList<String> images;
+    private boolean children;
 
     public DictionaryEntryItem() {
     }
 
     public String getStatus() {
         return status;
+    }
+
+    public boolean isChildren() {
+        return children;
+    }
+
+    public void setChildren(boolean children) {
+        this.children = children;
     }
 
     public void setStatus(String status) {

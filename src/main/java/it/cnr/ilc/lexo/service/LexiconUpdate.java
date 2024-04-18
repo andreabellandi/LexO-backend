@@ -52,7 +52,7 @@ public class LexiconUpdate extends Service {
     private final BibliographyManager bibliographyManager = ManagerFactory.getManager(BibliographyManager.class);
 
     @POST
-    @Path("language")
+    @Path("lexicon/language")
     @Produces(MediaType.APPLICATION_JSON)
     @RequestMapping(
             method = RequestMethod.POST,
@@ -60,7 +60,7 @@ public class LexiconUpdate extends Service {
             produces = "application/json; charset=UTF-8")
     @ApiOperation(value = "Lexicon language update",
             notes = "This method updates the lexicon language according to the input updater")
-    public Response language(
+    public Response lexiconLanguage(
             @HeaderParam("Authorization") String key, @QueryParam("id") String id, LanguageUpdater lu) {
             try {
                 checkKey(key);

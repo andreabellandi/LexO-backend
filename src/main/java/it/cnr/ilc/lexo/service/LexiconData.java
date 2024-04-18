@@ -444,29 +444,29 @@ public class LexiconData extends Service {
     }
 
     @GET
-    @Path("dictionaryEntryComponents")
+    @Path("lexicographicComponents")
     @Produces(MediaType.APPLICATION_JSON)
     @RequestMapping(
             method = RequestMethod.GET,
-            value = "dictionaryEntryComponents",
+            value = "lexicographicComponents",
             produces = "application/json; charset=UTF-8")
     @ApiOperation(value = "Dictionary entry component",
-            notes = "This method returns the elements belonging to a given dictionary entry component")
-    public Response dictionaryEntryComponents(
+            notes = "This method returns the elements belonging to a given lexicographic component")
+    public Response lexicographicComponents(
             @HeaderParam("Authorization") String key,
             @ApiParam(
                     name = "id",
-                    value = "dictionary entry component ID",
+                    value = "lexicographic component ID",
                     required = true)
             @QueryParam("id") String id) {
         try {
             userCheck(key);
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
-            log(Level.INFO, "data/dictionaryEntryComponents: <" + _id + ">");
+            log(Level.INFO, "data/lexicographicComponents: <" + _id + ">");
             UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
             if (!utilityManager.isDictEntryComponent(_id)) {
-                log(Level.ERROR, "data/dictionaryEntryComponents: <" + _id + "> is not neither an Entry nor a Lexicographic component");
-                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("data/dictionaryEntryComponents: <"
+                log(Level.ERROR, "data/lexicographicComponents: <" + _id + "> is not neither an Entry nor a Lexicographic component");
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("data/lexicographicComponents: <"
                         + _id + "> is not neither an Entry nor a Lexicographic component").build();
             }
             TupleQueryResult comps = lexiconManager.getDictEntryComponents(_id);

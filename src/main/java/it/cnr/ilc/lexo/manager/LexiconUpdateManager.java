@@ -947,7 +947,7 @@ public final class LexiconUpdateManager implements Manager, Cached {
         } else if (cpu.getType().equals(EnumUtil.LinguisticRelation.Lexicog.toString())) {
             if (cpu.getRelation().equals(EnumUtil.PositionRelation.rdfListPosition.toString())) {
                 return setPosition(lexicalEntityID, cpu, utilityManager);
-            } else if (cpu.getRelation().equals(EnumUtil.PositionRelation.rdfsMemeber.toString())) {
+            } else if (cpu.getRelation().equals(EnumUtil.PositionRelation.rdfsMember.toString())) {
                 return addComponentMember(lexicalEntityID, cpu.getComponent());
             }
             return null;
@@ -965,8 +965,9 @@ public final class LexiconUpdateManager implements Manager, Cached {
                     if (cpu.getCurrentPosition() != (int) cpu.getCurrentPosition()) {
                         throw new ManagerException(cpu.getCurrentPosition() + " must be an integer number");
                     } else {
-                        if (!utilityManager.existsGenericRelation(lexicalEntityID, cpu.getRelation().replaceAll("_n", "_" + String.valueOf(cpu.getCurrentPosition())), "?x")) {
-                            throw new ManagerException(lexicalEntityID + " has not a component in position #" + cpu.getCurrentPosition());
+                        if (!utilityManager.existsGenericRelation(lexicalEntityID, cpu.getRelation().replaceAll("_n", "_" + String.valueOf(cpu.getCurrentPosition())), 
+                                "<" + cpu.getComponent() + ">")) {
+                            throw new ManagerException(lexicalEntityID + " has not <" + cpu.getComponent() + "> as component in position #" + cpu.getCurrentPosition());
                         }
                         if (utilityManager.existsGenericRelation(lexicalEntityID, cpu.getRelation().replaceAll("_n", "_" + String.valueOf(cpu.getPosition())), "?x")) {
                             throw new ManagerException(lexicalEntityID + " has just a component in position #" + cpu.getPosition() + ". Please, first remove it");
