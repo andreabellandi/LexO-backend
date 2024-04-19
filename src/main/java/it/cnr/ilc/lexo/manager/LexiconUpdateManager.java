@@ -967,12 +967,6 @@ public final class LexiconUpdateManager implements Manager, Cached {
     public String updateLexicographicComponentPosition(String lexicalEntityID, LexicographicComponentPositionUpdater lcpu) throws ManagerException {
         validatePositionRelation(lcpu.getRelation());
         UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
-        if (lcpu.getComponent() == null) {
-            throw new ManagerException("The component field can not be null ");
-        }
-        if (lcpu.getComponent().isEmpty()) {
-            throw new ManagerException("The component field can not be empty");
-        }
         if (lcpu.getType().equals(EnumUtil.LinguisticRelation.Lexicog.toString())) {
             if (lcpu.getRelation().equals(EnumUtil.PositionRelation.rdfListPosition.toString())) {
                 return setLexicographicComponentPosition(lexicalEntityID, lcpu, utilityManager);
@@ -1022,6 +1016,12 @@ public final class LexiconUpdateManager implements Manager, Cached {
             } 
         }
         // ********** AGGIUNGERE IL CASO METTI IN CODA, METTI IN TESTA !!************
+        if (lcpu.getComponent() == null) {
+            throw new ManagerException("The component field can not be null ");
+        }
+        if (lcpu.getComponent().isEmpty()) {
+            throw new ManagerException("The component field can not be empty");
+        }
         if (lcpu.getPosition() != 0) {
             if (lcpu.getPosition() != (int) lcpu.getPosition()) {
                 throw new ManagerException(lcpu.getPosition() + " must be an integer number");
@@ -1039,9 +1039,9 @@ public final class LexiconUpdateManager implements Manager, Cached {
     private String updateLexicographicComponentOrdering(String lexicalEntityID, LexicographicComponentPositionUpdater lcpu, UtilityManager utilityManager) throws ManagerException {
         String lastupdate = timestampFormat.format(new Timestamp(System.currentTimeMillis()));
         String ordering = "", deletion = "";
-        for (Map.Entry<Integer, String> entry : lcpu.getOrdering().entrySet()) {
-            ordering = ordering + "<" + lexicalEntityID + "> rdf:_" + entry.getKey() + " <" + entry.getValue() + "> . ";
-            deletion = deletion + "<" + lexicalEntityID + "> rdf:_" + entry.getKey() + " ?o . ";
+        for (Map.Entry<String, Integer> entry : lcpu.getOrdering().entrySet()) {
+            ordering = ordering + "<" + lexicalEntityID + "> rdf:_" + entry.getValue() + " <" + entry.getKey() + "> . ";
+            deletion = deletion + "<" + lexicalEntityID + "> rdf:_" + entry.getValue() + " ?o" + entry.getValue() + " . ";
         }
         RDFQueryUtil.update(SparqlInsertData.UPDATE_ORDERING
                 .replaceAll("_TO_INSERT_", ordering)

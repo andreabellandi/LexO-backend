@@ -9,6 +9,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -27,13 +28,13 @@ public class LexicographicComponentPositionUpdater {
     @ApiModelProperty(value = "position as integer", allowEmptyValue = false)
     private int position;
     @ApiModelProperty(value = "array of couples of position and id", allowEmptyValue = false)
-    private HashMap<Integer, String> ordering;
+    private Map<String, Integer> ordering;
 
-    public HashMap<Integer, String> getOrdering() {
+    public Map<String, Integer> getOrdering() {
         return ordering;
     }
 
-    public void setOrdering(HashMap<Integer, String> ordering) {
+    public void setOrdering(Map<String, Integer> ordering) {
         this.ordering = ordering;
     }
 
@@ -52,7 +53,6 @@ public class LexicographicComponentPositionUpdater {
     public void setPosition(int position) {
         this.position = position;
     }
-
 
     public String getType() {
         return type;

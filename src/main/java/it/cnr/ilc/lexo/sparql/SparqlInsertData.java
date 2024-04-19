@@ -303,9 +303,7 @@ public class SparqlInsertData {
             + "}";
 
     public static final String UPDATE_ORDERING
-            = SparqlPrefix.RDF.getSparqlPrefix() + "\n"
-            + SparqlPrefix.DCT.getSparqlPrefix() + "\n"
-            + "DELETE {\n"
+            = "DELETE {\n"
             + "_TO_DELETE_ }\n"
             + "INSERT {\n"
             + "_TO_INSERT_ }\n"
