@@ -47,6 +47,7 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalSenseCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalSenseItem;
+import it.cnr.ilc.lexo.service.data.lexicon.output.LexicographicComponent;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LinkedEntity;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LinkedEntityByBibliography;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Metadata;
@@ -81,6 +82,7 @@ import it.cnr.ilc.lexo.service.helper.LexicalEntryFilterHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalEntryElementHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalSenseCoreHelper;
 import it.cnr.ilc.lexo.service.helper.LexicalSenseFilterHelper;
+import it.cnr.ilc.lexo.service.helper.LexicographicComponentHelper;
 import it.cnr.ilc.lexo.service.helper.LinkedEntityByBibliographyHelper;
 import it.cnr.ilc.lexo.service.helper.LinkedEntityHelper;
 import it.cnr.ilc.lexo.service.helper.MetadataHelper;
@@ -156,6 +158,7 @@ public class LexiconData extends Service {
     private final ComponentFilterHelper componentFilterHelper = new ComponentFilterHelper();
     private final ComponentHelper componentHelper = new ComponentHelper();
     private final DictionaryEntryComponentHelper dictionaryEntryComponentHelper = new DictionaryEntryComponentHelper();
+    private final LexicographicComponentHelper lexicographicComponentHelper = new LexicographicComponentHelper();
     private final CollocationHelper collocationHelper = new CollocationHelper();
     private final FormRestrictionHelper formRestrictionHelper = new FormRestrictionHelper();
     private final ConceptSetHelper conceptSetHelper = new ConceptSetHelper();
@@ -450,7 +453,7 @@ public class LexiconData extends Service {
             method = RequestMethod.GET,
             value = "lexicographicComponents",
             produces = "application/json; charset=UTF-8")
-    @ApiOperation(value = "Dictionary entry component",
+    @ApiOperation(value = "Lexicographic components",
             notes = "This method returns the elements belonging to a given lexicographic component")
     public Response lexicographicComponents(
             @HeaderParam("Authorization") String key,
@@ -469,9 +472,9 @@ public class LexiconData extends Service {
                 return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("data/lexicographicComponents: <"
                         + _id + "> is not neither an Entry nor a Lexicographic component").build();
             }
-            TupleQueryResult comps = lexiconManager.getDictEntryComponents(_id);
-            DictionaryEntryComponent dec = dictionaryEntryComponentHelper.newData(comps);
-            String json = dictionaryEntryComponentHelper.toJson(dec);
+            TupleQueryResult comps = lexiconManager.getLexicographicComponents(_id);
+            List<LexicographicComponent> lcs = lexicographicComponentHelper.newDataList(comps);
+            String json = lexicographicComponentHelper.toJson(lcs);
             return Response.ok(json)
                     .type(MediaType.TEXT_PLAIN)
                     .header("Access-Control-Allow-Headers", "content-type")

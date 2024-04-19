@@ -22,6 +22,8 @@ public class DictionaryEntryComponent extends Entity implements Data {
     private String component;
     @ApiModelProperty(value = "dictionary entry component label")
     private String label;
+    @ApiModelProperty(value = "if the component is a dictionary entry, language can be present")
+    private String language;
     @ApiModelProperty(value = "the entity which the component refers to")
     private LinkedEntity describes;
     @ApiModelProperty(value = "the list of ordered members")
@@ -45,6 +47,13 @@ public class DictionaryEntryComponent extends Entity implements Data {
         this.label = label;
     }
 
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
 
     public LinkedEntity getDescribes() {
         return describes;

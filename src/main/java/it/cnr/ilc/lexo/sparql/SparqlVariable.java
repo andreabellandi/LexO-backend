@@ -50,7 +50,7 @@ public class SparqlVariable {
     public static final String LEXICAL_ENTRY_CONSTITUENT = "constituent";
     public static final String LEXICAL_ENTRY_ETYMOLOGY = "etymology";
     
-    public static final String DICTIONARY_ENTRY = "lexicalEntry";
+    public static final String DICTIONARY_ENTRY = "dictionaryEntry";
     public static final String DICTIONARY_ENTRY_STATUS = "status";
     public static final String DICTIONARY_ENTRY_REVISOR = "revisor";
     public static final String DICTIONARY_ENTRY_COMPLETING_AUTHOR = "author";
@@ -227,6 +227,7 @@ public class SparqlVariable {
     public static final String DESCRIBE_LABEL = "describeLabel";
     public static final String ORDERED_MEMBER = "orderedMember";
     public static final String UNORDERED_MEMBER = "unorderedMember";
+    public static final String LEXICOGRAPHIC_COMPONENT = "lexComp";
 
     // skos variables
     public static final String CHILD = "child";

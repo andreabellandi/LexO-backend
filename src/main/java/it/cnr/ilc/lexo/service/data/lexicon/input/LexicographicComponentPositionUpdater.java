@@ -7,16 +7,18 @@ package it.cnr.ilc.lexo.service.data.lexicon.input;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  *
  * @author andreabellandi
  */
 @ApiModel(description = "Input model representing a component position updater")
-public class ComponentPositionUpdater {
+public class LexicographicComponentPositionUpdater {
 
     @ApiModelProperty(value = "the type of relation", allowEmptyValue = false,
-            allowableValues = "decomp, lexicog")
+            allowableValues = "lexicog")
     private String type;
     @ApiModelProperty(value = "position relation", allowEmptyValue = false, allowableValues = "_n, member")
     private String relation;
@@ -24,8 +26,16 @@ public class ComponentPositionUpdater {
     private String component;
     @ApiModelProperty(value = "position as integer", allowEmptyValue = false)
     private int position;
-    @ApiModelProperty(value = "current position as integer (empty for component position creation)", allowEmptyValue = true)
-    private int currentPosition;
+    @ApiModelProperty(value = "array of couples of position and id", allowEmptyValue = false)
+    private HashMap<Integer, String> ordering;
+
+    public HashMap<Integer, String> getOrdering() {
+        return ordering;
+    }
+
+    public void setOrdering(HashMap<Integer, String> ordering) {
+        this.ordering = ordering;
+    }
 
     public String getComponent() {
         return component;
@@ -43,13 +53,6 @@ public class ComponentPositionUpdater {
         this.position = position;
     }
 
-    public int getCurrentPosition() {
-        return currentPosition;
-    }
-
-    public void setCurrentPosition(int currentPosition) {
-        this.currentPosition = currentPosition;
-    }
 
     public String getType() {
         return type;

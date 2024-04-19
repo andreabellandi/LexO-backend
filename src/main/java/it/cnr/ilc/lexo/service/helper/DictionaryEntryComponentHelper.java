@@ -14,6 +14,8 @@ import it.cnr.ilc.lexo.sparql.SparqlPrefix;
 import it.cnr.ilc.lexo.sparql.SparqlQueryUtil;
 import it.cnr.ilc.lexo.sparql.SparqlVariable;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.eclipse.rdf4j.query.BindingSet;
 
 /**
@@ -26,13 +28,18 @@ public class DictionaryEntryComponentHelper extends TripleStoreDataHelper<Dictio
     public void fillData(DictionaryEntryComponent data, BindingSet bs) {
         data.setCreator(getStringValue(bs, SparqlVariable.LEXICON_LANGUAGE_CREATOR));
         data.setLabel(getLiteralLabel(bs, SparqlVariable.LEXICON_LANGUAGE_LABEL));
+        try {
+            data.setLanguage(getLiteralLanguage(bs, SparqlVariable.LABEL));
+        } catch (Exception ex) {
+            Logger.getLogger(DictionaryEntryFilterHelper.class.getName()).log(Level.SEVERE, null, ex);
+        }
         data.setLastUpdate(getStringValue(bs, SparqlVariable.LAST_UPDATE));
         data.setCreationDate(getStringValue(bs, SparqlVariable.CREATION_DATE));
         data.setConfidence(getDoubleNumber(bs, SparqlVariable.CONFIDENCE));
         data.setLabel(getStringValue(bs, SparqlVariable.LABEL));
         data.setOrderedMemebers(getList(getStringValue(bs, SparqlVariable.ORDERED_MEMBER)));
         data.setUnorderedMembers(getList(getStringValue(bs, SparqlVariable.UNORDERED_MEMBER)));
-        data.setDescribes(getDescribes(bs));
+        data.setDescribes(!getStringValue(bs, SparqlVariable.DESCRIBE).isEmpty() ? getDescribes(bs) : null);
     }
     
     private LinkedEntity getDescribes(BindingSet bs) {

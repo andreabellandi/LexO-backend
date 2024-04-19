@@ -147,7 +147,7 @@ public class LexiconCreation extends Service {
             String json = dictionaryHelper.toJson(d);
             log(Level.INFO, "Dictionary for language " + lang + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
             return Response.ok(json)
-                    .type(MediaType.TEXT_PLAIN)
+                    .type(MediaType.APPLICATION_JSON)
                     .header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
@@ -214,7 +214,7 @@ public class LexiconCreation extends Service {
             String json = languageHelper.toJson(l);
             log(Level.INFO, "Language " + lang + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
             return Response.ok(json)
-                    .type(MediaType.TEXT_PLAIN)
+                    .type(MediaType.APPLICATION_JSON)
                     .header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
@@ -272,7 +272,7 @@ public class LexiconCreation extends Service {
             String json = lexicalEntryCoreHelper.toJson(lec);
             log(Level.INFO, "Lexical entry " + lec.getLabel() + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
             return Response.ok(json)
-                    .type(MediaType.TEXT_PLAIN)
+                    .type(MediaType.APPLICATION_JSON)
                     .header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
@@ -329,7 +329,7 @@ public class LexiconCreation extends Service {
             String json = dictionaryEntryComponentHelper.toJson(dec);
             log(Level.INFO, "Dictionary entry " + dec.getLabel() + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
             return Response.ok(json)
-                    .type(MediaType.TEXT_PLAIN)
+                    .type(MediaType.APPLICATION_JSON)
                     .header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
@@ -402,7 +402,7 @@ public class LexiconCreation extends Service {
                 String json = formCoreHelper.toJson(fc);
                 log(Level.INFO, "Form " + fc.getLabel() + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
                 return Response.ok(json)
-                        .type(MediaType.TEXT_PLAIN)
+                        .type(MediaType.APPLICATION_JSON)
                         .header("Access-Control-Allow-Headers", "content-type")
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
@@ -478,7 +478,7 @@ public class LexiconCreation extends Service {
                 String json = lexicalSenseCoreHelper.toJson(sc);
                 log(Level.INFO, "Lexical sense " + sc.getSense() + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
                 return Response.ok(json)
-                        .type(MediaType.TEXT_PLAIN)
+                        .type(MediaType.APPLICATION_JSON)
                         .header("Access-Control-Allow-Headers", "content-type")
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
@@ -550,7 +550,7 @@ public class LexiconCreation extends Service {
                 String json = componentHelper.toJson(comp);
                 log(Level.INFO, "Component " + comp.getComponent() + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
                 return Response.ok(json)
-                        .type(MediaType.TEXT_PLAIN)
+                        .type(MediaType.APPLICATION_JSON)
                         .header("Access-Control-Allow-Headers", "content-type")
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
@@ -622,7 +622,7 @@ public class LexiconCreation extends Service {
                 String json = collocationHelper.toJson(col);
                 log(Level.INFO, "Collocation " + col.getCollocation() + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
                 return Response.ok(json)
-                        .type(MediaType.TEXT_PLAIN)
+                        .type(MediaType.APPLICATION_JSON)
                         .header("Access-Control-Allow-Headers", "content-type")
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
@@ -700,7 +700,7 @@ public class LexiconCreation extends Service {
                 String json = etymologyHelper.toJson(e);
                 log(Level.INFO, "Etymology " + e.getEtymology() + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
                 return Response.ok(json)
-                        .type(MediaType.TEXT_PLAIN)
+                        .type(MediaType.APPLICATION_JSON)
                         .header("Access-Control-Allow-Headers", "content-type")
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
@@ -788,7 +788,7 @@ public class LexiconCreation extends Service {
                 String json = etymologicalLinkHelper.toJson(el);
                 log(Level.INFO, "Etymological link " + el.getEtymologicalLink() + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
                 return Response.ok(json)
-                        .type(MediaType.TEXT_PLAIN)
+                        .type(MediaType.APPLICATION_JSON)
                         .header("Access-Control-Allow-Headers", "content-type")
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
@@ -863,7 +863,7 @@ public class LexiconCreation extends Service {
                 String json = bibliographyHelper.toJson(bi);
                 log(Level.INFO, "Bibliography " + bi.getBibliography() + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
                 return Response.ok(json)
-                        .type(MediaType.TEXT_PLAIN)
+                        .type(MediaType.APPLICATION_JSON)
                         .header("Access-Control-Allow-Headers", "content-type")
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
@@ -925,7 +925,7 @@ public class LexiconCreation extends Service {
             String json = lexicalConceptHelper.toJson(lc);
             log(Level.INFO, "Lexical concept " + lc.getLexicalConcept() + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
             return Response.ok(json)
-                    .type(MediaType.TEXT_PLAIN)
+                    .type(MediaType.APPLICATION_JSON)
                     .header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
@@ -982,7 +982,7 @@ public class LexiconCreation extends Service {
             String json = conceptSetHelper.toJson(cs);
             log(Level.INFO, "Concept set " + cs.getConceptSet() + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
             return Response.ok(json)
-                    .type(MediaType.TEXT_PLAIN)
+                    .type(MediaType.APPLICATION_JSON)
                     .header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
@@ -1053,7 +1053,7 @@ public class LexiconCreation extends Service {
                 String json = indirectLexicalRelationHelper.toJson(rr);
                 log(Level.INFO, "lexicoSemanticRelation " + rr.getRelation() + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
                 return Response.ok(json)
-                        .type(MediaType.TEXT_PLAIN)
+                        .type(MediaType.APPLICATION_JSON)
                         .header("Access-Control-Allow-Headers", "content-type")
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
@@ -1113,7 +1113,7 @@ public class LexiconCreation extends Service {
                 String json = translationSetHelper.toJson(ts);
                 log(Level.INFO, "translationSet " + ts.getTranslationSet() + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
                 return Response.ok(json)
-                        .type(MediaType.TEXT_PLAIN)
+                        .type(MediaType.APPLICATION_JSON)
                         .header("Access-Control-Allow-Headers", "content-type")
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
@@ -1179,7 +1179,7 @@ public class LexiconCreation extends Service {
                 String json = formRestrictionHelper.toJson(fr);
                 log(Level.INFO, "Form restriction " + fr.getFormRestriction() + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
                 return Response.ok(json)
-                        .type(MediaType.TEXT_PLAIN)
+                        .type(MediaType.APPLICATION_JSON)
                         .header("Access-Control-Allow-Headers", "content-type")
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
@@ -1204,7 +1204,7 @@ public class LexiconCreation extends Service {
             method = RequestMethod.GET,
             value = "lexicographicComponent",
             produces = "application/json; charset=UTF-8")
-    @ApiOperation(value = "Dictionary entry component creation",
+    @ApiOperation(value = "Lexicographic component creation",
             notes = "This method creates a new component of a dictionary entry according to lexcog module, and returns its id and some metadata")
     public Response lexicographicComponent(
             @HeaderParam("Authorization") String key,
@@ -1241,7 +1241,7 @@ public class LexiconCreation extends Service {
                 String json = dictionaryEntryComponentHelper.toJson(dec);
                 log(Level.INFO, "Lexicographic component " + dec.getComponent() + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
                 return Response.ok(json)
-                        .type(MediaType.TEXT_PLAIN)
+                        .type(MediaType.APPLICATION_JSON)
                         .header("Access-Control-Allow-Headers", "content-type")
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();

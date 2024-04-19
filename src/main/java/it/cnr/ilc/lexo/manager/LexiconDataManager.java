@@ -558,6 +558,11 @@ public class LexiconDataManager implements Manager, Cached {
         String query = SparqlSelectData.DATA_DICT_ENTRY_COMPONENTS.replace("_ID_", id);
         return RDFQueryUtil.evaluateTQuery(query);
     }
+    
+    public TupleQueryResult getLexicographicComponents(String id) throws ManagerException {
+        String query = SparqlSelectData.DATA_LEXICOGRAPHIC_COMPONENTS.replace("_ID_", id);
+        return RDFQueryUtil.evaluateTQuery(query);
+    }
 
     public TupleQueryResult getEtymologicalLinks(String etymologyID) throws ManagerException {
         String query = SparqlSelectData.DATA_ETYMOLOGY_ETY_LINKS_LIST.replace("[IRI]", "\\\"" + etymologyID + "\\\"");

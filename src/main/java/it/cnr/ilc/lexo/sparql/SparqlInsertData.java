@@ -25,13 +25,13 @@ public class SparqlInsertData {
             + "                   dct:created \"[CREATED]\" ;\n"
             + "                   dct:modified \"[MODIFIED]\" . \n"
             + "}";
-    
+
     public static final String CREATE_DICTIONARY_ENTRY
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
             + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
             + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
             + SparqlPrefix.VS.getSparqlPrefix() + "\n"
-             + SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
             + "_PREFIX_ \n"
             + "INSERT DATA {\n"
             + "    <[ID]> a lexicog:Entry ;\n"
@@ -41,7 +41,6 @@ public class SparqlInsertData {
             + "                   dct:created \"[CREATED]\" ;\n"
             + "                   dct:modified \"[MODIFIED]\" . \n"
             + "}";
-    
 
     public static final String CREATE_LEXICON_LANGUAGE
             = SparqlPrefix.LIME.getSparqlPrefix() + "\n"
@@ -55,7 +54,7 @@ public class SparqlInsertData {
             + SparqlPrefix.DCT.getPrefix() + "created \"_CREATED_\" ;\n"
             + SparqlPrefix.DCT.getPrefix() + "modified \"_MODIFIED_\" . \n"
             + "}";
-    
+
     public static final String CREATE_DICTIONARY
             = SparqlPrefix.LIME.getSparqlPrefix() + "\n"
             + SparqlPrefix.DCT.getSparqlPrefix() + "\n"
@@ -95,7 +94,7 @@ public class SparqlInsertData {
             + "INSERT DATA {\n"
             + "    <_ID_> a ety:Etymology ;\n"
             + "                   rdfs:label \"Etymology of: _LABEL_\" ;\n"
-//            + "                   lexinfo:confidence 1 ;\n"
+            //            + "                   lexinfo:confidence 1 ;\n"
             + "                   dct:creator \"_AUTHOR_\" ;\n"
             + "                   dct:created \"_CREATED_\" ;\n"
             + "                   dct:modified \"_MODIFIED_\" . \n"
@@ -144,7 +143,7 @@ public class SparqlInsertData {
             + "                   dct:modified \"_MODIFIED_\" . \n"
             + "    <_LEID_> decomp:constituent <_ID_> .\n"
             + "}";
-    
+
     public static final String CREATE_DICTIONARY_ENTRY_COMPONENT
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
             + SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
@@ -155,7 +154,7 @@ public class SparqlInsertData {
             + "                   dct:created \"_CREATED_\" ;\n"
             + "                   dct:modified \"_MODIFIED_\" . \n"
             + "}";
-    
+
     public static final String CREATE_COLLOCATION
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
             + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
@@ -170,13 +169,13 @@ public class SparqlInsertData {
             + "                   dct:modified \"_MODIFIED_\" . \n"
             + "                   frac:head <_LEID_> .\n"
             + "}";
-    
+
     public static final String CREATE_LEXICOSEMANTIC_RELATION
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
             + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
             + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
             + SparqlPrefix.VS.getSparqlPrefix() + "\n"
-             + SparqlPrefix.VARTRANS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.VARTRANS.getSparqlPrefix() + "\n"
             + SparqlPrefix.DECOMP.getSparqlPrefix() + "\n"
             + "_PREFIX_ \n"
             + "INSERT DATA {\n"
@@ -187,13 +186,13 @@ public class SparqlInsertData {
             + "                   dct:modified \"_MODIFIED_\" . \n"
             + "    <_ID_> vartrans:source <_LEID_> .\n"
             + "}";
-    
+
     public static final String CREATE_TRANSLATIONSET
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
             + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
             + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
             + SparqlPrefix.VS.getSparqlPrefix() + "\n"
-             + SparqlPrefix.VARTRANS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.VARTRANS.getSparqlPrefix() + "\n"
             + SparqlPrefix.DECOMP.getSparqlPrefix() + "\n"
             + "_PREFIX_ \n"
             + "INSERT DATA {\n"
@@ -203,13 +202,13 @@ public class SparqlInsertData {
             + "                   rdfs:label \"_LABEL_\" ;\n"
             + "                   dct:modified \"_MODIFIED_\" . \n"
             + "}";
-    
+
     public static final String CREATE_FORMRESTRICTION
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
             + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
             + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
             + SparqlPrefix.VS.getSparqlPrefix() + "\n"
-             + SparqlPrefix.VARTRANS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.VARTRANS.getSparqlPrefix() + "\n"
             + SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
             + "_PREFIX_ \n"
             + "INSERT DATA {\n"
@@ -220,7 +219,7 @@ public class SparqlInsertData {
             + "                   dct:modified \"_MODIFIED_\" . \n"
             + "    <_LEXID_> lexicog:restrictedTo <_ID_> .\n"
             + "}";
-    
+
     public static final String CREATE_LEXICAL_CONCEPT
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
             + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
@@ -233,7 +232,7 @@ public class SparqlInsertData {
             + "                   dct:modified \"_MODIFIED_\" ; \n"
             + "                   _LABEL_ . \n"
             + "}";
-    
+
     public static final String CREATE_CONCEPT_SET
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
             + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
@@ -295,14 +294,24 @@ public class SparqlInsertData {
             + "INSERT DATA { "
             + "<_ID_> a ety:Cognate .  "
             + "}";
-    
+
     public static final String CREATE_COMPONENT_POSITION
             = SparqlPrefix.RDF.getSparqlPrefix() + "\n"
             + SparqlPrefix.DCT.getSparqlPrefix() + "\n"
             + "INSERT DATA {  "
             + "<_IDLE_> rdf:_POSITION <_IDCOMPONENT_>. "
             + "}";
-    
+
+    public static final String UPDATE_ORDERING
+            = SparqlPrefix.RDF.getSparqlPrefix() + "\n"
+            + SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+            + "DELETE {\n"
+            + "_TO_DELETE_ }\n"
+            + "INSERT {\n"
+            + "_TO_INSERT_ }\n"
+            + "WHERE {\n" 
+            + "_TO_WHERE_ }";
+
     public static final String CREATE_IMAGE_REFERENCE
             // source, rights, title, description, publisher
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
@@ -322,5 +331,5 @@ public class SparqlInsertData {
             + "        dct:modified \"_MODIFIED_\" . \n"
             + "    <_LEID_> foaf:depiction <_ID_> .\n"
             + "}";
-    
+
 }

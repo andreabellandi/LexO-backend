@@ -13,7 +13,7 @@ import it.cnr.ilc.lexo.manager.LexiconUpdateManager;
 import it.cnr.ilc.lexo.manager.ManagerException;
 import it.cnr.ilc.lexo.manager.ManagerFactory;
 import it.cnr.ilc.lexo.manager.UtilityManager;
-import it.cnr.ilc.lexo.service.data.lexicon.input.ComponentPositionUpdater;
+import it.cnr.ilc.lexo.service.data.lexicon.input.MultiwordComponentPositionUpdater;
 import it.cnr.ilc.lexo.service.data.lexicon.input.DictionaryEntryUpdater;
 import it.cnr.ilc.lexo.service.data.lexicon.input.EtymologicalLinkUpdater;
 import it.cnr.ilc.lexo.service.data.lexicon.input.EtymologyUpdater;
@@ -22,6 +22,7 @@ import it.cnr.ilc.lexo.service.data.lexicon.input.GenericRelationUpdater;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LanguageUpdater;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalEntryUpdater;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalSenseUpdater;
+import it.cnr.ilc.lexo.service.data.lexicon.input.LexicographicComponentPositionUpdater;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LinguisticRelationUpdater;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -355,20 +356,20 @@ public class LexiconUpdate extends Service {
     }
 
     @POST
-    @Path("componentPosition")
+    @Path("multiwordComponentPosition")
     @Produces(MediaType.APPLICATION_JSON)
     @RequestMapping(
             method = RequestMethod.POST,
-            value = "componentPosition",
+            value = "multiwordComponentPosition",
             produces = "application/json; charset=UTF-8")
-    @ApiOperation(value = "Component position update",
-            notes = "This method updates the position of a multiword or a lexicographic component according to the input updater")
-    public Response componentPosition(@HeaderParam("Authorization") String key, @QueryParam("id") String id, ComponentPositionUpdater cpu) {
+    @ApiOperation(value = "Multiword component position update",
+            notes = "This method updates the position of a multiword component according to the input updater")
+    public Response multiwordComponentPosition(@HeaderParam("Authorization") String key, @QueryParam("id") String id, MultiwordComponentPositionUpdater mcpu) {
             try {
                 checkKey(key);
                 String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
                 try {
-                    return Response.ok(lexiconManager.updateComponentPosition(_id, cpu))
+                    return Response.ok(lexiconManager.updateMultiwordComponentPosition(_id, mcpu))
                             .type(MediaType.TEXT_PLAIN)
                             .header("Access-Control-Allow-Headers", "content-type")
                             .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
@@ -379,7 +380,38 @@ public class LexiconUpdate extends Service {
             } catch (UnsupportedEncodingException ex) {
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
             } catch (AuthorizationException | ServiceException ex) {
-            log(Level.ERROR, "lexicon/creation/componentPosition: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            log(Level.ERROR, "update/multiwordComponentPosition: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
+        }
+    }
+    
+    
+    @POST
+    @Path("lexicographicComponentPosition")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.POST,
+            value = "lexicographicComponentPosition",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Lexicographic Component position update",
+            notes = "This method updates the position of a lexicographic component according to the input updater")
+    public Response lexicographicComponentPosition(@HeaderParam("Authorization") String key, @QueryParam("id") String id, LexicographicComponentPositionUpdater lcpu) {
+            try {
+                checkKey(key);
+                String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
+                try {
+                    return Response.ok(lexiconManager.updateLexicographicComponentPosition(_id, lcpu))
+                            .type(MediaType.TEXT_PLAIN)
+                            .header("Access-Control-Allow-Headers", "content-type")
+                            .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                            .build();
+                } catch (ManagerException | UpdateExecutionException ex) {
+                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+                }
+            } catch (UnsupportedEncodingException ex) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            } catch (AuthorizationException | ServiceException ex) {
+            log(Level.ERROR, "update/lexicographicComponentPosition: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }

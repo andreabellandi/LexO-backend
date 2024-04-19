@@ -50,6 +50,7 @@ public class SparqlPrefix {
     public static Namespace SKOS = new Namespace("skos:", "http://www.w3.org/2004/02/skos/core#");
     public static Namespace SKOS_XL = new Namespace("skos-xl:", "http://www.w3.org/2008/05/skos-xl#");
     public static Namespace OWL = new Namespace("owl:", "http://www.w3.org/2002/07/owl#");
+    public static Namespace XSD = new Namespace("xsd:", "http://www.w3.org/2001/XMLSchema#");
 
     // data
 //    public static Namespace LEX = new Namespace("lex:", LexOProperties.getProperty("repository.lexicon.namespace"));
