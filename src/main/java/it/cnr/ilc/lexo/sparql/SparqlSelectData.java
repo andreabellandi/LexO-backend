@@ -157,9 +157,9 @@ public class SparqlSelectData {
             + " ?" + SparqlVariable.DICTIONARY_ENTRY_COMPLETING_AUTHOR
             + " ?" + SparqlVariable.REVISION_DATE
             + " ?" + SparqlVariable.COMPLETION_DATE
-            + " ?confidence"
+            + " ?confidence (COUNT(?_" + SparqlVariable.CHILD + ") AS ?" + SparqlVariable.CHILD + ")"
             + "\n"
-            + "#(GROUP_CONCAT(distinct str(?_" + SparqlVariable.DICTIONARY_ENTRY_POS + ");SEPARATOR=\";\") AS ?" + SparqlVariable.DICTIONARY_ENTRY_POS + ")\n"
+            + "(GROUP_CONCAT(distinct str(?_" + SparqlVariable.DICTIONARY_ENTRY_POS + ");SEPARATOR=\";\") AS ?" + SparqlVariable.DICTIONARY_ENTRY_POS + ")\n"
             + "FROM onto:explicit WHERE {\n"
             + "  ?search a inst:" + SparqlVariable.DICTIONARY_ENTRY_INDEX + " ;\n"
             + "      luc:query \"[FILTER]\" ;\n"
@@ -180,14 +180,13 @@ public class SparqlSelectData {
             + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " loc:rev ?" + SparqlVariable.LEXICAL_ENTRY_REVISOR + "} .\n"
             + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " vs:term_status ?" + SparqlVariable.LEXICAL_ENTRY_STATUS + "} .\n"
             + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " foaf:depiction ?_" + SparqlVariable.IMAGE + "} .\n"
-            + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " rdf:_1 ?" + SparqlVariable.CHILD + " } .\n"
-            // it doesn't work for pos !!!
-            + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " rdfs:member|rdf:rest*/rdf:first [ lexinfo:partOfSpeech ?_" + SparqlVariable.DICTIONARY_ENTRY_POS + "] } .\n"
+            + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " ?" + SparqlVariable.PROPERTY_NAME + " ?_" + SparqlVariable.CHILD + " . "
+            + "   OPTIONAL { ?_" + SparqlVariable.CHILD + " lexicog:describes [ lexinfo:partOfSpeech ?_" + SparqlVariable.DICTIONARY_ENTRY_POS + " ] }\n"
+            + "              FILTER (strstarts(str(?" + SparqlVariable.PROPERTY_NAME + "), str(rdf:_)))} .\n"
             + "} GROUP BY ?"
             + SparqlVariable.DICTIONARY_ENTRY + " ?"
             + SparqlVariable.LABEL + " ?"
             + SparqlVariable.DICTIONARY_ENTRY_REVISOR + " ?"
-            + SparqlVariable.DICTIONARY_ENTRY_POS + " ?"
             + SparqlVariable.DICTIONARY_ENTRY_STATUS + " ?"
             + SparqlVariable.DICTIONARY_ENTRY_CREATION_AUTHOR + " ?"
             + SparqlVariable.LABEL + " ?"
@@ -196,7 +195,6 @@ public class SparqlSelectData {
             + SparqlVariable.CREATION_DATE + " ?"
             + SparqlVariable.LAST_UPDATE + " ?"
             + SparqlVariable.IMAGE + " ?"
-            + SparqlVariable.CHILD + " ?"
             + SparqlVariable.DICTIONARY_ENTRY_COMPLETING_AUTHOR + " ?"
             + SparqlVariable.REVISION_DATE + " ?"
             + SparqlVariable.COMPLETION_DATE
@@ -2067,44 +2065,6 @@ public class SparqlSelectData {
             + "} ORDER BY ?" + SparqlVariable.IMAGE + "\n"
             + " ";
 
-    public static final String DATA_DICT_ENTRY_COMPONENTS
-            = SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
-            + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
-            + SparqlPrefix.RDF.getSparqlPrefix() + "\n"
-            + SparqlPrefix.DCT.getSparqlPrefix() + "\n"
-            + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
-            + SparqlPrefix.ONTO.getSparqlPrefix() + "\n"
-            + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
-            + SparqlPrefix.SKOS.getSparqlPrefix() + "\n"
-            + "SELECT ?" + SparqlVariable.LABEL + " ?" + SparqlVariable.DESCRIBE + " ?" + SparqlVariable.TYPE + " ?" + SparqlVariable.DESCRIBE_LABEL
-            + " ?" + SparqlVariable.CREATOR + " ?" + SparqlVariable.CREATION_DATE + " ?" + SparqlVariable.LAST_UPDATE
-            + " ?" + SparqlVariable.CONFIDENCE + " ?" + SparqlVariable.DICT_ELEMENT + " ?" + SparqlVariable.DICT_ELEMENT_TYPE + "\n"
-            + "(GROUP_CONCAT(concat(str(?_unorderedMember));SEPARATOR=\";\") AS ?" + SparqlVariable.UNORDERED_MEMBER + ")\n"
-            + "(GROUP_CONCAT(concat(str(?_orderedMember));SEPARATOR=\";\") AS ?" + SparqlVariable.ORDERED_MEMBER + ")\n"
-            + "FROM onto:explicit\n"
-            + "WHERE {\n"
-            + "BIND (<_ID_> AS ?" + SparqlVariable.DICT_ELEMENT + ")\n"
-            + "     ?" + SparqlVariable.DICT_ELEMENT + " a ?" + SparqlVariable.DICT_ELEMENT_TYPE + " .\n"
-            + "                   FILTER (STRSTARTS(STR(?" + SparqlVariable.DICT_ELEMENT_TYPE + "), \"http://www.w3.org/ns/lemon/lexicog#\"))"
-            + "    OPTIONAL { ?" + SparqlVariable.DICT_ELEMENT + " rdfs:label ?" + SparqlVariable.LABEL + " }\n"
-            + "    OPTIONAL { ?" + SparqlVariable.DICT_ELEMENT + " lexinfo:confidence ?" + SparqlVariable.CONFIDENCE + " }\n"
-            + "    OPTIONAL { ?" + SparqlVariable.DICT_ELEMENT + " lexicog:describes ?" + SparqlVariable.DESCRIBE + " \n"
-            + "    OPTIONAL { ?" + SparqlVariable.DESCRIBE + " rdf:type ?" + SparqlVariable.TYPE + " .\n"
-            + "            OPTIONAL { ?" + SparqlVariable.DESCRIBE + " rdfs:label|skos:definition|ontolex:writtenRep ?" + SparqlVariable.DESCRIBE_LABEL + " } \n"
-            + "            FILTER (STRSTARTS(STR(?" + SparqlVariable.TYPE + "), \"http://www.w3.org/ns/lemon/ontolex#\")) } \n"
-            + "    }\n"
-            + "    OPTIONAL { ?" + SparqlVariable.DICT_ELEMENT + " lexicog:subComponent|rdfs:member ?_unorderedMember }\n"
-            + "    OPTIONAL { ?" + SparqlVariable.DICT_ELEMENT + " ?orderedList ?_orderedMember . \n"
-            + "               FILTER (STRSTARTS(STR(?orderedList), STR(rdf:_))) }\n"
-            + "    OPTIONAL { ?" + SparqlVariable.DICT_ELEMENT + " dct:creator ?" + SparqlVariable.CREATOR + " }\n"
-            + "    OPTIONAL { ?" + SparqlVariable.DICT_ELEMENT + " dct:modified ?" + SparqlVariable.LAST_UPDATE + " }\n"
-            + "    OPTIONAL { ?" + SparqlVariable.DICT_ELEMENT + " dct:created ?" + SparqlVariable.CREATION_DATE + " }\n"
-            + "    FILTER BOUND(?" + SparqlVariable.DICT_ELEMENT + ")"
-            + "} GROUP BY ?" + SparqlVariable.DICT_ELEMENT + " ?" + SparqlVariable.DICT_ELEMENT_TYPE + " ?" + SparqlVariable.LABEL + " ?" + SparqlVariable.DESCRIBE + " ?"
-            + SparqlVariable.TYPE + " ?" + SparqlVariable.DESCRIBE_LABEL
-            + " ?" + SparqlVariable.CREATOR + " ?" + SparqlVariable.CREATION_DATE + " ?" + SparqlVariable.LAST_UPDATE
-            + " ?" + SparqlVariable.CONFIDENCE;
-
     public static final String DATA_LEXICOGRAPHIC_COMPONENTS
             = SparqlPrefix.XSD.getSparqlPrefix() + "\n"
             + SparqlPrefix.RDF.getSparqlPrefix() + "\n"
@@ -2119,15 +2079,18 @@ public class SparqlSelectData {
             + SparqlPrefix.DCT.getSparqlPrefix() + "\n"
             + "SELECT ?" + SparqlVariable.LEXICAL_ENTITY + " ?" + SparqlVariable.TYPE + " ?" + SparqlVariable.LABEL + " ?" + SparqlVariable.LEXICAL_ENTRY_POS + " ?" + SparqlVariable.LEXICOGRAPHIC_COMPONENT + " "
             //+ "(xsd:integer(REPLACE(str(?" + SparqlVariable.PROPERTY_NAME + "), \"http://www.w3.org/1999/02/22-rdf-syntax-ns#_\", \"\")) as ?" + SparqlVariable.COMPONENT_POSITION + ") "
-            + "?" + SparqlVariable.LEXICAL_ENTRY_STATUS + " ?" + SparqlVariable.LEXICAL_ENTRY_REVISOR + " ?" + SparqlVariable.COMPONENT_POSITION 
-            + " ?" + SparqlVariable.CREATOR + " ?" + SparqlVariable.NOTE + " ?" + SparqlVariable.CREATION_DATE + " ?" + SparqlVariable.LAST_UPDATE 
+            + "?" + SparqlVariable.LEXICAL_ENTRY_STATUS + " ?" + SparqlVariable.LEXICAL_ENTRY_REVISOR + " ?" + SparqlVariable.COMPONENT_POSITION
+            + " ?" + SparqlVariable.CREATOR + " ?" + SparqlVariable.NOTE + " ?" + SparqlVariable.CREATION_DATE + " ?" + SparqlVariable.LAST_UPDATE
             + " ?" + SparqlVariable.CHILD + " "
             + "?" + SparqlVariable.LEXICAL_ENTRY_COMPLETING_AUTHOR + " ?" + SparqlVariable.COMPLETION_DATE + " ?" + SparqlVariable.REVISION_DATE + " ?" + SparqlVariable.CONFIDENCE + "\n"
-            + "(GROUP_CONCAT(distinct str(?_" + SparqlVariable.TYPE + ");SEPARATOR=\";\") AS ?" + SparqlVariable.TYPE + ")\n"
+            + "(GROUP_CONCAT(distinct str(?_" + SparqlVariable.TYPE + ");SEPARATOR=\";\") AS ?" + SparqlVariable.TYPE + ")"
+            + " (COUNT(?_" + SparqlVariable.CHILD + ") AS ?" + SparqlVariable.CHILD + ")\n"
             + "FROM onto:explicit\n"
             + "WHERE { <_ID_> ?" + SparqlVariable.COMPONENT_POSITION + " ?" + SparqlVariable.LEXICOGRAPHIC_COMPONENT + " .\n"
+            // SparqlVariable.COMPONENT_POSITION should be different from lexicog:subComponent property
             + "    ?" + SparqlVariable.LEXICOGRAPHIC_COMPONENT + " a lexicog:LexicographicComponent .\n"
-            + "    OPTIONAL { ?" + SparqlVariable.LEXICOGRAPHIC_COMPONENT + " rdf:_1 ?" + SparqlVariable.CHILD + " }\n"
+            + "   OPTIONAL {?" + SparqlVariable.LEXICOGRAPHIC_COMPONENT + " " + SparqlVariable.PROPERTY_NAME + " ?_" + SparqlVariable.CHILD + " . "
+            + "              FILTER (strstarts(str(?" + SparqlVariable.PROPERTY_NAME + "), str(rdf:_)))} .\n"
             + "    OPTIONAL { ?" + SparqlVariable.LEXICOGRAPHIC_COMPONENT + " lexicog:describes ?" + SparqlVariable.LEXICAL_ENTITY + " .\n"
             + "        ?" + SparqlVariable.LEXICAL_ENTITY + " a ?_" + SparqlVariable.TYPE + " ;\n"
             + "                       rdfs:label|skos:definition ?" + SparqlVariable.LABEL + " .\n"
@@ -2144,10 +2107,67 @@ public class SparqlSelectData {
             + "        OPTIONAL {?" + SparqlVariable.LEXICAL_ENTITY + " vs:term_status ?" + SparqlVariable.LEXICAL_ENTRY_STATUS + "} .\n"
             + "    }\n"
             + "} GROUP BY ?" + SparqlVariable.LEXICAL_ENTITY + " ?" + SparqlVariable.LABEL + " ?" + SparqlVariable.LEXICAL_ENTRY_POS + " ?" + SparqlVariable.LEXICOGRAPHIC_COMPONENT + " "
-            + "?" + SparqlVariable.LEXICAL_ENTRY_STATUS + " ?" + SparqlVariable.LEXICAL_ENTRY_REVISOR + " ?" + SparqlVariable.COMPONENT_POSITION 
-            + " ?" + SparqlVariable.CREATOR + " ?" + SparqlVariable.NOTE + " ?" + SparqlVariable.CREATION_DATE + " ?" + SparqlVariable.LAST_UPDATE 
-            + " ?" + SparqlVariable.CHILD + " "
-            + "?" + SparqlVariable.LEXICAL_ENTRY_COMPLETING_AUTHOR + " ?" + SparqlVariable.COMPLETION_DATE + " ?" + SparqlVariable.REVISION_DATE + " ?" + SparqlVariable.CONFIDENCE + "";
+            + "?" + SparqlVariable.LEXICAL_ENTRY_STATUS + " ?" + SparqlVariable.LEXICAL_ENTRY_REVISOR + " ?" + SparqlVariable.COMPONENT_POSITION
+            + " ?" + SparqlVariable.CREATOR + " ?" + SparqlVariable.NOTE + " ?" + SparqlVariable.CREATION_DATE + " ?" + SparqlVariable.LAST_UPDATE
+            + " ?" + SparqlVariable.LEXICAL_ENTRY_COMPLETING_AUTHOR + " ?" + SparqlVariable.COMPLETION_DATE + " ?" + SparqlVariable.REVISION_DATE + " ?" + SparqlVariable.CONFIDENCE + "";
+
+    public static final String DATA_DICT_ENTRY
+            = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LOC.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTO.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDF.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.SESAME.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LUC.getSparqlPrefix() + "\n"
+            + SparqlPrefix.VS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.FOAF.getSparqlPrefix() + "\n"
+            + SparqlPrefix.SKOS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.INST.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
+            + "SELECT ?" + SparqlVariable.DICTIONARY_ENTRY + " ?" + SparqlVariable.DICTIONARY_ENTRY_STATUS + " ?" + SparqlVariable.DICTIONARY_ENTRY_REVISOR + 
+            " ?" + SparqlVariable.LABEL + " ?" + SparqlVariable.CREATOR + " ?" + SparqlVariable.NOTE + " "
+            + "?" + SparqlVariable.CREATION_DATE + " ?" + SparqlVariable.LAST_UPDATE + " ?" + SparqlVariable.IMAGE + " ?" + SparqlVariable.DICTIONARY_ENTRY_COMPLETING_AUTHOR + " "
+            + "?" + SparqlVariable.COMPLETION_DATE + " ?" + SparqlVariable.REVISION_DATE + " ?confidence \n"
+            + "(COUNT(?_" + SparqlVariable.CHILD + ") AS ?" + SparqlVariable.CHILD + ")\n"
+            + "(GROUP_CONCAT(distinct str(?_" + SparqlVariable.DICTIONARY_ENTRY_POS + ");SEPARATOR=\";\") AS ?" + SparqlVariable.DICTIONARY_ENTRY_POS + ")\n"
+            + "(GROUP_CONCAT(distinct str(?_" + SparqlVariable.TYPE + ");SEPARATOR=\";\") AS ?" + SparqlVariable.TYPE + ")\n"
+            + "FROM onto:explicit WHERE {\n"
+            + "  ?search a inst:dictionaryEntryIndex ;\n"
+            + "      luc:query \"dictionaryEntryIRI:\\\"_ID_\\\"\" ;\n"
+            + "      luc:entities ?" + SparqlVariable.DICTIONARY_ENTRY + " .\n"
+            + "  ?" + SparqlVariable.DICTIONARY_ENTRY + " rdfs:label ?" + SparqlVariable.LABEL + " ;\n"
+            + "                   sesame:directType ?_" + SparqlVariable.TYPE + "\n"
+            + "   OPTIONAL { ?" + SparqlVariable.DICTIONARY_ENTRY + " lexinfo:confidence ?confidence . }\n"
+            + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " dct:creator ?" + SparqlVariable.CREATOR + "} .\n"
+            + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " dct:created ?" + SparqlVariable.CREATION_DATE + "} .\n"
+            + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " dct:modified ?" + SparqlVariable.LAST_UPDATE + "} .\n"
+            + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " dct:author ?" + SparqlVariable.DICTIONARY_ENTRY_COMPLETING_AUTHOR + "} .\n"
+            + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " dct:dateAccepted ?" + SparqlVariable.COMPLETION_DATE + "} .\n"
+            + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " dct:dateSubmitted ?" + SparqlVariable.REVISION_DATE + "} .\n"
+            + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " skos:note ?" + SparqlVariable.NOTE + "} .\n"
+            + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " loc:rev ?" + SparqlVariable.DICTIONARY_ENTRY_REVISOR + "} .\n"
+            + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " vs:term_status ?" + SparqlVariable.DICTIONARY_ENTRY_STATUS + "} .\n"
+            + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " foaf:depiction ?" + SparqlVariable.IMAGE + "} .\n"
+            + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " ?" + SparqlVariable.PROPERTY_NAME + " ?_" + SparqlVariable.CHILD + " .    \n"
+            + "        OPTIONAL { \n"
+            + "            ?_" + SparqlVariable.CHILD + " lexicog:describes [ lexinfo:partOfSpeech ?_" + SparqlVariable.DICTIONARY_ENTRY_POS + " ] \n"
+            + "        }\n"
+            + "              FILTER (strstarts(str(?" + SparqlVariable.PROPERTY_NAME + "), str(rdf:_)))\n"
+            + "    } .\n"
+            + "} GROUP BY ?" + SparqlVariable.DICTIONARY_ENTRY + " ?" + 
+            SparqlVariable.LABEL + " ?" + 
+            SparqlVariable.DICTIONARY_ENTRY_REVISOR + " ?" + 
+            SparqlVariable.DICTIONARY_ENTRY_STATUS + " ?" + 
+            SparqlVariable.CREATOR + " "
+            + "?" + 
+            SparqlVariable.NOTE + " ?" + 
+            SparqlVariable.CREATION_DATE + " ?" + 
+            SparqlVariable.LAST_UPDATE + " ?" + SparqlVariable.IMAGE + " ?" + SparqlVariable.DICTIONARY_ENTRY_COMPLETING_AUTHOR + " "
+            + "?" + 
+            SparqlVariable.COMPLETION_DATE + " ?" + 
+            SparqlVariable.REVISION_DATE + " ?confidence";
 
     public static final String GET_RESOURCE_MODEL
             = SparqlPrefix.LIME.getSparqlPrefix() + "\n"

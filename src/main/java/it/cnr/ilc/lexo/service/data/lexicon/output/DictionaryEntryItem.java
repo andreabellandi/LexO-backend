@@ -26,7 +26,7 @@ public class DictionaryEntryItem extends Entity implements Data {
     private String completionDate;
     private String revisionDate;
     private ArrayList<String> images;
-    private boolean children;
+    private boolean hasChildren;
 
     public DictionaryEntryItem() {
     }
@@ -35,12 +35,12 @@ public class DictionaryEntryItem extends Entity implements Data {
         return status;
     }
 
-    public boolean isChildren() {
-        return children;
+    public boolean isHasChildren() {
+        return hasChildren;
     }
 
-    public void setChildren(boolean children) {
-        this.children = children;
+    public void setHasChildren(boolean hasChildren) {
+        this.hasChildren = hasChildren;
     }
 
     public void setStatus(String status) {

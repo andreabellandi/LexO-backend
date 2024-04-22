@@ -18,6 +18,7 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.Language;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Property;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalSenseCore;
+import it.cnr.ilc.lexo.service.data.lexicon.output.LexicographicComponent;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ReifiedRelation;
 import it.cnr.ilc.lexo.service.data.lexicon.output.TranslationSet;
 import it.cnr.ilc.lexo.sparql.SparqlInsertData;
@@ -120,7 +121,7 @@ public class LexiconCreationManager implements Manager, Cached {
         return setLexicalEntry(_id, idLabel, created, author);
     }
 
-    public DictionaryEntryComponent createDictionaryEntry(String author, String prefix, String baseIRI, String desiredID) throws ManagerException {
+    public LexicographicComponent createDictionaryEntry(String author, String prefix, String baseIRI, String desiredID) throws ManagerException {
         Timestamp tm = new Timestamp(System.currentTimeMillis());
         String id = (desiredID != null ? (!desiredID.isEmpty() ? (Manager.IDAlreadyExists(baseIRI + desiredID) ? null : desiredID) : idInstancePrefix + tm.toString()) : idInstancePrefix + tm.toString());
         if (id == null) throw new ManagerException("ID " + desiredID + " already exists");
@@ -152,13 +153,18 @@ public class LexiconCreationManager implements Manager, Cached {
         return lec;
     }
 
-    private DictionaryEntryComponent setDictionaryEntry(String id, String label, String created) {
-        DictionaryEntryComponent dec = new DictionaryEntryComponent();
+    private LexicographicComponent setDictionaryEntry(String id, String label, String created) {
+        LexicographicComponent dec = new LexicographicComponent();
+        ArrayList<String> type = new ArrayList();
         dec.setLabel(label);
         dec.setConfidence(-1);
         dec.setComponent(id);
         dec.setLastUpdate(created);
         dec.setCreationDate(created);
+        dec.setHasChildren(false);
+        type.add("Entry");
+        dec.setType(type);
+        dec.setStatus("working");
         return dec;
     }
 
@@ -287,7 +293,7 @@ public class LexiconCreationManager implements Manager, Cached {
         return setComponent(_id, created, author);
     }
 
-    public DictionaryEntryComponent createDictionaryEntryComponent(String author, String prefix, String baseIRI, String desiredID) throws ManagerException {
+    public LexicographicComponent createLexicographicComponent(String author, String prefix, String baseIRI, String desiredID) throws ManagerException {
         Timestamp tm = new Timestamp(System.currentTimeMillis());
         String id = (desiredID != null ? (!desiredID.isEmpty() ? (Manager.IDAlreadyExists(baseIRI + desiredID) ? null : desiredID) : idInstancePrefix + tm.toString()) : idInstancePrefix + tm.toString());
         if (id == null) throw new ManagerException("ID " + desiredID + " already exists");
@@ -299,7 +305,7 @@ public class LexiconCreationManager implements Manager, Cached {
                 .replace("_CREATED_", created)
                 .replace("_PREFIX_", sparqlPrefix)
                 .replace("_MODIFIED_", created));
-        return setDictionaryEntryComponent(_id, created, author);
+        return setLexicographicComponent(_id, created, author);
     }
 
     public Collocation createCollocation(String leID, String author, String prefix, String baseIRI, String desiredID) throws ManagerException {
@@ -399,8 +405,8 @@ public class LexiconCreationManager implements Manager, Cached {
         return sc;
     }
 
-    private DictionaryEntryComponent setDictionaryEntryComponent(String id, String created, String author) {
-        DictionaryEntryComponent dec = new DictionaryEntryComponent();
+    private LexicographicComponent setLexicographicComponent(String id, String created, String author) {
+        LexicographicComponent dec = new LexicographicComponent();
         dec.setCreator(author);
         dec.setConfidence(-1);
         dec.setComponent(id);

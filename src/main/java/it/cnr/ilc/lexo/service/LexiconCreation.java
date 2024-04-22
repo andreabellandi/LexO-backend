@@ -29,13 +29,13 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.Language;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalConcept;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalEntryCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalSenseCore;
+import it.cnr.ilc.lexo.service.data.lexicon.output.LexicographicComponent;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ReifiedRelation;
 import it.cnr.ilc.lexo.service.data.lexicon.output.TranslationSet;
 import it.cnr.ilc.lexo.service.helper.BibliographyHelper;
 import it.cnr.ilc.lexo.service.helper.CollocationHelper;
 import it.cnr.ilc.lexo.service.helper.ComponentHelper;
 import it.cnr.ilc.lexo.service.helper.ConceptSetHelper;
-import it.cnr.ilc.lexo.service.helper.DictionaryEntryComponentHelper;
 import it.cnr.ilc.lexo.service.helper.DictionaryHelper;
 import it.cnr.ilc.lexo.service.helper.EtymologicalLinkHelper;
 import it.cnr.ilc.lexo.service.helper.EtymologyHelper;
@@ -47,6 +47,7 @@ import it.cnr.ilc.lexo.service.helper.LexicalSenseCoreHelper;
 import it.cnr.ilc.lexo.service.helper.DirectRelationHelper;
 import it.cnr.ilc.lexo.service.helper.FormRestrictionHelper;
 import it.cnr.ilc.lexo.service.helper.IndirectLexicalRelationHelper;
+import it.cnr.ilc.lexo.service.helper.LexicographicComponentHelper;
 import it.cnr.ilc.lexo.service.helper.TranslationSetHelper;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -91,7 +92,7 @@ public class LexiconCreation extends Service {
     private final TranslationSetHelper translationSetHelper = new TranslationSetHelper();
     private final LexicalConceptHelper lexicalConceptHelper = new LexicalConceptHelper();
     private final ConceptSetHelper conceptSetHelper = new ConceptSetHelper();
-    private final DictionaryEntryComponentHelper dictionaryEntryComponentHelper = new DictionaryEntryComponentHelper();
+    private final LexicographicComponentHelper lexicographicComponentHelper = new LexicographicComponentHelper();
 
     @GET
     @Path("dictionary")
@@ -325,8 +326,8 @@ public class LexiconCreation extends Service {
             log(Level.INFO, "create/dictionaryEntry");
             UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
             utilityManager.validateNamespace(prefix, baseIRI);
-            DictionaryEntryComponent dec = lexiconManager.createDictionaryEntry(author, prefix, baseIRI, desiredID);
-            String json = dictionaryEntryComponentHelper.toJson(dec);
+            LexicographicComponent dec = lexiconManager.createDictionaryEntry(author, prefix, baseIRI, desiredID);
+            String json = lexicographicComponentHelper.toJson(dec);
             log(Level.INFO, "Dictionary entry " + dec.getLabel() + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
             return Response.ok(json)
                     .type(MediaType.APPLICATION_JSON)
@@ -1237,8 +1238,8 @@ public class LexiconCreation extends Service {
             try {
                 UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
                 utilityManager.validateNamespace(prefix, baseIRI);
-                DictionaryEntryComponent dec = lexiconManager.createDictionaryEntryComponent(author, prefix, baseIRI, desiredID);
-                String json = dictionaryEntryComponentHelper.toJson(dec);
+                LexicographicComponent dec = lexiconManager.createLexicographicComponent(author, prefix, baseIRI, desiredID);
+                String json = lexicographicComponentHelper.toJson(dec);
                 log(Level.INFO, "Lexicographic component " + dec.getComponent() + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
                 return Response.ok(json)
                         .type(MediaType.APPLICATION_JSON)

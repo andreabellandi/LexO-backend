@@ -485,14 +485,6 @@ public class LexiconUpdate extends Service {
         }
     }
 
-    public static void main(String[] args) throws JsonProcessingException {
-        LexicographicComponentPositionUpdater a = new LexicographicComponentPositionUpdater();
-        HashMap<String, Integer> b = new HashMap<>();
-        b.put("prova", 1);
-        b.put("prova2", 2);
-        a.setOrdering(b);
-        ObjectMapper ob = new ObjectMapper();
-        System.out.print(ob.writeValueAsString(a));
-    }
+   
 
 }

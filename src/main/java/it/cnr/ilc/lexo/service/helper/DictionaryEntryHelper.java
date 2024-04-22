@@ -14,16 +14,16 @@ import org.eclipse.rdf4j.query.BindingSet;
  *
  * @author andreabellandi
  */
-public class LexicographicComponentHelper extends TripleStoreDataHelper<LexicographicComponent> {
+public class DictionaryEntryHelper extends TripleStoreDataHelper<LexicographicComponent> {
 
     @Override
     public void fillData(LexicographicComponent data, BindingSet bs) {
         data.setCreator(getStringValue(bs, SparqlVariable.CREATOR));
-        data.setAuthor(getStringValue(bs, SparqlVariable.LEXICAL_ENTRY_COMPLETING_AUTHOR));
+        data.setAuthor(getStringValue(bs, SparqlVariable.DICTIONARY_ENTRY_COMPLETING_AUTHOR));
         data.setNote(getStringValue(bs, SparqlVariable.NOTE));
-        data.setPos(getPosList(bs, getStringValue(bs, SparqlVariable.LEXICAL_ENTRY_POS)));
-        data.setRevisor(getStringValue(bs, SparqlVariable.LEXICAL_ENTRY_REVISOR));
-        data.setStatus(getStringValue(bs, SparqlVariable.LEXICAL_ENTRY_STATUS));
+        data.setPos(getPosList(bs, getStringValue(bs, SparqlVariable.DICTIONARY_ENTRY_POS)));
+        data.setRevisor(getStringValue(bs, SparqlVariable.DICTIONARY_ENTRY_REVISOR));
+        data.setStatus(getStringValue(bs, SparqlVariable.DICTIONARY_ENTRY_STATUS));
         data.setConfidence(getDoubleNumber(bs, SparqlVariable.CONFIDENCE));
         data.setType(getTypes(bs));
         data.setLastUpdate(getStringValue(bs, SparqlVariable.LAST_UPDATE));
@@ -31,8 +31,8 @@ public class LexicographicComponentHelper extends TripleStoreDataHelper<Lexicogr
         data.setRevisionDate(getStringValue(bs, SparqlVariable.REVISION_DATE));
         data.setCompletionDate(getStringValue(bs, SparqlVariable.COMPLETION_DATE));
         data.setHasChildren((getIntegerNumber(bs, SparqlVariable.CHILD)) > 0);
-        data.setPosition(Integer.parseInt(getLocalName(bs, SparqlVariable.COMPONENT_POSITION).replace("_", "")));
-        data.setReferredEntity(getStringValue(bs, SparqlVariable.LEXICAL_ENTITY));
+//        data.setPosition(Integer.parseInt(getLocalName(bs, SparqlVariable.COMPONENT_POSITION).replace("_", "")));
+//        data.setReferredEntity(getStringValue(bs, SparqlVariable.LEXICAL_ENTITY));
         data.setLabel(getStringValue(bs, SparqlVariable.LABEL) + 
                 (getLiteralLanguage(bs, SparqlVariable.LABEL) != null ? "@" + getLiteralLanguage(bs, SparqlVariable.LABEL) : ""));
     }

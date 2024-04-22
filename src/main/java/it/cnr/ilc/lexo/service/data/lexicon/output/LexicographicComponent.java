@@ -25,11 +25,11 @@ public class LexicographicComponent extends Entity implements Data {
     @ApiModelProperty(value = "referred lexical entity")
     private String referredEntity;
     @ApiModelProperty(value = "type of lexical entity (lexical entry or lexical sense)")
-    private ArrayList<String> referredEntityType;
+    private ArrayList<String> type;
     @ApiModelProperty(value = "label")
-    private String referredEntityLabel;
+    private String label;
     @ApiModelProperty(value = "pos, if entity is a lexical entry")
-    private String pos;
+    private ArrayList<String> pos;
     private String status;
     private String revisor;
     private String author;
@@ -62,12 +62,12 @@ public class LexicographicComponent extends Entity implements Data {
         this.referredEntity = referredEntity;
     }
 
-    public ArrayList<String> getReferredEntityType() {
-        return referredEntityType;
+    public ArrayList<String> getType() {
+        return type;
     }
 
-    public void setReferredEntityType(ArrayList<String> referredEntityType) {
-        this.referredEntityType = referredEntityType;
+    public void setType(ArrayList<String> type) {
+        this.type = type;
     }
 
     public String getStatus() {
@@ -126,19 +126,19 @@ public class LexicographicComponent extends Entity implements Data {
         this.revisionDate = revisionDate;
     }
 
-    public String getReferredEntityLabel() {
-        return referredEntityLabel;
+    public String getLabel() {
+        return label;
     }
 
-    public void setReferredEntityLabel(String referredEntityLabel) {
-        this.referredEntityLabel = referredEntityLabel;
+    public void setLabel(String label) {
+        this.label = label;
     }
 
-    public String getPos() {
+    public ArrayList<String> getPos() {
         return pos;
     }
 
-    public void setPos(String pos) {
+    public void setPos(ArrayList<String> pos) {
         this.pos = pos;
     }
 

@@ -5,8 +5,6 @@
  */
 package it.cnr.ilc.lexo.service.helper;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalEntryFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.output.DictionaryEntryItem;
 import it.cnr.ilc.lexo.sparql.SparqlVariable;
 import java.util.logging.Level;
@@ -31,7 +29,7 @@ public class DictionaryEntryFilterHelper extends TripleStoreDataHelper<Dictionar
         } catch (Exception ex) {
             Logger.getLogger(DictionaryEntryFilterHelper.class.getName()).log(Level.SEVERE, null, ex);
         }
-        data.setChildren((bs.getBinding(SparqlVariable.CHILD) != null));
+        data.setHasChildren((getIntegerNumber(bs, SparqlVariable.CHILD)) > 0);
         data.setStatus(getStringValue(bs, SparqlVariable.DICTIONARY_ENTRY_STATUS));
         data.setRevisor(getStringValue(bs, SparqlVariable.DICTIONARY_ENTRY_REVISOR));
         data.setCreator(getStringValue(bs, SparqlVariable.DICTIONARY_ENTRY_CREATION_AUTHOR));
@@ -49,12 +47,5 @@ public class DictionaryEntryFilterHelper extends TripleStoreDataHelper<Dictionar
         return DictionaryEntryItem.class;
     }
 
-    public LexicalEntryFilter fromJsonFilter(String json) throws HelperException {
-        try {
-            return objectMapper.readValue(json, LexicalEntryFilter.class);
-        } catch (JsonProcessingException ex) {
-            throw new HelperException("parsing error");
-        }
-    }
 
 }
