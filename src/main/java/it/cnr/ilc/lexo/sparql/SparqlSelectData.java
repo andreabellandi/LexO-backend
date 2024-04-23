@@ -154,6 +154,7 @@ public class SparqlSelectData {
             + " ?" + SparqlVariable.LAST_UPDATE
             + " ?" + SparqlVariable.IMAGE
             + " ?" + SparqlVariable.CHILD
+            + " ?" + SparqlVariable.TYPE
             + " ?" + SparqlVariable.DICTIONARY_ENTRY_COMPLETING_AUTHOR
             + " ?" + SparqlVariable.REVISION_DATE
             + " ?" + SparqlVariable.COMPLETION_DATE
@@ -168,7 +169,8 @@ public class SparqlSelectData {
             + "      luc:offset \"[OFFSET]\" ;\n"
             + "      luc:limit \"[LIMIT]\" ;\n"
             + "      luc:entities ?" + SparqlVariable.DICTIONARY_ENTRY + " .\n"
-            + "  ?" + SparqlVariable.DICTIONARY_ENTRY + " rdfs:label ?" + SparqlVariable.LABEL + " .\n"
+            + "  ?" + SparqlVariable.DICTIONARY_ENTRY + " rdfs:label ?" + SparqlVariable.LABEL + " ;\n"
+            + "       sesame:directType ?" + SparqlVariable.TYPE + " .\n"
             + "   OPTIONAL { ?" + SparqlVariable.DICTIONARY_ENTRY + " lexinfo:confidence ?confidence . }\n"
             + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " dct:creator ?" + SparqlVariable.LEXICAL_ENTRY_CREATION_AUTHOR + "} .\n"
             + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " dct:created ?" + SparqlVariable.CREATION_DATE + "} .\n"
@@ -191,6 +193,7 @@ public class SparqlSelectData {
             + SparqlVariable.DICTIONARY_ENTRY_CREATION_AUTHOR + " ?"
             + SparqlVariable.LABEL + " ?"
             + SparqlVariable.NOTE + " ?"
+            + SparqlVariable.TYPE + " ?"
             + SparqlVariable.TOTAL_HITS + " ?"
             + SparqlVariable.CREATION_DATE + " ?"
             + SparqlVariable.LAST_UPDATE + " ?"

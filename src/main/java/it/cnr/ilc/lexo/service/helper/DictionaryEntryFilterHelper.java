@@ -29,6 +29,7 @@ public class DictionaryEntryFilterHelper extends TripleStoreDataHelper<Dictionar
         } catch (Exception ex) {
             Logger.getLogger(DictionaryEntryFilterHelper.class.getName()).log(Level.SEVERE, null, ex);
         }
+        data.setType(getTypes(bs, getStringValue(bs, SparqlVariable.TYPE)));
         data.setHasChildren((getIntegerNumber(bs, SparqlVariable.CHILD)) > 0);
         data.setStatus(getStringValue(bs, SparqlVariable.DICTIONARY_ENTRY_STATUS));
         data.setRevisor(getStringValue(bs, SparqlVariable.DICTIONARY_ENTRY_REVISOR));
