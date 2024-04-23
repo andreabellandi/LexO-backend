@@ -19,6 +19,7 @@ public class DictionaryEntryHelper extends TripleStoreDataHelper<LexicographicCo
     @Override
     public void fillData(LexicographicComponent data, BindingSet bs) {
         data.setCreator(getStringValue(bs, SparqlVariable.CREATOR));
+        data.setComponent(getStringValue(bs, SparqlVariable.DICTIONARY_ENTRY));
         data.setAuthor(getStringValue(bs, SparqlVariable.DICTIONARY_ENTRY_COMPLETING_AUTHOR));
         data.setNote(getStringValue(bs, SparqlVariable.NOTE));
         data.setPos(getPosList(bs, getStringValue(bs, SparqlVariable.DICTIONARY_ENTRY_POS)));
