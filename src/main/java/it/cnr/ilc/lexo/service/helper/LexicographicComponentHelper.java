@@ -26,6 +26,7 @@ public class LexicographicComponentHelper extends TripleStoreDataHelper<Lexicogr
         data.setStatus(getStringValue(bs, SparqlVariable.LEXICAL_ENTRY_STATUS));
         data.setConfidence(getDoubleNumber(bs, SparqlVariable.CONFIDENCE));
         data.setType(getTypes(bs));
+        data.setComponent(getStringValue(bs, SparqlVariable.LEXICOGRAPHIC_COMPONENT));
         data.setLastUpdate(getStringValue(bs, SparqlVariable.LAST_UPDATE));
         data.setCreationDate(getStringValue(bs, SparqlVariable.CREATION_DATE));
         data.setRevisionDate(getStringValue(bs, SparqlVariable.REVISION_DATE));
