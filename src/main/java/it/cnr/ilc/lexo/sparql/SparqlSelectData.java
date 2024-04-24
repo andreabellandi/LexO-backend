@@ -2092,7 +2092,7 @@ public class SparqlSelectData {
             + "WHERE { <_ID_> ?" + SparqlVariable.COMPONENT_POSITION + " ?" + SparqlVariable.LEXICOGRAPHIC_COMPONENT + " .\n"
             // SparqlVariable.COMPONENT_POSITION should be different from lexicog:subComponent property
             + "    ?" + SparqlVariable.LEXICOGRAPHIC_COMPONENT + " a lexicog:LexicographicComponent .\n"
-            + "   OPTIONAL {?" + SparqlVariable.LEXICOGRAPHIC_COMPONENT + " " + SparqlVariable.PROPERTY_NAME + " ?_" + SparqlVariable.CHILD + " . "
+            + "   OPTIONAL {?" + SparqlVariable.LEXICOGRAPHIC_COMPONENT + " ?" + SparqlVariable.PROPERTY_NAME + " ?_" + SparqlVariable.CHILD + " . "
             + "              FILTER (strstarts(str(?" + SparqlVariable.PROPERTY_NAME + "), str(rdf:_)))} .\n"
             + "    OPTIONAL { ?" + SparqlVariable.LEXICOGRAPHIC_COMPONENT + " lexicog:describes ?" + SparqlVariable.LEXICAL_ENTITY + " .\n"
             + "        ?" + SparqlVariable.LEXICAL_ENTITY + " a ?_" + SparqlVariable.TYPE + " ;\n"
