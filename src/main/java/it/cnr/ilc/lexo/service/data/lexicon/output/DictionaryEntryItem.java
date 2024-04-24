@@ -21,12 +21,13 @@ public class DictionaryEntryItem extends Entity implements Data {
     private String label;
     private String language;
     private String author;
-    private String note;
     private String dictionaryEntry;
     private String completionDate;
     private String revisionDate;
     private ArrayList<String> images;
     private ArrayList<String> type;
+    private ArrayList<String> seeAlso;
+    private String sameDictionaryEntryAs;
     private boolean hasChildren;
 
     public DictionaryEntryItem() {
@@ -34,6 +35,22 @@ public class DictionaryEntryItem extends Entity implements Data {
 
     public String getStatus() {
         return status;
+    }
+
+    public ArrayList<String> getSeeAlso() {
+        return seeAlso;
+    }
+
+    public void setSeeAlso(ArrayList<String> seeAlso) {
+        this.seeAlso = seeAlso;
+    }
+
+    public String getSameDictionaryEntryAs() {
+        return sameDictionaryEntryAs;
+    }
+
+    public void setSameDictionaryEntryAs(String sameDictionaryEntryAs) {
+        this.sameDictionaryEntryAs = sameDictionaryEntryAs;
     }
 
     public ArrayList<String> getType() {
@@ -96,14 +113,7 @@ public class DictionaryEntryItem extends Entity implements Data {
         this.author = author;
     }
 
-    public String getNote() {
-        return note;
-    }
-
-    public void setNote(String note) {
-        this.note = note;
-    }
-
+  
     public String getDictionaryEntry() {
         return dictionaryEntry;
     }

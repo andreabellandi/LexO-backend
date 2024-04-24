@@ -28,7 +28,7 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.Collocation;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Component;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ComponentItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ConceptSetItem;
-import it.cnr.ilc.lexo.service.data.lexicon.output.DictionaryEntryComponent;
+import it.cnr.ilc.lexo.service.data.lexicon.output.DictionaryEntryCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.DictionaryEntryItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.EtymologicalLink;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Etymology;
@@ -513,7 +513,7 @@ public class LexiconData extends Service {
                         + _id + "> iis not a dictionary entry").build();
             }
             TupleQueryResult comps = lexiconManager.getDictEntry(_id);
-            LexicographicComponent dict = dictionaryEntryHelper.newData(comps);
+            DictionaryEntryCore dict = dictionaryEntryHelper.newData(comps);
             String json = dictionaryEntryHelper.toJson(dict);
             return Response.ok(json)
                     .type(MediaType.APPLICATION_JSON)

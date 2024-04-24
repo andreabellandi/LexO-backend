@@ -20,7 +20,6 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.Collocation;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Component;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ConceptSet;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Dictionary;
-import it.cnr.ilc.lexo.service.data.lexicon.output.DictionaryEntryComponent;
 import it.cnr.ilc.lexo.service.data.lexicon.output.EtymologicalLink;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Etymology;
 import it.cnr.ilc.lexo.service.data.lexicon.output.FormCore;

@@ -163,7 +163,9 @@ public class SparqlVariable {
     public static final String LABEL_COUNT = "labelCount";
 
     public static final String SEEALSO = "seeAlso";
+    public static final String SEEALSO_LABEL = "seeAlsoLabel";
     public static final String SAMEAS = "sameAs";
+    public static final String SAMEAS_LABEL = "sameAsLabel";
 
     public static final String SOURCE = "source";
     public static final String SOURCE_DEFINITION = "sourceDefinition";

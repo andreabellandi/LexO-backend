@@ -15,51 +15,34 @@ import java.util.ArrayList;
  *
  * @author andreabellandi
  */
-@ApiModel(description = "Output model representing a lexicographic component")
-public class LexicographicComponent extends Entity implements Data {
+@ApiModel(description = "Output model representing a dictionary entry")
+public class DictionaryEntryCore extends Entity implements Data {
 
-    @ApiModelProperty(value = "component IRI")
-    private String component;
-    @ApiModelProperty(value = "position of the component")
-    private int position;
-    @ApiModelProperty(value = "referred lexical entity")
-    private String referredEntity;
-    @ApiModelProperty(value = "type of lexical entity (lexical entry or lexical sense)")
+    @ApiModelProperty(value = "dictionary entry IRI")
+    private String dictionaryEntry;
+    @ApiModelProperty(value = "type of the dictionary entry")
     private ArrayList<String> type;
-    @ApiModelProperty(value = "label or definition depending on the referred entity type")
+    @ApiModelProperty(value = "label")
     private String label;
-    @ApiModelProperty(value = "pos, if referred entity is a lexical entry")
     private ArrayList<String> pos;
     private String status;
     private String revisor;
     private String author;
-    private String note;
-    private boolean hasChildren;
     private String completionDate;
     private String revisionDate;
+    private String language;
+    private ArrayList<String> images;
+    private boolean hasChildren;
+    private ArrayList<String> note;
+    private ArrayList<LinkedEntity> seeAlso;
+    private ArrayList<LinkedEntity> sameDictionaryEntryAs;
 
-    public String getComponent() {
-        return component;
+    public String getDictionaryEntry() {
+        return dictionaryEntry;
     }
 
-    public void setComponent(String component) {
-        this.component = component;
-    }
-
-    public int getPosition() {
-        return position;
-    }
-
-    public void setPosition(int position) {
-        this.position = position;
-    }
-
-    public String getReferredEntity() {
-        return referredEntity;
-    }
-
-    public void setReferredEntity(String referredEntity) {
-        this.referredEntity = referredEntity;
+    public void setDictionaryEntry(String dictionaryEntry) {
+        this.dictionaryEntry = dictionaryEntry;
     }
 
     public ArrayList<String> getType() {
@@ -82,6 +65,38 @@ public class LexicographicComponent extends Entity implements Data {
         return revisor;
     }
 
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
+    public ArrayList<String> getImages() {
+        return images;
+    }
+
+    public void setImages(ArrayList<String> images) {
+        this.images = images;
+    }
+
+    public ArrayList<LinkedEntity> getSeeAlso() {
+        return seeAlso;
+    }
+
+    public void setSeeAlso(ArrayList<LinkedEntity> seeAlso) {
+        this.seeAlso = seeAlso;
+    }
+
+    public ArrayList<LinkedEntity> getSameDictionaryEntryAs() {
+        return sameDictionaryEntryAs;
+    }
+
+    public void setSameDictionaryEntryAs(ArrayList<LinkedEntity> sameDictionaryEntryAs) {
+        this.sameDictionaryEntryAs = sameDictionaryEntryAs;
+    }
+
     public void setRevisor(String revisor) {
         this.revisor = revisor;
     }
@@ -94,11 +109,11 @@ public class LexicographicComponent extends Entity implements Data {
         this.author = author;
     }
 
-    public String getNote() {
+    public ArrayList<String> getNote() {
         return note;
     }
 
-    public void setNote(String note) {
+    public void setNote(ArrayList<String> note) {
         this.note = note;
     }
 

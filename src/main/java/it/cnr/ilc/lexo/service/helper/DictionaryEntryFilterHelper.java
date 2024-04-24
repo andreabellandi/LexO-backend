@@ -29,12 +29,13 @@ public class DictionaryEntryFilterHelper extends TripleStoreDataHelper<Dictionar
         } catch (Exception ex) {
             Logger.getLogger(DictionaryEntryFilterHelper.class.getName()).log(Level.SEVERE, null, ex);
         }
+        data.setSeeAlso(getStringValuesList(getStringValue(bs, SparqlVariable.SEEALSO)));
+        data.setSameDictionaryEntryAs(getStringValue(bs, SparqlVariable.SAMEAS));
         data.setType(getTypes(bs, getStringValue(bs, SparqlVariable.TYPE)));
         data.setHasChildren((getIntegerNumber(bs, SparqlVariable.CHILD)) > 0);
         data.setStatus(getStringValue(bs, SparqlVariable.DICTIONARY_ENTRY_STATUS));
         data.setRevisor(getStringValue(bs, SparqlVariable.DICTIONARY_ENTRY_REVISOR));
         data.setCreator(getStringValue(bs, SparqlVariable.DICTIONARY_ENTRY_CREATION_AUTHOR));
-        data.setNote(getStringValue(bs, SparqlVariable.NOTE));
         data.setImages(getImages(getStringValue(bs, SparqlVariable.IMAGE)));
         data.setCompletionDate(getStringValue(bs, SparqlVariable.COMPLETION_DATE));
         data.setCreationDate(getStringValue(bs, SparqlVariable.CREATION_DATE));

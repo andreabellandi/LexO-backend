@@ -149,7 +149,6 @@ public class SparqlSelectData {
             + " ?" + SparqlVariable.DICTIONARY_ENTRY_POS
             + " ?" + SparqlVariable.LABEL
             + " ?" + SparqlVariable.DICTIONARY_ENTRY_CREATION_AUTHOR
-            + " ?" + SparqlVariable.NOTE
             + " ?" + SparqlVariable.CREATION_DATE
             + " ?" + SparqlVariable.LAST_UPDATE
             + " ?" + SparqlVariable.IMAGE
@@ -157,10 +156,13 @@ public class SparqlSelectData {
             + " ?" + SparqlVariable.TYPE
             + " ?" + SparqlVariable.DICTIONARY_ENTRY_COMPLETING_AUTHOR
             + " ?" + SparqlVariable.REVISION_DATE
+            + " ?" + SparqlVariable.SEEALSO
+            + " ?" + SparqlVariable.SAMEAS
             + " ?" + SparqlVariable.COMPLETION_DATE
             + " ?confidence (COUNT(?_" + SparqlVariable.CHILD + ") AS ?" + SparqlVariable.CHILD + ")"
             + "\n"
             + "(GROUP_CONCAT(distinct str(?_" + SparqlVariable.DICTIONARY_ENTRY_POS + ");SEPARATOR=\";\") AS ?" + SparqlVariable.DICTIONARY_ENTRY_POS + ")\n"
+            + "(GROUP_CONCAT(distinct str(?_" + SparqlVariable.SEEALSO + ");SEPARATOR=\";\") AS ?" + SparqlVariable.SEEALSO + ")\n"
             + "FROM onto:explicit WHERE {\n"
             + "  ?search a inst:" + SparqlVariable.DICTIONARY_ENTRY_INDEX + " ;\n"
             + "      luc:query \"[FILTER]\" ;\n"
@@ -175,10 +177,11 @@ public class SparqlSelectData {
             + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " dct:creator ?" + SparqlVariable.LEXICAL_ENTRY_CREATION_AUTHOR + "} .\n"
             + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " dct:created ?" + SparqlVariable.CREATION_DATE + "} .\n"
             + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " dct:modified ?" + SparqlVariable.LAST_UPDATE + "} .\n"
+            + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " owl:sameAs ?" + SparqlVariable.SAMEAS + "} .\n"
+            + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " rdfs:seeAlso ?" + SparqlVariable.SEEALSO + "} .\n"
             + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " dct:author ?" + SparqlVariable.LEXICAL_ENTRY_COMPLETING_AUTHOR + "} .\n"
             + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " dct:dateAccepted ?" + SparqlVariable.REVISION_DATE + "} .\n"
             + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " dct:dateSubmitted ?" + SparqlVariable.COMPLETION_DATE + "} .\n"
-            + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " skos:note ?" + SparqlVariable.NOTE + "} .\n"
             + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " loc:rev ?" + SparqlVariable.LEXICAL_ENTRY_REVISOR + "} .\n"
             + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " vs:term_status ?" + SparqlVariable.LEXICAL_ENTRY_STATUS + "} .\n"
             + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " foaf:depiction ?_" + SparqlVariable.IMAGE + "} .\n"
@@ -192,12 +195,12 @@ public class SparqlSelectData {
             + SparqlVariable.DICTIONARY_ENTRY_STATUS + " ?"
             + SparqlVariable.DICTIONARY_ENTRY_CREATION_AUTHOR + " ?"
             + SparqlVariable.LABEL + " ?"
-            + SparqlVariable.NOTE + " ?"
             + SparqlVariable.TYPE + " ?"
             + SparqlVariable.TOTAL_HITS + " ?"
             + SparqlVariable.CREATION_DATE + " ?"
             + SparqlVariable.LAST_UPDATE + " ?"
             + SparqlVariable.IMAGE + " ?"
+            + SparqlVariable.SAMEAS + " ?"
             + SparqlVariable.DICTIONARY_ENTRY_COMPLETING_AUTHOR + " ?"
             + SparqlVariable.REVISION_DATE + " ?"
             + SparqlVariable.COMPLETION_DATE
@@ -2129,48 +2132,62 @@ public class SparqlSelectData {
             + SparqlPrefix.SKOS.getSparqlPrefix() + "\n"
             + SparqlPrefix.INST.getSparqlPrefix() + "\n"
             + SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
-            + "SELECT ?" + SparqlVariable.DICTIONARY_ENTRY + " ?" + SparqlVariable.DICTIONARY_ENTRY_STATUS + " ?" + SparqlVariable.DICTIONARY_ENTRY_REVISOR + 
-            " ?" + SparqlVariable.LABEL + " ?" + SparqlVariable.CREATOR + " ?" + SparqlVariable.NOTE + " "
-            + "?" + SparqlVariable.CREATION_DATE + " ?" + SparqlVariable.LAST_UPDATE + " ?" + SparqlVariable.IMAGE + " ?" + SparqlVariable.DICTIONARY_ENTRY_COMPLETING_AUTHOR + " "
+            + "SELECT ?" + SparqlVariable.DICTIONARY_ENTRY + " ?" + SparqlVariable.DICTIONARY_ENTRY_STATUS + " ?" + SparqlVariable.DICTIONARY_ENTRY_REVISOR
+            + " ?" + SparqlVariable.LABEL + " ?" + SparqlVariable.CREATOR
+            + " ?" + SparqlVariable.CREATION_DATE + " ?" + SparqlVariable.LAST_UPDATE + " ?" + SparqlVariable.IMAGE + " ?" + SparqlVariable.DICTIONARY_ENTRY_COMPLETING_AUTHOR + " "
             + "?" + SparqlVariable.COMPLETION_DATE + " ?" + SparqlVariable.REVISION_DATE + " ?confidence \n"
             + "(COUNT(?_" + SparqlVariable.CHILD + ") AS ?" + SparqlVariable.CHILD + ")\n"
             + "(GROUP_CONCAT(distinct str(?_" + SparqlVariable.DICTIONARY_ENTRY_POS + ");SEPARATOR=\";\") AS ?" + SparqlVariable.DICTIONARY_ENTRY_POS + ")\n"
             + "(GROUP_CONCAT(distinct str(?_" + SparqlVariable.TYPE + ");SEPARATOR=\";\") AS ?" + SparqlVariable.TYPE + ")\n"
-            + "FROM onto:explicit WHERE {\n"
+            + "(GROUP_CONCAT(distinct str(?_" + SparqlVariable.NOTE + ");SEPARATOR=\"_NOTE_SEPARATOR_\") AS ?" + SparqlVariable.NOTE + ")\n"
+            + "(GROUP_CONCAT(distinct str(?_" + SparqlVariable.IMAGE + ");SEPARATOR=\";\") AS ?" + SparqlVariable.IMAGE + ")\n"
+            + "(GROUP_CONCAT(distinct concat(\"" + SparqlPrefix.OWL.getUri() + "sameAs\",\"<>\",str(?_" + SparqlVariable.SAMEAS + "),\"<>\",str(?graph" + SparqlVariable.SAMEAS + "),\"<>\",str(?" + SparqlVariable.SAMEAS_LABEL + "));SEPARATOR=\"---\") AS ?" + SparqlVariable.SAMEAS + ")\n"
+            + "(GROUP_CONCAT(distinct concat(\"" + SparqlPrefix.RDFS.getUri() + "seeAlso\",\"<>\",str(?_" + SparqlVariable.SEEALSO + "),\"<>\",str(?graph" + SparqlVariable.SEEALSO + "),\"<>\",str(?" + SparqlVariable.SEEALSO_LABEL + "));SEPARATOR=\"---\") AS ?" + SparqlVariable.SEEALSO + ")\n"
+            + "FROM NAMED onto:explicit\n "
+            + "FROM NAMED onto:implicit\n "
+            + "WHERE {\n"
             + "  ?search a inst:dictionaryEntryIndex ;\n"
             + "      luc:query \"dictionaryEntryIRI:\\\"_ID_\\\"\" ;\n"
             + "      luc:entities ?" + SparqlVariable.DICTIONARY_ENTRY + " .\n"
             + "  ?" + SparqlVariable.DICTIONARY_ENTRY + " rdfs:label ?" + SparqlVariable.LABEL + " ;\n"
             + "                   sesame:directType ?_" + SparqlVariable.TYPE + "\n"
-            + "   OPTIONAL { ?" + SparqlVariable.DICTIONARY_ENTRY + " lexinfo:confidence ?confidence . }\n"
+            + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " lexinfo:confidence ?confidence . }\n"
             + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " dct:creator ?" + SparqlVariable.CREATOR + "} .\n"
             + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " dct:created ?" + SparqlVariable.CREATION_DATE + "} .\n"
             + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " dct:modified ?" + SparqlVariable.LAST_UPDATE + "} .\n"
             + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " dct:author ?" + SparqlVariable.DICTIONARY_ENTRY_COMPLETING_AUTHOR + "} .\n"
             + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " dct:dateAccepted ?" + SparqlVariable.COMPLETION_DATE + "} .\n"
             + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " dct:dateSubmitted ?" + SparqlVariable.REVISION_DATE + "} .\n"
-            + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " skos:note ?" + SparqlVariable.NOTE + "} .\n"
             + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " loc:rev ?" + SparqlVariable.DICTIONARY_ENTRY_REVISOR + "} .\n"
             + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " vs:term_status ?" + SparqlVariable.DICTIONARY_ENTRY_STATUS + "} .\n"
             + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " foaf:depiction ?" + SparqlVariable.IMAGE + "} .\n"
+            + "   OPTIONAL { \n"
+            + "        	GRAPH ?graph" + SparqlVariable.SAMEAS + " { ?" + SparqlVariable.DICTIONARY_ENTRY + " owl:sameAs ?_" + SparqlVariable.SAMEAS + " . } \n"
+            + "        	   OPTIONAL { ?_" + SparqlVariable.SAMEAS + " rdfs:label ?" + SparqlVariable.SAMEAS_LABEL + " }\n"
+            + "             FILTER(regex(str(?graph" + SparqlVariable.SAMEAS + "), \"explicit\"))"
+            + "    	}\n"
+            + "   OPTIONAL { \n"
+            + "        	GRAPH ?graph" + SparqlVariable.SEEALSO + " { ?" + SparqlVariable.DICTIONARY_ENTRY + " rdfs:seeAlso ?_" + SparqlVariable.SEEALSO + " . } \n"
+            + "        	   OPTIONAL { ?_" + SparqlVariable.SEEALSO + " rdfs:label ?" + SparqlVariable.SEEALSO_LABEL + " }\n"
+            + "    	}\n"
             + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " ?" + SparqlVariable.PROPERTY_NAME + " ?_" + SparqlVariable.CHILD + " .    \n"
             + "        OPTIONAL { \n"
             + "            ?_" + SparqlVariable.CHILD + " lexicog:describes [ lexinfo:partOfSpeech ?_" + SparqlVariable.DICTIONARY_ENTRY_POS + " ] \n"
             + "        }\n"
             + "              FILTER (strstarts(str(?" + SparqlVariable.PROPERTY_NAME + "), str(rdf:_)))\n"
             + "    } .\n"
-            + "} GROUP BY ?" + SparqlVariable.DICTIONARY_ENTRY + " ?" + 
-            SparqlVariable.LABEL + " ?" + 
-            SparqlVariable.DICTIONARY_ENTRY_REVISOR + " ?" + 
-            SparqlVariable.DICTIONARY_ENTRY_STATUS + " ?" + 
-            SparqlVariable.CREATOR + " "
-            + "?" + 
-            SparqlVariable.NOTE + " ?" + 
-            SparqlVariable.CREATION_DATE + " ?" + 
-            SparqlVariable.LAST_UPDATE + " ?" + SparqlVariable.IMAGE + " ?" + SparqlVariable.DICTIONARY_ENTRY_COMPLETING_AUTHOR + " "
-            + "?" + 
-            SparqlVariable.COMPLETION_DATE + " ?" + 
-            SparqlVariable.REVISION_DATE + " ?confidence";
+            + "} GROUP BY ?" + SparqlVariable.DICTIONARY_ENTRY + " ?"
+            + SparqlVariable.LABEL + " ?"
+            + SparqlVariable.DICTIONARY_ENTRY_REVISOR + " ?"
+            + SparqlVariable.DICTIONARY_ENTRY_STATUS + " ?"
+            + SparqlVariable.CREATOR + " "
+            + "?"
+            + SparqlVariable.CREATION_DATE + " ?"
+            + SparqlVariable.LAST_UPDATE
+            + " ?" + SparqlVariable.DICTIONARY_ENTRY_COMPLETING_AUTHOR + " "
+            + "?"
+            + SparqlVariable.COMPLETION_DATE + " ?"
+            + SparqlVariable.REVISION_DATE + " ?confidence";
 
     public static final String GET_RESOURCE_MODEL
             = SparqlPrefix.LIME.getSparqlPrefix() + "\n"
