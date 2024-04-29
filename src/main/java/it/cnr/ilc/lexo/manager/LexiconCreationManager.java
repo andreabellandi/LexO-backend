@@ -9,6 +9,7 @@ import it.cnr.ilc.lexo.LexOProperties;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Collocation;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Component;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Dictionary;
+import it.cnr.ilc.lexo.service.data.lexicon.output.DictionaryEntryCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.EtymologicalLink;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Etymology;
 import it.cnr.ilc.lexo.service.data.lexicon.output.FormCore;
@@ -120,7 +121,7 @@ public class LexiconCreationManager implements Manager, Cached {
         return setLexicalEntry(_id, idLabel, created, author);
     }
 
-    public LexicographicComponent createDictionaryEntry(String author, String prefix, String baseIRI, String desiredID) throws ManagerException {
+    public DictionaryEntryCore createDictionaryEntry(String author, String prefix, String baseIRI, String desiredID) throws ManagerException {
         Timestamp tm = new Timestamp(System.currentTimeMillis());
         String id = (desiredID != null ? (!desiredID.isEmpty() ? (Manager.IDAlreadyExists(baseIRI + desiredID) ? null : desiredID) : idInstancePrefix + tm.toString()) : idInstancePrefix + tm.toString());
         if (id == null) throw new ManagerException("ID " + desiredID + " already exists");
@@ -152,12 +153,12 @@ public class LexiconCreationManager implements Manager, Cached {
         return lec;
     }
 
-    private LexicographicComponent setDictionaryEntry(String id, String label, String created) {
-        LexicographicComponent dec = new LexicographicComponent();
+    private DictionaryEntryCore setDictionaryEntry(String id, String label, String created) {
+        DictionaryEntryCore dec = new DictionaryEntryCore();
         ArrayList<String> type = new ArrayList();
         dec.setLabel(label);
         dec.setConfidence(-1);
-        dec.setComponent(id);
+        dec.setDictionaryEntry(id);
         dec.setLastUpdate(created);
         dec.setCreationDate(created);
         dec.setHasChildren(false);

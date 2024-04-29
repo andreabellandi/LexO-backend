@@ -20,6 +20,7 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.Collocation;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Component;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ConceptSet;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Dictionary;
+import it.cnr.ilc.lexo.service.data.lexicon.output.DictionaryEntryCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.EtymologicalLink;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Etymology;
 import it.cnr.ilc.lexo.service.data.lexicon.output.FormCore;
@@ -35,6 +36,7 @@ import it.cnr.ilc.lexo.service.helper.BibliographyHelper;
 import it.cnr.ilc.lexo.service.helper.CollocationHelper;
 import it.cnr.ilc.lexo.service.helper.ComponentHelper;
 import it.cnr.ilc.lexo.service.helper.ConceptSetHelper;
+import it.cnr.ilc.lexo.service.helper.DictionaryEntryHelper;
 import it.cnr.ilc.lexo.service.helper.DictionaryHelper;
 import it.cnr.ilc.lexo.service.helper.EtymologicalLinkHelper;
 import it.cnr.ilc.lexo.service.helper.EtymologyHelper;
@@ -92,6 +94,7 @@ public class LexiconCreation extends Service {
     private final LexicalConceptHelper lexicalConceptHelper = new LexicalConceptHelper();
     private final ConceptSetHelper conceptSetHelper = new ConceptSetHelper();
     private final LexicographicComponentHelper lexicographicComponentHelper = new LexicographicComponentHelper();
+    private final DictionaryEntryHelper dictionaryEntryHelper = new DictionaryEntryHelper();
 
     @GET
     @Path("dictionary")
@@ -325,8 +328,8 @@ public class LexiconCreation extends Service {
             log(Level.INFO, "create/dictionaryEntry");
             UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
             utilityManager.validateNamespace(prefix, baseIRI);
-            LexicographicComponent dec = lexiconManager.createDictionaryEntry(author, prefix, baseIRI, desiredID);
-            String json = lexicographicComponentHelper.toJson(dec);
+            DictionaryEntryCore dec = lexiconManager.createDictionaryEntry(author, prefix, baseIRI, desiredID);
+            String json = dictionaryEntryHelper.toJson(dec);
             log(Level.INFO, "Dictionary entry " + dec.getLabel() + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
             return Response.ok(json)
                     .type(MediaType.APPLICATION_JSON)
