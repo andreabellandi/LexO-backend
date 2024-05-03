@@ -149,6 +149,19 @@ public final class UtilityManager implements Manager, Cached {
         }
         return null;
     }
+    
+    public ArrayList<String> getDictionaryEntryByLexicalEntry(String id) throws QueryEvaluationException {
+        ArrayList<String> des = new ArrayList();
+        String query = SparqlQueryUtil.GET_DICTIONARY_ENTRY_ASSOCIATED_TO_LEXICAL_ENTRY.replaceAll("_ID_", id);
+        try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {
+            while (result.hasNext()) {
+                BindingSet bs = result.next();
+                des.add(bs.getBinding(SparqlVariable.DICTIONARY_ENTRY).getValue().toString());
+            }
+        } catch (QueryEvaluationException qee) {
+        }
+        return des;
+    }
 
     public boolean isDictionaryEntry(String id) throws QueryEvaluationException {
         String query = SparqlQueryUtil.IS_DICTIONARYENTRY_ID.replaceAll("_ID_", id);

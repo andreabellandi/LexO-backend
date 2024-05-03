@@ -47,11 +47,13 @@ public class DictionaryEntryHelper extends TripleStoreDataHelper<DictionaryEntry
         data.setSeeAlso(getLinkedEntities(bs, getStringValue(bs, SparqlVariable.SEEALSO)));
         data.setSameDictionaryEntryAs(getLinkedEntities(bs, getStringValue(bs, SparqlVariable.SAMEAS)));
     }
-    
+
     private ArrayList<String> getTypes(BindingSet bs) {
         ArrayList<String> types = new ArrayList();
         for (String _type : getStringValue(bs, SparqlVariable.TYPE).split(";")) {
-            types.add(_type.split("#")[1]);
+            if (!_type.isEmpty()) {
+                types.add(_type.split("#")[1]);
+            }
         }
         return types;
     }

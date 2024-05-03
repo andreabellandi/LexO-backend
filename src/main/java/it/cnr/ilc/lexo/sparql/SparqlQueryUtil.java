@@ -263,4 +263,14 @@ public class SparqlQueryUtil {
 
     public static final String SYSTEM_INFO = "DESCRIBE <http://www.ontotext.com/SYSINFO> FROM <http://www.ontotext.com/SYSINFO>";
 
+    public static final String GET_DICTIONARY_ENTRY_ASSOCIATED_TO_LEXICAL_ENTRY
+            = SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTO.getSparqlPrefix() + "\n"
+            + "SELECT ?" + SparqlVariable.DICTIONARY_ENTRY + "\n"
+            + "FROM onto:explicit\n"
+            + "WHERE {\n"
+            + "    ?" + SparqlVariable.LEXICOGRAPHIC_COMPONENT + " lexicog:describes <_ID_> .\n"
+            + "    ?" + SparqlVariable.DICTIONARY_ENTRY + " ?" + SparqlVariable.PROPERTY_NAME + " ?" + SparqlVariable.LEXICOGRAPHIC_COMPONENT + " .\n"
+            + "}";
+
 }

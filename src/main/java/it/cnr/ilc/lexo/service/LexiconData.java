@@ -485,7 +485,7 @@ public class LexiconData extends Service {
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }
     }
-    
+
     @GET
     @Path("dictionaryEntry")
     @Produces(MediaType.APPLICATION_JSON)
@@ -515,6 +515,51 @@ public class LexiconData extends Service {
             TupleQueryResult comps = lexiconManager.getDictEntry(_id);
             DictionaryEntryCore dict = dictionaryEntryHelper.newData(comps);
             String json = dictionaryEntryHelper.toJson(dict);
+            return Response.ok(json)
+                    .type(MediaType.APPLICATION_JSON)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
+        } catch (ManagerException | UnsupportedEncodingException | AuthorizationException | ServiceException ex) {
+            log(Level.ERROR, ex.getMessage());
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        }
+    }
+
+    @GET
+    @Path("dictionaryEntryByLexicalEntry")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "dictionaryEntryByLexicalEntry",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Dictionary Entry associated to a lexical entry",
+            notes = "This method returns the dictionary entries associated to a given lexical entry")
+    public Response dictionaryEntryByLexicalEntry(
+            @HeaderParam("Authorization") String key,
+            @ApiParam(
+                    name = "id",
+                    value = "lexical entry ID",
+                    required = true)
+            @QueryParam("id") String id) {
+        try {
+            userCheck(key);
+            String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
+            log(Level.INFO, "data/dictionaryEntryByLexicalEntry: <" + _id + ">");
+            UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+            ArrayList<String> des = utilityManager.getDictionaryEntryByLexicalEntry(_id);
+            if (des.isEmpty()) {
+                log(Level.ERROR, "data/dictionaryEntryByLexicalEntry: <" + _id + "> has not a dictionary entry associated");
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("data/dictionaryEntryByLexicalEntry: <"
+                        + _id + "> has not a dictionary entry associated").build();
+            }
+            ArrayList<DictionaryEntryCore> decs = new ArrayList();
+            for (String de : des) {
+                TupleQueryResult comps = lexiconManager.getDictEntry(de);
+                DictionaryEntryCore dict = dictionaryEntryHelper.newData(comps);
+                decs.add(dict);
+            }
+            String json = dictionaryEntryHelper.toJson(decs);
             return Response.ok(json)
                     .type(MediaType.APPLICATION_JSON)
                     .header("Access-Control-Allow-Headers", "content-type")
@@ -728,7 +773,7 @@ public class LexiconData extends Service {
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }
     }
-    
+
     @POST
     @Path("dictionaryEntries")
     @Produces(MediaType.APPLICATION_JSON)
@@ -1415,7 +1460,7 @@ public class LexiconData extends Service {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }
     }
-    
+
     @GET
     @Path("metadata")
     @Produces(MediaType.APPLICATION_JSON)
@@ -1425,7 +1470,7 @@ public class LexiconData extends Service {
             produces = "application/json; charset=UTF-8")
     @ApiOperation(value = "Lexical entity metadata",
             notes = "This method returns the lexical entity metadata")
-        
+
     public Response metadata(@HeaderParam("Authorization") String key,
             @ApiParam(
                     name = "id",

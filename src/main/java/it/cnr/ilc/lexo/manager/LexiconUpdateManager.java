@@ -859,9 +859,9 @@ public final class LexiconUpdateManager implements Manager, Cached {
             validateGenericReferenceRelation(gru.getRelation());
             if (StringUtil.existsIRI(gru.getValue())) {
                 // CONSTRAINT: sameAs holds with external links only
-                if (gru.getRelation().contains(EnumUtil.GenericRelationReference.sameAs.toString())) {
-                    throw new ManagerException(gru.getRelation() + " links to external links only");
-                }
+//                if (gru.getRelation().contains(EnumUtil.GenericRelationReference.sameAs.toString())) {
+//                    throw new ManagerException(gru.getRelation() + " links to external links only");
+//                }
                 setTargetValue(gru, false);
             } else {
                 validateURL(gru.getValue());

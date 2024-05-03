@@ -120,7 +120,7 @@ public class SparqlSelectData {
             + SparqlVariable.LEXICAL_ENTRY_CREATION_AUTHOR + " ?"
             + SparqlVariable.LABEL + " ?"
             + SparqlVariable.NOTE + " ?"
-             + SparqlVariable.LEXICOGRAPHIC_COMPONENT + " ?"
+            + SparqlVariable.LEXICOGRAPHIC_COMPONENT + " ?"
             + SparqlVariable.TOTAL_HITS + " ?"
             + SparqlVariable.CREATION_DATE + " ?"
             + SparqlVariable.LAST_UPDATE + " ?"
@@ -2198,4 +2198,6 @@ public class SparqlSelectData {
             + "SELECT DISTINCT ?" + SparqlVariable.VALUE + "\n"
             + "WHERE {\n"
             + " ?x lime:linguisticCatalog ?" + SparqlVariable.VALUE + " }";
+
+
 }
