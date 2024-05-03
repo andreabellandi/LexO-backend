@@ -467,7 +467,7 @@ public class LexiconData extends Service {
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
             log(Level.INFO, "data/lexicographicComponents: <" + _id + ">");
             UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
-            if (!utilityManager.isDictEntryComponent(_id)) {
+            if (!utilityManager.isLexicographicComponent(_id)) {
                 log(Level.ERROR, "data/lexicographicComponents: <" + _id + "> is not neither an Entry nor a Lexicographic component");
                 return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("data/lexicographicComponents: <"
                         + _id + "> is not neither an Entry nor a Lexicographic component").build();

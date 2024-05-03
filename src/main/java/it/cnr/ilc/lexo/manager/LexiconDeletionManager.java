@@ -13,6 +13,8 @@ import it.cnr.ilc.lexo.util.RDFQueryUtil;
 import it.cnr.ilc.lexo.util.StringUtil;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  *
@@ -21,7 +23,7 @@ import java.text.SimpleDateFormat;
 public class LexiconDeletionManager implements Manager, Cached {
 
     private static final SimpleDateFormat timestampFormat = new SimpleDateFormat(LexOProperties.getProperty("manager.operationTimestampFormat"));
-    
+
     @Override
     public void reloadCache() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -31,7 +33,7 @@ public class LexiconDeletionManager implements Manager, Cached {
         RDFQueryUtil.update(SparqlDeleteData.DELETE_LEXICON_LANGUAGE.replaceAll("_ID_", id));
         return timestampFormat.format(new Timestamp(System.currentTimeMillis()));
     }
-    
+
     public String deleteDictionary(String id) throws ManagerException {
         RDFQueryUtil.update(SparqlDeleteData.DELETE_DICTIONARY.replaceAll("_ID_", id));
         return timestampFormat.format(new Timestamp(System.currentTimeMillis()));
@@ -45,14 +47,43 @@ public class LexiconDeletionManager implements Manager, Cached {
             throw new ManagerException("The lexical entry cannot be deleted. Remove its forms and/or senses first.");
         }
     }
-    
-    public String deleteDictionaryEntryComponent(String id) throws ManagerException {
+
+    public String deleteDictionaryEntry(String id) throws ManagerException {
         if (!ManagerFactory.getManager(UtilityManager.class).hasDictionaryEntryComponents(id)) {
-            RDFQueryUtil.update(SparqlDeleteData.DELETE_DICTIONARY_ENTRY_COMPONENT.replaceAll("_ID_", id));
+            RDFQueryUtil.update(SparqlDeleteData.DELETE_DICTIONARY_ENTRY.replaceAll("_ID_", id));
             return timestampFormat.format(new Timestamp(System.currentTimeMillis()));
         } else {
             throw new ManagerException("The dictionary entry component cannot be deleted. Remove its components first.");
         }
+    }
+
+    public String deleteLexicographicComponent(String superLexComp, TreeMap<Integer, String> map, String id) throws ManagerException {
+        if (!ManagerFactory.getManager(UtilityManager.class).hasDictionaryEntryComponents(id)) {
+            String toDelete = "", toInsert = "";
+            for (Map.Entry<Integer, String> entry : map.entrySet()) {
+                toDelete = toDelete + " <" + superLexComp + "> rdf:_" + entry.getKey() + " <" + entry.getValue() + "> .\n";
+            }
+            TreeMap<Integer, String> _map = filterMap(map, id);
+            int position = 1;
+            for (Map.Entry<Integer, String> entry : _map.entrySet()) {
+                toInsert = toInsert + " <" + superLexComp + "> rdf:_" + position + " <" + entry.getValue() + "> .\n";
+                position++;
+            }
+            RDFQueryUtil.update(SparqlDeleteData.DELETE_LEXICOGRAPHIC_COMPONENT.replaceAll("_TO_DELETE_", toDelete).replaceAll("_TO_INSERT_", toInsert));
+            return timestampFormat.format(new Timestamp(System.currentTimeMillis()));
+        } else {
+            throw new ManagerException("The lexicographic component cannot be deleted. Remove its components first.");
+        }
+    }
+    
+    private TreeMap<Integer, String> filterMap(TreeMap<Integer, String> map, String id) {
+        TreeMap<Integer, String> _map = new TreeMap();
+        for (Map.Entry<Integer, String> entry : map.entrySet()) {
+            if (!entry.getValue().equals(id)) {
+                _map.put(entry.getKey(), entry.getValue());
+            }
+        }
+        return _map;
     }
 
     public String deleteForm(String id) throws ManagerException {
@@ -69,27 +100,27 @@ public class LexiconDeletionManager implements Manager, Cached {
         RDFQueryUtil.update(SparqlDeleteData.DELETE_COMPONENT.replaceAll("_ID_", id));
         return timestampFormat.format(new Timestamp(System.currentTimeMillis()));
     }
-    
+
     public String deleteCollocation(String id) throws ManagerException {
         RDFQueryUtil.update(SparqlDeleteData.DELETE_COLLOCATION.replaceAll("_ID_", id));
         return timestampFormat.format(new Timestamp(System.currentTimeMillis()));
     }
-    
+
     public String deleteFormRestriction(String id) throws ManagerException {
         RDFQueryUtil.update(SparqlDeleteData.DELETE_FORM_RESTRICTION.replaceAll("_ID_", id));
         return timestampFormat.format(new Timestamp(System.currentTimeMillis()));
     }
-    
+
     public String deleteLexicoSemanticRelation(String id) throws ManagerException {
         RDFQueryUtil.update(SparqlDeleteData.DELETE_LEXICOSEMANTIC_RELATION.replaceAll("_ID_", id));
         return timestampFormat.format(new Timestamp(System.currentTimeMillis()));
     }
-    
+
     public String deleteTranslationSet(String id) throws ManagerException {
         RDFQueryUtil.update(SparqlDeleteData.DELETE_TRANSLATION_SET.replaceAll("_ID_", id));
         return timestampFormat.format(new Timestamp(System.currentTimeMillis()));
     }
-    
+
     public String deleteImage(String id) throws ManagerException {
         RDFQueryUtil.update(SparqlDeleteData.DELETE_IMAGE.replaceAll("_ID_", id));
         return timestampFormat.format(new Timestamp(System.currentTimeMillis()));

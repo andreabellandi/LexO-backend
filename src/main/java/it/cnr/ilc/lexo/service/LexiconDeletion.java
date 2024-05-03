@@ -22,6 +22,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -178,19 +180,19 @@ public class LexiconDeletion extends Service {
     }
     
     @GET
-    @Path("dictionaryEntryComponent")
+    @Path("dictionaryEntry")
     @Produces(MediaType.APPLICATION_JSON)
     @RequestMapping(
             method = RequestMethod.GET,
-            value = "dictionaryEntryComponent",
+            value = "dictionaryEntry",
             produces = "application/json; charset=UTF-8")
-    @ApiOperation(value = "Dictionary entry component deletion",
-            notes = "This method deletes a dictionary entry component")
-    public Response dictionaryEntryComponent(
+    @ApiOperation(value = "Dictionary entry deletion",
+            notes = "This method deletes a dictionary entry")
+    public Response dictionaryEntry(
             @HeaderParam("Authorization") String key,
             @ApiParam(
                     name = "id",
-                    value = "dictionary entry component ID",
+                    value = "dictionary entry ID",
                     required = true)
             @QueryParam("id") String id) {
             try {
@@ -198,10 +200,10 @@ public class LexiconDeletion extends Service {
                 String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
                 try {
                     UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
-                    if (!utilityManager.isDictEntryComponent(_id)) {
+                    if (!utilityManager.isDictEntry(_id)) {
                         return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " does not exist").build();
                     }
-                    return Response.ok(lexiconManager.deleteDictionaryEntryComponent(_id))
+                    return Response.ok(lexiconManager.deleteDictionaryEntry(_id))
                             .type(MediaType.TEXT_PLAIN)
                             .header("Access-Control-Allow-Headers", "content-type")
                             .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
@@ -212,7 +214,50 @@ public class LexiconDeletion extends Service {
             } catch (UnsupportedEncodingException ex) {
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
             } catch (AuthorizationException | ServiceException ex) {
-            log(Level.ERROR, "lexicon/creation/dictionaryEntryComponent: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            log(Level.ERROR, "lexicon/creation/dictionaryEntry: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
+        }
+    }
+    
+    
+    @GET
+    @Path("lexicographicComponent")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "lexicographicComponent",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Lexicographic component deletion",
+            notes = "This method deletes a lexicographic component")
+    public Response lexicographicComponent(
+            @HeaderParam("Authorization") String key,
+            @ApiParam(
+                    name = "id",
+                    value = "lexicographic component ID",
+                    required = true)
+            @QueryParam("id") String id) {
+            try {
+                checkKey(key);
+                String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
+                try {
+                    UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+                    String superLexComp = utilityManager.getSuperLexicographicComponent(id);
+                    if (superLexComp == null) {
+                        return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " is not a Lexicographic Component or it has no position setted").build();
+                    }
+                    TreeMap<Integer, String> map = utilityManager.getLexicographicComponetsPositions(id);
+                    return Response.ok(lexiconManager.deleteLexicographicComponent(superLexComp, map, _id))
+                            .type(MediaType.TEXT_PLAIN)
+                            .header("Access-Control-Allow-Headers", "content-type")
+                            .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                            .build();
+                } catch (ManagerException ex) {
+                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+                }
+            } catch (UnsupportedEncodingException ex) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            } catch (AuthorizationException | ServiceException ex) {
+            log(Level.ERROR, "lexicon/creation/lexicographicComponent: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }

@@ -25,11 +25,16 @@ public class SparqlDeleteData {
             + "WHERE { <_ID_> ?predicate ?object . \n"
             + "         OPTIONAL { ?subject ?_predicate <_ID_> . } }";
     
-    public static final String DELETE_DICTIONARY_ENTRY_COMPONENT
+    public static final String DELETE_DICTIONARY_ENTRY
             = "DELETE { <_ID_> ?predicate ?object . \n"
             + "         ?subject ?_predicate <_ID_> . }\n"
             + "WHERE { <_ID_> ?predicate ?object . \n"
             + "         OPTIONAL { ?subject ?_predicate <_ID_> . } }";
+    
+    public static final String DELETE_LEXICOGRAPHIC_COMPONENT
+            = "DELETE { _TO_DELETE_ }\n"
+            + "INSERT { _TO_INSERT_ }\n"
+            + "WHERE { _TO_DELETE_ }";
 
     public static final String DELETE_FORM
             = "DELETE { <_ID_> ?predicate ?object . \n"

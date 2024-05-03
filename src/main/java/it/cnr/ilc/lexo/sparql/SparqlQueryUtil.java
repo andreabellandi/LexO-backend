@@ -25,6 +25,26 @@ public class SparqlQueryUtil {
             + "ask { <_ID_> <_RELATION_> ?label \n"
             + "    FILTER (lang(?label) = \"_LANGUAGE_\") }";
 
+    public static final String LEXICOGRAPHIC_COMPONENTS_POSITIONS
+            = SparqlPrefix.RDF.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTO.getSparqlPrefix() + "\n"
+            + "SELECT ?" + SparqlVariable.PROPERTY_NAME + " ?" + SparqlVariable.TARGET + " \n"
+            + "FROM onto:explicit\n"
+            + "WHERE { \n"
+            + "    ?dictEntry ?x <_ID_> ;\n"
+            + "               ?" + SparqlVariable.PROPERTY_NAME + " ?" + SparqlVariable.TARGET + " .\n"
+            + "    FILTER (strstarts(str(?" + SparqlVariable.PROPERTY_NAME + "), str(rdf:_)))\n"
+            + "}";
+
+    public static final String SUPER_LEXICOGRAPHIC_COMPONENT
+            = SparqlPrefix.RDF.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
+            + "SELECT ?" + SparqlVariable.LEXICOGRAPHIC_COMPONENT + "\n"
+            + "WHERE { \n"
+            + "       ?" + SparqlVariable.LEXICOGRAPHIC_COMPONENT + " ?" + SparqlVariable.PROPERTY_NAME + " <_ID_> .\n"
+            + " FILTER (strstarts(str(?" + SparqlVariable.PROPERTY_NAME + "), str(rdf:_))) }";
+
     public static final String BIBLIOGRAFY_BY_ITEMKEY
             = SparqlPrefix.RDF.getSparqlPrefix() + "\n"
             + SparqlPrefix.DCT.getSparqlPrefix() + "\n"
@@ -48,17 +68,23 @@ public class SparqlQueryUtil {
     public static final String IS_LEXICALENTRY_ID
             = SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
             + "ASK { <_ID_> a " + SparqlPrefix.ONTOLEX.getPrefix() + "LexicalEntry }";
-    
+
     public static final String IS_DICTIONARYENTRY_ID
             = SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
             + "ASK { <_ID_> a " + SparqlPrefix.LEXICOG.getPrefix() + "Entry }";
 
-    public static final String IS_DICTENTRY_COMPONENT_ID
+    public static final String IS_LEXICOGRAPHIC_COMPONENT_ID
             = SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
             + "ASK { \n"
-            + "{ <_ID_> a " + SparqlPrefix.LEXICOG.getPrefix() + "Entry }\n"
-            + " UNION \n"
-            + "{ <_ID_> a " + SparqlPrefix.LEXICOG.getPrefix() + "LexicographicComponent }\n"
+            + "{ <_ID_> a " + SparqlPrefix.LEXICOG.getPrefix() + "LexicographicComponent } UNION \n"
+            + "{ <_ID_> a " + SparqlPrefix.LEXICOG.getPrefix() + "Entry } \n"
+            + "}";
+
+    public static final String IS_DICTENTRY_ID
+            = SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
+            + "ASK { \n"
+            + "<_ID_> a " + SparqlPrefix.LEXICOG.getPrefix() + "Entry ; \n"
+            + " " + SparqlPrefix.LEXICOG.getPrefix() + "describes|" + SparqlPrefix.RDF.getPrefix() + "_1 ?x "
             + "}";
 
     public static final String LEXICALENTRY_TYPE
@@ -67,7 +93,6 @@ public class SparqlQueryUtil {
             + "WHERE { <_ID_> rdf:type ?" + SparqlVariable.LEXICAL_ENTRY_TYPE + " .\n"
             + "FILTER(regex(str(?" + SparqlVariable.LEXICAL_ENTRY_TYPE + "),\""
             + SparqlPrefix.ONTOLEX.getUri() + "|" + SparqlPrefix.ETY.getUri() + "\")) }";
-    
 
     public static final String IS_COMPONENT_ID
             = SparqlPrefix.DECOMP.getSparqlPrefix() + "\n"
@@ -187,7 +212,7 @@ public class SparqlQueryUtil {
 
     public static final String DICTIONARY_LANGUAGE
             = SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
-             + SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+            + SparqlPrefix.DCT.getSparqlPrefix() + "\n"
             + "SELECT ?" + SparqlVariable.DICT_LANGUAGE + " \n"
             + "WHERE { ?" + SparqlVariable.DICT_ELEMENT + " " + SparqlPrefix.LEXICOG.getPrefix() + "entry  <_ID_> ;\n"
             + "        " + SparqlPrefix.DCT.getPrefix() + "language ?" + SparqlVariable.DICT_LANGUAGE + " }";
@@ -235,7 +260,7 @@ public class SparqlQueryUtil {
             = SparqlPrefix.FOAF.getSparqlPrefix() + "\n"
             + "SELECT ?" + SparqlVariable.IDENTIFIER + " \n"
             + "WHERE { <_ID_> foaf:depiction ?" + SparqlVariable.IDENTIFIER + " }";
-    
-    public static final String SYSTEM_INFO  = "DESCRIBE <http://www.ontotext.com/SYSINFO> FROM <http://www.ontotext.com/SYSINFO>";
-    
+
+    public static final String SYSTEM_INFO = "DESCRIBE <http://www.ontotext.com/SYSINFO> FROM <http://www.ontotext.com/SYSINFO>";
+
 }
