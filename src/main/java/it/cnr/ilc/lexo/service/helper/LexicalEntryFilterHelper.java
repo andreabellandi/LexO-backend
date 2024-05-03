@@ -45,6 +45,7 @@ public class LexicalEntryFilterHelper extends TripleStoreDataHelper<LexicalEntry
         data.setRevisionDate(getStringValue(bs, SparqlVariable.REVISION_DATE));
         data.setAuthor(getStringValue(bs, SparqlVariable.LEXICAL_ENTRY_COMPLETING_AUTHOR));
         data.setHasChildren(true);
+        data.setIsDescribedByLexicographicComponent(!getStringValue(bs, SparqlVariable.LEXICOGRAPHIC_COMPONENT).isEmpty());
     }
 
     @Override

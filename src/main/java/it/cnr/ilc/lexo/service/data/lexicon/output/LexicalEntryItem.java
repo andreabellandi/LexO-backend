@@ -25,6 +25,7 @@ public class LexicalEntryItem extends Entity implements Data {
     private String author;
     private String note;
     private boolean hasChildren;
+    private boolean isDescribedByLexicographicComponent;
     private String lexicalEntry;
     private ArrayList<Morphology> morphology;
     private String completionDate;
@@ -36,6 +37,14 @@ public class LexicalEntryItem extends Entity implements Data {
 
     public boolean isHasChildren() {
         return hasChildren;
+    }
+
+    public boolean isIsDescribedByLexicographicComponent() {
+        return isDescribedByLexicographicComponent;
+    }
+
+    public void setIsDescribedByLexicographicComponent(boolean isDescribedByLexicographicComponent) {
+        this.isDescribedByLexicographicComponent = isDescribedByLexicographicComponent;
     }
 
     public void setHasChildren(boolean hasChildren) {

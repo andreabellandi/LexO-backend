@@ -51,6 +51,7 @@ public class SparqlSelectData {
             + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
             + SparqlPrefix.SESAME.getSparqlPrefix() + "\n"
             + SparqlPrefix.LUC.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
             + SparqlPrefix.VS.getSparqlPrefix() + "\n"
             + SparqlPrefix.FOAF.getSparqlPrefix() + "\n"
             + SparqlPrefix.SKOS.getSparqlPrefix() + "\n"
@@ -67,6 +68,7 @@ public class SparqlSelectData {
             + " ?" + SparqlVariable.CREATION_DATE
             + " ?" + SparqlVariable.LAST_UPDATE
             + " ?" + SparqlVariable.IMAGE
+            + " ?" + SparqlVariable.LEXICOGRAPHIC_COMPONENT
             + " ?" + SparqlVariable.LEXICAL_ENTRY_COMPLETING_AUTHOR
             + " ?" + SparqlVariable.REVISION_DATE
             + " ?" + SparqlVariable.COMPLETION_DATE
@@ -90,6 +92,7 @@ public class SparqlSelectData {
             + "   OPTIONAL { ?" + SparqlVariable.LEXICAL_ENTRY + " lexinfo:confidence ?confidence . }\n"
             + "   OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " dct:creator ?" + SparqlVariable.LEXICAL_ENTRY_CREATION_AUTHOR + "} .\n"
             + "   OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " dct:created ?" + SparqlVariable.CREATION_DATE + "} .\n"
+            + "   OPTIONAL {?" + SparqlVariable.LEXICOGRAPHIC_COMPONENT + " lexicog:describes ?" + SparqlVariable.LEXICAL_ENTRY + " } .\n"
             + "   OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " dct:modified ?" + SparqlVariable.LAST_UPDATE + "} .\n"
             + "   OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " dct:author ?" + SparqlVariable.LEXICAL_ENTRY_COMPLETING_AUTHOR + "} .\n"
             + "   OPTIONAL {?" + SparqlVariable.LEXICAL_ENTRY + " dct:dateAccepted ?" + SparqlVariable.REVISION_DATE + "} .\n"
@@ -117,6 +120,7 @@ public class SparqlSelectData {
             + SparqlVariable.LEXICAL_ENTRY_CREATION_AUTHOR + " ?"
             + SparqlVariable.LABEL + " ?"
             + SparqlVariable.NOTE + " ?"
+             + SparqlVariable.LEXICOGRAPHIC_COMPONENT + " ?"
             + SparqlVariable.TOTAL_HITS + " ?"
             + SparqlVariable.CREATION_DATE + " ?"
             + SparqlVariable.LAST_UPDATE + " ?"
