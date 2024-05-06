@@ -44,7 +44,7 @@ public class LexiconDeletionManager implements Manager, Cached {
             RDFQueryUtil.update(SparqlDeleteData.DELETE_LEXICAL_ENTRY.replaceAll("_ID_", id));
             return timestampFormat.format(new Timestamp(System.currentTimeMillis()));
         } else {
-            throw new ManagerException("The lexical entry cannot be deleted. Remove its forms and/or senses first.");
+            throw new ManagerException("The lexical item cannot be eliminated because it has forms and/or senses, or it is described by a dictionary entry.");
         }
     }
 
