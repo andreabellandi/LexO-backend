@@ -69,7 +69,7 @@ public class LexiconDeletionManager implements Manager, Cached {
                 toInsert = toInsert + " <" + superLexComp + "> rdf:_" + position + " <" + entry.getValue() + "> .\n";
                 position++;
             }
-            RDFQueryUtil.update(SparqlDeleteData.DELETE_LEXICOGRAPHIC_COMPONENT.replaceAll("_TO_DELETE_", toDelete).replaceAll("_TO_INSERT_", toInsert));
+            RDFQueryUtil.update(SparqlDeleteData.DELETE_LEXICOGRAPHIC_COMPONENT.replaceAll("_ID_", id).replaceAll("_TO_DELETE_", toDelete).replaceAll("_TO_INSERT_", toInsert));
             return timestampFormat.format(new Timestamp(System.currentTimeMillis()));
         } else {
             throw new ManagerException("The lexicographic component cannot be deleted. Remove its components first.");
