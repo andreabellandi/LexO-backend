@@ -149,6 +149,7 @@ public class SparqlQueryUtil {
 
     public static final String HAS_LEXICALENTRY_CHILDREN
             = SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
             + "ASK { "
             + "{ <_ID_> " + SparqlPrefix.ONTOLEX.getPrefix() + "sense|" + SparqlPrefix.ONTOLEX.getPrefix() + "lexicalForm ?f } "
             + " UNION "

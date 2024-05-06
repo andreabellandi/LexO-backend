@@ -223,6 +223,7 @@ public final class UtilityManager implements Manager, Cached {
 
     public boolean hasLexicalEntryChildren(String id) throws QueryEvaluationException {
         String query = SparqlQueryUtil.HAS_LEXICALENTRY_CHILDREN.replaceAll("_ID_", id);
+        boolean b = RDFQueryUtil.evaluateBQuery(query);
         return RDFQueryUtil.evaluateBQuery(query);
     }
 
