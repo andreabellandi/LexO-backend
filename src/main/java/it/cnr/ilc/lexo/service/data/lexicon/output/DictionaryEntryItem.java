@@ -8,6 +8,7 @@ package it.cnr.ilc.lexo.service.data.lexicon.output;
 import it.cnr.ilc.lexo.service.data.output.Entity;
 import it.cnr.ilc.lexo.service.data.Data;
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  *
@@ -26,8 +27,8 @@ public class DictionaryEntryItem extends Entity implements Data {
     private String revisionDate;
     private ArrayList<String> images;
     private ArrayList<String> type;
-    private ArrayList<String> seeAlso;
-    private String sameDictionaryEntryAs;
+    private Map<String, String> seeAlso;
+    private Map<String, String> sameDictionaryEntryAs;
     private boolean hasChildren;
 
     public DictionaryEntryItem() {
@@ -37,19 +38,19 @@ public class DictionaryEntryItem extends Entity implements Data {
         return status;
     }
 
-    public ArrayList<String> getSeeAlso() {
+    public Map<String, String> getSeeAlso() {
         return seeAlso;
     }
 
-    public void setSeeAlso(ArrayList<String> seeAlso) {
+    public void setSeeAlso(Map<String, String> seeAlso) {
         this.seeAlso = seeAlso;
     }
 
-    public String getSameDictionaryEntryAs() {
+    public Map<String, String> getSameDictionaryEntryAs() {
         return sameDictionaryEntryAs;
     }
 
-    public void setSameDictionaryEntryAs(String sameDictionaryEntryAs) {
+    public void setSameDictionaryEntryAs(Map<String, String> sameDictionaryEntryAs) {
         this.sameDictionaryEntryAs = sameDictionaryEntryAs;
     }
 
@@ -113,7 +114,6 @@ public class DictionaryEntryItem extends Entity implements Data {
         this.author = author;
     }
 
-  
     public String getDictionaryEntry() {
         return dictionaryEntry;
     }

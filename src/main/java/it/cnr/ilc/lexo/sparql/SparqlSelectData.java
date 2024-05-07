@@ -166,7 +166,8 @@ public class SparqlSelectData {
             + " ?confidence (COUNT(?_" + SparqlVariable.CHILD + ") AS ?" + SparqlVariable.CHILD + ")"
             + "\n"
             + "(GROUP_CONCAT(distinct str(?_" + SparqlVariable.DICTIONARY_ENTRY_POS + ");SEPARATOR=\";\") AS ?" + SparqlVariable.DICTIONARY_ENTRY_POS + ")\n"
-            + "(GROUP_CONCAT(distinct str(?_" + SparqlVariable.SEEALSO + ");SEPARATOR=\";\") AS ?" + SparqlVariable.SEEALSO + ")\n"
+            + "(GROUP_CONCAT(distinct concat(str(?_seeAlso), \"---\" , str(?_labelSeeAlso));SEPARATOR=\";\") AS ?" + SparqlVariable.SEEALSO + ")\n"
+            + "(GROUP_CONCAT(distinct concat(str(?_sameAs), \"---\" , str(?_labelSameAs));SEPARATOR=\";\") AS ?" + SparqlVariable.SAMEAS + ")\n"
             + "FROM onto:explicit WHERE {\n"
             + "  ?search a inst:" + SparqlVariable.DICTIONARY_ENTRY_INDEX + " ;\n"
             + "      luc:query \"[FILTER]\" ;\n"
@@ -181,8 +182,8 @@ public class SparqlSelectData {
             + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " dct:creator ?" + SparqlVariable.LEXICAL_ENTRY_CREATION_AUTHOR + "} .\n"
             + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " dct:created ?" + SparqlVariable.CREATION_DATE + "} .\n"
             + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " dct:modified ?" + SparqlVariable.LAST_UPDATE + "} .\n"
-            + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " owl:sameAs ?" + SparqlVariable.SAMEAS + "} .\n"
-            + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " rdfs:seeAlso ?" + SparqlVariable.SEEALSO + "} .\n"
+            + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " owl:sameAs ?_sameAs . ?_sameAs rdfs:label ?_labelSameAs } .\n"
+            + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " rdfs:seeAlso ?_seeAlso . ?_seeAlso rdfs:label ?_labelSeeAlso } .\n"
             + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " dct:author ?" + SparqlVariable.LEXICAL_ENTRY_COMPLETING_AUTHOR + "} .\n"
             + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " dct:dateAccepted ?" + SparqlVariable.REVISION_DATE + "} .\n"
             + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " dct:dateSubmitted ?" + SparqlVariable.COMPLETION_DATE + "} .\n"
@@ -204,7 +205,6 @@ public class SparqlSelectData {
             + SparqlVariable.CREATION_DATE + " ?"
             + SparqlVariable.LAST_UPDATE + " ?"
             + SparqlVariable.IMAGE + " ?"
-            + SparqlVariable.SAMEAS + " ?"
             + SparqlVariable.DICTIONARY_ENTRY_COMPLETING_AUTHOR + " ?"
             + SparqlVariable.REVISION_DATE + " ?"
             + SparqlVariable.COMPLETION_DATE
@@ -2198,6 +2198,5 @@ public class SparqlSelectData {
             + "SELECT DISTINCT ?" + SparqlVariable.VALUE + "\n"
             + "WHERE {\n"
             + " ?x lime:linguisticCatalog ?" + SparqlVariable.VALUE + " }";
-
 
 }

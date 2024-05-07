@@ -7,6 +7,8 @@ package it.cnr.ilc.lexo.service.helper;
 
 import it.cnr.ilc.lexo.service.data.lexicon.output.DictionaryEntryItem;
 import it.cnr.ilc.lexo.sparql.SparqlVariable;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.eclipse.rdf4j.query.BindingSet;
@@ -29,8 +31,13 @@ public class DictionaryEntryFilterHelper extends TripleStoreDataHelper<Dictionar
         } catch (Exception ex) {
             Logger.getLogger(DictionaryEntryFilterHelper.class.getName()).log(Level.SEVERE, null, ex);
         }
-        data.setSeeAlso(getStringValuesList(getStringValue(bs, SparqlVariable.SEEALSO)));
-        data.setSameDictionaryEntryAs(getStringValue(bs, SparqlVariable.SAMEAS));
+        
+        
+        data.setSeeAlso(getReferencesList(getStringValue(bs, SparqlVariable.SEEALSO)));
+        data.setSameDictionaryEntryAs(getReferencesList(getStringValue(bs, SparqlVariable.SAMEAS)));
+        
+        
+        
         data.setType(getTypes(bs, getStringValue(bs, SparqlVariable.TYPE)));
         data.setHasChildren((getIntegerNumber(bs, SparqlVariable.CHILD)) > 0);
         data.setStatus(getStringValue(bs, SparqlVariable.DICTIONARY_ENTRY_STATUS));
@@ -49,5 +56,15 @@ public class DictionaryEntryFilterHelper extends TripleStoreDataHelper<Dictionar
         return DictionaryEntryItem.class;
     }
 
+    private Map<String, String> getReferencesList(String refList) {
+        Map<String, String> sameAsList = new HashMap();
+        if (!refList.isEmpty()) {
+            for (String sa : refList.split(";")) {
+                String _sa[] = sa.split("---");
+                sameAsList.put(_sa[0], _sa[1]);
+            }
+        }
+        return sameAsList;
+    }
 
 }
