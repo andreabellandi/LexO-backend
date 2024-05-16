@@ -37,6 +37,7 @@ import it.cnr.ilc.lexo.util.EnumUtil.LexicalConceptSearchFilter;
 import it.cnr.ilc.lexo.util.EnumUtil.LexicalEntryStatus;
 import it.cnr.ilc.lexo.util.EnumUtil.LexicalEntryTypes;
 import it.cnr.ilc.lexo.util.EnumUtil.LexicalSenseSearchFilter;
+import it.cnr.ilc.lexo.util.OntoLexEntity;
 import it.cnr.ilc.lexo.util.RDFQueryUtil;
 import it.cnr.ilc.lexo.util.StringUtil;
 import java.util.ArrayList;
@@ -432,6 +433,12 @@ public class LexiconDataManager implements Manager, Cached {
         String query = SparqlSelectData.DATA_LINGUISTIC_RELATION
                 .replace("_ID_", lexicalEntryID)
                 .replace("_RELATION_", property);
+        if (property.equals(OntoLexEntity.LexicalConceptRel.isLexicalizedSenseOf.toString()) ||
+                property.equals(OntoLexEntity.LexicalConceptRel.evokes.toString())) {
+            query = query.replaceAll("_PROPERTY_", SparqlPrefix.RDFS.getPrefix() + "label|" + SparqlPrefix.SKOS.getPrefix() + "prefLabel");
+        } else {
+            query = query.replaceAll("_PROPERTY_", SparqlPrefix.RDFS.getPrefix() + "label|" + SparqlPrefix.SKOS.getPrefix() + "definition");
+        }
         return RDFQueryUtil.evaluateTQuery(query);
     }
 

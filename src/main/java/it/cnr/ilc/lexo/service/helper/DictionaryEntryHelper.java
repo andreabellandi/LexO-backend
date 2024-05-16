@@ -37,8 +37,7 @@ public class DictionaryEntryHelper extends TripleStoreDataHelper<DictionaryEntry
         data.setRevisionDate(getStringValue(bs, SparqlVariable.REVISION_DATE));
         data.setCompletionDate(getStringValue(bs, SparqlVariable.COMPLETION_DATE));
         data.setHasChildren((getIntegerNumber(bs, SparqlVariable.CHILD)) > 0);
-        data.setLabel(getStringValue(bs, SparqlVariable.LABEL)
-                + (getLiteralLanguage(bs, SparqlVariable.LABEL) != null ? "@" + getLiteralLanguage(bs, SparqlVariable.LABEL) : ""));
+        data.setLabel(getStringValue(bs, SparqlVariable.LABEL));
         try {
             data.setLanguage(getLiteralLanguage(bs, SparqlVariable.LABEL));
         } catch (Exception ex) {

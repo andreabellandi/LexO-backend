@@ -500,17 +500,20 @@ public class SKOSManager implements Manager, Cached {
         if (id.equals("root")) {
             query = SparqlSelectData.DATA_LEXICAL_CONCEPTS_ROOT
                     .replace("_LABELPROPERTY_", lexicalizationModel.equals("label") ? SparqlPrefix.RDFS.getUri() + "label" : SparqlPrefix.SKOS.getUri() + "prefLabel")
-                    .replace("_DEFAULTLANGUAGE_", defaultLanguageLabel);
+                    .replace("_DEFAULTLANGUAGE_", defaultLanguageLabel)
+                    .replace("_LABEL_INDEX_", lexicalizationModel.equals("label") ? "label" : "prefLabel");
         } else {
             UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
             if (utilityManager.isConceptSet(id)) {
                 query = SparqlSelectData.DATA_TOP_LEXICAL_CONCEPT_OF_A_CONCEPT_SET.replace("_LEXICALCONCEPT_", id)
                         .replace("_LABELPROPERTY_", lexicalizationModel.equals("label") ? SparqlPrefix.RDFS.getUri() + "label" : SparqlPrefix.SKOS.getUri() + "prefLabel")
-                        .replace("_DEFAULTLANGUAGE_", defaultLanguageLabel);
+                        .replace("_DEFAULTLANGUAGE_", defaultLanguageLabel)
+                        .replace("_LABEL_INDEX_", lexicalizationModel.equals("label") ? "label" : "prefLabel");
             } else if (utilityManager.isLexicalConcept(id)) {
                 query = SparqlSelectData.DATA_LEXICAL_CONCEPTS_CHILDREN.replace("_LEXICALCONCEPT_", id)
                         .replace("_LABELPROPERTY_", lexicalizationModel.equals("label") ? SparqlPrefix.RDFS.getUri() + "label" : SparqlPrefix.SKOS.getUri() + "prefLabel")
-                        .replace("_DEFAULTLANGUAGE_", defaultLanguageLabel);
+                        .replace("_DEFAULTLANGUAGE_", defaultLanguageLabel)
+                        .replace("_LABEL_INDEX_", lexicalizationModel.equals("label") ? "label" : "prefLabel");
             } else {
                 throw new ManagerException(id + " is an unknown entity");
             }

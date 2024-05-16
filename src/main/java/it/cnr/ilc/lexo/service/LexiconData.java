@@ -221,7 +221,7 @@ public class LexiconData extends Service {
                 return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("lexical module not available").build();
             }
             return Response.ok(json)
-                    .type(MediaType.TEXT_PLAIN)
+                    .type(MediaType.APPLICATION_JSON)
                     .header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
@@ -278,7 +278,7 @@ public class LexiconData extends Service {
                 return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("lexical module not available").build();
             }
             return Response.ok(json)
-                    .type(MediaType.TEXT_PLAIN)
+                    .type(MediaType.APPLICATION_JSON)
                     .header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
@@ -359,7 +359,7 @@ public class LexiconData extends Service {
                 return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("lexical module not available").build();
             }
             return Response.ok(json)
-                    .type(MediaType.TEXT_PLAIN)
+                    .type(MediaType.APPLICATION_JSON)
                     .header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
@@ -393,7 +393,7 @@ public class LexiconData extends Service {
             FormRestriction fr = formRestrictionHelper.newData(restriction);
             String json = formRestrictionHelper.toJson(fr);
             return Response.ok(json)
-                    .type(MediaType.TEXT_PLAIN)
+                    .type(MediaType.APPLICATION_JSON)
                     .header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
@@ -436,7 +436,7 @@ public class LexiconData extends Service {
                 json = etymologyTreeHelper.toJson(et);
             }
             return Response.ok(json)
-                    .type(MediaType.TEXT_PLAIN)
+                    .type(MediaType.APPLICATION_JSON)
                     .header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
@@ -476,7 +476,7 @@ public class LexiconData extends Service {
             List<LexicographicComponent> lcs = lexicographicComponentHelper.newDataList(comps);
             String json = lexicographicComponentHelper.toJson(lcs);
             return Response.ok(json)
-                    .type(MediaType.TEXT_PLAIN)
+                    .type(MediaType.APPLICATION_JSON)
                     .header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
@@ -595,7 +595,7 @@ public class LexiconData extends Service {
             Component comp = componentHelper.newData(_comp);
             String json = componentHelper.toJson(comp);
             return Response.ok(json)
-                    .type(MediaType.TEXT_PLAIN)
+                    .type(MediaType.APPLICATION_JSON)
                     .header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
@@ -629,7 +629,7 @@ public class LexiconData extends Service {
             List<Collocation> colls = collocationHelper.newDataList(_colls);
             String json = collocationHelper.toJson(colls);
             return Response.ok(json)
-                    .type(MediaType.TEXT_PLAIN)
+                    .type(MediaType.APPLICATION_JSON)
                     .header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
@@ -672,7 +672,7 @@ public class LexiconData extends Service {
             lc.getEntities().add(new GroupedLinkedEntity("ontolex", le));
             String json = lexicalConceptHelper.toJson(lc);
             return Response.ok(json)
-                    .type(MediaType.TEXT_PLAIN)
+                    .type(MediaType.APPLICATION_JSON)
                     .header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
@@ -700,7 +700,7 @@ public class LexiconData extends Service {
             List<Language> entries = languageHelper.newDataList(languages);
             String json = languageHelper.toJson(entries);
             return Response.ok(json)
-                    .type(MediaType.TEXT_PLAIN)
+                    .type(MediaType.APPLICATION_JSON)
                     .header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
@@ -729,7 +729,7 @@ public class LexiconData extends Service {
             HitsDataList hdl = new HitsDataList(lexicalSenseFilterHelper.getTotalHits(), senses);
             String json = lexicalSenseFilterHelper.toJson(hdl);
             return Response.ok(json)
-                    .type(MediaType.TEXT_PLAIN)
+                    .type(MediaType.APPLICATION_JSON)
                     .header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
@@ -764,7 +764,7 @@ public class LexiconData extends Service {
                 json = lexicalEntryFilterHelper.toJson(hdl);
             }
             return Response.ok(json)
-                    .type(MediaType.TEXT_PLAIN)
+                    .type(MediaType.APPLICATION_JSON)
                     .header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
@@ -799,7 +799,7 @@ public class LexiconData extends Service {
                 json = dictionaryEntryFilterHelper.toJson(hdl);
             }
             return Response.ok(json)
-                    .type(MediaType.TEXT_PLAIN)
+                    .type(MediaType.APPLICATION_JSON)
                     .header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
@@ -828,7 +828,7 @@ public class LexiconData extends Service {
             HitsDataList hdl = new HitsDataList(formItemsHelper.getTotalHits(), fi);
             String json = formItemsHelper.toJson(hdl);
             return Response.ok(json)
-                    .type(MediaType.TEXT_PLAIN)
+                    .type(MediaType.APPLICATION_JSON)
                     .header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
@@ -864,7 +864,7 @@ public class LexiconData extends Service {
             List<FormItem> forms = formItemsHelper.newDataList(_forms);
             String json = formItemsHelper.toJson(forms);
             return Response.ok(json)
-                    .type(MediaType.TEXT_PLAIN)
+                    .type(MediaType.APPLICATION_JSON)
                     .header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
@@ -893,14 +893,17 @@ public class LexiconData extends Service {
 
         try {
             userCheck(key);
+            String json = "";
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
             log(Level.INFO, "data/lexicalConcepts <" + _id + ">");
             TupleQueryResult _lc = skosManager.getLexicalConceptChildren(_id);
-            List<LexicalConceptItem> lcs = lexicalConceptItemHelper.newDataList(_lc);
-            HitsDataList hdl = new HitsDataList(lcs.size(), lcs);
-            String json = lexicalConceptItemHelper.toJson(hdl);
+            if (_lc != null) {
+                List<LexicalConceptItem> lcs = lexicalConceptItemHelper.newDataList(_lc);
+                HitsDataList hdl = new HitsDataList(lcs.size(), lcs);
+                json = lexicalConceptItemHelper.toJson(hdl);
+            }
             return Response.ok(json)
-                    .type(MediaType.TEXT_PLAIN)
+                    .type(MediaType.APPLICATION_JSON)
                     .header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
@@ -923,13 +926,16 @@ public class LexiconData extends Service {
     public Response lexicalConceptsList(@HeaderParam("Authorization") String key, LexicalConceptFilter lcf) throws HelperException {
         try {
             userCheck(key);
+            String json = "";
             log(Level.INFO, "data/filteredLexicalConcepts\n" + LogUtil.getLogFromPayload(lcf));
             TupleQueryResult lexicalConcepts = lexiconManager.getFilterdLexicalConcepts(lcf);
-            List<LexicalConceptItem> lcs = lexicalConceptItemHelper.newDataList(lexicalConcepts);
-            HitsDataList hdl = new HitsDataList(lexicalConceptItemHelper.getTotalHits(), lcs);
-            String json = lexicalConceptItemHelper.toJson(hdl);
+            if (lexicalConcepts != null) {
+                List<LexicalConceptItem> lcs = lexicalConceptItemHelper.newDataList(lexicalConcepts);
+                HitsDataList hdl = new HitsDataList(lexicalConceptItemHelper.getTotalHits(), lcs);
+                json = lexicalConceptItemHelper.toJson(hdl);
+            }
             return Response.ok(json)
-                    .type(MediaType.TEXT_PLAIN)
+                    .type(MediaType.APPLICATION_JSON)
                     .header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
@@ -958,7 +964,7 @@ public class LexiconData extends Service {
             HitsDataList hdl = new HitsDataList(cs.size(), cs);
             String json = conceptSetItemHelper.toJson(hdl);
             return Response.ok(json)
-                    .type(MediaType.TEXT_PLAIN)
+                    .type(MediaType.APPLICATION_JSON)
                     .header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
@@ -993,7 +999,7 @@ public class LexiconData extends Service {
             List<LexicalSenseItem> senses = lexicalSenseFilterHelper.newDataList(_forms);
             String json = lexicalSenseFilterHelper.toJson(senses);
             return Response.ok(json)
-                    .type(MediaType.TEXT_PLAIN)
+                    .type(MediaType.APPLICATION_JSON)
                     .header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
@@ -1027,7 +1033,7 @@ public class LexiconData extends Service {
             List<EtymologyItem> etys = etymologyFilterHelper.newDataList(_etys);
             String json = etymologyFilterHelper.toJson(etys);
             return Response.ok(json)
-                    .type(MediaType.TEXT_PLAIN)
+                    .type(MediaType.APPLICATION_JSON)
                     .header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
@@ -1062,7 +1068,7 @@ public class LexiconData extends Service {
             List<LexicalSenseItem> senses = lexicalSenseFilterHelper.newDataList(_forms);
             String json = lexicalSenseFilterHelper.toJson(senses);
             return Response.ok(json)
-                    .type(MediaType.TEXT_PLAIN)
+                    .type(MediaType.APPLICATION_JSON)
                     .header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
@@ -1096,7 +1102,7 @@ public class LexiconData extends Service {
             LexicalEntryElementItem elements = lexicalEntryElementHelper.newData(_elements);
             String json = lexicalEntryElementHelper.toJson(elements);
             return Response.ok(json)
-                    .type(MediaType.TEXT_PLAIN)
+                    .type(MediaType.APPLICATION_JSON)
                     .header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
@@ -1138,7 +1144,7 @@ public class LexiconData extends Service {
             List<LinkedEntity> le = linkedEntityHelper.newDataList(lingRel);
             String json = linkedEntityHelper.toJson(le);
             return Response.ok(json)
-                    .type(MediaType.TEXT_PLAIN)
+                    .type(MediaType.APPLICATION_JSON)
                     .header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
@@ -1180,7 +1186,7 @@ public class LexiconData extends Service {
             List<LinkedEntity> le = linkedEntityHelper.newDataList(genRel);
             String json = linkedEntityHelper.toJson(le);
             return Response.ok(json)
-                    .type(MediaType.TEXT_PLAIN)
+                    .type(MediaType.APPLICATION_JSON)
                     .header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
@@ -1226,7 +1232,7 @@ public class LexiconData extends Service {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }
         return Response.ok(json)
-                .type(MediaType.TEXT_PLAIN)
+                .type(MediaType.APPLICATION_JSON)
                 .header("Access-Control-Allow-Headers", "content-type")
                 .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                 .build();
@@ -1260,7 +1266,7 @@ public class LexiconData extends Service {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }
         return Response.ok(json)
-                .type(MediaType.TEXT_PLAIN)
+                .type(MediaType.APPLICATION_JSON)
                 .header("Access-Control-Allow-Headers", "content-type")
                 .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                 .build();
@@ -1293,7 +1299,7 @@ public class LexiconData extends Service {
                 json = lexicalEntryFilterHelper.toJson(entries);
             }
             return Response.ok(json)
-                    .type(MediaType.TEXT_PLAIN)
+                    .type(MediaType.APPLICATION_JSON)
                     .header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
@@ -1330,7 +1336,7 @@ public class LexiconData extends Service {
                 json = lexicalEntryFilterHelper.toJson(entry);
             }
             return Response.ok(json)
-                    .type(MediaType.TEXT_PLAIN)
+                    .type(MediaType.APPLICATION_JSON)
                     .header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
@@ -1378,7 +1384,7 @@ public class LexiconData extends Service {
             }
 
             return Response.ok(json)
-                    .type(MediaType.TEXT_PLAIN)
+                    .type(MediaType.APPLICATION_JSON)
                     .header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
@@ -1412,7 +1418,7 @@ public class LexiconData extends Service {
             List<ImageDetail> images = imageHelper.newDataList(_imgs);
             String json = imageHelper.toJson(images);
             return Response.ok(json)
-                    .type(MediaType.TEXT_PLAIN)
+                    .type(MediaType.APPLICATION_JSON)
                     .header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
@@ -1485,7 +1491,7 @@ public class LexiconData extends Service {
             Metadata metadata = metadataHelper.newData(_metadata);
             String json = metadataHelper.toJson(metadata);
             return Response.ok(json)
-                    .type(MediaType.TEXT_PLAIN)
+                    .type(MediaType.APPLICATION_JSON)
                     .header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
