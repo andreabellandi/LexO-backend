@@ -1139,15 +1139,20 @@ public class LexiconData extends Service {
             log(Level.INFO, "data/linguisticRelation <" + _id + ">");
             TupleQueryResult lingRel = lexiconManager.getLinguisticRelation(_id, property);
             if (!lingRel.hasNext()) {
-                return Response.status(Response.Status.OK).type(MediaType.TEXT_PLAIN).entity("There are no instances of " + property).build();
+                return Response.ok()
+                        .type(MediaType.APPLICATION_JSON)
+                        .header("Access-Control-Allow-Headers", "content-type")
+                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                        .build();
+            } else {
+                List<LinkedEntity> le = linkedEntityHelper.newDataList(lingRel);
+                String json = linkedEntityHelper.toJson(le);
+                return Response.ok(json)
+                        .type(MediaType.APPLICATION_JSON)
+                        .header("Access-Control-Allow-Headers", "content-type")
+                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                        .build();
             }
-            List<LinkedEntity> le = linkedEntityHelper.newDataList(lingRel);
-            String json = linkedEntityHelper.toJson(le);
-            return Response.ok(json)
-                    .type(MediaType.APPLICATION_JSON)
-                    .header("Access-Control-Allow-Headers", "content-type")
-                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                    .build();
         } catch (ManagerException | UnsupportedEncodingException | AuthorizationException | ServiceException ex) {
             log(Level.ERROR, ex.getMessage());
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
