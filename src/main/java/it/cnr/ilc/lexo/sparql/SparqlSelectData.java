@@ -2137,13 +2137,13 @@ public class SparqlSelectData {
             + SparqlPrefix.INST.getSparqlPrefix() + "\n"
             + SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
             + "SELECT ?" + SparqlVariable.DICTIONARY_ENTRY + " ?" + SparqlVariable.DICTIONARY_ENTRY_STATUS + " ?" + SparqlVariable.DICTIONARY_ENTRY_REVISOR
-            + " ?" + SparqlVariable.LABEL + " ?" + SparqlVariable.CREATOR
+            + " ?" + SparqlVariable.LABEL + " ?" + SparqlVariable.CREATOR + " ?" + SparqlVariable.NOTE
             + " ?" + SparqlVariable.CREATION_DATE + " ?" + SparqlVariable.LAST_UPDATE + " ?" + SparqlVariable.IMAGE + " ?" + SparqlVariable.DICTIONARY_ENTRY_COMPLETING_AUTHOR + " "
             + "?" + SparqlVariable.COMPLETION_DATE + " ?" + SparqlVariable.REVISION_DATE + " ?confidence \n"
             + "(COUNT(?_" + SparqlVariable.CHILD + ") AS ?" + SparqlVariable.CHILD + ")\n"
             + "(GROUP_CONCAT(distinct str(?_" + SparqlVariable.DICTIONARY_ENTRY_POS + ");SEPARATOR=\";\") AS ?" + SparqlVariable.DICTIONARY_ENTRY_POS + ")\n"
             + "(GROUP_CONCAT(distinct str(?_" + SparqlVariable.TYPE + ");SEPARATOR=\";\") AS ?" + SparqlVariable.TYPE + ")\n"
-            + "(GROUP_CONCAT(distinct str(?_" + SparqlVariable.NOTE + ");SEPARATOR=\"_NOTE_SEPARATOR_\") AS ?" + SparqlVariable.NOTE + ")\n"
+//            + "(GROUP_CONCAT(distinct str(?_" + SparqlVariable.NOTE + ");SEPARATOR=\"_NOTE_SEPARATOR_\") AS ?" + SparqlVariable.NOTE + ")\n"
             + "(GROUP_CONCAT(distinct str(?_" + SparqlVariable.IMAGE + ");SEPARATOR=\";\") AS ?" + SparqlVariable.IMAGE + ")\n"
             + "(GROUP_CONCAT(distinct concat(\"" + SparqlPrefix.OWL.getUri() + "sameAs\",\"<>\",str(?_" + SparqlVariable.SAMEAS + "),\"<>\",str(?graph" + SparqlVariable.SAMEAS + "),\"<>\",str(?" + SparqlVariable.SAMEAS_LABEL + "));SEPARATOR=\"---\") AS ?" + SparqlVariable.SAMEAS + ")\n"
             + "(GROUP_CONCAT(distinct concat(\"" + SparqlPrefix.RDFS.getUri() + "seeAlso\",\"<>\",str(?_" + SparqlVariable.SEEALSO + "),\"<>\",str(?graph" + SparqlVariable.SEEALSO + "),\"<>\",str(?" + SparqlVariable.SEEALSO_LABEL + "));SEPARATOR=\"---\") AS ?" + SparqlVariable.SEEALSO + ")\n"
@@ -2165,6 +2165,7 @@ public class SparqlSelectData {
             + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " loc:rev ?" + SparqlVariable.DICTIONARY_ENTRY_REVISOR + "} .\n"
             + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " vs:term_status ?" + SparqlVariable.DICTIONARY_ENTRY_STATUS + "} .\n"
             + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " foaf:depiction ?" + SparqlVariable.IMAGE + "} .\n"
+            + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " skos:note ?" + SparqlVariable.NOTE + "} .\n"
             + "   OPTIONAL { \n"
             + "        	GRAPH ?graph" + SparqlVariable.SAMEAS + " { ?" + SparqlVariable.DICTIONARY_ENTRY + " owl:sameAs ?_" + SparqlVariable.SAMEAS + " . } \n"
             + "        	   OPTIONAL { ?_" + SparqlVariable.SAMEAS + " rdfs:label ?" + SparqlVariable.SAMEAS_LABEL + " }\n"
@@ -2191,6 +2192,7 @@ public class SparqlSelectData {
             + " ?" + SparqlVariable.DICTIONARY_ENTRY_COMPLETING_AUTHOR + " "
             + "?"
             + SparqlVariable.COMPLETION_DATE + " ?"
+            + SparqlVariable.NOTE + " ?"
             + SparqlVariable.REVISION_DATE + " ?confidence";
 
     public static final String GET_RESOURCE_MODEL

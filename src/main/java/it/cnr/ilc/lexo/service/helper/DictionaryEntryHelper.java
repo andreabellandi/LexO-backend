@@ -24,7 +24,7 @@ public class DictionaryEntryHelper extends TripleStoreDataHelper<DictionaryEntry
         data.setCreator(getStringValue(bs, SparqlVariable.CREATOR));
         data.setDictionaryEntry(getStringValue(bs, SparqlVariable.DICTIONARY_ENTRY));
         data.setAuthor(getStringValue(bs, SparqlVariable.DICTIONARY_ENTRY_COMPLETING_AUTHOR));
-        data.setNote(getNotes(bs));
+        data.setNote(getStringValue(bs, SparqlVariable.NOTE));
         data.setPos(getPosList(bs, getStringValue(bs, SparqlVariable.DICTIONARY_ENTRY_POS)));
         data.setRevisor(getStringValue(bs, SparqlVariable.DICTIONARY_ENTRY_REVISOR));
         data.setStatus(getStringValue(bs, SparqlVariable.DICTIONARY_ENTRY_STATUS));
@@ -57,13 +57,13 @@ public class DictionaryEntryHelper extends TripleStoreDataHelper<DictionaryEntry
         return types;
     }
 
-    private ArrayList<String> getNotes(BindingSet bs) {
-        ArrayList<String> notes = new ArrayList();
-        for (String _n : getStringValue(bs, SparqlVariable.NOTE).split("_NOTE_SEPARATOR_")) {
-            notes.add(_n);
-        }
-        return notes;
-    }
+//    private ArrayList<String> getNotes(BindingSet bs) {
+//        ArrayList<String> notes = new ArrayList();
+//        for (String _n : getStringValue(bs, SparqlVariable.NOTE).split("_NOTE_SEPARATOR_")) {
+//            notes.add(_n);
+//        }
+//        return notes;
+//    }
 
     @Override
     public Class<DictionaryEntryCore> getDataClass() {

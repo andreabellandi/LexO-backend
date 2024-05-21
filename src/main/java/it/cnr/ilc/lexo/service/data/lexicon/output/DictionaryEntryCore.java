@@ -33,7 +33,7 @@ public class DictionaryEntryCore extends Entity implements Data {
     private String language;
     private ArrayList<String> images;
     private boolean hasChildren;
-    private ArrayList<String> note;
+    private String note;
     private ArrayList<LinkedEntity> seeAlso;
     private ArrayList<LinkedEntity> sameDictionaryEntryAs;
 
@@ -109,11 +109,11 @@ public class DictionaryEntryCore extends Entity implements Data {
         this.author = author;
     }
 
-    public ArrayList<String> getNote() {
+    public String getNote() {
         return note;
     }
 
-    public void setNote(ArrayList<String> note) {
+    public void setNote(String note) {
         this.note = note;
     }
 
