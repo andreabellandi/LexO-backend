@@ -104,6 +104,8 @@ public abstract class TripleStoreDataHelper<D extends Data> extends Helper<D> {
             for (String t : _types.split(";")) {
                 if (t.contains("#")) {
                     types.add(t.split("#")[1].trim());
+                } else {
+                    types.add(t);
                 }
             }
         }
@@ -224,7 +226,9 @@ public abstract class TripleStoreDataHelper<D extends Data> extends Helper<D> {
                 le.setInferred(_e[2].contains("implicit"));
                 le.setLink(_e[0]);
                 le.setLinkType(isExternalUri(_e[1]) ? "external" : "internal");
-                if (_e[3] != null) le.setLabel(_e[3]);
+                if (_e[3] != null) {
+                    le.setLabel(_e[3]);
+                }
                 _entities.add(le);
             }
         }

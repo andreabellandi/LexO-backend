@@ -523,6 +523,7 @@ public class SKOSManager implements Manager, Cached {
 
     public TupleQueryResult getConceptSets() throws ManagerException {
         String query = SparqlSelectData.DATA_CONCEPT_SETS.replaceAll("_DEFAULTLANGUAGE_", defaultLanguageLabel)
+                .replace("_INDEX_LABEL_", lexicalizationModel.equals("label") ? "label" : "prefLabel")
                 .replace("_LABELPROPERTY_", lexicalizationModel.equals("label") ? SparqlPrefix.RDFS.getUri() + "label" : SparqlPrefix.SKOS.getUri() + "prefLabel");
         return RDFQueryUtil.evaluateTQuery(query);
     }

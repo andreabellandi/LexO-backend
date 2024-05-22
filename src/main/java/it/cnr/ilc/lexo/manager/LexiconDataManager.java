@@ -435,9 +435,14 @@ public class LexiconDataManager implements Manager, Cached {
                 .replace("_RELATION_", property);
         if (property.equals(OntoLexEntity.LexicalConceptRel.isLexicalizedSenseOf.toString()) ||
                 property.equals(OntoLexEntity.LexicalConceptRel.evokes.toString())) {
-            query = query.replaceAll("_PROPERTY_", lexicalizationModel.equals("skos") ? SparqlPrefix.SKOS.getPrefix() + "prefLabel" : SparqlPrefix.RDFS.getPrefix() + "label");
+            query = query.replaceAll("_PROPERTY_", lexicalizationModel.equals("skos") ? SparqlPrefix.SKOS.getPrefix() + "prefLabel" : SparqlPrefix.RDFS.getPrefix() + "label")
+                    .replaceAll("_LEXICAL_CONCEPT_", "OPTIONAL { ?" + SparqlVariable.TARGET + " " + SparqlPrefix.SKOS.getPrefix() + "inScheme [ " + (lexicalizationModel.equals("skos") ? SparqlPrefix.SKOS.getPrefix() + "prefLabel" : SparqlPrefix.RDFS.getPrefix() + "label") + " ?_type ] }\n")
+                    .replaceAll("_TYPE_", SparqlPrefix.SESAME.getPrefix() + "directType ?_type ");
+//                    .replaceAll("_TYPE_", SparqlPrefix.SKOS.getPrefix() + "inScheme [ " + (lexicalizationModel.equals("skos") ? SparqlPrefix.SKOS.getPrefix() + "prefLabel" : SparqlPrefix.RDFS.getPrefix() + "label") + " ?_type ] ");
         } else {
-            query = query.replaceAll("_PROPERTY_", SparqlPrefix.RDFS.getPrefix() + "label|" + SparqlPrefix.SKOS.getPrefix() + "definition");
+            query = query.replaceAll("_PROPERTY_", SparqlPrefix.RDFS.getPrefix() + "label|" + SparqlPrefix.SKOS.getPrefix() + "definition")
+                    .replaceAll("_TYPE_", SparqlPrefix.SESAME.getPrefix() + "directType ?_type ")
+                    .replaceAll("_LEXICAL_CONCEPT_", "");
         }
         return RDFQueryUtil.evaluateTQuery(query);
     }
