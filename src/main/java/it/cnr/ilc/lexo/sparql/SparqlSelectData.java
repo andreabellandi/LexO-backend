@@ -1258,6 +1258,30 @@ public class SparqlSelectData {
             + " ?" + SparqlVariable.LABEL + " ?" + SparqlVariable.CREATOR + " ?" + SparqlVariable.CREATION_DATE
             + " ?" + SparqlVariable.LAST_UPDATE + " ?" + SparqlVariable.NOTE + " ?" + SparqlVariable.CONFIDENCE + " ?" + SparqlVariable.HEAD + " ?" + SparqlVariable.FREQUENCY;
 
+    public static final String DATA_CORPUS_FREQUENCY
+            = SparqlPrefix.FRAC.getSparqlPrefix() + "\n"
+            + SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTO.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.SKOS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDF.getSparqlPrefix() + "\n"
+            + "SELECT ?" + SparqlVariable.CORPUS_FREQUENCY + " ?" + SparqlVariable.SOURCE
+            + " ?" + SparqlVariable.CREATION_DATE + " ?" + SparqlVariable.LAST_UPDATE + " ?" + SparqlVariable.CREATOR
+            + " ?" + SparqlVariable.NOTE + " ?" + SparqlVariable.CONFIDENCE + " ?" + SparqlVariable.FREQUENCY + "\n"
+            + "FROM onto:explicit\n"
+            + "WHERE {\n"
+            + "    <_ID_> frac:frequency ?" + SparqlVariable.CORPUS_FREQUENCY + "\n"
+            + "    OPTIONAL { ?" + SparqlVariable.CORPUS_FREQUENCY + " dct:source ?" + SparqlVariable.SOURCE + " . }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.CORPUS_FREQUENCY + " dct:creator ?" + SparqlVariable.CREATOR + " }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.CORPUS_FREQUENCY + " dct:modified ?" + SparqlVariable.LAST_UPDATE + " }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.CORPUS_FREQUENCY + " dct:created ?" + SparqlVariable.CREATION_DATE + " }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.CORPUS_FREQUENCY + " skos:note ?" + SparqlVariable.NOTE + " }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.CORPUS_FREQUENCY + " lexinfo:confidence ?" + SparqlVariable.CONFIDENCE + " }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.CORPUS_FREQUENCY + " rdf:value ?" + SparqlVariable.FREQUENCY + " }\n"
+            + "}";
+
     public static final String DATA_LINGUISTIC_RELATION
             = SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
             + SparqlPrefix.ONTO.getSparqlPrefix() + "\n"
@@ -1277,7 +1301,7 @@ public class SparqlSelectData {
             + "    OPTIONAL { ?" + SparqlVariable.TARGET + " _PROPERTY_ ?" + SparqlVariable.LABEL + " . }\n"
             + "    _LEXICAL_CONCEPT_"
             + "    OPTIONAL { ?" + SparqlVariable.TARGET + " _TYPE_ . \n"
-//             + "    OPTIONAL { ?" + SparqlVariable.TARGET + SparqlPrefix.SESAME.getPrefix() + "directType ?_type . \n"
+            //             + "    OPTIONAL { ?" + SparqlVariable.TARGET + SparqlPrefix.SESAME.getPrefix() + "directType ?_type . \n"
             + "    FILTER (!regex(str(?_type), \"http://www.w3.org/2000/01/rdf-schema#|http://www.w3.org/1999/02/22-rdf-syntax-ns#|http://www.w3.org/2002/07/owl#\")) }\n"
             + "    FILTER (!regex(str(?relation), \"http://www.ontologydesignpatterns.org/cp/owl/semiotics.owl#\"))\n"
             + "    BIND(?relation AS ?" + SparqlVariable.LINK + ")\n"
@@ -2145,7 +2169,7 @@ public class SparqlSelectData {
             + "(COUNT(?_" + SparqlVariable.CHILD + ") AS ?" + SparqlVariable.CHILD + ")\n"
             + "(GROUP_CONCAT(distinct str(?_" + SparqlVariable.DICTIONARY_ENTRY_POS + ");SEPARATOR=\";\") AS ?" + SparqlVariable.DICTIONARY_ENTRY_POS + ")\n"
             + "(GROUP_CONCAT(distinct str(?_" + SparqlVariable.TYPE + ");SEPARATOR=\";\") AS ?" + SparqlVariable.TYPE + ")\n"
-//            + "(GROUP_CONCAT(distinct str(?_" + SparqlVariable.NOTE + ");SEPARATOR=\"_NOTE_SEPARATOR_\") AS ?" + SparqlVariable.NOTE + ")\n"
+            //            + "(GROUP_CONCAT(distinct str(?_" + SparqlVariable.NOTE + ");SEPARATOR=\"_NOTE_SEPARATOR_\") AS ?" + SparqlVariable.NOTE + ")\n"
             + "(GROUP_CONCAT(distinct str(?_" + SparqlVariable.IMAGE + ");SEPARATOR=\";\") AS ?" + SparqlVariable.IMAGE + ")\n"
             + "(GROUP_CONCAT(distinct concat(\"" + SparqlPrefix.OWL.getUri() + "sameAs\",\"<>\",str(?_" + SparqlVariable.SAMEAS + "),\"<>\",str(?graph" + SparqlVariable.SAMEAS + "),\"<>\",str(?" + SparqlVariable.SAMEAS_LABEL + "));SEPARATOR=\"---\") AS ?" + SparqlVariable.SAMEAS + ")\n"
             + "(GROUP_CONCAT(distinct concat(\"" + SparqlPrefix.RDFS.getUri() + "seeAlso\",\"<>\",str(?_" + SparqlVariable.SEEALSO + "),\"<>\",str(?graph" + SparqlVariable.SEEALSO + "),\"<>\",str(?" + SparqlVariable.SEEALSO_LABEL + "));SEPARATOR=\"---\") AS ?" + SparqlVariable.SEEALSO + ")\n"

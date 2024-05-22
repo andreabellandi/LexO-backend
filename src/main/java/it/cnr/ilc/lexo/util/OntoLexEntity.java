@@ -236,6 +236,22 @@ public class OntoLexEntity {
             return this.type;
         }
     }
+    
+    public static enum CorpusFrquencyRel {
+        value(SparqlPrefix.RDF.getUri() + "value"),
+        source(SparqlPrefix.DCT.getUri() + "source");
+
+        private final String type;
+
+        private CorpusFrquencyRel(String type) {
+            this.type = type;
+        }
+
+        @Override
+        public String toString() {
+            return this.type;
+        }
+    }
 
     public static enum LexicalRel {
         Cognate(SparqlPrefix.ETY.getUri() + "cognate"),

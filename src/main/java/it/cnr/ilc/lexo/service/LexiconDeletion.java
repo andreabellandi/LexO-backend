@@ -583,6 +583,46 @@ public class LexiconDeletion extends Service {
     }
     
     @GET
+    @Path("corpusFrequency")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "corpusFrequency",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Corpus Frequency deletion",
+            notes = "This method deletes a corpus frequency")
+    public Response corpusFrequency(
+            @HeaderParam("Authorization") String key,
+            @ApiParam(
+                    name = "id",
+                    value = "Corpus Frequency ID",
+                    required = true)
+            @QueryParam("id") String id) {
+        try {
+            checkKey(key);
+            String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
+            try {
+                UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+                if (!utilityManager.isCorpusFrequency(_id)) {
+                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " does not exist or it is not a corpus frequency").build();
+                }
+                return Response.ok(lexiconManager.deleteCorpusFrequency(_id))
+                        .type(MediaType.TEXT_PLAIN)
+                        .header("Access-Control-Allow-Headers", "content-type")
+                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                        .build();
+            } catch (ManagerException ex) {
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            }
+        } catch (UnsupportedEncodingException ex) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        } catch (AuthorizationException | ServiceException ex) {
+            log(Level.ERROR, "lexicon/deletion/corpusFrequency: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
+        }
+    }
+    
+    @GET
     @Path("formRestriction")
     @Produces(MediaType.APPLICATION_JSON)
     @RequestMapping(

@@ -105,6 +105,11 @@ public class LexiconDeletionManager implements Manager, Cached {
         RDFQueryUtil.update(SparqlDeleteData.DELETE_COLLOCATION.replaceAll("_ID_", id));
         return timestampFormat.format(new Timestamp(System.currentTimeMillis()));
     }
+    
+    public String deleteCorpusFrequency(String id) throws ManagerException {
+        RDFQueryUtil.update(SparqlDeleteData.DELETE_CORPUS_FREQUENCY.replaceAll("_ID_", id));
+        return timestampFormat.format(new Timestamp(System.currentTimeMillis()));
+    }
 
     public String deleteFormRestriction(String id) throws ManagerException {
         RDFQueryUtil.update(SparqlDeleteData.DELETE_FORM_RESTRICTION.replaceAll("_ID_", id));

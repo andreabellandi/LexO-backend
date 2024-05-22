@@ -296,6 +296,11 @@ public final class UtilityManager implements Manager, Cached {
         String query = SparqlQueryUtil.IS_COLLOCATION_ID.replaceAll("_ID_", id);
         return RDFQueryUtil.evaluateBQuery(query);
     }
+    
+    public boolean isCorpusFrequency(String id) throws QueryEvaluationException {
+        String query = SparqlQueryUtil.IS_CORPUS_FREQUENCY_ID.replaceAll("_ID_", id);
+        return RDFQueryUtil.evaluateBQuery(query);
+    }
 
     public boolean isFormRestriction(String id) throws QueryEvaluationException {
         String query = SparqlQueryUtil.IS_FORMRESTRICTION_ID.replaceAll("_ID_", id);

@@ -8,6 +8,7 @@ package it.cnr.ilc.lexo.manager;
 import it.cnr.ilc.lexo.LexOProperties;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Collocation;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Component;
+import it.cnr.ilc.lexo.service.data.lexicon.output.CorpusFrequency;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Dictionary;
 import it.cnr.ilc.lexo.service.data.lexicon.output.DictionaryEntryCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.EtymologicalLink;
@@ -323,6 +324,22 @@ public class LexiconCreationManager implements Manager, Cached {
                 .replace("_MODIFIED_", created));
         return setCollocation(_id, leID, created, author);
     }
+    
+    public CorpusFrequency createCorpusFrequency(String leID, String author, String prefix, String baseIRI, String desiredID) throws ManagerException {
+        Timestamp tm = new Timestamp(System.currentTimeMillis());
+        String id = (desiredID != null ? (!desiredID.isEmpty() ? (Manager.IDAlreadyExists(baseIRI + desiredID) ? null : desiredID) : idInstancePrefix + tm.toString()) : idInstancePrefix + tm.toString());
+        if (id == null) throw new ManagerException("ID " + desiredID + " already exists");
+        String created = timestampFormat.format(tm);
+        String sparqlPrefix = "PREFIX " + prefix + ": <" + baseIRI + ">";
+        String _id = baseIRI + id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
+        RDFQueryUtil.update(SparqlInsertData.CREATE_CORPUS_FREQUENCY.replaceAll("_ID_", _id)
+                .replaceAll("_AUTHOR_", author)
+                .replaceAll("_CREATED_", created)
+                .replaceAll("_PREFIX_", sparqlPrefix)
+                .replaceAll("_LEID_", leID)
+                .replaceAll("_MODIFIED_", created));
+        return setCorpusFrequency(_id, created, author);
+    }
 
     public ReifiedRelation createLexicoSemanticRelation(String leID, String type, String author, String prefix, String baseIRI, String desiredID) throws ManagerException {
         Manager.validateWithEnum("type", OntoLexEntity.VartransRelationClasses.class, type);
@@ -422,6 +439,16 @@ public class LexiconCreationManager implements Manager, Cached {
         col.setConfidence(-1);
         col.setCollocation(id);
         col.setHead(leID);
+        col.setLastUpdate(created);
+        col.setCreationDate(created);
+        return col;
+    }
+    
+    private CorpusFrequency setCorpusFrequency(String id, String created, String author) {
+        CorpusFrequency col = new CorpusFrequency();
+        col.setCreator(author);
+        col.setConfidence(-1);
+        col.setCorpusFrequency(id);
         col.setLastUpdate(created);
         col.setCreationDate(created);
         return col;

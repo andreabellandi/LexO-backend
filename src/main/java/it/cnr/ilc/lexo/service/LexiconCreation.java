@@ -19,6 +19,7 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.BibliographicItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Collocation;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Component;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ConceptSet;
+import it.cnr.ilc.lexo.service.data.lexicon.output.CorpusFrequency;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Dictionary;
 import it.cnr.ilc.lexo.service.data.lexicon.output.DictionaryEntryCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.EtymologicalLink;
@@ -36,6 +37,7 @@ import it.cnr.ilc.lexo.service.helper.BibliographyHelper;
 import it.cnr.ilc.lexo.service.helper.CollocationHelper;
 import it.cnr.ilc.lexo.service.helper.ComponentHelper;
 import it.cnr.ilc.lexo.service.helper.ConceptSetHelper;
+import it.cnr.ilc.lexo.service.helper.CorpusFrequencyHelper;
 import it.cnr.ilc.lexo.service.helper.DictionaryEntryHelper;
 import it.cnr.ilc.lexo.service.helper.DictionaryHelper;
 import it.cnr.ilc.lexo.service.helper.EtymologicalLinkHelper;
@@ -88,6 +90,7 @@ public class LexiconCreation extends Service {
     private final LexicalSenseCoreHelper lexicalSenseCoreHelper = new LexicalSenseCoreHelper();
     private final ComponentHelper componentHelper = new ComponentHelper();
     private final CollocationHelper collocationHelper = new CollocationHelper();
+    private final CorpusFrequencyHelper corpusFrequencyHelper = new CorpusFrequencyHelper();
     private final FormRestrictionHelper formRestrictionHelper = new FormRestrictionHelper();
     private final IndirectLexicalRelationHelper indirectLexicalRelationHelper = new IndirectLexicalRelationHelper();
     private final TranslationSetHelper translationSetHelper = new TranslationSetHelper();
@@ -638,6 +641,79 @@ public class LexiconCreation extends Service {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         } catch (AuthorizationException | ServiceException ex) {
             log(Level.ERROR, "create/collocation: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
+        }
+    }
+    
+    
+    @GET
+    @Path("corpusFrequency")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "corpusFrequency",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Corpus frequency creation",
+            notes = "This method creates a new corpus frequency by using the frac module of ontolex")
+    public Response corpusFrequency(
+            @ApiParam(
+                    name = "id",
+                    value = "the lexical entity having a frequency in a corpus",
+                    required = true)
+            @QueryParam("id") String id,
+            @HeaderParam("Authorization") String key,
+            @ApiParam(
+                    name = "author",
+                    value = "the account that is creating the component (if LexO user management disabled)",
+                    example = "user7",
+                    required = false)
+            @QueryParam("author") String author,
+            @ApiParam(
+                    name = "desiredID",
+                    value = "the ID name to assign to the created entity",
+                    example = "idName",
+                    required = false)
+            @QueryParam("desiredID") String desiredID,
+            @ApiParam(
+                    name = "prefix",
+                    value = "prefix of the namespace",
+                    example = "myprefix",
+                    required = true)
+            @QueryParam("prefix") String prefix,
+            @ApiParam(
+                    name = "baseIRI",
+                    value = "base IRI of the entity",
+                    example = "http://mydata.com#",
+                    required = true)
+            @QueryParam("baseIRI") String baseIRI) {
+        try {
+            checkKey(key);
+            log(Level.INFO, "create/corpusFrequency creates a corpus frequency of the lexical entity: " + URLDecoder.decode(id, StandardCharsets.UTF_8.name()));
+            String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
+            try {
+                UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+                utilityManager.validateNamespace(prefix, baseIRI);
+                if (!utilityManager.exists(id)) {
+                    log(Level.ERROR, "create/corpusFrequency: " + "IRI " + _id + " is not a lexical entity");
+                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " is not a lexical entity").build();
+                }
+                CorpusFrequency cf = lexiconManager.createCorpusFrequency(_id, author, prefix, baseIRI, desiredID);
+                String json = corpusFrequencyHelper.toJson(cf);
+                log(Level.INFO, "CorpusFrequency " + cf.getCorpusFrequency() + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
+                return Response.ok(json)
+                        .type(MediaType.APPLICATION_JSON)
+                        .header("Access-Control-Allow-Headers", "content-type")
+                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                        .build();
+            } catch (ManagerException ex) {
+                log(Level.ERROR, "create/corpusFrequency: " + ex.getMessage());
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            }
+        } catch (UnsupportedEncodingException ex) {
+            log(Level.ERROR, "create/corpusFrequency: " + ex.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        } catch (AuthorizationException | ServiceException ex) {
+            log(Level.ERROR, "create/corpusFrequency: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }

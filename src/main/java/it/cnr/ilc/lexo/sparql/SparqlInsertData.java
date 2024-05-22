@@ -169,6 +169,21 @@ public class SparqlInsertData {
             + "                   dct:modified \"_MODIFIED_\" . \n"
             + "                   frac:head <_LEID_> .\n"
             + "}";
+    
+    public static final String CREATE_CORPUS_FREQUENCY
+            = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.VS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.FRAC.getSparqlPrefix() + "\n"
+            + "_PREFIX_ \n"
+            + "INSERT DATA {\n"
+            + "    <_ID_> a frac:CorpusFrequency ;\n"
+            + "                   dct:creator \"_AUTHOR_\" ;\n"
+            + "                   dct:created \"_CREATED_\" ;\n"
+            + "                   dct:modified \"_MODIFIED_\" . \n"
+            + "    <_LEID_> frac:frequency <_ID_>\n"
+            + "}";
 
     public static final String CREATE_LEXICOSEMANTIC_RELATION
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"

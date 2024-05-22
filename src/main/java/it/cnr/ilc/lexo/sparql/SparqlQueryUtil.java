@@ -101,6 +101,10 @@ public class SparqlQueryUtil {
     public static final String IS_COLLOCATION_ID
             = SparqlPrefix.FRAC.getSparqlPrefix() + "\n"
             + "ASK { <_ID_> a " + SparqlPrefix.FRAC.getPrefix() + "Collocation }";
+    
+    public static final String IS_CORPUS_FREQUENCY_ID
+            = SparqlPrefix.FRAC.getSparqlPrefix() + "\n"
+            + "ASK { <_ID_> a " + SparqlPrefix.FRAC.getPrefix() + "CorpusFrequency }";
 
     public static final String IS_FORMRESTRICTION_ID
             = SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"

@@ -62,6 +62,12 @@ public class SparqlDeleteData {
             + "WHERE { <_ID_> ?predicate ?object . \n"
             + "         OPTIONAL { ?subject ?_predicate <_ID_> . } }";
     
+    public static final String DELETE_CORPUS_FREQUENCY
+            = "DELETE { <_ID_> ?predicate ?object . \n"
+            + "         ?subject ?_predicate <_ID_> . }\n"
+            + "WHERE { <_ID_> ?predicate ?object . \n"
+            + "         OPTIONAL { ?subject ?_predicate <_ID_> . } }";
+    
     public static final String DELETE_FORM_RESTRICTION
             = "DELETE { <_ID_> ?predicate ?object . \n"
             + "         ?subject ?_predicate <_ID_> . }\n"

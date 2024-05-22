@@ -111,6 +111,7 @@ public class SparqlVariable {
 
     public static final String FRAME = "frame";
     public static final String COLLOCATION = "collocation";
+     public static final String CORPUS_FREQUENCY = "corpusFrequency";
     public static final String HEAD = "head";
     public static final String FREQUENCY = "frequency";
 

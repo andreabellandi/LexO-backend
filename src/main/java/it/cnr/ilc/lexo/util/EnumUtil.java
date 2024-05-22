@@ -244,6 +244,7 @@ public class EnumUtil {
         ConceptRel("conceptRel"),
         Metadata("metadata"),
         FrequencyRel("frequencyRel"),
+        CorpusFrequency("corpusFrequency"),
         Decomp("decomp");
 
         private final String genericRelation;

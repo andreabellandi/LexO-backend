@@ -428,6 +428,11 @@ public class LexiconDataManager implements Manager, Cached {
         String query = SparqlSelectData.DATA_COLLOCATIONS.replace("_ID_", id);
         return RDFQueryUtil.evaluateTQuery(query);
     }
+    
+    public TupleQueryResult getCorpusFrequency(String id) throws ManagerException {
+        String query = SparqlSelectData.DATA_CORPUS_FREQUENCY.replace("_ID_", id);
+        return RDFQueryUtil.evaluateTQuery(query);
+    }
 
     public TupleQueryResult getLinguisticRelation(String lexicalEntryID, String property) throws ManagerException {
         String query = SparqlSelectData.DATA_LINGUISTIC_RELATION

@@ -28,6 +28,7 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.Collocation;
 import it.cnr.ilc.lexo.service.data.lexicon.output.Component;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ComponentItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ConceptSetItem;
+import it.cnr.ilc.lexo.service.data.lexicon.output.CorpusFrequency;
 import it.cnr.ilc.lexo.service.data.lexicon.output.DictionaryEntryCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.DictionaryEntryItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.EtymologicalLink;
@@ -59,6 +60,7 @@ import it.cnr.ilc.lexo.service.helper.ComponentFilterHelper;
 import it.cnr.ilc.lexo.service.helper.ComponentHelper;
 import it.cnr.ilc.lexo.service.helper.ConceptSetHelper;
 import it.cnr.ilc.lexo.service.helper.ConceptSetItemHelper;
+import it.cnr.ilc.lexo.service.helper.CorpusFrequencyHelper;
 import it.cnr.ilc.lexo.service.helper.DictionaryEntryFilterHelper;
 import it.cnr.ilc.lexo.service.helper.DictionaryEntryHelper;
 import it.cnr.ilc.lexo.service.helper.DirectRelationHelper;
@@ -160,6 +162,7 @@ public class LexiconData extends Service {
     private final LexicographicComponentHelper lexicographicComponentHelper = new LexicographicComponentHelper();
     private final DictionaryEntryHelper dictionaryEntryHelper = new DictionaryEntryHelper();
     private final CollocationHelper collocationHelper = new CollocationHelper();
+    private final CorpusFrequencyHelper corpusFrequencyHelper = new CorpusFrequencyHelper();
     private final FormRestrictionHelper formRestrictionHelper = new FormRestrictionHelper();
     private final ConceptSetHelper conceptSetHelper = new ConceptSetHelper();
     private final SKOSManager skosManager = ManagerFactory.getManager(SKOSManager.class);
@@ -628,6 +631,40 @@ public class LexiconData extends Service {
             TupleQueryResult _colls = lexiconManager.getCollocations(_id);
             List<Collocation> colls = collocationHelper.newDataList(_colls);
             String json = collocationHelper.toJson(colls);
+            return Response.ok(json)
+                    .type(MediaType.APPLICATION_JSON)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
+        } catch (ManagerException | UnsupportedEncodingException | AuthorizationException | ServiceException ex) {
+            log(Level.ERROR, ex.getMessage());
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        }
+    }
+    
+    @GET
+    @Path("corpusFrequency")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "corpusFrequency",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Corpus Frequency",
+            notes = "This method returns the corpus frequency of a lexical entity")
+    public Response corpusFrequency(
+            @HeaderParam("Authorization") String key,
+            @ApiParam(
+                    name = "id",
+                    value = "lexical entity ID",
+                    required = true)
+            @QueryParam("id") String id) {
+        try {
+            userCheck(key);
+            String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
+            log(Level.INFO, "data/corpusFrequency <" + _id + ">");
+            TupleQueryResult _cfs = lexiconManager.getCorpusFrequency(_id);
+            List<CorpusFrequency> cfs = corpusFrequencyHelper.newDataList(_cfs);
+            String json = corpusFrequencyHelper.toJson(cfs);
             return Response.ok(json)
                     .type(MediaType.APPLICATION_JSON)
                     .header("Access-Control-Allow-Headers", "content-type")
