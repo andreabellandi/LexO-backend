@@ -435,7 +435,7 @@ public class LexiconDataManager implements Manager, Cached {
                 .replace("_RELATION_", property);
         if (property.equals(OntoLexEntity.LexicalConceptRel.isLexicalizedSenseOf.toString()) ||
                 property.equals(OntoLexEntity.LexicalConceptRel.evokes.toString())) {
-            query = query.replaceAll("_PROPERTY_", SparqlPrefix.RDFS.getPrefix() + "label|" + SparqlPrefix.SKOS.getPrefix() + "prefLabel");
+            query = query.replaceAll("_PROPERTY_", lexicalizationModel.equals("skos") ? SparqlPrefix.SKOS.getPrefix() + "prefLabel" : SparqlPrefix.RDFS.getPrefix() + "label");
         } else {
             query = query.replaceAll("_PROPERTY_", SparqlPrefix.RDFS.getPrefix() + "label|" + SparqlPrefix.SKOS.getPrefix() + "definition");
         }
