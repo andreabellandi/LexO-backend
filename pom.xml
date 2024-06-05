@@ -12,8 +12,8 @@
         <postfix></postfix>
     </properties>
     
-        <dependencies>
-            <dependency>
+    <dependencies>
+        <dependency>
             <groupId>org.glassfish.jersey.core</groupId>
             <artifactId>jersey-client</artifactId>
             <version>2.33</version>
@@ -29,11 +29,11 @@
             <version>4.0.1</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
+<!--        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>1.7.30</version>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>com.opencsv</groupId>
             <artifactId>opencsv</artifactId>
@@ -255,7 +255,7 @@
             <properties>
                 <db.jdbcUrl>jdbc:mysql://localhost/lexo_server</db.jdbcUrl>
                 <envClassifier>maia</envClassifier>
-                <postfix>maia</postfix>
+                <postfix>-maia</postfix>
                 <db.user>lexo</db.user>
                 <db.password>LexOServer12</db.password>
                 <graphdb.url>https://lexo-datasets.ilc.cnr.it:7200</graphdb.url>
@@ -265,29 +265,76 @@
             </properties>
         </profile>     
         <profile>
-            <id>maia-complit</id>
+            <id>maia-localhost</id>
+            <!-- compilazione di lexo-backend che punta repo di maia-repo in GraphDB sulla stessa macchina (localhost) -->
+            <dependencies>
+                <!-- https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client -->
+                <dependency>
+                    <groupId>org.mariadb.jdbc</groupId>
+                    <artifactId>mariadb-java-client</artifactId>
+                    <version>3.2.0</version>
+                </dependency>
+            </dependencies> 
             <properties>
-                <db.jdbcUrl>jdbc:mysql://localhost/lexo_server</db.jdbcUrl>
+                <db.jdbcDialect>org.hibernate.dialect.MariaDB103Dialect</db.jdbcDialect>
+                <db.jdbcDriverClass>org.mariadb.jdbc.Driver</db.jdbcDriverClass>
+                <db.jdbcUrl>jdbc:mariadb://localhost/lexo_server?characterEncoding=UTF-8&amp;amp;serverTimezone=Europe/Rome</db.jdbcUrl>
                 <db.user>lexo</db.user>
                 <db.password>LexOServer12</db.password>
-                <envClassifier>maia-complit</envClassifier> <!-- postfix del nome del war -->
-                <postfix>-maia-complit</postfix> <!-- postfix della webapp (parte finale della URL) -->
+                <envClassifier>-maia-repo-localhost</envClassifier> <!-- postfix del nome del war -->
+                <postfix>-maia-repo-localhost</postfix> <!-- postfix della webapp (parte finale della URL) -->
                 <graphdb.url>http://localhost:7200</graphdb.url>
-                <graphdb.repository>CompL-it</graphdb.repository>
+                <graphdb.repository>maia-repo</graphdb.repository>
                 <graphdb.poolSize>5</graphdb.poolSize>
                 <graphDb.namedGraph></graphDb.namedGraph>
             </properties>
         </profile> 
         <profile>
-            <id>simone_test</id> 
+            <id>maia-localhost-mysql</id>
+            <!-- compilazione di lexo-backend che punta repo di maia-repo in GraphDB sulla stessa macchina (localhost) -->
             <properties>
-                <db.jdbcUrl>jdbc:mysql://licodemo/lexo_server</db.jdbcUrl>
+                <db.jdbcDialect>org.hibernate.dialect.MySQLDialect</db.jdbcDialect>
+                <db.jdbcDriverClass>com.mysql.cj.jdbc.Driver</db.jdbcDriverClass>
+                <db.jdbcUrl>jdbc:mysql://localhost/lexo_server?characterEncoding=UTF-8&amp;amp;serverTimezone=Europe/Rome</db.jdbcUrl>
                 <db.user>lexo</db.user>
                 <db.password>LexOServer12</db.password>
-                <envClassifier>simone_test</envClassifier> <!-- postfix del nome del war -->
-                <postfix>-simone_test</postfix> <!-- postfix della webapp (parte finale della URL) -->
+                <envClassifier>-maia-repo-localhost</envClassifier> <!-- postfix del nome del war -->
+                <postfix>-maia-repo-localhost</postfix> <!-- postfix della webapp (parte finale della URL) -->
                 <graphdb.url>http://localhost:7200</graphdb.url>
-                <graphdb.repository>CompL-it</graphdb.repository>
+                <graphdb.repository>maia-repo</graphdb.repository>
+                <graphdb.poolSize>5</graphdb.poolSize>
+                <graphDb.namedGraph></graphDb.namedGraph>
+            </properties>
+        </profile>  
+        <profile>
+            <id>simone_test</id> 
+            <dependencies>
+                <!-- https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client -->
+                <dependency>
+                    <groupId>org.mariadb.jdbc</groupId>
+                    <artifactId>mariadb-java-client</artifactId>
+                    <version>3.2.0</version>
+                    <scope>provided</scope>
+                </dependency>
+            </dependencies> 
+            <properties>
+                <db.jdbcDialect>org.hibernate.dialect.MySQLDialect</db.jdbcDialect>
+                <db.jdbcDriverClass>com.mysql.cj.jdbc.Driver</db.jdbcDriverClass>
+                <db.jdbcUrl>jdbc:mysql://146.48.93.207/lexo_server?characterEncoding=UTF-8&amp;amp;serverTimezone=Europe/Rome</db.jdbcUrl>
+                <db.user>lexo</db.user>
+                <db.password>LexOServer12</db.password>
+                <envClassifier>-maia-repo-localhost</envClassifier> <!-- postfix del nome del war -->
+                <postfix>-maia-repo-localhost</postfix> <!-- postfix della webapp (parte finale della URL) -->
+                <graphdb.url>http://146.48.93.207:7200</graphdb.url>
+                <graphdb.repository>maia-repo</graphdb.repository>
+
+                <!--                <db.jdbcUrl>jdbc:mysql://licodemo/lexo_server</db.jdbcUrl>
+                <db.user>lexo</db.user>
+                <db.password>LexOServer12</db.password>
+                <envClassifier>simone_test</envClassifier>  postfix del nome del war 
+                <postfix>-simone_test</postfix>  postfix della webapp (parte finale della URL) 
+                <graphdb.url>http://localhost:7200</graphdb.url>
+                <graphdb.repository>CompL-it</graphdb.repository>-->
                 <graphdb.poolSize>2</graphdb.poolSize>
                 <graphDb.namedGraph></graphDb.namedGraph>
             </properties>
@@ -299,7 +346,7 @@
                 <db.user>root</db.user>
                 <db.password>root</db.password>
                 <graphdb.url>http://localhost:7200</graphdb.url>
-                                <graphdb.repository>ItAnt</graphdb.repository>
+                <graphdb.repository>ItAnt</graphdb.repository>
                 <!--<graphdb.repository>dictionary</graphdb.repository>-->
                 <!--<graphdb.repository>TEST_NEW_SERVICES</graphdb.repository>-->
                 <graphdb.poolSize>5</graphdb.poolSize>
