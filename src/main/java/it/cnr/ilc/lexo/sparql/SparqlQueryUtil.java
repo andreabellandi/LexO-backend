@@ -93,6 +93,14 @@ public class SparqlQueryUtil {
             + "WHERE { <_ID_> rdf:type ?" + SparqlVariable.LEXICAL_ENTRY_TYPE + " .\n"
             + "FILTER(regex(str(?" + SparqlVariable.LEXICAL_ENTRY_TYPE + "),\""
             + SparqlPrefix.ONTOLEX.getUri() + "|" + SparqlPrefix.ETY.getUri() + "\")) }";
+    
+    public static final String LEXICAL_SENSES_BY_LEXICAL_ENTRY
+            = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
+            + "SELECT ?" + SparqlVariable.SENSE + " ?" + SparqlVariable.CREATOR + " \n"
+            + "WHERE { <_ID_> ontolex:sense ?" + SparqlVariable.SENSE + " .\n"
+            + "        ?" + SparqlVariable.SENSE + " dct:creator ?" + SparqlVariable.CREATOR + " . \n"
+            + "}";
 
     public static final String IS_COMPONENT_ID
             = SparqlPrefix.DECOMP.getSparqlPrefix() + "\n"
@@ -101,7 +109,7 @@ public class SparqlQueryUtil {
     public static final String IS_COLLOCATION_ID
             = SparqlPrefix.FRAC.getSparqlPrefix() + "\n"
             + "ASK { <_ID_> a " + SparqlPrefix.FRAC.getPrefix() + "Collocation }";
-    
+
     public static final String IS_CORPUS_FREQUENCY_ID
             = SparqlPrefix.FRAC.getSparqlPrefix() + "\n"
             + "ASK { <_ID_> a " + SparqlPrefix.FRAC.getPrefix() + "CorpusFrequency }";
@@ -277,5 +285,24 @@ public class SparqlQueryUtil {
             + "    ?" + SparqlVariable.LEXICOGRAPHIC_COMPONENT + " lexicog:describes <_ID_> .\n"
             + "    ?" + SparqlVariable.DICTIONARY_ENTRY + " ?" + SparqlVariable.PROPERTY_NAME + " ?" + SparqlVariable.LEXICOGRAPHIC_COMPONENT + " .\n"
             + "}";
+    
+    public static final String GET_LEXICOGRAPHIC_COMPONENT_BY_DESCRIBE
+            = SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
+            + "SELECT ?" + SparqlVariable.LEXICOGRAPHIC_COMPONENT + "\n"
+            + "WHERE {\n"
+            + "    ?" + SparqlVariable.LEXICOGRAPHIC_COMPONENT + " lexicog:describes <_ID_> .\n"
+            + "}";
+
+    public static final String GET_NUMBER_OF_RDF_MEMBERS_OF_LEXICAL_ENTRY
+            = SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDF.getSparqlPrefix() + "\n"
+             + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
+            + "SELECT (COUNT(?member) AS ?" + SparqlVariable.LABEL_COUNT + ") \n"
+            + "WHERE {\n"
+            + "	<_DE_ID_> rdfs:member ?" + SparqlVariable.LEXICOGRAPHIC_COMPONENT + " .\n"
+            + "    ?" + SparqlVariable.LEXICOGRAPHIC_COMPONENT + " lexicog:describes <_LE_ID_> .\n"
+            + "    ?" + SparqlVariable.LEXICOGRAPHIC_COMPONENT + " ?list ?member\n"
+            + "    FILTER(regex(str(?list), \"http://www.w3.org/1999/02/22-rdf-syntax-ns#_\"))\n"
+            + "} ";
 
 }

@@ -1223,9 +1223,9 @@ public class LexiconData extends Service {
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
             log(Level.INFO, "data/genericRelation <" + _id + ">");
             TupleQueryResult genRel = lexiconManager.getGenericRelation(_id, property);
-            if (!genRel.hasNext()) {
-                return Response.status(Response.Status.OK).type(MediaType.TEXT_PLAIN).entity("There are no instances of " + property).build();
-            }
+//            if (!genRel.hasNext()) {
+//                return Response.status(Response.Status.OK).type(MediaType.TEXT_PLAIN).entity("There are no instances of " + property).build();
+//            }
             if (!genRel.hasNext()) {
                 String json = linkedEntityHelper.toJson(new ArrayList());
                 return Response.ok(json)

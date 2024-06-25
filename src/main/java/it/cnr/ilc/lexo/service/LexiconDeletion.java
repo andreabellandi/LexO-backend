@@ -322,13 +322,12 @@ public class LexiconDeletion extends Service {
                 checkKey(key);
                 String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
                 try {
-                    //        log(Level.INFO, "get lexicon entries types");
                     UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
                     if (!utilityManager.isLexicalSense(_id)) {
                         return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " does not exist").build();
                     }
-
-                    return Response.ok(lexiconManager.deleteLexicalSense(_id))
+                    String lexicographicComponent = utilityManager.getLexicographicComponentBySense(_id);
+                    return Response.ok(lexiconManager.deleteLexicalSense(_id, lexicographicComponent))
                             .type(MediaType.TEXT_PLAIN)
                             .header("Access-Control-Allow-Headers", "content-type")
                             .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")

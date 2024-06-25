@@ -299,7 +299,7 @@ public class LexiconCreationManager implements Manager, Cached {
         String id = (desiredID != null ? (!desiredID.isEmpty() ? (Manager.IDAlreadyExists(baseIRI + desiredID) ? null : desiredID) : idInstancePrefix + tm.toString()) : idInstancePrefix + tm.toString());
         if (id == null) throw new ManagerException("ID " + desiredID + " already exists");
         String created = timestampFormat.format(tm);
-        String sparqlPrefix = "PREFIX " + prefix + ": <" + baseIRI + ">";
+        String sparqlPrefix = (prefix != null) ? ("PREFIX " + prefix + ": <" + baseIRI + ">") : "";
         String _id = baseIRI + id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
         RDFQueryUtil.update(SparqlInsertData.CREATE_DICTIONARY_ENTRY_COMPONENT.replaceAll("_ID_", _id)
                 .replace("_AUTHOR_", author)
@@ -480,5 +480,7 @@ public class LexiconCreationManager implements Manager, Cached {
         fr.setCreationDate(created);
         return fr;
     }
+    
+    
 
 }

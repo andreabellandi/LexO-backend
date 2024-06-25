@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import it.cnr.ilc.lexo.manager.BibliographyManager;
 import it.cnr.ilc.lexo.manager.LexiconCreationManager;
+import it.cnr.ilc.lexo.manager.LexiconUpdateManager;
 import it.cnr.ilc.lexo.manager.ManagerException;
 import it.cnr.ilc.lexo.manager.ManagerFactory;
 import it.cnr.ilc.lexo.manager.SKOSManager;
@@ -55,6 +56,7 @@ import it.cnr.ilc.lexo.service.helper.TranslationSetHelper;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -77,6 +79,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class LexiconCreation extends Service {
 
     private final LexiconCreationManager lexiconManager = ManagerFactory.getManager(LexiconCreationManager.class);
+    private final LexiconUpdateManager lexiconUpdateManager = ManagerFactory.getManager(LexiconUpdateManager.class);
 
     private final BibliographyManager bibliographyManager = ManagerFactory.getManager(BibliographyManager.class);
     private final SKOSManager skosManager = ManagerFactory.getManager(SKOSManager.class);
@@ -483,6 +486,14 @@ public class LexiconCreation extends Service {
                 LexicalSenseCore sc = lexiconManager.createLexicalSense(_lexicalEntryID, author, prefix, baseIRI, desiredID);
                 String json = lexicalSenseCoreHelper.toJson(sc);
                 log(Level.INFO, "Lexical sense " + sc.getSense() + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
+                // check if updating sense ordering (for dictionary management purposes) is needed
+                ArrayList<String> de = utilityManager.getDictionaryEntryByLexicalEntry(_lexicalEntryID);
+                if (de != null) {
+                    // lexical entry is associated with a dictionary entry
+                    int senseNumber = utilityManager.getNumberOfOrderedSenses(de.get(0), _lexicalEntryID);
+                    LexicographicComponent lc = lexiconManager.createLexicographicComponent(author, prefix, baseIRI, desiredID);
+                    lexiconUpdateManager.addLexicographicComponentOfSense(_lexicalEntryID, sc.getSense(), lc.getComponent(), senseNumber);
+                }
                 return Response.ok(json)
                         .type(MediaType.APPLICATION_JSON)
                         .header("Access-Control-Allow-Headers", "content-type")
@@ -644,8 +655,7 @@ public class LexiconCreation extends Service {
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
-    
-    
+
     @GET
     @Path("corpusFrequency")
     @Produces(MediaType.APPLICATION_JSON)

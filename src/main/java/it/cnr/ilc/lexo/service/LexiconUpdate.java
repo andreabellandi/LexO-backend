@@ -11,6 +11,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import it.cnr.ilc.lexo.manager.BibliographyManager;
+import it.cnr.ilc.lexo.manager.LexiconCreationManager;
 import it.cnr.ilc.lexo.manager.LexiconUpdateManager;
 import it.cnr.ilc.lexo.manager.ManagerException;
 import it.cnr.ilc.lexo.manager.ManagerFactory;
@@ -26,10 +27,13 @@ import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalEntryUpdater;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalSenseUpdater;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicographicComponentPositionUpdater;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LinguisticRelationUpdater;
+import it.cnr.ilc.lexo.service.data.lexicon.output.LexicographicComponent;
+import it.cnr.ilc.lexo.util.OntoLexEntity;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.HeaderParam;
@@ -53,6 +57,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class LexiconUpdate extends Service {
 
     private final LexiconUpdateManager lexiconManager = ManagerFactory.getManager(LexiconUpdateManager.class);
+    private final LexiconCreationManager lexiconCreationManager = ManagerFactory.getManager(LexiconCreationManager.class);
     private final BibliographyManager bibliographyManager = ManagerFactory.getManager(BibliographyManager.class);
 
     @POST
@@ -310,6 +315,19 @@ public class LexiconUpdate extends Service {
             checkKey(key);
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
             try {
+                // if a lexical entry is associated to a dictionary entry we need to order its lexical senses
+                if (lru.getRelation().equals(OntoLexEntity.Lexicog.describes.toString())) {
+                    UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+                    if (utilityManager.isLexicalEntry(lru.getValue())) {
+                        Map<String, String> senses = utilityManager.getLexicalSensesByLexicalEntry(lru.getValue());
+                        int senseNumber = 1;
+                        for (Map.Entry<String, String> entry : senses.entrySet()) {
+                            LexicographicComponent lc = lexiconCreationManager.createLexicographicComponent(entry.getValue(), null, entry.getKey().split("#")[0], null);
+                            lexiconManager.addLexicographicComponentOfSense(_id, entry.getKey(), lc.getComponent(), senseNumber);
+                            senseNumber++;
+                        }
+                    }
+                }
                 String json = lexiconManager.updateLinguisticRelation(_id, lru);
                 return Response.ok(json)
                         .type(MediaType.TEXT_PLAIN)
@@ -484,7 +502,5 @@ public class LexiconUpdate extends Service {
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
-
-   
 
 }

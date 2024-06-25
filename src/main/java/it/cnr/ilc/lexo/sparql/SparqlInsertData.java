@@ -169,7 +169,7 @@ public class SparqlInsertData {
             + "                   dct:modified \"_MODIFIED_\" . \n"
             + "                   frac:head <_LEID_> .\n"
             + "}";
-    
+
     public static final String CREATE_CORPUS_FREQUENCY
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
             + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
@@ -322,7 +322,7 @@ public class SparqlInsertData {
             + "_TO_DELETE_ }\n"
             + "INSERT {\n"
             + "_TO_INSERT_ }\n"
-            + "WHERE {\n" 
+            + "WHERE {\n"
             + "_TO_WHERE_ }";
 
     public static final String CREATE_IMAGE_REFERENCE

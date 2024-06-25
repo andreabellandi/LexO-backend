@@ -150,6 +150,19 @@ public final class UtilityManager implements Manager, Cached {
         return null;
     }
     
+    public Map<String, String> getLexicalSensesByLexicalEntry(String id) throws QueryEvaluationException {
+        String query = SparqlQueryUtil.LEXICAL_SENSES_BY_LEXICAL_ENTRY.replaceAll("_ID_", id);
+        Map<String, String> senses = new HashMap();
+        try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {
+            while (result.hasNext()) {
+                BindingSet bs = result.next();
+                senses.put(bs.getBinding(SparqlVariable.SENSE).getValue().toString(), bs.getBinding(SparqlVariable.CREATOR).getValue().toString());
+            }
+        } catch (QueryEvaluationException qee) {
+        }
+        return senses;
+    }
+    
     public ArrayList<String> getDictionaryEntryByLexicalEntry(String id) throws QueryEvaluationException {
         ArrayList<String> des = new ArrayList();
         String query = SparqlQueryUtil.GET_DICTIONARY_ENTRY_ASSOCIATED_TO_LEXICAL_ENTRY.replaceAll("_ID_", id);
@@ -162,7 +175,31 @@ public final class UtilityManager implements Manager, Cached {
         }
         return des;
     }
-
+    
+    public String getLexicographicComponentBySense(String id) throws QueryEvaluationException {
+        String query = SparqlQueryUtil.GET_LEXICOGRAPHIC_COMPONENT_BY_DESCRIBE.replaceAll("_ID_", id);
+        try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {
+            while (result.hasNext()) {
+                BindingSet bs = result.next();
+                return (bs.getBinding(SparqlVariable.LEXICOGRAPHIC_COMPONENT).getValue().toString());
+            }
+        } catch (QueryEvaluationException qee) {
+        }
+        return "";
+    }
+    
+    public int getNumberOfOrderedSenses(String de, String id) throws QueryEvaluationException {
+        String query = SparqlQueryUtil.GET_NUMBER_OF_RDF_MEMBERS_OF_LEXICAL_ENTRY.replaceAll("_DE_ID_", de).replaceAll("_LE_ID_", id);
+        try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {
+            while (result.hasNext()) {
+                BindingSet bs = result.next();
+                return Integer.parseInt(bs.getBinding(SparqlVariable.LABEL_COUNT).getValue().toString());
+            }
+        } catch (QueryEvaluationException qee) {
+        }
+        return 0;
+    }
+    
     public boolean isDictionaryEntry(String id) throws QueryEvaluationException {
         String query = SparqlQueryUtil.IS_DICTIONARYENTRY_ID.replaceAll("_ID_", id);
         return RDFQueryUtil.evaluateBQuery(query);
@@ -247,6 +284,11 @@ public final class UtilityManager implements Manager, Cached {
         return RDFQueryUtil.evaluateBQuery(query);
     }
 
+    public boolean lexicalEntryInDictionaryEntry(String id) throws QueryEvaluationException {
+        String query = SparqlQueryUtil.IS_LEXICALENTRY_ID.replaceAll("_ID_", id);
+        return RDFQueryUtil.evaluateBQuery(query);
+    }
+    
     public TreeMap<Integer, String> getLexicographicComponetsPositions(String id) {
         TreeMap<Integer, String> map = new TreeMap();
         String query = SparqlQueryUtil.LEXICOGRAPHIC_COMPONENTS_POSITIONS.replaceAll("_ID_", id);
