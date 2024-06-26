@@ -249,15 +249,12 @@ public class SparqlUpdateData {
             + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
              + SparqlPrefix.RDF.getSparqlPrefix() + "\n"
              + SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
-            + "DELETE { ?comp dct:modified ?modified . } \n"
+            + "DELETE { <_ID_> dct:modified ?modified . } \n"
             + "INSERT { \n"
-            + "    <_LC_ID_> lexicog:describes <_SENSE_ID_> .\n"
-            + "    ?comp rdf:__POSITION_ <_LC_ID_> .\n"
-            + "    ?comp dct:modified _LAST_UPDATE_ . }\n"
-            + "WHERE {\n"
-//            + "	<_DE_ID_> rdfs:member ?comp .\n"
-            + " ?comp lexicog:describes <_LE_ID_> .\n"
-            + " OPTIONAL {?comp dct:modified ?modified . }\n"
-            + "} ";
+            + "    <_LCID_> lexicog:describes <_SENSEID_> .\n"
+            + "    <_ID_> rdf:__POSITION_ <_LCID_> .\n"
+            + "    <_ID_> dct:modified _LAST_UPDATE_ . \n"
+            + "}\n "
+            + "WHERE { <_ID_> dct:modified ?modified . } \n";
 
 }

@@ -488,11 +488,11 @@ public class LexiconCreation extends Service {
                 log(Level.INFO, "Lexical sense " + sc.getSense() + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
                 // check if updating sense ordering (for dictionary management purposes) is needed
                 ArrayList<String> de = utilityManager.getDictionaryEntryByLexicalEntry(_lexicalEntryID);
-                if (de != null) {
+                if (!de.isEmpty()) {
                     // lexical entry is associated with a dictionary entry
                     int senseNumber = utilityManager.getNumberOfOrderedSenses(de.get(0), _lexicalEntryID);
                     LexicographicComponent lc = lexiconManager.createLexicographicComponent(author, prefix, baseIRI, desiredID);
-                    lexiconUpdateManager.addLexicographicComponentOfSense(_lexicalEntryID, sc.getSense(), lc.getComponent(), senseNumber);
+                    lexiconUpdateManager.addLexicographicComponentOfSense(_lexicalEntryID, sc.getSense(), lc.getComponent(), senseNumber + 1);
                 }
                 return Response.ok(json)
                         .type(MediaType.APPLICATION_JSON)

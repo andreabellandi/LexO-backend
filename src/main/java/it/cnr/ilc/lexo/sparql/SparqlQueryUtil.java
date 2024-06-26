@@ -99,7 +99,7 @@ public class SparqlQueryUtil {
             + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
             + "SELECT ?" + SparqlVariable.SENSE + " ?" + SparqlVariable.CREATOR + " \n"
             + "WHERE { <_ID_> ontolex:sense ?" + SparqlVariable.SENSE + " .\n"
-            + "        ?" + SparqlVariable.SENSE + " dct:creator ?" + SparqlVariable.CREATOR + " . \n"
+            + "        OPTIONAL { ?" + SparqlVariable.SENSE + " dct:creator ?" + SparqlVariable.CREATOR + " } \n"
             + "}";
 
     public static final String IS_COMPONENT_ID
@@ -247,6 +247,9 @@ public class SparqlQueryUtil {
 
     public static final String UNIQUE_ID
             = "ASK { <_ID_> ?p ?o }";
+    
+    public static final String LEXICOGRAPHIC_COMPONENT_LEAF
+            = "ASK { <_ID_> ?propName ?x . FILTER (strstarts(str(?propName), str(rdf:_))) }";
 
     public static final String INDIRECT_RELATION_TYPE
             = SparqlPrefix.ONTO.getSparqlPrefix() + "\n"

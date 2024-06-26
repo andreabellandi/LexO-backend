@@ -343,12 +343,12 @@
             <id>devel-andrea</id> 
             <properties>
                 
-                <!--                <db.jdbcDialect>org.hibernate.dialect.MySQLDialect</db.jdbcDialect>
+                              <db.jdbcDialect>org.hibernate.dialect.MySQLDialect</db.jdbcDialect>
                 <db.jdbcDriverClass>com.mysql.cj.jdbc.Driver</db.jdbcDriverClass>
-                <db.jdbcUrl>jdbc:mysql://localhost/lexo_server?characterEncoding=UTF-8&amp;amp;serverTimezone=Europe/Rome</db.jdbcUrl>-->
+                <db.jdbcUrl>jdbc:mysql://localhost/lexo_server?characterEncoding=UTF-8&amp;amp;serverTimezone=Europe/Rome</db.jdbcUrl>
                 
                 
-                <db.jdbcUrl>jdbc:mysql://localhost/lexo_server</db.jdbcUrl>
+                <!--<db.jdbcUrl>jdbc:mysql://localhost/lexo_server</db.jdbcUrl>-->
                 <db.user>root</db.user>
                 <db.password>root</db.password>
                 <graphdb.url>http://localhost:7200</graphdb.url>

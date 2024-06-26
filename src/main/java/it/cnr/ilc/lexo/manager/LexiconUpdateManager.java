@@ -1153,11 +1153,11 @@ public final class LexiconUpdateManager implements Manager, Cached {
     
     public String addLexicographicComponentOfSense(String le, String sense, String comp, int position) throws ManagerException, UpdateExecutionException {
         String lastupdate = timestampFormat.format(new Timestamp(System.currentTimeMillis()));
-        RDFQueryUtil.update(SparqlUpdateData.ADD_SENSE_TO_LEXICOGRAPHIC_COMPONENT.replaceAll("_POSITION_", String.valueOf(position))
-                .replaceAll("_LE_ID_", le)
-//                .replaceAll("_DE_ID_", de)
-                .replaceAll("_LC_ID_", comp)
-                .replaceAll("_SENSE_ID_", sense)
+        RDFQueryUtil.update(SparqlUpdateData.ADD_SENSE_TO_LEXICOGRAPHIC_COMPONENT
+                .replaceAll("_POSITION_", String.valueOf(position))
+                .replaceAll("_ID_", le)
+                .replaceAll("_LCID_", comp)
+                .replaceAll("_SENSEID_", sense)
                 .replaceAll("_LAST_UPDATE_", "\"" + lastupdate + "\""));
         return lastupdate;
     }

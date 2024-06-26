@@ -75,7 +75,7 @@ public class LexiconDeletionManager implements Manager, Cached {
             throw new ManagerException("The lexicographic component cannot be deleted. Try to delete all the senses of the lexical entry, first.");
         }
     }
-    
+
     private TreeMap<Integer, String> filterMap(TreeMap<Integer, String> map, String id) {
         TreeMap<Integer, String> _map = new TreeMap();
         for (Map.Entry<Integer, String> entry : map.entrySet()) {
@@ -91,9 +91,8 @@ public class LexiconDeletionManager implements Manager, Cached {
         return timestampFormat.format(new Timestamp(System.currentTimeMillis()));
     }
 
-    public String deleteLexicalSense(String id, String lexicographicComponent) throws ManagerException {
+    public String deleteLexicalSense(String id) throws ManagerException {
         RDFQueryUtil.update(SparqlDeleteData.DELETE_LEXICAL_SENSE.replaceAll("_ID_", id));
-        RDFQueryUtil.update(SparqlDeleteData.DELETE_LEXICAL_SENSE.replaceAll("_ID_", lexicographicComponent));
         return timestampFormat.format(new Timestamp(System.currentTimeMillis()));
     }
 
@@ -106,7 +105,7 @@ public class LexiconDeletionManager implements Manager, Cached {
         RDFQueryUtil.update(SparqlDeleteData.DELETE_COLLOCATION.replaceAll("_ID_", id));
         return timestampFormat.format(new Timestamp(System.currentTimeMillis()));
     }
-    
+
     public String deleteCorpusFrequency(String id) throws ManagerException {
         RDFQueryUtil.update(SparqlDeleteData.DELETE_CORPUS_FREQUENCY.replaceAll("_ID_", id));
         return timestampFormat.format(new Timestamp(System.currentTimeMillis()));

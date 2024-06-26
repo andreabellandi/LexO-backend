@@ -80,8 +80,7 @@ public class LexiconDeletion extends Service {
                     }
                     lexiconManager.deleteLexiconLanguage(_id);
                     return Response.ok()
-                            .type(MediaType.TEXT_PLAIN)
-                            .header("Access-Control-Allow-Headers", "content-type")
+                            .type(MediaType.TEXT_PLAIN)                            .header("Access-Control-Allow-Headers", "content-type")
                             .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                             .build();
                 } catch (ManagerException ex) {
@@ -124,8 +123,7 @@ public class LexiconDeletion extends Service {
                     }
                     lexiconManager.deleteDictionary(_id);
                     return Response.ok()
-                            .type(MediaType.TEXT_PLAIN)
-                            .header("Access-Control-Allow-Headers", "content-type")
+                            .type(MediaType.TEXT_PLAIN)                            .header("Access-Control-Allow-Headers", "content-type")
                             .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                             .build();
                 } catch (ManagerException ex) {
@@ -164,8 +162,7 @@ public class LexiconDeletion extends Service {
                         return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " does not exist").build();
                     }
                     return Response.ok(lexiconManager.deleteLexicalEntry(_id))
-                            .type(MediaType.TEXT_PLAIN)
-                            .header("Access-Control-Allow-Headers", "content-type")
+                            .type(MediaType.TEXT_PLAIN)                            .header("Access-Control-Allow-Headers", "content-type")
                             .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                             .build();
                 } catch (ManagerException ex) {
@@ -204,8 +201,7 @@ public class LexiconDeletion extends Service {
 //                        return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " does not exist").build();
 //                    }
                     return Response.ok(lexiconManager.deleteDictionaryEntry(_id))
-                            .type(MediaType.TEXT_PLAIN)
-                            .header("Access-Control-Allow-Headers", "content-type")
+                            .type(MediaType.TEXT_PLAIN)                            .header("Access-Control-Allow-Headers", "content-type")
                             .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                             .build();
                 } catch (ManagerException ex) {
@@ -247,8 +243,7 @@ public class LexiconDeletion extends Service {
                     }
                     TreeMap<Integer, String> map = utilityManager.getLexicographicComponetsPositions(id);
                     return Response.ok(lexiconManager.deleteLexicographicComponent(superLexComp, map, _id))
-                            .type(MediaType.TEXT_PLAIN)
-                            .header("Access-Control-Allow-Headers", "content-type")
+                            .type(MediaType.TEXT_PLAIN)                            .header("Access-Control-Allow-Headers", "content-type")
                             .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                             .build();
                 } catch (ManagerException ex) {
@@ -288,8 +283,7 @@ public class LexiconDeletion extends Service {
                 }
 
                 return Response.ok(lexiconManager.deleteForm(_id))
-                        .type(MediaType.TEXT_PLAIN)
-                        .header("Access-Control-Allow-Headers", "content-type")
+                        .type(MediaType.TEXT_PLAIN)                        .header("Access-Control-Allow-Headers", "content-type")
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
             } catch (ManagerException ex) {
@@ -327,7 +321,13 @@ public class LexiconDeletion extends Service {
                         return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " does not exist").build();
                     }
                     String lexicographicComponent = utilityManager.getLexicographicComponentBySense(_id);
-                    return Response.ok(lexiconManager.deleteLexicalSense(_id, lexicographicComponent))
+                    if (utilityManager.hasSubLexicographicComponent(lexicographicComponent)) {
+                        return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("Deletion forbidden. Seleted sense has sub-senses. Remove them first").build();
+                    }
+                    String superLexComp = utilityManager.getSuperLexicographicComponent(lexicographicComponent);
+                    TreeMap<Integer, String> map = utilityManager.getLexicographicComponetsPositions(lexicographicComponent);
+                    lexiconManager.deleteLexicographicComponent(superLexComp, map, lexicographicComponent);
+                    return Response.ok(lexiconManager.deleteLexicalSense(_id))
                             .type(MediaType.TEXT_PLAIN)
                             .header("Access-Control-Allow-Headers", "content-type")
                             .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
@@ -367,8 +367,7 @@ public class LexiconDeletion extends Service {
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " does not exist").build();
                 }
                 return Response.ok(lexiconManager.deleteEtymologicalLink(_id))
-                        .type(MediaType.TEXT_PLAIN)
-                        .header("Access-Control-Allow-Headers", "content-type")
+                        .type(MediaType.TEXT_PLAIN)                        .header("Access-Control-Allow-Headers", "content-type")
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
             } catch (ManagerException ex) {
@@ -412,8 +411,7 @@ public class LexiconDeletion extends Service {
                 }
 
                 return Response.ok(lexiconManager.deleteEtymology(_id))
-                        .type(MediaType.TEXT_PLAIN)
-                        .header("Access-Control-Allow-Headers", "content-type")
+                        .type(MediaType.TEXT_PLAIN)                        .header("Access-Control-Allow-Headers", "content-type")
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
             } catch (ManagerException ex) {
@@ -448,8 +446,7 @@ public class LexiconDeletion extends Service {
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
             try {
                 return Response.ok(bibliographyManager.deleteBibliography(_id))
-                        .type(MediaType.TEXT_PLAIN)
-                        .header("Access-Control-Allow-Headers", "content-type")
+                        .type(MediaType.TEXT_PLAIN)                        .header("Access-Control-Allow-Headers", "content-type")
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
             } catch (ManagerException ex) {
@@ -485,8 +482,7 @@ public class LexiconDeletion extends Service {
                 try {
 
                     return Response.ok(lexiconManager.deleteRelation(_id, rd))
-                            .type(MediaType.TEXT_PLAIN)
-                            .header("Access-Control-Allow-Headers", "content-type")
+                            .type(MediaType.TEXT_PLAIN)                            .header("Access-Control-Allow-Headers", "content-type")
                             .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                             .build();
                 } catch (ManagerException ex) {
@@ -526,8 +522,7 @@ public class LexiconDeletion extends Service {
                 }
 
                 return Response.ok(lexiconManager.deleteComponent(_id))
-                        .type(MediaType.TEXT_PLAIN)
-                        .header("Access-Control-Allow-Headers", "content-type")
+                        .type(MediaType.TEXT_PLAIN)                        .header("Access-Control-Allow-Headers", "content-type")
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
             } catch (ManagerException ex) {
@@ -566,8 +561,7 @@ public class LexiconDeletion extends Service {
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " does not exist or it is not a collocation").build();
                 }
                 return Response.ok(lexiconManager.deleteCollocation(_id))
-                        .type(MediaType.TEXT_PLAIN)
-                        .header("Access-Control-Allow-Headers", "content-type")
+                        .type(MediaType.TEXT_PLAIN)                        .header("Access-Control-Allow-Headers", "content-type")
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
             } catch (ManagerException ex) {
@@ -606,8 +600,7 @@ public class LexiconDeletion extends Service {
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " does not exist or it is not a corpus frequency").build();
                 }
                 return Response.ok(lexiconManager.deleteCorpusFrequency(_id))
-                        .type(MediaType.TEXT_PLAIN)
-                        .header("Access-Control-Allow-Headers", "content-type")
+                        .type(MediaType.TEXT_PLAIN)                        .header("Access-Control-Allow-Headers", "content-type")
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
             } catch (ManagerException ex) {
@@ -646,8 +639,7 @@ public class LexiconDeletion extends Service {
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " does not exist or it is not a form restriction").build();
                 }
                 return Response.ok(lexiconManager.deleteFormRestriction(_id))
-                        .type(MediaType.TEXT_PLAIN)
-                        .header("Access-Control-Allow-Headers", "content-type")
+                        .type(MediaType.TEXT_PLAIN)                        .header("Access-Control-Allow-Headers", "content-type")
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
             } catch (ManagerException ex) {
@@ -686,8 +678,7 @@ public class LexiconDeletion extends Service {
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " does not exist or it is not a lexico semantic relation").build();
                 }
                 return Response.ok(lexiconManager.deleteLexicoSemanticRelation(_id))
-                        .type(MediaType.TEXT_PLAIN)
-                        .header("Access-Control-Allow-Headers", "content-type")
+                        .type(MediaType.TEXT_PLAIN)                        .header("Access-Control-Allow-Headers", "content-type")
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
             } catch (ManagerException ex) {
@@ -726,8 +717,7 @@ public class LexiconDeletion extends Service {
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " does not exist or it is not a translation set").build();
                 }
                 return Response.ok(lexiconManager.deleteTranslationSet(_id))
-                        .type(MediaType.TEXT_PLAIN)
-                        .header("Access-Control-Allow-Headers", "content-type")
+                        .type(MediaType.TEXT_PLAIN)                        .header("Access-Control-Allow-Headers", "content-type")
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
             } catch (ManagerException ex) {
@@ -771,8 +761,7 @@ public class LexiconDeletion extends Service {
                         return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " does not exist or it is not a Lexical Concept").build();
                     }
                     return Response.ok(skosManager.deleteLexicalConcept(_id, recursive))
-                            .type(MediaType.TEXT_PLAIN)
-                            .header("Access-Control-Allow-Headers", "content-type")
+                            .type(MediaType.TEXT_PLAIN)                            .header("Access-Control-Allow-Headers", "content-type")
                             .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                             .build();
                 } catch (ManagerException ex) {
@@ -813,8 +802,7 @@ public class LexiconDeletion extends Service {
                 }
 
                 return Response.ok(skosManager.deleteConceptSet(_id))
-                        .type(MediaType.TEXT_PLAIN)
-                        .header("Access-Control-Allow-Headers", "content-type")
+                        .type(MediaType.TEXT_PLAIN)                        .header("Access-Control-Allow-Headers", "content-type")
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
             } catch (ManagerException ex) {
@@ -857,8 +845,7 @@ public class LexiconDeletion extends Service {
                 // TODO:
                 // rimuovi file url dal server
                 return Response.ok(lexiconManager.deleteImage(_id))
-                        .type(MediaType.TEXT_PLAIN)
-                        .header("Access-Control-Allow-Headers", "content-type")
+                        .type(MediaType.TEXT_PLAIN)                        .header("Access-Control-Allow-Headers", "content-type")
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
             } catch (ManagerException ex) {
