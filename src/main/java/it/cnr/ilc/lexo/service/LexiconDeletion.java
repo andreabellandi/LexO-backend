@@ -67,33 +67,33 @@ public class LexiconDeletion extends Service {
                     value = "lexicon language ID",
                     required = true)
             @QueryParam("id") String id) {
+        try {
+            String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
             try {
-                String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
-                try {
-                    checkKey(key);
-                    UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
-                    if (!utilityManager.isLexiconLanguage(_id)) {
-                        return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " does not exist").build();
-                    }
-                    if (utilityManager.lexicalEntriesNumberByLanguage(_id) != 0) {
-                        return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " cannot be deleted. Remove all its entries first").build();
-                    }
-                    lexiconManager.deleteLexiconLanguage(_id);
-                    return Response.ok()
-                            .type(MediaType.TEXT_PLAIN)                            .header("Access-Control-Allow-Headers", "content-type")
-                            .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                            .build();
-                } catch (ManagerException ex) {
-                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
-                } catch (AuthorizationException | ServiceException ex) {
-                   log(Level.ERROR, "lexicon/creation/language: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
-            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
+                checkKey(key);
+                UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+                if (!utilityManager.isLexiconLanguage(_id)) {
+                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " does not exist").build();
                 }
-            } catch (UnsupportedEncodingException ex) {
-                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+                if (utilityManager.lexicalEntriesNumberByLanguage(_id) != 0) {
+                    return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " cannot be deleted. Remove all its entries first").build();
+                }
+                lexiconManager.deleteLexiconLanguage(_id);
+                return Response.ok()
+                        .type(MediaType.TEXT_PLAIN).header("Access-Control-Allow-Headers", "content-type")
+                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                        .build();
+            } catch (ManagerException ex) {
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            } catch (AuthorizationException | ServiceException ex) {
+                log(Level.ERROR, "lexicon/creation/language: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
             }
+        } catch (UnsupportedEncodingException ex) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        }
     }
-    
+
     @GET
     @Path("dictionary")
     @Produces(MediaType.APPLICATION_JSON)
@@ -110,31 +110,31 @@ public class LexiconDeletion extends Service {
                     value = "dictionary ID",
                     required = true)
             @QueryParam("id") String id) {
+        try {
+            String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
             try {
-                String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
-                try {
-                    checkKey(key);
-                    UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
-                    if (!utilityManager.isDictionary(_id)) {
-                        return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " does not exist").build();
-                    }
-                    if (utilityManager.dictionaryHasEntry(_id)) {
-                        return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " cannot be deleted. Remove all its entries first").build();
-                    }
-                    lexiconManager.deleteDictionary(_id);
-                    return Response.ok()
-                            .type(MediaType.TEXT_PLAIN)                            .header("Access-Control-Allow-Headers", "content-type")
-                            .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                            .build();
-                } catch (ManagerException ex) {
-                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
-                } catch (AuthorizationException | ServiceException ex) {
-                   log(Level.ERROR, "lexicon/creation/dictionary: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
-            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
+                checkKey(key);
+                UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+                if (!utilityManager.isDictionary(_id)) {
+                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " does not exist").build();
                 }
-            } catch (UnsupportedEncodingException ex) {
-                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+                if (utilityManager.dictionaryHasEntry(_id)) {
+                    return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " cannot be deleted. Remove all its entries first").build();
+                }
+                lexiconManager.deleteDictionary(_id);
+                return Response.ok()
+                        .type(MediaType.TEXT_PLAIN).header("Access-Control-Allow-Headers", "content-type")
+                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                        .build();
+            } catch (ManagerException ex) {
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            } catch (AuthorizationException | ServiceException ex) {
+                log(Level.ERROR, "lexicon/creation/dictionary: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
             }
+        } catch (UnsupportedEncodingException ex) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        }
     }
 
     @GET
@@ -153,29 +153,29 @@ public class LexiconDeletion extends Service {
                     value = "lexical entry ID",
                     required = true)
             @QueryParam("id") String id) {
+        try {
+            checkKey(key);
+            String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
             try {
-                checkKey(key);
-                String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
-                try {
-                    UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
-                    if (!utilityManager.isLexicalEntry(_id)) {
-                        return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " does not exist").build();
-                    }
-                    return Response.ok(lexiconManager.deleteLexicalEntry(_id))
-                            .type(MediaType.TEXT_PLAIN)                            .header("Access-Control-Allow-Headers", "content-type")
-                            .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                            .build();
-                } catch (ManagerException ex) {
-                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+                UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+                if (!utilityManager.isLexicalEntry(_id)) {
+                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " does not exist").build();
                 }
-            } catch (UnsupportedEncodingException ex) {
-                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
-            } catch (AuthorizationException | ServiceException ex) {
+                return Response.ok(lexiconManager.deleteLexicalEntry(_id))
+                        .type(MediaType.TEXT_PLAIN).header("Access-Control-Allow-Headers", "content-type")
+                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                        .build();
+            } catch (ManagerException ex) {
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            }
+        } catch (UnsupportedEncodingException ex) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        } catch (AuthorizationException | ServiceException ex) {
             log(Level.ERROR, "lexicon/creation/lexicalEntry: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
-    
+
     @GET
     @Path("dictionaryEntry")
     @Produces(MediaType.APPLICATION_JSON)
@@ -192,30 +192,29 @@ public class LexiconDeletion extends Service {
                     value = "dictionary entry ID",
                     required = true)
             @QueryParam("id") String id) {
+        try {
+            checkKey(key);
+            String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
             try {
-                checkKey(key);
-                String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
-                try {
-                    UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+                UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
 //                    if (!utilityManager.isDictEntry(_id)) {
 //                        return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " does not exist").build();
 //                    }
-                    return Response.ok(lexiconManager.deleteDictionaryEntry(_id))
-                            .type(MediaType.TEXT_PLAIN)                            .header("Access-Control-Allow-Headers", "content-type")
-                            .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                            .build();
-                } catch (ManagerException ex) {
-                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
-                }
-            } catch (UnsupportedEncodingException ex) {
-                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
-            } catch (AuthorizationException | ServiceException ex) {
+                return Response.ok(lexiconManager.deleteDictionaryEntry(_id))
+                        .type(MediaType.TEXT_PLAIN).header("Access-Control-Allow-Headers", "content-type")
+                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                        .build();
+            } catch (ManagerException ex) {
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            }
+        } catch (UnsupportedEncodingException ex) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        } catch (AuthorizationException | ServiceException ex) {
             log(Level.ERROR, "lexicon/creation/dictionaryEntry: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
-    
-    
+
     @GET
     @Path("lexicographicComponent")
     @Produces(MediaType.APPLICATION_JSON)
@@ -232,26 +231,26 @@ public class LexiconDeletion extends Service {
                     value = "lexicographic component ID",
                     required = true)
             @QueryParam("id") String id) {
+        try {
+            checkKey(key);
+            String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
             try {
-                checkKey(key);
-                String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
-                try {
-                    UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
-                    String superLexComp = utilityManager.getSuperLexicographicComponent(id);
-                    if (superLexComp == null) {
-                        return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " is not a Lexicographic Component or it has no position setted").build();
-                    }
-                    TreeMap<Integer, String> map = utilityManager.getLexicographicComponetsPositions(id);
-                    return Response.ok(lexiconManager.deleteLexicographicComponent(superLexComp, map, _id))
-                            .type(MediaType.TEXT_PLAIN)                            .header("Access-Control-Allow-Headers", "content-type")
-                            .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                            .build();
-                } catch (ManagerException ex) {
-                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+                UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+                String superLexComp = utilityManager.getSuperLexicographicComponent(id);
+                if (superLexComp == null) {
+                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " is not a Lexicographic Component or it has no position setted").build();
                 }
-            } catch (UnsupportedEncodingException ex) {
-                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
-            } catch (AuthorizationException | ServiceException ex) {
+                TreeMap<Integer, String> map = utilityManager.getLexicographicComponetsPositions(id);
+                return Response.ok(lexiconManager.deleteLexicographicComponent(superLexComp, map, _id))
+                        .type(MediaType.TEXT_PLAIN).header("Access-Control-Allow-Headers", "content-type")
+                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                        .build();
+            } catch (ManagerException ex) {
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            }
+        } catch (UnsupportedEncodingException ex) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        } catch (AuthorizationException | ServiceException ex) {
             log(Level.ERROR, "lexicon/creation/lexicographicComponent: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
@@ -283,7 +282,7 @@ public class LexiconDeletion extends Service {
                 }
 
                 return Response.ok(lexiconManager.deleteForm(_id))
-                        .type(MediaType.TEXT_PLAIN)                        .header("Access-Control-Allow-Headers", "content-type")
+                        .type(MediaType.TEXT_PLAIN).header("Access-Control-Allow-Headers", "content-type")
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
             } catch (ManagerException ex) {
@@ -312,32 +311,34 @@ public class LexiconDeletion extends Service {
                     name = "id",
                     required = true)
             @QueryParam("id") String id) {
+        try {
+            checkKey(key);
+            String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
             try {
-                checkKey(key);
-                String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
-                try {
-                    UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
-                    if (!utilityManager.isLexicalSense(_id)) {
-                        return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " does not exist").build();
-                    }
-                    String lexicographicComponent = utilityManager.getLexicographicComponentBySense(_id);
+                UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+                if (!utilityManager.isLexicalSense(_id)) {
+                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " does not exist").build();
+                }
+                String lexicographicComponent = utilityManager.getLexicographicComponentBySense(_id);
+                if (!lexicographicComponent.isEmpty()) {
                     if (utilityManager.hasSubLexicographicComponent(lexicographicComponent)) {
                         return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("Deletion forbidden. Seleted sense has sub-senses. Remove them first").build();
                     }
                     String superLexComp = utilityManager.getSuperLexicographicComponent(lexicographicComponent);
                     TreeMap<Integer, String> map = utilityManager.getLexicographicComponetsPositions(lexicographicComponent);
                     lexiconManager.deleteLexicographicComponent(superLexComp, map, lexicographicComponent);
-                    return Response.ok(lexiconManager.deleteLexicalSense(_id))
-                            .type(MediaType.TEXT_PLAIN)
-                            .header("Access-Control-Allow-Headers", "content-type")
-                            .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                            .build();
-                } catch (ManagerException ex) {
-                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
                 }
-            } catch (UnsupportedEncodingException ex) {
-                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
-            } catch (AuthorizationException | ServiceException ex) {
+                return Response.ok(lexiconManager.deleteLexicalSense(_id))
+                        .type(MediaType.TEXT_PLAIN)
+                        .header("Access-Control-Allow-Headers", "content-type")
+                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                        .build();
+            } catch (ManagerException ex) {
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            }
+        } catch (UnsupportedEncodingException ex) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        } catch (AuthorizationException | ServiceException ex) {
             log(Level.ERROR, "lexicon/creation/lexicalSense: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
@@ -367,7 +368,7 @@ public class LexiconDeletion extends Service {
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " does not exist").build();
                 }
                 return Response.ok(lexiconManager.deleteEtymologicalLink(_id))
-                        .type(MediaType.TEXT_PLAIN)                        .header("Access-Control-Allow-Headers", "content-type")
+                        .type(MediaType.TEXT_PLAIN).header("Access-Control-Allow-Headers", "content-type")
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
             } catch (ManagerException ex) {
@@ -411,7 +412,7 @@ public class LexiconDeletion extends Service {
                 }
 
                 return Response.ok(lexiconManager.deleteEtymology(_id))
-                        .type(MediaType.TEXT_PLAIN)                        .header("Access-Control-Allow-Headers", "content-type")
+                        .type(MediaType.TEXT_PLAIN).header("Access-Control-Allow-Headers", "content-type")
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
             } catch (ManagerException ex) {
@@ -446,7 +447,7 @@ public class LexiconDeletion extends Service {
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
             try {
                 return Response.ok(bibliographyManager.deleteBibliography(_id))
-                        .type(MediaType.TEXT_PLAIN)                        .header("Access-Control-Allow-Headers", "content-type")
+                        .type(MediaType.TEXT_PLAIN).header("Access-Control-Allow-Headers", "content-type")
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
             } catch (ManagerException ex) {
@@ -476,21 +477,21 @@ public class LexiconDeletion extends Service {
                     value = "lexical entity ID",
                     required = true)
             @QueryParam("id") String id, RelationDeleter rd) {
+        try {
+            checkKey(key);
+            String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
             try {
-                checkKey(key);
-                String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
-                try {
 
-                    return Response.ok(lexiconManager.deleteRelation(_id, rd))
-                            .type(MediaType.TEXT_PLAIN)                            .header("Access-Control-Allow-Headers", "content-type")
-                            .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                            .build();
-                } catch (ManagerException ex) {
-                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
-                }
-            } catch (UnsupportedEncodingException ex) {
-                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
-            } catch (AuthorizationException | ServiceException ex) {
+                return Response.ok(lexiconManager.deleteRelation(_id, rd))
+                        .type(MediaType.TEXT_PLAIN).header("Access-Control-Allow-Headers", "content-type")
+                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                        .build();
+            } catch (ManagerException ex) {
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            }
+        } catch (UnsupportedEncodingException ex) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        } catch (AuthorizationException | ServiceException ex) {
             log(Level.ERROR, "lexicon/creation/relation: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
@@ -522,7 +523,7 @@ public class LexiconDeletion extends Service {
                 }
 
                 return Response.ok(lexiconManager.deleteComponent(_id))
-                        .type(MediaType.TEXT_PLAIN)                        .header("Access-Control-Allow-Headers", "content-type")
+                        .type(MediaType.TEXT_PLAIN).header("Access-Control-Allow-Headers", "content-type")
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
             } catch (ManagerException ex) {
@@ -535,7 +536,7 @@ public class LexiconDeletion extends Service {
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
-    
+
     @GET
     @Path("collocation")
     @Produces(MediaType.APPLICATION_JSON)
@@ -561,7 +562,7 @@ public class LexiconDeletion extends Service {
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " does not exist or it is not a collocation").build();
                 }
                 return Response.ok(lexiconManager.deleteCollocation(_id))
-                        .type(MediaType.TEXT_PLAIN)                        .header("Access-Control-Allow-Headers", "content-type")
+                        .type(MediaType.TEXT_PLAIN).header("Access-Control-Allow-Headers", "content-type")
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
             } catch (ManagerException ex) {
@@ -574,7 +575,7 @@ public class LexiconDeletion extends Service {
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
-    
+
     @GET
     @Path("corpusFrequency")
     @Produces(MediaType.APPLICATION_JSON)
@@ -600,7 +601,7 @@ public class LexiconDeletion extends Service {
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " does not exist or it is not a corpus frequency").build();
                 }
                 return Response.ok(lexiconManager.deleteCorpusFrequency(_id))
-                        .type(MediaType.TEXT_PLAIN)                        .header("Access-Control-Allow-Headers", "content-type")
+                        .type(MediaType.TEXT_PLAIN).header("Access-Control-Allow-Headers", "content-type")
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
             } catch (ManagerException ex) {
@@ -613,7 +614,7 @@ public class LexiconDeletion extends Service {
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
-    
+
     @GET
     @Path("formRestriction")
     @Produces(MediaType.APPLICATION_JSON)
@@ -639,7 +640,7 @@ public class LexiconDeletion extends Service {
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " does not exist or it is not a form restriction").build();
                 }
                 return Response.ok(lexiconManager.deleteFormRestriction(_id))
-                        .type(MediaType.TEXT_PLAIN)                        .header("Access-Control-Allow-Headers", "content-type")
+                        .type(MediaType.TEXT_PLAIN).header("Access-Control-Allow-Headers", "content-type")
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
             } catch (ManagerException ex) {
@@ -652,7 +653,7 @@ public class LexiconDeletion extends Service {
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
-    
+
     @GET
     @Path("lexicoSemanticRelation")
     @Produces(MediaType.APPLICATION_JSON)
@@ -678,7 +679,7 @@ public class LexiconDeletion extends Service {
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " does not exist or it is not a lexico semantic relation").build();
                 }
                 return Response.ok(lexiconManager.deleteLexicoSemanticRelation(_id))
-                        .type(MediaType.TEXT_PLAIN)                        .header("Access-Control-Allow-Headers", "content-type")
+                        .type(MediaType.TEXT_PLAIN).header("Access-Control-Allow-Headers", "content-type")
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
             } catch (ManagerException ex) {
@@ -691,7 +692,7 @@ public class LexiconDeletion extends Service {
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
-    
+
     @GET
     @Path("translationSet")
     @Produces(MediaType.APPLICATION_JSON)
@@ -717,7 +718,7 @@ public class LexiconDeletion extends Service {
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " does not exist or it is not a translation set").build();
                 }
                 return Response.ok(lexiconManager.deleteTranslationSet(_id))
-                        .type(MediaType.TEXT_PLAIN)                        .header("Access-Control-Allow-Headers", "content-type")
+                        .type(MediaType.TEXT_PLAIN).header("Access-Control-Allow-Headers", "content-type")
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
             } catch (ManagerException ex) {
@@ -752,25 +753,24 @@ public class LexiconDeletion extends Service {
                     value = "boolean",
                     required = true)
             @QueryParam("recursive") boolean recursive) {
+        try {
+            checkKey(key);
+            String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
             try {
-                checkKey(key);
-                String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
-                try {
-                    UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
-                    if (!utilityManager.isLexicalConcept(_id)) {
-                        return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " does not exist or it is not a Lexical Concept").build();
-                    }
-                    return Response.ok(skosManager.deleteLexicalConcept(_id, recursive))
-                            .type(MediaType.TEXT_PLAIN)                            .header("Access-Control-Allow-Headers", "content-type")
-                            .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                            .build();
-                } catch (ManagerException ex) {
-                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+                UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+                if (!utilityManager.isLexicalConcept(_id)) {
+                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " does not exist or it is not a Lexical Concept").build();
                 }
-            } catch (UnsupportedEncodingException ex) {
-                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
-            } 
-            catch (AuthorizationException | ServiceException ex) {
+                return Response.ok(skosManager.deleteLexicalConcept(_id, recursive))
+                        .type(MediaType.TEXT_PLAIN).header("Access-Control-Allow-Headers", "content-type")
+                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                        .build();
+            } catch (ManagerException ex) {
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            }
+        } catch (UnsupportedEncodingException ex) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        } catch (AuthorizationException | ServiceException ex) {
             log(Level.ERROR, "lexicon/creation/lexicalConcept: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
@@ -802,7 +802,7 @@ public class LexiconDeletion extends Service {
                 }
 
                 return Response.ok(skosManager.deleteConceptSet(_id))
-                        .type(MediaType.TEXT_PLAIN)                        .header("Access-Control-Allow-Headers", "content-type")
+                        .type(MediaType.TEXT_PLAIN).header("Access-Control-Allow-Headers", "content-type")
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
             } catch (ManagerException ex) {
@@ -845,7 +845,7 @@ public class LexiconDeletion extends Service {
                 // TODO:
                 // rimuovi file url dal server
                 return Response.ok(lexiconManager.deleteImage(_id))
-                        .type(MediaType.TEXT_PLAIN)                        .header("Access-Control-Allow-Headers", "content-type")
+                        .type(MediaType.TEXT_PLAIN).header("Access-Control-Allow-Headers", "content-type")
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
             } catch (ManagerException ex) {
