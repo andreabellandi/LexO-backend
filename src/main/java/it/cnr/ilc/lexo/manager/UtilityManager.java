@@ -157,7 +157,7 @@ public final class UtilityManager implements Manager, Cached {
             while (result.hasNext()) {
                 BindingSet bs = result.next();
                 senses.put(bs.getBinding(SparqlVariable.SENSE).getValue().stringValue(),
-                        (bs.getBinding(SparqlVariable.CREATOR) != null) ? bs.getBinding(SparqlVariable.CREATOR).getValue().toString()
+                        (bs.getBinding(SparqlVariable.CREATOR) != null) ? bs.getBinding(SparqlVariable.CREATOR).getValue().stringValue()
                         : "unknown");
             }
         } catch (QueryEvaluationException qee) {
