@@ -72,7 +72,7 @@ public class LexiconDeletionManager implements Manager, Cached {
             RDFQueryUtil.update(SparqlDeleteData.DELETE_LEXICOGRAPHIC_COMPONENT.replaceAll("_ID_", id).replaceAll("_TO_DELETE_", toDelete).replaceAll("_TO_INSERT_", toInsert));
             return timestampFormat.format(new Timestamp(System.currentTimeMillis()));
         } else {
-            throw new ManagerException("The lexicographic component cannot be deleted. Try to delete all the senses of the lexical entry, first.");
+            throw new ManagerException("The lexicographic component cannot be deleted because it has some subcomponents.");
         }
     }
 

@@ -93,7 +93,7 @@ public class SparqlQueryUtil {
             + "WHERE { <_ID_> rdf:type ?" + SparqlVariable.LEXICAL_ENTRY_TYPE + " .\n"
             + "FILTER(regex(str(?" + SparqlVariable.LEXICAL_ENTRY_TYPE + "),\""
             + SparqlPrefix.ONTOLEX.getUri() + "|" + SparqlPrefix.ETY.getUri() + "\")) }";
-    
+
     public static final String LEXICAL_SENSES_BY_LEXICAL_ENTRY
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
             + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
@@ -171,10 +171,13 @@ public class SparqlQueryUtil {
     public static final String HAS_DICTIONARYENTRY_COMPONENTS
             = SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
             + SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
             + "ASK { \n"
             + "       { <_ID_> rdfs:member ?m }\n"
             + "          UNION \n"
             + "       { <_ID_> lexicog:subComponent ?sc }\n"
+            + "          UNION \n"
+            + "       { <_ID_> lexicog:describes [ ontolex:sense ?sense ]  }\n"
             + "    }";
 
     public static final String EXISTS_ID
@@ -247,7 +250,7 @@ public class SparqlQueryUtil {
 
     public static final String UNIQUE_ID
             = "ASK { <_ID_> ?p ?o }";
-    
+
     public static final String LEXICOGRAPHIC_COMPONENT_LEAF
             = "ASK { <_ID_> ?propName ?x . FILTER (strstarts(str(?propName), str(rdf:_))) }";
 
@@ -288,7 +291,7 @@ public class SparqlQueryUtil {
             + "    ?" + SparqlVariable.LEXICOGRAPHIC_COMPONENT + " lexicog:describes <_ID_> .\n"
             + "    ?" + SparqlVariable.DICTIONARY_ENTRY + " ?" + SparqlVariable.PROPERTY_NAME + " ?" + SparqlVariable.LEXICOGRAPHIC_COMPONENT + " .\n"
             + "}";
-    
+
     public static final String GET_LEXICOGRAPHIC_COMPONENT_BY_DESCRIBE
             = SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
             + "SELECT ?" + SparqlVariable.LEXICOGRAPHIC_COMPONENT + "\n"
@@ -299,7 +302,7 @@ public class SparqlQueryUtil {
     public static final String GET_NUMBER_OF_RDF_MEMBERS_OF_LEXICAL_ENTRY
             = SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
             + SparqlPrefix.RDF.getSparqlPrefix() + "\n"
-             + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
             + "SELECT (COUNT(?member) AS ?" + SparqlVariable.LABEL_COUNT + ") \n"
             + "WHERE {\n"
             + "	<_DE_ID_> rdfs:member ?" + SparqlVariable.LEXICOGRAPHIC_COMPONENT + " .\n"
