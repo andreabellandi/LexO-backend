@@ -37,6 +37,7 @@ public class LexicographicComponent extends Entity implements Data {
 //    private boolean hasChildren;
     private String completionDate;
     private String revisionDate;
+    private ArrayList<String> lexicalConcepts;
 
     public String getComponent() {
         return component;
@@ -60,6 +61,14 @@ public class LexicographicComponent extends Entity implements Data {
 
     public void setReferredEntity(String referredEntity) {
         this.referredEntity = referredEntity;
+    }
+
+    public ArrayList<String> getLexicalConcepts() {
+        return lexicalConcepts;
+    }
+
+    public void setLexicalConcepts(ArrayList<String> lexicalConcepts) {
+        this.lexicalConcepts = lexicalConcepts;
     }
 
     public ArrayList<String> getType() {

@@ -32,12 +32,13 @@ public class LexicographicComponentHelper extends TripleStoreDataHelper<Lexicogr
         data.setRevisionDate(getStringValue(bs, SparqlVariable.REVISION_DATE));
         data.setCompletionDate(getStringValue(bs, SparqlVariable.COMPLETION_DATE));
 //        data.setHasChildren((getIntegerNumber(bs, SparqlVariable.CHILD)) > 0);
+        data.setLexicalConcepts(getLexicalConcepts(bs));
         data.setPosition(Integer.parseInt(getLocalName(bs, SparqlVariable.COMPONENT_POSITION).replace("_", "")));
         data.setReferredEntity(getStringValue(bs, SparqlVariable.LEXICAL_ENTITY));
-        data.setLabel(getStringValue(bs, SparqlVariable.LABEL) + 
-                (!getLiteralLanguage(bs, SparqlVariable.LABEL).isEmpty() ? "@" + getLiteralLanguage(bs, SparqlVariable.LABEL) : ""));
+        data.setLabel(getStringValue(bs, SparqlVariable.LABEL)
+                + (!getLiteralLanguage(bs, SparqlVariable.LABEL).isEmpty() ? "@" + getLiteralLanguage(bs, SparqlVariable.LABEL) : ""));
     }
-    
+
     private ArrayList<String> getTypes(BindingSet bs) {
         ArrayList<String> types = new ArrayList();
         for (String _type : getStringValue(bs, SparqlVariable.TYPE).split(";")) {
@@ -46,10 +47,17 @@ public class LexicographicComponentHelper extends TripleStoreDataHelper<Lexicogr
         return types;
     }
 
+    private ArrayList<String> getLexicalConcepts(BindingSet bs) {
+        ArrayList<String> lcs = new ArrayList();
+        for (String _lc : getStringValue(bs, SparqlVariable.LEXICAL_CONCEPT).split(";")) {
+            lcs.add(_lc.split("#")[1]);
+        }
+        return lcs;
+    }
+
     @Override
     public Class<LexicographicComponent> getDataClass() {
         return LexicographicComponent.class;
     }
-
 
 }
