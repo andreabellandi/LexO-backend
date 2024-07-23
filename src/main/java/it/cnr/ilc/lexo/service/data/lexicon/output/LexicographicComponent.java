@@ -34,7 +34,7 @@ public class LexicographicComponent extends Entity implements Data {
     private String revisor;
     private String author;
     private String note;
-    private boolean hasChildren;
+//    private boolean hasChildren;
     private String completionDate;
     private String revisionDate;
 
@@ -102,13 +102,13 @@ public class LexicographicComponent extends Entity implements Data {
         this.note = note;
     }
 
-    public boolean isHasChildren() {
-        return hasChildren;
-    }
-
-    public void setHasChildren(boolean hasChildren) {
-        this.hasChildren = hasChildren;
-    }
+//    public boolean isHasChildren() {
+//        return hasChildren;
+//    }
+//
+//    public void setHasChildren(boolean hasChildren) {
+//        this.hasChildren = hasChildren;
+//    }
 
     public String getCompletionDate() {
         return completionDate;

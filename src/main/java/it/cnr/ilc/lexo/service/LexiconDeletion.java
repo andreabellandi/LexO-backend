@@ -86,7 +86,7 @@ public class LexiconDeletion extends Service {
             } catch (ManagerException ex) {
                 return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
             } catch (AuthorizationException | ServiceException ex) {
-                log(Level.ERROR, "lexicon/creation/language: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+                log(Level.ERROR, "lexicon/delete/language: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
                 return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
             }
         } catch (UnsupportedEncodingException ex) {
@@ -129,7 +129,7 @@ public class LexiconDeletion extends Service {
             } catch (ManagerException ex) {
                 return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
             } catch (AuthorizationException | ServiceException ex) {
-                log(Level.ERROR, "lexicon/creation/dictionary: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+                log(Level.ERROR, "lexicon/delete/dictionary: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
                 return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
             }
         } catch (UnsupportedEncodingException ex) {
@@ -171,7 +171,7 @@ public class LexiconDeletion extends Service {
         } catch (UnsupportedEncodingException ex) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         } catch (AuthorizationException | ServiceException ex) {
-            log(Level.ERROR, "lexicon/creation/lexicalEntry: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            log(Level.ERROR, "lexicon/delete/lexicalEntry: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
@@ -210,7 +210,7 @@ public class LexiconDeletion extends Service {
         } catch (UnsupportedEncodingException ex) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         } catch (AuthorizationException | ServiceException ex) {
-            log(Level.ERROR, "lexicon/creation/dictionaryEntry: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            log(Level.ERROR, "lexicon/delete/dictionaryEntry: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
@@ -251,7 +251,7 @@ public class LexiconDeletion extends Service {
         } catch (UnsupportedEncodingException ex) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         } catch (AuthorizationException | ServiceException ex) {
-            log(Level.ERROR, "lexicon/creation/lexicographicComponent: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            log(Level.ERROR, "lexicon/delete/lexicographicComponent: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
@@ -291,7 +291,7 @@ public class LexiconDeletion extends Service {
         } catch (UnsupportedEncodingException | ServiceException ex) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         } catch (AuthorizationException ex) {
-            log(Level.ERROR, "lexicon/creation/form: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            log(Level.ERROR, "lexicon/delete/form: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
@@ -319,15 +319,24 @@ public class LexiconDeletion extends Service {
                 if (!utilityManager.isLexicalSense(_id)) {
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " does not exist").build();
                 }
+                if (utilityManager.hasSubLexicographicComponent(_id)) {
+                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("Deletion forbidden. Seleted sense has sub-senses.").build();
+                }
                 String lexicographicComponent = utilityManager.getLexicographicComponentBySense(_id);
                 if (!lexicographicComponent.isEmpty()) {
-                    if (utilityManager.hasSubLexicographicComponent(lexicographicComponent)) {
-                        return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("Deletion forbidden. Seleted sense has sub-senses. Remove them first").build();
-                    }
                     String superLexComp = utilityManager.getSuperLexicographicComponent(lexicographicComponent);
                     TreeMap<Integer, String> map = utilityManager.getLexicographicComponetsPositions(lexicographicComponent);
                     lexiconManager.deleteLexicographicComponent(superLexComp, map, lexicographicComponent);
                 }
+//                String lexicographicComponent = utilityManager.getLexicographicComponentBySense(_id);
+//                if (!lexicographicComponent.isEmpty()) {
+//                    if (utilityManager.hasSubLexicographicComponent(lexicographicComponent)) {
+//                        return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("Deletion forbidden. Seleted sense has sub-senses. Remove them first").build();
+//                    }
+//                    String superLexComp = utilityManager.getSuperLexicographicComponent(lexicographicComponent);
+//                    TreeMap<Integer, String> map = utilityManager.getLexicographicComponetsPositions(lexicographicComponent);
+//                    lexiconManager.deleteLexicographicComponent(superLexComp, map, lexicographicComponent);
+//                }
                 return Response.ok(lexiconManager.deleteLexicalSense(_id))
                         .type(MediaType.TEXT_PLAIN)
                         .header("Access-Control-Allow-Headers", "content-type")
@@ -339,7 +348,7 @@ public class LexiconDeletion extends Service {
         } catch (UnsupportedEncodingException ex) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         } catch (AuthorizationException | ServiceException ex) {
-            log(Level.ERROR, "lexicon/creation/lexicalSense: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            log(Level.ERROR, "lexicon/delete/lexicalSense: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
@@ -377,7 +386,7 @@ public class LexiconDeletion extends Service {
         } catch (UnsupportedEncodingException ex) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         } catch (AuthorizationException | ServiceException ex) {
-            log(Level.ERROR, "lexicon/creation/etymologicalLink: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            log(Level.ERROR, "lexicon/delete/etymologicalLink: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
@@ -421,7 +430,7 @@ public class LexiconDeletion extends Service {
         } catch (UnsupportedEncodingException ex) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         } catch (AuthorizationException | ServiceException ex) {
-            log(Level.ERROR, "lexicon/creation/etymology: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            log(Level.ERROR, "lexicon/delete/etymology: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
@@ -456,7 +465,7 @@ public class LexiconDeletion extends Service {
         } catch (UnsupportedEncodingException ex) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         } catch (AuthorizationException | ServiceException ex) {
-            log(Level.ERROR, "lexicon/creation/bibliography: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            log(Level.ERROR, "lexicon/delete/bibliography: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
@@ -492,7 +501,7 @@ public class LexiconDeletion extends Service {
         } catch (UnsupportedEncodingException ex) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         } catch (AuthorizationException | ServiceException ex) {
-            log(Level.ERROR, "lexicon/creation/relation: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            log(Level.ERROR, "lexicon/delete/relation: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
@@ -688,7 +697,7 @@ public class LexiconDeletion extends Service {
         } catch (UnsupportedEncodingException ex) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         } catch (AuthorizationException | ServiceException ex) {
-            log(Level.ERROR, "lexicon/creation/lexicoSemanticRelation: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            log(Level.ERROR, "lexicon/delete/lexicoSemanticRelation: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
@@ -727,7 +736,7 @@ public class LexiconDeletion extends Service {
         } catch (UnsupportedEncodingException ex) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         } catch (AuthorizationException | ServiceException ex) {
-            log(Level.ERROR, "lexicon/creation/translationSet: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            log(Level.ERROR, "lexicon/delete/translationSet: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
@@ -771,7 +780,7 @@ public class LexiconDeletion extends Service {
         } catch (UnsupportedEncodingException ex) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         } catch (AuthorizationException | ServiceException ex) {
-            log(Level.ERROR, "lexicon/creation/lexicalConcept: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            log(Level.ERROR, "lexicon/delete/lexicalConcept: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
@@ -811,7 +820,7 @@ public class LexiconDeletion extends Service {
         } catch (UnsupportedEncodingException ex) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         } catch (AuthorizationException | ServiceException ex) {
-            log(Level.ERROR, "lexicon/creation/conceptSet: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            log(Level.ERROR, "lexicon/delete/conceptSet: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
@@ -854,7 +863,7 @@ public class LexiconDeletion extends Service {
         } catch (UnsupportedEncodingException ex) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         } catch (AuthorizationException | ServiceException ex) {
-            log(Level.ERROR, "lexicon/creation/image: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            log(Level.ERROR, "lexicon/delete/image: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }

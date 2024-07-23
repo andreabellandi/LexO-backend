@@ -180,6 +180,14 @@ public class SparqlQueryUtil {
             + "       { <_ID_> lexicog:describes [ ontolex:sense ?sense ]  }\n"
             + "    }";
 
+    public static final String COMPONENT_DESCRIBES_LEXICALENTRY_WITH_SENSES
+            = SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
+            + "SELECT ?lexicalEntry  \n"
+            + "WHERE { <_ID_> lexicog:describes ?lexicalEntry .\n"
+            + "       ?lexicalEntry ontolex:sense ?sense }";
+    
     public static final String EXISTS_ID
             = "ASK { <_ID_> a ?type }";
 
@@ -305,9 +313,7 @@ public class SparqlQueryUtil {
             + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
             + "SELECT (COUNT(?member) AS ?" + SparqlVariable.LABEL_COUNT + ") \n"
             + "WHERE {\n"
-            + "	<_DE_ID_> rdfs:member ?" + SparqlVariable.LEXICOGRAPHIC_COMPONENT + " .\n"
-            + "    ?" + SparqlVariable.LEXICOGRAPHIC_COMPONENT + " lexicog:describes <_LE_ID_> .\n"
-            + "    ?" + SparqlVariable.LEXICOGRAPHIC_COMPONENT + " ?list ?member\n"
+            + "    <_LE_ID_> ?list ?member\n"
             + "    FILTER(regex(str(?list), \"http://www.w3.org/1999/02/22-rdf-syntax-ns#_\"))\n"
             + "} ";
 

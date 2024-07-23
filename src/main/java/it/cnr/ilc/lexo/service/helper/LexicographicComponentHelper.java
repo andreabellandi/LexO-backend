@@ -31,11 +31,11 @@ public class LexicographicComponentHelper extends TripleStoreDataHelper<Lexicogr
         data.setCreationDate(getStringValue(bs, SparqlVariable.CREATION_DATE));
         data.setRevisionDate(getStringValue(bs, SparqlVariable.REVISION_DATE));
         data.setCompletionDate(getStringValue(bs, SparqlVariable.COMPLETION_DATE));
-        data.setHasChildren((getIntegerNumber(bs, SparqlVariable.CHILD)) > 0);
+//        data.setHasChildren((getIntegerNumber(bs, SparqlVariable.CHILD)) > 0);
         data.setPosition(Integer.parseInt(getLocalName(bs, SparqlVariable.COMPONENT_POSITION).replace("_", "")));
         data.setReferredEntity(getStringValue(bs, SparqlVariable.LEXICAL_ENTITY));
         data.setLabel(getStringValue(bs, SparqlVariable.LABEL) + 
-                (getLiteralLanguage(bs, SparqlVariable.LABEL) != null ? "@" + getLiteralLanguage(bs, SparqlVariable.LABEL) : ""));
+                (!getLiteralLanguage(bs, SparqlVariable.LABEL).isEmpty() ? "@" + getLiteralLanguage(bs, SparqlVariable.LABEL) : ""));
     }
     
     private ArrayList<String> getTypes(BindingSet bs) {

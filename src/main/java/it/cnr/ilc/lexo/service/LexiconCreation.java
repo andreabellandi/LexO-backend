@@ -490,7 +490,7 @@ public class LexiconCreation extends Service {
                 ArrayList<String> de = utilityManager.getDictionaryEntryByLexicalEntry(_lexicalEntryID);
                 if (!de.isEmpty()) {
                     // lexical entry is associated with a dictionary entry
-                    int senseNumber = utilityManager.getNumberOfOrderedSenses(de.get(0), _lexicalEntryID);
+                    int senseNumber = utilityManager.getNumberOfOrderedSenses(_lexicalEntryID);
                     LexicographicComponent lc = lexiconManager.createLexicographicComponent(author, prefix, baseIRI, desiredID);
                     lexiconUpdateManager.addLexicographicComponentOfSense(_lexicalEntryID, sc.getSense(), lc.getComponent(), senseNumber + 1);
                 }

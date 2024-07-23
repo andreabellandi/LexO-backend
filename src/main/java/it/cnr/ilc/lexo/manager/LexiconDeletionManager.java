@@ -58,7 +58,8 @@ public class LexiconDeletionManager implements Manager, Cached {
     }
 
     public String deleteLexicographicComponent(String superLexComp, TreeMap<Integer, String> map, String id) throws ManagerException {
-        if (!ManagerFactory.getManager(UtilityManager.class).hasDictionaryEntryComponents(id)) {
+        String le = ManagerFactory.getManager(UtilityManager.class).lexicalEntryWithSenses(id);
+        if (le == null) {
             String toDelete = "", toInsert = "";
             for (Map.Entry<Integer, String> entry : map.entrySet()) {
                 toDelete = toDelete + " <" + superLexComp + "> rdf:_" + entry.getKey() + " <" + entry.getValue() + "> .\n";
@@ -72,7 +73,24 @@ public class LexiconDeletionManager implements Manager, Cached {
             RDFQueryUtil.update(SparqlDeleteData.DELETE_LEXICOGRAPHIC_COMPONENT.replaceAll("_ID_", id).replaceAll("_TO_DELETE_", toDelete).replaceAll("_TO_INSERT_", toInsert));
             return timestampFormat.format(new Timestamp(System.currentTimeMillis()));
         } else {
-            throw new ManagerException("The lexicographic component cannot be deleted because it has some subcomponents.");
+//            throw new ManagerException("The lexicographic component cannot be deleted because it has some subcomponents.");
+            Map<String, String> senses = ManagerFactory.getManager(UtilityManager.class).getLexicalSensesByLexicalEntry(le);
+            for (Map.Entry<String, String> s : senses.entrySet()) {
+                RDFQueryUtil.update(SparqlDeleteData.DELETE_LEXICOGRAPHIC_COMPONENT_AND_POSITION.replaceAll("_ID_", s.getKey()));
+            }
+            RDFQueryUtil.update(SparqlDeleteData.DELETE_LEXICOGRAPHIC_COMPONENT_AND_POSITION.replaceAll("_ID_", le));
+            RDFQueryUtil.update(SparqlDeleteData.DELETE_DICTIONARY_ENTRY_ASSOCIATION.replaceAll("_ID_", id));
+
+            for (Map.Entry<Integer, String> entry : map.entrySet()) {
+                RDFQueryUtil.update("DELETE DATA { <" + superLexComp + "> rdf:_" + entry.getKey() + " <" + entry.getValue() + "> }");
+            }
+            TreeMap<Integer, String> _map = filterMap(map, id);
+            int position = 1;
+            for (Map.Entry<Integer, String> entry : _map.entrySet()) {
+                RDFQueryUtil.update("INSERT DATA { <" + superLexComp + "> rdf:_" + position + " <" + entry.getValue() + "> }");
+                position++;
+            }
+            return timestampFormat.format(new Timestamp(System.currentTimeMillis()));
         }
     }
 
