@@ -50,8 +50,8 @@ public class LexicographicComponentHelper extends TripleStoreDataHelper<Lexicogr
     private ArrayList<String> getLexicalConcepts(BindingSet bs) {
         ArrayList<String> lcs = new ArrayList();
         for (String _lc : getStringValue(bs, SparqlVariable.LEXICAL_CONCEPT).split(";")) {
-            if (_lc.contains("#")) {
-                lcs.add(_lc.split("#")[1]);
+            if (!_lc.isEmpty()) {
+                lcs.add(_lc);
             }
         }
         return lcs;
