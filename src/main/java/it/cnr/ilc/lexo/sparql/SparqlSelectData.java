@@ -2112,6 +2112,7 @@ public class SparqlSelectData {
             + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
             + SparqlPrefix.FOAF.getSparqlPrefix() + "\n"
             + SparqlPrefix.VS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
             + SparqlPrefix.DCT.getSparqlPrefix() + "\n"
             + "SELECT ?" + SparqlVariable.LEXICAL_ENTITY + " ?" + SparqlVariable.TYPE + " ?" + SparqlVariable.LABEL + " ?" + SparqlVariable.LEXICAL_ENTRY_POS + " ?" + SparqlVariable.LEXICOGRAPHIC_COMPONENT + " "
             //+ "(xsd:integer(REPLACE(str(?" + SparqlVariable.PROPERTY_NAME + "), \"http://www.w3.org/1999/02/22-rdf-syntax-ns#_\", \"\")) as ?" + SparqlVariable.COMPONENT_POSITION + ") "
