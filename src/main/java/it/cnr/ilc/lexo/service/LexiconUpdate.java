@@ -317,14 +317,16 @@ public class LexiconUpdate extends Service {
             try {
                 // if a lexical entry is associated to a dictionary entry we need to order its lexical senses
                 if (lru.getRelation().equals(OntoLexEntity.Lexicog.describes.toString())) {
-                    UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
-                    if (utilityManager.isLexicalEntry(lru.getValue())) {
-                        Map<String, String> senses = utilityManager.getLexicalSensesByLexicalEntry(lru.getValue());
-                        int senseNumber = 1;
-                        for (Map.Entry<String, String> entry : senses.entrySet()) {
-                            LexicographicComponent lc = lexiconCreationManager.createLexicographicComponent(entry.getValue(), null, entry.getKey().split("#")[0] + "#", null);
-                            lexiconManager.addLexicographicComponentOfSense(lru.getValue(), entry.getKey(), lc.getComponent(), senseNumber);
-                            senseNumber++;
+                    if (lru.getSensesCustomOrder() == null) {
+                        UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+                        if (utilityManager.isLexicalEntry(lru.getValue())) {
+                            Map<String, String> senses = utilityManager.getLexicalSensesByLexicalEntry(lru.getValue());
+                            int senseNumber = 1;
+                            for (Map.Entry<String, String> entry : senses.entrySet()) {
+                                LexicographicComponent lc = lexiconCreationManager.createLexicographicComponent(entry.getValue(), null, entry.getKey().split("#")[0] + "#", null);
+                                lexiconManager.addLexicographicComponentOfSense(lru.getValue(), entry.getKey(), lc.getComponent(), senseNumber);
+                                senseNumber++;
+                            }
                         }
                     }
                 }

@@ -24,6 +24,8 @@ public class LinguisticRelationUpdater {
     private String value;
     @ApiModelProperty(value = "previous realtion/attribute value or value to delete (leave empty, if a new relation value is needed)", example = "oldValue", allowEmptyValue = true)
     private String currentValue;
+    @ApiModelProperty(value = "boolean, that makes sense when relation is equal to http://www.w3.org/ns/lemon/lexicog#describes", allowEmptyValue = true)
+    private String sensesCustomOrder;
 
     public String getCurrentValue() {
         return currentValue;
@@ -55,6 +57,14 @@ public class LinguisticRelationUpdater {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public String getSensesCustomOrder() {
+        return sensesCustomOrder;
+    }
+
+    public void setSensesCustomOrder(String sensesCustomOrder) {
+        this.sensesCustomOrder = sensesCustomOrder;
     }
 
 }
