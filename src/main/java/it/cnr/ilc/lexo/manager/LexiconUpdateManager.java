@@ -1150,7 +1150,7 @@ public final class LexiconUpdateManager implements Manager, Cached {
                 .replaceAll("_LAST_UPDATE_", "\"" + lastupdate + "\""));
         return lastupdate;
     }
-    
+    // le=componente; sense=
     public String addLexicographicComponentOfSense(String le, String sense, String comp, int position) throws ManagerException, UpdateExecutionException {
         String lastupdate = timestampFormat.format(new Timestamp(System.currentTimeMillis()));
         RDFQueryUtil.update(SparqlUpdateData.ADD_SENSE_TO_LEXICOGRAPHIC_COMPONENT

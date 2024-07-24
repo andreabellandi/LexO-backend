@@ -323,7 +323,7 @@ public class LexiconUpdate extends Service {
                         int senseNumber = 1;
                         for (Map.Entry<String, String> entry : senses.entrySet()) {
                             LexicographicComponent lc = lexiconCreationManager.createLexicographicComponent(entry.getValue(), null, entry.getKey().split("#")[0] + "#", null);
-                            lexiconManager.addLexicographicComponentOfSense(_id, entry.getKey(), lc.getComponent(), senseNumber);
+                            lexiconManager.addLexicographicComponentOfSense(lru.getValue(), entry.getKey(), lc.getComponent(), senseNumber);
                             senseNumber++;
                         }
                     }
