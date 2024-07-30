@@ -317,6 +317,7 @@ public class LexiconUpdate extends Service {
             try {
                 // if a lexical entry is associated to a dictionary entry we need to order its lexical senses
                 if (lru.getRelation().equals(OntoLexEntity.Lexicog.describes.toString())) {
+                    // if it is called in the context of lexical entry association or sense re-ordering
                     if (lru.getSensesCustomOrder() == null) {
                         UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
                         if (utilityManager.isLexicalEntry(lru.getValue())) {
