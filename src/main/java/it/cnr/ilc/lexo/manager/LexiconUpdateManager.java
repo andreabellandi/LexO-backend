@@ -236,6 +236,7 @@ public final class LexiconUpdateManager implements Manager, Cached {
     }
 
     public String updateLexiconLanguage(String id, LanguageUpdater lu) throws ManagerException {
+        if (!lu.getValue().isEmpty()) {
         validateLexiconLanguageAttribute(lu.getRelation());
         if (lu.getRelation().equals(OntoLexEntity.LanguageAttributes.Lexvo.toString())) {
             validateURL(lu.getValue(), lexvoPrefix, libraryOfCongressPrefix, lexvoPrefixWWW, libraryOfCongressPrefixWWW);
@@ -250,6 +251,8 @@ public final class LexiconUpdateManager implements Manager, Cached {
             return updateLexiconLanguage(id, lu.getRelation(), "\"" + lu.getValue() + "\"");
         } else {
             return null;
+        } } else {
+             throw new ManagerException("The relation value cannot be empty");
         }
     }
 
@@ -281,6 +284,7 @@ public final class LexiconUpdateManager implements Manager, Cached {
     }
 
     public String updateLexicalEntry(String id, LexicalEntryUpdater leu, String user, String type) throws ManagerException {
+        if (!leu.getValue().isEmpty()) {
         validateLexicalEntryAttribute(leu.getRelation());
         if (leu.getRelation().equals(OntoLexEntity.LexicalEntryAttributes.Label.toString())) {
             String lang = ManagerFactory.getManager(UtilityManager.class).getLanguage(id);
@@ -309,6 +313,9 @@ public final class LexiconUpdateManager implements Manager, Cached {
                     "?" + SparqlVariable.TARGET);
         } else {
             return null;
+        }
+        } else {
+             throw new ManagerException("The relation value cannot be empty");
         }
     }
 
@@ -398,7 +405,7 @@ public final class LexiconUpdateManager implements Manager, Cached {
         }
         return null;
     }
-    
+
     private String updateStatus(String id, DictionaryEntryUpdater deu, String user) throws QueryEvaluationException, ManagerException {
         String status = getStatus(id);
         if (status != null) {
@@ -503,6 +510,7 @@ public final class LexiconUpdateManager implements Manager, Cached {
     }
 
     public String updateForm(String id, FormUpdater fu) throws ManagerException {
+        if (!fu.getValue().isEmpty()) {
         UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
         validateFormAttribute(fu.getRelation());
         if (fu.getRelation().equals(OntoLexEntity.FormAttributes.Type.toString())) {
@@ -553,6 +561,9 @@ public final class LexiconUpdateManager implements Manager, Cached {
         } else {
             return null;
         }
+        } else {
+             throw new ManagerException("The relation value cannot be empty");
+        }
     }
 
     public String updateForm(String id, String relation, String valueToInsert) throws ManagerException, UpdateExecutionException {
@@ -579,6 +590,7 @@ public final class LexiconUpdateManager implements Manager, Cached {
     }
 
     public String updateLexicalSense(String id, LexicalSenseUpdater lsu) throws ManagerException {
+        if (!lsu.getValue().isEmpty()) {
         validateLexicalSenseAttribute(lsu.getRelation());
         if (lsu.getRelation().equals(OntoLexEntity.LexicalSenseAttributes.Note.toString())) {
             return updateLexicalSense(id, lsu.getRelation(), "\"" + lsu.getValue() + "\"");
@@ -608,6 +620,9 @@ public final class LexiconUpdateManager implements Manager, Cached {
         } else {
             return null;
         }
+        } else {
+             throw new ManagerException("The relation value cannot be empty");
+        }
     }
 
     public String updateLexicalSense(String id, String relation, String valueToInsert) throws ManagerException, UpdateExecutionException {
@@ -624,34 +639,42 @@ public final class LexiconUpdateManager implements Manager, Cached {
     }
 
     public String updateEtymology(String id, EtymologyUpdater eu) throws ManagerException {
-        validateEtymologyAttribute(eu.getRelation());
-        if (eu.getRelation().equals(OntoLexEntity.EtymologyAttributes.Note.toString())) {
-            return updateEtymology(id, eu.getRelation(), "\"" + eu.getValue() + "\"");
-        } else if (eu.getRelation().equals(OntoLexEntity.EtymologyAttributes.Label.toString())) {
-            return updateEtymology(id, eu.getRelation(), "\"" + eu.getValue() + "\"");
-        } else if (eu.getRelation().equals(OntoLexEntity.EtymologyAttributes.HypothesisOf.toString())) {
-            return updateEtymology(id, eu.getRelation(), "\"" + eu.getValue() + "\"");
-        } else if (eu.getRelation().equals(OntoLexEntity.LanguageAttributes.Confidence.toString())) {
-            validateConfidenceValue(eu.getValue());
-            return updateEtymology(id, eu.getRelation(), eu.getValue());
+        if (!eu.getValue().isEmpty()) {
+            validateEtymologyAttribute(eu.getRelation());
+            if (eu.getRelation().equals(OntoLexEntity.EtymologyAttributes.Note.toString())) {
+                return updateEtymology(id, eu.getRelation(), "\"" + eu.getValue() + "\"");
+            } else if (eu.getRelation().equals(OntoLexEntity.EtymologyAttributes.Label.toString())) {
+                return updateEtymology(id, eu.getRelation(), "\"" + eu.getValue() + "\"");
+            } else if (eu.getRelation().equals(OntoLexEntity.EtymologyAttributes.HypothesisOf.toString())) {
+                return updateEtymology(id, eu.getRelation(), "\"" + eu.getValue() + "\"");
+            } else if (eu.getRelation().equals(OntoLexEntity.LanguageAttributes.Confidence.toString())) {
+                validateConfidenceValue(eu.getValue());
+                return updateEtymology(id, eu.getRelation(), eu.getValue());
+            } else {
+                return null;
+            }
         } else {
-            return null;
+            throw new ManagerException("The relation value cannot be empty");
         }
     }
 
     public String updateEtymologicalLink(String id, EtymologicalLinkUpdater elu) throws ManagerException {
-        validateEtymologicalLinkAttribute(elu.getRelation());
-        if (elu.getRelation().equals(OntoLexEntity.EtymologicalLinkAttributes.Note.toString())) {
-            return updateEtymologicalLink(id, elu.getRelation(), "\"" + elu.getValue() + "\"");
-        } else if (elu.getRelation().equals(OntoLexEntity.EtymologicalLinkAttributes.Type.toString())) {
-            return updateEtymologicalLink(id, elu.getRelation(), "\"" + elu.getValue() + "\"");
-        } else if (elu.getRelation().equals(OntoLexEntity.EtymologicalLinkAttributes.Label.toString())) {
-            return updateEtymologicalLink(id, elu.getRelation(), "\"" + elu.getValue() + "\"");
-        } else if (elu.getRelation().equals(OntoLexEntity.LanguageAttributes.Confidence.toString())) {
-            validateConfidenceValue(elu.getValue());
-            return updateEtymologicalLink(id, elu.getRelation(), elu.getValue());
+        if (!elu.getValue().isEmpty()) {
+            validateEtymologicalLinkAttribute(elu.getRelation());
+            if (elu.getRelation().equals(OntoLexEntity.EtymologicalLinkAttributes.Note.toString())) {
+                return updateEtymologicalLink(id, elu.getRelation(), "\"" + elu.getValue() + "\"");
+            } else if (elu.getRelation().equals(OntoLexEntity.EtymologicalLinkAttributes.Type.toString())) {
+                return updateEtymologicalLink(id, elu.getRelation(), "\"" + elu.getValue() + "\"");
+            } else if (elu.getRelation().equals(OntoLexEntity.EtymologicalLinkAttributes.Label.toString())) {
+                return updateEtymologicalLink(id, elu.getRelation(), "\"" + elu.getValue() + "\"");
+            } else if (elu.getRelation().equals(OntoLexEntity.LanguageAttributes.Confidence.toString())) {
+                validateConfidenceValue(elu.getValue());
+                return updateEtymologicalLink(id, elu.getRelation(), elu.getValue());
+            } else {
+                return null;
+            }
         } else {
-            return null;
+            throw new ManagerException("The relation value cannot be empty");
         }
     }
 
@@ -876,62 +899,62 @@ public final class LexiconUpdateManager implements Manager, Cached {
 
     public String updateGenericRelation(String id, GenericRelationUpdater gru) throws ManagerException {
         if (!gru.getValue().isEmpty()) {
-        if (gru.getType().equals(EnumUtil.GenericRelation.Reference.toString())) {
-            validateGenericReferenceRelation(gru.getRelation());
-            if (StringUtil.existsIRI(gru.getValue())) {
-                // CONSTRAINT: sameAs holds with external links only
+            if (gru.getType().equals(EnumUtil.GenericRelation.Reference.toString())) {
+                validateGenericReferenceRelation(gru.getRelation());
+                if (StringUtil.existsIRI(gru.getValue())) {
+                    // CONSTRAINT: sameAs holds with external links only
 //                if (gru.getRelation().contains(EnumUtil.GenericRelationReference.sameAs.toString())) {
 //                    throw new ManagerException(gru.getRelation() + " links to external links only");
 //                }
-                setTargetValue(gru, false);
-            } else {
-                validateURL(gru.getValue());
-                setTargetValue(gru, false);
-            }
-        } else if (gru.getType().equals(EnumUtil.GenericRelation.Bibliography.toString())) {
-            validateGenericBibliographyRelation(gru.getRelation());
-            setTargetValue(gru, true);
-        } else if (gru.getType().equals(EnumUtil.GenericRelation.Metadata.toString())) {
-            validateMetadataTypes(gru.getRelation());
-            setTargetValue(gru, true);
-        } else if (gru.getType().equals(EnumUtil.GenericRelation.Extension.toString())) {
-            // TEMPORARY SOLUTION: extensions manager will be developed
-            if (gru.getRelation().contains("stemType")) {
-                setTargetValue(gru, true);
-            } else {
-                throw new ManagerException("Extension not supported");
-            }
-        } else if (gru.getType().equals(EnumUtil.GenericRelation.FrequencyRel.toString())) {
-            validateFrequency(gru.getRelation());
-            if (gru.getValue() != null) {
-                gru.setValue(" [ rdf:value " + gru.getValue() + " ]");
-            }
-            if (gru.getCurrentValue() != null) {
-                gru.setCurrentValue(" ?x . ?x rdf:value " + gru.getCurrentValue());
-            }
-        } else if (gru.getType().equals(EnumUtil.GenericRelation.CorpusFrequency.toString())) {
-            validateCorpusFrequency(gru.getRelation());
-            if (gru.getRelation().equals(OntoLexEntity.CorpusFrquencyRel.source.toString())) {
-                if (gru.getValue() != null) {
-                    setTargetValue(gru, true);
+                    setTargetValue(gru, false);
+                } else {
+                    validateURL(gru.getValue());
+                    setTargetValue(gru, false);
                 }
+            } else if (gru.getType().equals(EnumUtil.GenericRelation.Bibliography.toString())) {
+                validateGenericBibliographyRelation(gru.getRelation());
+                setTargetValue(gru, true);
+            } else if (gru.getType().equals(EnumUtil.GenericRelation.Metadata.toString())) {
+                validateMetadataTypes(gru.getRelation());
+                setTargetValue(gru, true);
+            } else if (gru.getType().equals(EnumUtil.GenericRelation.Extension.toString())) {
+                // TEMPORARY SOLUTION: extensions manager will be developed
+                if (gru.getRelation().contains("stemType")) {
+                    setTargetValue(gru, true);
+                } else {
+                    throw new ManagerException("Extension not supported");
+                }
+            } else if (gru.getType().equals(EnumUtil.GenericRelation.FrequencyRel.toString())) {
+                validateFrequency(gru.getRelation());
+                if (gru.getValue() != null) {
+                    gru.setValue(" [ rdf:value " + gru.getValue() + " ]");
+                }
+                if (gru.getCurrentValue() != null) {
+                    gru.setCurrentValue(" ?x . ?x rdf:value " + gru.getCurrentValue());
+                }
+            } else if (gru.getType().equals(EnumUtil.GenericRelation.CorpusFrequency.toString())) {
+                validateCorpusFrequency(gru.getRelation());
+                if (gru.getRelation().equals(OntoLexEntity.CorpusFrquencyRel.source.toString())) {
+                    if (gru.getValue() != null) {
+                        setTargetValue(gru, true);
+                    }
+                }
+            } else if (gru.getType().equals(EnumUtil.GenericRelation.Confidence.toString())) {
+                validateConfidence(gru.getRelation());
+                if (gru.getValue() != null) {
+                    validateConfidenceValue(gru.getValue());
+                }
+                if (gru.getCurrentValue() != null) {
+                    validateConfidenceValue(gru.getCurrentValue());
+                }
+            } else {
+                throw new ManagerException(gru.getType() + " is not a valid relation type");
             }
-        } else if (gru.getType().equals(EnumUtil.GenericRelation.Confidence.toString())) {
-            validateConfidence(gru.getRelation());
-            if (gru.getValue() != null) {
-                validateConfidenceValue(gru.getValue());
-            }
-            if (gru.getCurrentValue() != null) {
-                validateConfidenceValue(gru.getCurrentValue());
-            }
-        } else {
-            throw new ManagerException(gru.getType() + " is not a valid relation type");
-        }
-        return (gru.getCurrentValue() != null)
-                ? (gru.getCurrentValue().isEmpty()
-                ? createGenericRelation(id, gru.getRelation(), gru.getValue())
-                : updateGenericRelation(id, gru.getRelation(), gru.getValue(), gru.getCurrentValue()))
-                : createGenericRelation(id, gru.getRelation(), gru.getValue());
+            return (gru.getCurrentValue() != null)
+                    ? (gru.getCurrentValue().isEmpty()
+                    ? createGenericRelation(id, gru.getRelation(), gru.getValue())
+                    : updateGenericRelation(id, gru.getRelation(), gru.getValue(), gru.getCurrentValue()))
+                    : createGenericRelation(id, gru.getRelation(), gru.getValue());
         } else {
             throw new ManagerException("The relation value cannot be empty");
         }
@@ -1108,37 +1131,35 @@ public final class LexiconUpdateManager implements Manager, Cached {
     }
 
     public String updateDictionaryEntry(String id, DictionaryEntryUpdater deu, String user) throws ManagerException {
-        validateDictionaryEntryAttribute(deu.getRelation());
-        if (deu.getRelation().equals(OntoLexEntity.DictionaryEntryAttributes.Label.toString())) {
-            String lang = ManagerFactory.getManager(UtilityManager.class).getDictLanguage(id);
-            if (lang == null) {
-                throw new ManagerException("The language of the dictionary entry could not be found");
+        if (!deu.getValue().isEmpty()) {
+            validateDictionaryEntryAttribute(deu.getRelation());
+            if (deu.getRelation().equals(OntoLexEntity.DictionaryEntryAttributes.Label.toString())) {
+                String lang = ManagerFactory.getManager(UtilityManager.class).getDictLanguage(id);
+                if (lang == null) {
+                    throw new ManagerException("The language of the dictionary entry could not be found");
+                }
+                return updateDictionaryEntry(id, deu.getRelation(), "\"" + deu.getValue() + "\"@" + lang, "?" + SparqlVariable.TARGET);
+            } else if (deu.getRelation().equals(OntoLexEntity.DictionaryEntryAttributes.Language.toString())) {
+                validateDictionaryEntryLanguage(deu.getValue());
+                return updateLanguage(id, deu);
+            } else if (deu.getRelation().equals(OntoLexEntity.DictionaryEntryAttributes.Note.toString())) {
+                return updateDictionaryEntry(id, deu.getRelation(), "\"" + deu.getValue() + "\"", "?" + SparqlVariable.TARGET);
+            } else if (deu.getRelation().equals(OntoLexEntity.DictionaryEntryAttributes.Status.toString())) {
+                validateLexicalEntryStatus(deu.getValue());
+                if (deu.getValue().isEmpty()) {
+                    throw new ManagerException("status cannot be empty");
+                }
+                return updateStatus(id, deu, user);
+            } else if (deu.getRelation().equals(OntoLexEntity.LanguageAttributes.Confidence.toString())) {
+                validateConfidenceValue(deu.getValue());
+                return updateDictionaryEntry(id, deu.getRelation(),
+                        deu.getValue(),
+                        "?" + SparqlVariable.TARGET);
+            } else {
+                return null;
             }
-            return updateDictionaryEntry(id, deu.getRelation(), "\"" + deu.getValue() + "\"@" + lang, "?" + SparqlVariable.TARGET);
-        } else if (deu.getRelation().equals(OntoLexEntity.DictionaryEntryAttributes.Language.toString())) {
-            validateDictionaryEntryLanguage(deu.getValue());
-            return updateLanguage(id, deu);
-        } else if (deu.getRelation().equals(OntoLexEntity.DictionaryEntryAttributes.Note.toString())) {
-            return updateDictionaryEntry(id, deu.getRelation(), "\"" + deu.getValue() + "\"", "?" + SparqlVariable.TARGET);
-        } 
-        
- 
-        else if (deu.getRelation().equals(OntoLexEntity.DictionaryEntryAttributes.Status.toString())) {
-            validateLexicalEntryStatus(deu.getValue());
-            if (deu.getValue().isEmpty()) {
-                throw new ManagerException("status cannot be empty");
-            }
-            return updateStatus(id, deu, user);
-        } 
-        
-        
-        else if (deu.getRelation().equals(OntoLexEntity.LanguageAttributes.Confidence.toString())) {
-            validateConfidenceValue(deu.getValue());
-            return updateDictionaryEntry(id, deu.getRelation(),
-                    deu.getValue(),
-                    "?" + SparqlVariable.TARGET);
         } else {
-            return null;
+            throw new ManagerException("The relation value cannot be empty");
         }
     }
 
@@ -1154,6 +1175,7 @@ public final class LexiconUpdateManager implements Manager, Cached {
                 .replaceAll("_LAST_UPDATE_", "\"" + lastupdate + "\""));
         return lastupdate;
     }
+
     // le=componente; sense=
     public String addLexicographicComponentOfSense(String le, String sense, String comp, int position) throws ManagerException, UpdateExecutionException {
         String lastupdate = timestampFormat.format(new Timestamp(System.currentTimeMillis()));
