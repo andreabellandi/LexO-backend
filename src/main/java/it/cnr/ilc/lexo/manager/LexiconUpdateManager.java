@@ -875,6 +875,7 @@ public final class LexiconUpdateManager implements Manager, Cached {
     }
 
     public String updateGenericRelation(String id, GenericRelationUpdater gru) throws ManagerException {
+        if (!gru.getValue().isEmpty()) {
         if (gru.getType().equals(EnumUtil.GenericRelation.Reference.toString())) {
             validateGenericReferenceRelation(gru.getRelation());
             if (StringUtil.existsIRI(gru.getValue())) {
@@ -931,6 +932,9 @@ public final class LexiconUpdateManager implements Manager, Cached {
                 ? createGenericRelation(id, gru.getRelation(), gru.getValue())
                 : updateGenericRelation(id, gru.getRelation(), gru.getValue(), gru.getCurrentValue()))
                 : createGenericRelation(id, gru.getRelation(), gru.getValue());
+        } else {
+            throw new ManagerException("The relation value cannot be empty");
+        }
     }
 
     private void setTargetValue(GenericRelationUpdater gru, boolean literal) {
