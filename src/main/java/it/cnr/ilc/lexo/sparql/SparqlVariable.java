@@ -231,6 +231,9 @@ public class SparqlVariable {
     public static final String ORDERED_MEMBER = "orderedMember";
     public static final String UNORDERED_MEMBER = "unorderedMember";
     public static final String LEXICOGRAPHIC_COMPONENT = "lexComp";
+    
+    public static final String ECD_COMPONENT = "ECDComponent";
+    public static final String ECD_SENSE_LABEL = "ECDSenseLabel"; 
 
     // skos variables
     public static final String CHILD = "child";
