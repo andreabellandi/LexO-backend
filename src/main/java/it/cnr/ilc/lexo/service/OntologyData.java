@@ -209,9 +209,14 @@ public class OntologyData extends Service {
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response uploadFile(@FormDataParam("file") InputStream uploadedInputStream, @FormDataParam("file") FormDataContentDisposition fileDetail) throws IOException {
         try {
+            log(Level.INFO, "/ontology/data/upload: fileName: " + fileDetail.getFileName() + " - Name: " + fileDetail.getName());
             String fileName = fileDetail.getFileName();
             OntologyManager om = OntologyManager.getInstance();
-            om.upload(uploadedInputStream, fileName);
+            if (om.upload(uploadedInputStream, fileName) == null) {
+                log(Level.INFO, "/ontology/data/upload: " + fileDetail.getFileName() + " ontology already present");
+            } else {
+                log(Level.INFO, "/ontology/data/upload: " + fileDetail.getFileName() + " ontology uploaded");
+            }
             return Response.ok()
                     .type(MediaType.APPLICATION_JSON)
                     .header("Access-Control-Allow-Headers", "content-type")
@@ -222,7 +227,7 @@ public class OntologyData extends Service {
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }
     }
-    
+
     @GET
     @Path("restore")
     @Produces(MediaType.APPLICATION_JSON)
