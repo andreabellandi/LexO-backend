@@ -1,0 +1,25 @@
+2024-10-03 12:29:52,144 INFO LexO-backend start
+2024-10-03 12:44:18,772 INFO LexO-backend start
+2024-10-03 12:45:24,948 INFO LexO-backend start
+2024-10-03 12:58:22,722 INFO [ANONYMOUS] create/lexicon/language: lang=it
+2024-10-03 12:58:23,532 INFO [ANONYMOUS] Language it created (prefix=lex baseIRI=http://mydata.com#
+2024-10-03 13:45:22,893 INFO [ANONYMOUS] statistics/lexicon/pos
+2024-10-03 13:53:36,795 INFO [ANONYMOUS] create/lexicalEntry
+2024-10-03 13:53:36,888 ERROR [ANONYMOUS] create/lexicalEntry: test corresponds to a different base IRI
+2024-10-03 13:53:56,153 INFO [ANONYMOUS] create/lexicalEntry
+2024-10-03 13:53:56,216 ERROR [ANONYMOUS] create/lexicalEntry: abdou_test corresponds to a different base IRI
+2024-10-03 13:54:07,307 INFO [ANONYMOUS] create/lexicalEntry
+2024-10-03 13:54:07,702 INFO [ANONYMOUS] Lexical entry LexO_2024-10-0313_54_07_38 created (prefix=abdou_test baseIRI=http://mydata.com#abdou_test
+2024-10-03 13:55:07,790 INFO [ANONYMOUS] data/lexicalEntry <http://mydata.com#abdou_test> with module: core
+2024-10-03 13:55:20,596 INFO [ANONYMOUS] data/lexicalEntry <abdou_test> with module: core
+2024-10-03 14:21:20,697 INFO [ANONYMOUS] create/lexicalEntry
+2024-10-03 14:21:20,753 ERROR [ANONYMOUS] create/lexicalEntry: teest corresponds to a different base IRI
+2024-10-03 14:21:32,427 INFO [ANONYMOUS] create/lexicalEntry
+2024-10-03 14:21:32,649 INFO [ANONYMOUS] Lexical entry LexO_2024-10-0314_21_32_477 created (prefix=teest baseIRI=http://mydata.com#teest
+2024-10-03 14:22:24,737 INFO [ANONYMOUS] data/lexicalEntry <teest> with module: core
+2024-10-03 14:50:36,933 INFO [ANONYMOUS] data/lexicalEntry <teest> with module: core
+2024-10-03 14:50:50,392 INFO [ANONYMOUS] data/lexicalEntry <http://mydata.com#teestLexO_2024-10-0314_21_32_477> with module: core
+2024-10-03 14:50:57,788 ERROR [ANONYMOUS] lexical module decomposition not available
+2024-10-03 14:51:02,682 INFO [ANONYMOUS] data/lexicalEntry <http://mydata.com#teestLexO_2024-10-0314_21_32_477> with module: variation and translation
+2024-10-03 14:51:10,297 ERROR [ANONYMOUS] lexical module syntax and semantics not available
+2024-10-03 14:51:15,307 INFO [ANONYMOUS] data/lexicalEntry <http://mydata.com#teestLexO_2024-10-0314_21_32_477> with module: core

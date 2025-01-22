@@ -594,7 +594,7 @@ public class LexiconDataManager implements Manager, Cached {
         String query = SparqlSelectData.DATA_LEXICON_LANGUAGES;
         return RDFQueryUtil.evaluateTQuery(query);
     }
-
+    
     public void setDefaultLanguage(LexicalConcept lc) {
         for (Label l : lc.getLabels()) {
             if (l.getType().equals(lexicalizationModel.equals("skos") ? "prefLabel" : "label")

@@ -32,7 +32,7 @@ public class LexinfoData extends Service {
     private final LexinfoMorphoHelper lexinfoMorphoHelper = new LexinfoMorphoHelper();
     private final VocabularyValuesHelper vocabularyValuesHelper = new VocabularyValuesHelper();
     private final PropertyHierachyHelper propertyHierachyHelper = new PropertyHierachyHelper();
-
+    
     @GET
     @Path("morphology")
     @Produces(MediaType.APPLICATION_JSON)

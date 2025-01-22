@@ -248,5 +248,9 @@ public class SparqlVariable {
     public static final String GCHILD = "grandchild";
     public static final String NGCHILD = "nGrandchildren";
     public static final String ROOT = "root";
+    
+    // lexical function
+    public static final String Lexical_Function = "lexicalFunction";
+    
 
 }

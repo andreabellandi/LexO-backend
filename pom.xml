@@ -412,5 +412,21 @@
                 <graphDb.namedGraph></graphDb.namedGraph>
             </properties>
         </profile>
+        <profile>
+            <id>devel-abdou</id> 
+            <properties>
+                <db.jdbcDialect>org.hibernate.dialect.MySQLDialect</db.jdbcDialect>
+                <db.jdbcDriverClass>com.mysql.cj.jdbc.Driver</db.jdbcDriverClass>
+                <db.jdbcUrl>jdbc:mysql://localhost/lexo_server?characterEncoding=UTF-8&amp;amp;serverTimezone=Europe/Rome</db.jdbcUrl>
+                <envClassifier></envClassifier>
+                <postfix></postfix>
+                <db.user>root</db.user>
+                <db.password>root</db.password>
+                <graphdb.url>http://localhost:7200</graphdb.url>
+                <graphdb.repository>Test</graphdb.repository>
+                <graphdb.poolSize>5</graphdb.poolSize>
+                <graphDb.namedGraph></graphDb.namedGraph>
+            </properties>
+        </profile>
     </profiles>
 </project>

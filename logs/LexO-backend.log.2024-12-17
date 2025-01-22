@@ -1,0 +1,85 @@
+2024-12-17 02:07:44,047 INFO LexO-backend start
+2024-12-17 02:09:49,269 INFO [ANONYMOUS] create/lexicalEntry
+2024-12-17 02:09:49,512 ERROR [ANONYMOUS] create/lexicalEntry: Alimentaire corresponds to a different base IRI
+2024-12-17 02:10:01,832 INFO [ANONYMOUS] create/lexicalEntry
+2024-12-17 02:10:01,901 ERROR [ANONYMOUS] create/lexicalEntry: Alimentaire corresponds to a different base IRI
+2024-12-17 02:10:58,790 INFO [ANONYMOUS] create/lexicalEntry
+2024-12-17 02:10:58,868 ERROR [ANONYMOUS] create/lexicalEntry: Alimentaires corresponds to a different base IRI
+2024-12-17 02:11:08,547 INFO [ANONYMOUS] create/lexicalEntry
+2024-12-17 02:11:18,096 INFO [ANONYMOUS] create/lexicalEntry
+2024-12-17 02:11:18,182 ERROR [ANONYMOUS] create/lexicalEntry: Alimentaire corresponds to a different base IRI
+2024-12-17 02:11:26,517 INFO [ANONYMOUS] create/lexicalEntry
+2024-12-17 02:11:26,599 ERROR [ANONYMOUS] create/lexicalEntry: alimentaire corresponds to a different base IRI
+2024-12-17 02:12:41,432 INFO [ANONYMOUS] create/lexicalEntry
+2024-12-17 02:12:52,445 INFO [ANONYMOUS] create/lexicalEntry
+2024-12-17 02:12:52,531 ERROR [ANONYMOUS] create/lexicalEntry: alimentaire corresponds to a different base IRI
+2024-12-17 02:12:58,941 INFO [ANONYMOUS] create/lexicalEntry
+2024-12-17 02:12:59,008 ERROR [ANONYMOUS] create/lexicalEntry: alimentairee corresponds to a different base IRI
+2024-12-17 02:13:16,531 INFO [ANONYMOUS] create/lexicalEntry
+2024-12-17 02:13:16,593 ERROR [ANONYMOUS] create/lexicalEntry: alimentairee corresponds to a different base IRI
+2024-12-17 02:13:31,549 INFO [ANONYMOUS] create/lexicalEntry
+2024-12-17 02:13:31,649 ERROR [ANONYMOUS] create/lexicalEntry: alimentairee corresponds to a different base IRI
+2024-12-17 02:13:46,118 INFO [ANONYMOUS] create/dictionaryEntry
+2024-12-17 02:13:46,176 ERROR [ANONYMOUS] create/dictionaryEntry: alimentaire corresponds to a different base IRI
+2024-12-17 02:15:59,522 INFO [ANONYMOUS] data/lexicalEntries
+{
+   text: alimentaire
+   search mode: startsWith
+   type: word
+   author: user1
+   formType: flexed
+   lang: it
+   pos: noun
+   status: reviewed
+   limit: 500
+   offset: 0
+}
+2024-12-17 02:17:23,368 INFO [ANONYMOUS] data/lexicalEntries
+{
+   text: alimentaire
+   search mode: startsWith
+   type: word
+   author: user1
+   formType: flexed
+   lang: it
+   pos: adjective
+   status: reviewed
+   limit: 500
+   offset: 0
+}
+2024-12-17 02:17:52,018 INFO [ANONYMOUS] data/lexicalEntry <alimentaire> with module: core
+2024-12-17 02:18:29,777 INFO [ANONYMOUS] create/dictionaryEntry
+2024-12-17 02:18:29,931 ERROR [ANONYMOUS] create/dictionaryEntry: alimentaire corresponds to a different base IRI
+2024-12-17 02:18:48,752 INFO [ANONYMOUS] create/lexicalEntry
+2024-12-17 02:18:48,875 ERROR [ANONYMOUS] create/lexicalEntry: alimentairee corresponds to a different base IRI
+2024-12-17 02:19:16,038 INFO [ANONYMOUS] create/lexicalEntry
+2024-12-17 02:19:26,373 INFO [ANONYMOUS] create/lexicalEntry
+2024-12-17 14:23:13,792 INFO LexO-backend start
+2024-12-17 14:25:06,925 INFO LexO-backend start
+2024-12-17 14:30:38,450 INFO LexO-backend start
+2024-12-17 14:31:51,246 INFO LexO-backend start
+2024-12-17 14:47:00,456 INFO [ANONYMOUS] create/dictionaryEntry
+2024-12-17 14:47:08,510 INFO [ANONYMOUS] create/dictionaryEntry
+2024-12-17 14:47:08,633 ERROR [ANONYMOUS] create/dictionaryEntry: fr corresponds to a different base IRI
+2024-12-17 14:50:17,609 INFO [ANONYMOUS] create/dictionaryEntry
+2024-12-17 14:50:17,752 ERROR [ANONYMOUS] create/dictionaryEntry: fr corresponds to a different base IRI
+2024-12-17 14:52:04,558 INFO [ANONYMOUS] create/dictionaryEntry
+2024-12-17 14:52:21,740 INFO [ANONYMOUS] create/dictionaryEntry
+2024-12-17 14:52:56,316 INFO [ANONYMOUS] data/dictionaryEntry: <fr>
+2024-12-17 14:52:56,456 ERROR [ANONYMOUS] data/dictionaryEntry: <fr> is not a dictionary entry
+2024-12-17 14:53:05,868 INFO [ANONYMOUS] data/dictionaryEntry: <1>
+2024-12-17 14:53:06,021 ERROR [ANONYMOUS] data/dictionaryEntry: <1> is not a dictionary entry
+2024-12-17 14:53:11,721 INFO [ANONYMOUS] data/dictionaryEntry: <it>
+2024-12-17 14:53:11,747 ERROR [ANONYMOUS] data/dictionaryEntry: <it> is not a dictionary entry
+2024-12-17 14:53:22,296 INFO [ANONYMOUS] data/dictionaryEntry: <all>
+2024-12-17 14:53:22,409 ERROR [ANONYMOUS] data/dictionaryEntry: <all> is not a dictionary entry
+2024-12-17 14:53:29,330 INFO [ANONYMOUS] data/dictionaryEntry: <*>
+2024-12-17 14:53:29,433 ERROR [ANONYMOUS] data/dictionaryEntry: <*> is not a dictionary entry
+2024-12-17 14:53:34,136 INFO [ANONYMOUS] data/dictionaryEntry: <2>
+2024-12-17 14:53:34,179 ERROR [ANONYMOUS] data/dictionaryEntry: <2> is not a dictionary entry
+2024-12-17 14:53:39,353 INFO [ANONYMOUS] data/dictionaryEntry: <italien>
+2024-12-17 14:53:39,435 ERROR [ANONYMOUS] data/dictionaryEntry: <italien> is not a dictionary entry
+2024-12-17 14:53:47,483 INFO [ANONYMOUS] data/dictionaryEntry: <it>
+2024-12-17 14:53:47,544 ERROR [ANONYMOUS] data/dictionaryEntry: <it> is not a dictionary entry
+2024-12-17 14:53:53,114 INFO [ANONYMOUS] data/dictionaryEntry: <en>
+2024-12-17 14:53:53,154 ERROR [ANONYMOUS] data/dictionaryEntry: <en> is not a dictionary entry

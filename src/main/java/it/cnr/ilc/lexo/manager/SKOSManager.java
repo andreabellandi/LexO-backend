@@ -10,7 +10,6 @@ import it.cnr.ilc.lexo.service.data.lexicon.input.skos.SKOSDeleter;
 import it.cnr.ilc.lexo.service.data.lexicon.input.skos.SKOSUpdater;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ConceptSet;
 import it.cnr.ilc.lexo.service.data.lexicon.output.LexicalConcept;
-import it.cnr.ilc.lexo.service.data.output.Label;
 import it.cnr.ilc.lexo.sparql.SparqlDeleteData;
 import it.cnr.ilc.lexo.sparql.SparqlInsertData;
 import it.cnr.ilc.lexo.sparql.SparqlPrefix;
@@ -27,8 +26,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
@@ -532,5 +529,5 @@ public class SKOSManager implements Manager, Cached {
         String query = SparqlSelectData.DATA_LEXICAL_CONCEPT.replaceAll("_ID_", id);
         return RDFQueryUtil.evaluateTQuery(query);
     }
-
+    
 }

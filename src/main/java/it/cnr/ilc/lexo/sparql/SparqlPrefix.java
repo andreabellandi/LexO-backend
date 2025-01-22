@@ -59,6 +59,11 @@ public class SparqlPrefix {
 
     // extension vocabulary
     public static Namespace ITANT = new Namespace("itant:", "https://www.prin-italia-antica.unifi.it#");
+    
+    
+    // lexical function
+    public static Namespace LFREL = new Namespace("lfrel:", "https://github.com/alex-fonseca/lexfom/lfrel.owl#");
+   
 
     // melchuk
     public static Namespace LFREL = new Namespace("lfrel:", "https://github.com/alex-fonseca/lexfom/lfrel.owl#");

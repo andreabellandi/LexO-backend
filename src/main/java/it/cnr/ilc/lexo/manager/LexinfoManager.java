@@ -35,6 +35,7 @@ public final class LexinfoManager implements Manager, Cached {
     private final List<RangedProperty> lexicalCategory = new ArrayList<>();
     private final List<RangedProperty> semanticCategory = new ArrayList<>();
     private final List<RangedProperty> formCategory = new ArrayList<>();
+    private final List<RangedProperty> lexicalFunction = new ArrayList<>();
     private final List<Value> representation = new ArrayList<>();
     private final List<PropertyHierarchy> lexicalRel = new ArrayList<>();
     private final List<PropertyHierarchy> senseRel = new ArrayList<>();
@@ -57,7 +58,13 @@ public final class LexinfoManager implements Manager, Cached {
     public List<RangedProperty> getFormCategory() {
         return formCategory;
     }
-
+    
+    /* ---- Abdou ----- */
+    public List<RangedProperty> getLexicalFunction() {
+        return lexicalFunction;
+    }
+    /* ------------ */
+    
     public Map<String, RangedProperty> getFormCategoryHash() {
         return formCategoryHash;
     }

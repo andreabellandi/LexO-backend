@@ -1,0 +1,9 @@
+2024-10-07 09:09:32,742 INFO LexO-backend start
+2024-10-07 09:48:01,693 INFO [ANONYMOUS] create/lexicalEntry
+2024-10-07 09:48:01,851 ERROR [ANONYMOUS] create/lexicalEntry: tt corresponds to a different base IRI
+2024-10-07 09:48:20,427 INFO [ANONYMOUS] create/lexicalEntry
+2024-10-07 09:48:20,481 ERROR [ANONYMOUS] create/lexicalEntry: testt corresponds to a different base IRI
+2024-10-07 09:48:36,679 INFO [ANONYMOUS] create/lexicalEntry
+2024-10-07 09:48:36,745 ERROR [ANONYMOUS] create/lexicalEntry: aabdoutest corresponds to a different base IRI
+2024-10-07 09:48:46,831 INFO [ANONYMOUS] create/lexicalEntry
+2024-10-07 09:48:47,641 INFO [ANONYMOUS] Lexical entry abdoutest created (prefix=aabdoutest baseIRI=http://mydata.com#aabdoutest
