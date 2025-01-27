@@ -129,6 +129,7 @@ public class SparqlVariable {
 
     public static final String LEXICAL_FORM = "lexicalForm";
 
+    public static final String LEXICAL_CONCEPT_SCHEME = "lexicalConceptScheme";
     public static final String LEXICAL_CONCEPT = "lexicalConcept";
     public static final String LEXICAL_CONCEPT_CREATOR = "creator";
     public static final String CONCEPT_SET_CREATOR = "creator";

@@ -2121,7 +2121,8 @@ public class SparqlSelectData {
             + " ?" + SparqlVariable.CHILD + " "
             + "?" + SparqlVariable.LEXICAL_ENTRY_COMPLETING_AUTHOR + " ?" + SparqlVariable.COMPLETION_DATE + " ?" + SparqlVariable.REVISION_DATE + " ?" + SparqlVariable.CONFIDENCE + "\n"
             + "(GROUP_CONCAT(distinct str(?_" + SparqlVariable.TYPE + ");SEPARATOR=\";\") AS ?" + SparqlVariable.TYPE + ")\n"
-            + "(GROUP_CONCAT(distinct str(?_" + SparqlVariable.LEXICAL_CONCEPT + ");SEPARATOR=\";\") AS ?" + SparqlVariable.LEXICAL_CONCEPT + ")\n"
+            + "(GROUP_CONCAT(distinct "
+            + "concat ( str(?_" + SparqlVariable.LEXICAL_CONCEPT_SCHEME + ") , \":\" , str(?_" + SparqlVariable.LEXICAL_CONCEPT + ") );SEPARATOR=\";\") AS ?" + SparqlVariable.LEXICAL_CONCEPT + ")\n"
             + " (COUNT(?_" + SparqlVariable.CHILD + ") AS ?" + SparqlVariable.CHILD + ")\n"
             + "FROM onto:explicit\n"
             + "WHERE { <_ID_> ?" + SparqlVariable.COMPONENT_POSITION + " ?" + SparqlVariable.LEXICOGRAPHIC_COMPONENT + " .\n"
@@ -2143,7 +2144,7 @@ public class SparqlSelectData {
             + "        OPTIONAL {?" + SparqlVariable.LEXICAL_ENTITY + " skos:note ?" + SparqlVariable.NOTE + "} .\n"
             + "        OPTIONAL {?" + SparqlVariable.LEXICAL_ENTITY + " loc:rev ?" + SparqlVariable.LEXICAL_ENTRY_REVISOR + "} .\n"
             + "        OPTIONAL {?" + SparqlVariable.LEXICAL_ENTITY + " vs:term_status ?" + SparqlVariable.LEXICAL_ENTRY_STATUS + "} .\n"
-            + "        OPTIONAL {?" + SparqlVariable.LEXICAL_ENTITY + " ontolex:isLexicalizedSenseOf [ skos:prefLabel ?_" + SparqlVariable.LEXICAL_CONCEPT + "] } .\n"
+            + "        OPTIONAL {?" + SparqlVariable.LEXICAL_ENTITY + " ontolex:isLexicalizedSenseOf [ skos:prefLabel ?_" + SparqlVariable.LEXICAL_CONCEPT + " ; skos:inScheme [ skos:prefLabel ?_" + SparqlVariable.LEXICAL_CONCEPT_SCHEME + "] ] } .\n"
             + "    }\n"
             + "} GROUP BY ?" + SparqlVariable.LEXICAL_ENTITY + " ?" + SparqlVariable.LABEL + " ?" + SparqlVariable.LEXICAL_ENTRY_POS + " ?" + SparqlVariable.LEXICOGRAPHIC_COMPONENT + " "
             + "?" + SparqlVariable.LEXICAL_ENTRY_STATUS + " ?" + SparqlVariable.LEXICAL_ENTRY_REVISOR + " ?" + SparqlVariable.COMPONENT_POSITION
