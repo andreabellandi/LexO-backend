@@ -1353,10 +1353,8 @@ public class LexiconData extends Service {
             log(Level.INFO, "data/subTerms <" + _id + ">");
             String json = "";
             TupleQueryResult lexicalEnties = lexiconManager.getSubTerms(_id);
-            if (lexicalEnties.hasNext()) {
                 List<LexicalEntryItem> entries = lexicalEntryFilterHelper.newDataList(lexicalEnties);
                 json = lexicalEntryFilterHelper.toJson(entries);
-            }
             return Response.ok(json)
                     .type(MediaType.APPLICATION_JSON)
                     .header("Access-Control-Allow-Headers", "content-type")
