@@ -2251,9 +2251,9 @@ public class SparqlSelectData {
             //+ "(xsd:integer(REPLACE(str(?" + SparqlVariable.PROPERTY_NAME + "), \"http://www.w3.org/1999/02/22-rdf-syntax-ns#_\", \"\")) as ?" + SparqlVariable.COMPONENT_POSITION + ") "
             + "?" + SparqlVariable.LEXICAL_ENTRY_STATUS + " ?" + SparqlVariable.LEXICAL_ENTRY_REVISOR + " ?" + SparqlVariable.COMPONENT_POSITION
             + " ?" + SparqlVariable.CREATOR + " ?" + SparqlVariable.NOTE + " ?" + SparqlVariable.CREATION_DATE + " ?" + SparqlVariable.LAST_UPDATE
-            + " ?" + SparqlVariable.CHILD + " "
-//            + " ?" + SparqlVariable.ECD_SENSE_LABEL + " "
-            + "?" + SparqlVariable.LEXICAL_ENTRY_COMPLETING_AUTHOR + " ?" + SparqlVariable.COMPLETION_DATE + " ?" + SparqlVariable.REVISION_DATE + " ?" + SparqlVariable.CONFIDENCE + "\n"
+            + " ?" + SparqlVariable.CHILD
+            + " ?" + SparqlVariable.SENSE_DEFINITION
+            + " ?" + SparqlVariable.LEXICAL_ENTRY_COMPLETING_AUTHOR + " ?" + SparqlVariable.COMPLETION_DATE + " ?" + SparqlVariable.REVISION_DATE + " ?" + SparqlVariable.CONFIDENCE + "\n"
             + "(GROUP_CONCAT(distinct str(?_" + SparqlVariable.TYPE + ");SEPARATOR=\";\") AS ?" + SparqlVariable.TYPE + ")\n"
             + "(GROUP_CONCAT(distinct str(?_" + SparqlVariable.LEXICAL_CONCEPT + ");SEPARATOR=\";\") AS ?" + SparqlVariable.LEXICAL_CONCEPT + ")\n"
             + " (COUNT(?_" + SparqlVariable.CHILD + ") AS ?" + SparqlVariable.CHILD + ")\n"
@@ -2267,7 +2267,8 @@ public class SparqlSelectData {
             + "    OPTIONAL { ?" + SparqlVariable.ECD_COMPONENT + " lexicog:describes ?" + SparqlVariable.LEXICAL_ENTITY + " .\n"
             + "              OPTIONAL { ?" + SparqlVariable.ECD_COMPONENT + " rdfs:label ?" + SparqlVariable.LABEL + " . }\n"
             + "        OPTIONAL { ?" + SparqlVariable.LEXICAL_ENTITY + " a ?_" + SparqlVariable.TYPE + " }\n"
-            + "        OPTIONAL { ?" + SparqlVariable.LEXICAL_ENTITY + " rdfs:label|skos:definition ?" + SparqlVariable.LABEL + " }\n"
+            + "        OPTIONAL { ?" + SparqlVariable.LEXICAL_ENTITY + " skos:definition ?" + SparqlVariable.SENSE_DEFINITION + " }\n"
+             + "        OPTIONAL { ?" + SparqlVariable.LEXICAL_ENTITY + " rdfs:label ?" + SparqlVariable.LABEL + " }\n"
             + "        OPTIONAL {?" + SparqlVariable.LEXICAL_ENTITY + " lexinfo:partOfSpeech ?" + SparqlVariable.LEXICAL_ENTRY_POS + " }\n"
             + "        OPTIONAL {?x ontolex:sense ?" + SparqlVariable.LEXICAL_ENTITY + " ;\n"
             + "                     lexinfo:partOfSpeech ?" + SparqlVariable.LEXICAL_ENTRY_POS + " }\n"
@@ -2288,7 +2289,7 @@ public class SparqlSelectData {
             + "?" + SparqlVariable.LEXICAL_ENTRY_STATUS + " ?" + SparqlVariable.LEXICAL_ENTRY_REVISOR + " ?" + SparqlVariable.COMPONENT_POSITION
             + " ?" + SparqlVariable.CREATOR + " ?" + SparqlVariable.NOTE + " ?" + SparqlVariable.CREATION_DATE + " ?" + SparqlVariable.LAST_UPDATE
             + " ?" + SparqlVariable.LEXICAL_ENTRY_COMPLETING_AUTHOR + " ?" + SparqlVariable.COMPLETION_DATE + " ?" + SparqlVariable.REVISION_DATE
-            + " ?" + SparqlVariable.CONFIDENCE;
+            + " ?" + SparqlVariable.CONFIDENCE  + " ?" + SparqlVariable.SENSE_DEFINITION;
 //            + " ?" + SparqlVariable.ECD_SENSE_LABEL + "";
 
     public static final String DATA_ECD_ENTRIES

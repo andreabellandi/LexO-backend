@@ -31,7 +31,7 @@ public class ECDComponent extends Entity implements Data {
     private String label;
     @ApiModelProperty(value = "pos, if referred entity is a lexical entry")
     private ArrayList<String> pos;
-//    private String senseNumber;
+    private String definition;
     private String status;
     private String revisor;
     private String author;
@@ -50,6 +50,14 @@ public class ECDComponent extends Entity implements Data {
 
     public int getPosition() {
         return position;
+    }
+
+    public String getDefinition() {
+        return definition;
+    }
+
+    public void setDefinition(String definition) {
+        this.definition = definition;
     }
 
     public void setPosition(int position) {
@@ -119,7 +127,6 @@ public class ECDComponent extends Entity implements Data {
 //    public void setHasChildren(boolean hasChildren) {
 //        this.hasChildren = hasChildren;
 //    }
-
     public String getCompletionDate() {
         return completionDate;
     }
@@ -151,7 +158,7 @@ public class ECDComponent extends Entity implements Data {
     public void setPos(ArrayList<String> pos) {
         this.pos = pos;
     }
-    
+
 //        public String getSenseNumber() {
 //        return senseNumber;
 //    }
@@ -159,5 +166,4 @@ public class ECDComponent extends Entity implements Data {
 //    public void setSenseNumber(String senseNumber) {
 //        this.senseNumber = senseNumber;
 //    }
-
 }

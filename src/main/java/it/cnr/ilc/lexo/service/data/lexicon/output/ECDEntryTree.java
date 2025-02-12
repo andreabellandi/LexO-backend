@@ -17,7 +17,7 @@ import java.util.List;
  *
  * @author andreabellandi
  */
-@ApiModel(description = "Output model representing the hoerarchical structure of an ECD dictionary entry")
+@ApiModel(description = "Output model representing the hierarchical structure of an ECD dictionary entry")
 public class ECDEntryTree extends Entity implements Data {
 
     private String id;
@@ -25,7 +25,7 @@ public class ECDEntryTree extends Entity implements Data {
     private ArrayList<String> type = new ArrayList();
     private String label;
     private ArrayList<String> pos = new ArrayList();
-    private String senseNumber;
+    private String definition;
     private List<ECDEntryTree> children;
 
     public ECDEntryTree() {
@@ -37,6 +37,7 @@ public class ECDEntryTree extends Entity implements Data {
         type = component.getType();
         pos = component.getPos();
         label = component.getLabel();
+        definition = component.getDefinition();
     }
 
     public String getId() {
@@ -79,12 +80,12 @@ public class ECDEntryTree extends Entity implements Data {
         this.label = label;
     }
 
-    public String getSenseNumber() {
-        return senseNumber;
+    public String getDefinition() {
+        return definition;
     }
 
-    public void setSenseNumber(String senseNumber) {
-        this.senseNumber = senseNumber;
+    public void setDefinition(String definition) {
+        this.definition = definition;
     }
 
     public List<ECDEntryTree> getChildren() {

@@ -38,6 +38,7 @@ public class ECDComponentHelper extends TripleStoreDataHelper<ECDComponent> {
         data.setReferredEntity(getStringValue(bs, SparqlVariable.LEXICAL_ENTITY));
         data.setLabel(getStringValue(bs, SparqlVariable.LABEL)
                 + (!getLiteralLanguage(bs, SparqlVariable.LABEL).isEmpty() ? "@" + getLiteralLanguage(bs, SparqlVariable.LABEL) : ""));
+        data.setDefinition(getStringValue(bs, SparqlVariable.SENSE_DEFINITION));
     }
 
     private ArrayList<String> getTypes(BindingSet bs) {
