@@ -4,7 +4,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package it.cnr.ilc.lexo.service.data.lexicon.output;
+package it.cnr.ilc.lexo.service.data.lexicon.output.ecd;
 
 import it.cnr.ilc.lexo.service.data.output.Entity;
 import io.swagger.annotations.ApiModel;
@@ -17,8 +17,8 @@ import java.util.List;
  *
  * @author andreabellandi
  */
-@ApiModel(description = "Output model representing the hierarchical structure of an ECD dictionary entry")
-public class ECDEntryTree extends Entity implements Data {
+@ApiModel(description = "Output model representing the hierarchical semantic structure of an ECD dictionary entry")
+public class ECDEntrySemantics extends Entity implements Data {
 
     private String id;
     private String referredEntity;
@@ -26,12 +26,12 @@ public class ECDEntryTree extends Entity implements Data {
     private String label;
     private ArrayList<String> pos = new ArrayList();
     private String definition;
-    private List<ECDEntryTree> children;
+    private List<ECDEntrySemantics> children;
 
-    public ECDEntryTree() {
+    public ECDEntrySemantics() {
     }
 
-    public ECDEntryTree(ECDComponent component) {
+    public ECDEntrySemantics(ECDComponent component) {
         id = component.getComponent();
         referredEntity = component.getReferredEntity();
         type = component.getType();
@@ -88,11 +88,11 @@ public class ECDEntryTree extends Entity implements Data {
         this.definition = definition;
     }
 
-    public List<ECDEntryTree> getChildren() {
+    public List<ECDEntrySemantics> getChildren() {
         return children;
     }
 
-    public void setChildren(List<ECDEntryTree> children) {
+    public void setChildren(List<ECDEntrySemantics> children) {
         this.children = children;
     }
 

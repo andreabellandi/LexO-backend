@@ -5,22 +5,22 @@
  */
 package it.cnr.ilc.lexo.service.helper;
 
-import it.cnr.ilc.lexo.service.data.lexicon.output.ECDEntryTree;
+import it.cnr.ilc.lexo.service.data.lexicon.output.ecd.ECDEntrySemantics;
 import org.eclipse.rdf4j.query.BindingSet;
 
 /**
  *
  * @author andreabellandi
  */
-public class ECDEntryTreeHelper extends TripleStoreDataHelper<ECDEntryTree> {
+public class ECDEntrySemanticsHelper extends TripleStoreDataHelper<ECDEntrySemantics> {
 
     @Override
-    public void fillData(ECDEntryTree data, BindingSet bs) {
+    public void fillData(ECDEntrySemantics data, BindingSet bs) {
     }
 
     @Override
-    public Class<ECDEntryTree> getDataClass() {
-        return ECDEntryTree.class;
+    public Class<ECDEntrySemantics> getDataClass() {
+        return ECDEntrySemantics.class;
     }
 
 }

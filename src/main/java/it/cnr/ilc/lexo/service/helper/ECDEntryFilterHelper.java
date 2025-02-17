@@ -6,7 +6,7 @@
 package it.cnr.ilc.lexo.service.helper;
 
 import it.cnr.ilc.lexo.service.data.lexicon.output.DictionaryEntryItem;
-import it.cnr.ilc.lexo.service.data.lexicon.output.ECDEntryItem;
+import it.cnr.ilc.lexo.service.data.lexicon.output.ecd.ECDEntryItem;
 import it.cnr.ilc.lexo.sparql.SparqlVariable;
 import java.util.HashMap;
 import java.util.Map;

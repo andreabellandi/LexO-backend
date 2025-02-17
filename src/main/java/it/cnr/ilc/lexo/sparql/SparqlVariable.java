@@ -73,6 +73,7 @@ public class SparqlVariable {
     public static final String PHONETIC_REPRESENTATION = "phoneticRep";
     public static final String MORPHOLOGY_TRAIT_NAME = "traitName";
     public static final String MORPHOLOGY_TRAIT_VALUE = "traitValue";
+    public static final String INHERITED_MORPHOLOGY = "inheritedMorphology";
     public static final String INHERITED_MORPHOLOGY_TRAIT_NAME = "inheritedTraitName";
     public static final String INHERITED_MORPHOLOGY_TRAIT_VALUE = "inheritedTraitValue";
     public static final String MORPHOLOGY = "morpho";

@@ -5,7 +5,7 @@
  */
 package it.cnr.ilc.lexo.service.helper;
 
-import it.cnr.ilc.lexo.service.data.lexicon.output.ECDComponent;
+import it.cnr.ilc.lexo.service.data.lexicon.output.ecd.ECDComponent;
 import it.cnr.ilc.lexo.sparql.SparqlVariable;
 import java.util.ArrayList;
 import java.util.Arrays;

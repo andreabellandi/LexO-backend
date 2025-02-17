@@ -15,13 +15,15 @@ import it.cnr.ilc.lexo.manager.ManagerFactory;
 import it.cnr.ilc.lexo.service.data.lexicon.input.DictionaryEntryFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.input.ECDEntryFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.output.DictionaryEntryItem;
-import it.cnr.ilc.lexo.service.data.lexicon.output.ECDComponent;
-import it.cnr.ilc.lexo.service.data.lexicon.output.ECDEntryItem;
-import it.cnr.ilc.lexo.service.data.lexicon.output.ECDEntryTree;
+import it.cnr.ilc.lexo.service.data.lexicon.output.ecd.ECDComponent;
+import it.cnr.ilc.lexo.service.data.lexicon.output.ecd.ECDEntryItem;
+import it.cnr.ilc.lexo.service.data.lexicon.output.ecd.ECDEntrySemantics;
 import it.cnr.ilc.lexo.service.data.lexicon.output.HitsDataList;
+import it.cnr.ilc.lexo.service.data.lexicon.output.ecd.ECDEntryMorphology;
 import it.cnr.ilc.lexo.service.helper.ECDComponentHelper;
 import it.cnr.ilc.lexo.service.helper.ECDEntryFilterHelper;
-import it.cnr.ilc.lexo.service.helper.ECDEntryTreeHelper;
+import it.cnr.ilc.lexo.service.helper.ECDEntryMorphologyHelper;
+import it.cnr.ilc.lexo.service.helper.ECDEntrySemanticsHelper;
 import it.cnr.ilc.lexo.service.helper.HelperException;
 import it.cnr.ilc.lexo.util.LogUtil;
 import java.io.UnsupportedEncodingException;
@@ -57,7 +59,8 @@ public class ECDData extends Service {
 
     private final ECDDataManager ecdManager = ManagerFactory.getManager(ECDDataManager.class);
     private final ECDComponentHelper ECDComponentHelper = new ECDComponentHelper();
-    private final ECDEntryTreeHelper ECDEntryTreeHelper = new ECDEntryTreeHelper();
+    private final ECDEntryMorphologyHelper ECDEntryMorphologyHelper = new ECDEntryMorphologyHelper();
+    private final ECDEntrySemanticsHelper ECDEntrySemanticsHelper = new ECDEntrySemanticsHelper();
     private final ECDEntryFilterHelper ECDEntryFilterHelper = new ECDEntryFilterHelper();
     
 
@@ -104,15 +107,15 @@ public class ECDData extends Service {
     }
 
     @GET
-    @Path("ECDEntryTree")
+    @Path("ECDEntrySemantics")
     @Produces(MediaType.APPLICATION_JSON)
     @RequestMapping(
             method = RequestMethod.GET,
-            value = "ECDEntryTree",
+            value = "ECDEntrySemantics",
             produces = "application/json; charset=UTF-8")
-    @ApiOperation(value = "Dictionary entry tree structure",
-            notes = "This method returns the tree of all the elements belonging to a given dictionary entry")
-    public Response ECDEntryTree(
+    @ApiOperation(value = "Semantics of an entry",
+            notes = "This method returns the hierarchical structure of the senses belonging to a given dictionary entry")
+    public Response ECDEntrySemantics(
             @HeaderParam("Authorization") String key,
             @ApiParam(
                     name = "id",
@@ -122,9 +125,9 @@ public class ECDData extends Service {
         try {
             userCheck(key);
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
-            log(Level.INFO, "ecd/data/dictionaryEntryTree: <" + _id + ">");
-            List<ECDEntryTree> tree = getTreeNode(_id);
-            String json = ECDEntryTreeHelper.toJson(tree);
+            log(Level.INFO, "ecd/data/ECDEntrySemantics: <" + _id + ">");
+            List<ECDEntrySemantics> tree = getTreeNode(_id);
+            String json = ECDEntrySemanticsHelper.toJson(tree);
             return Response.ok(json)
                     .type(MediaType.APPLICATION_JSON)
                     .header("Access-Control-Allow-Headers", "content-type")
@@ -136,19 +139,53 @@ public class ECDData extends Service {
         }
     }
 
-    private List<ECDEntryTree> getTreeNode(String id) throws ManagerException {
+    private List<ECDEntrySemantics> getTreeNode(String id) throws ManagerException {
         TupleQueryResult comps = ecdManager.getECDComponents(id);
         List<ECDComponent> lcs = ECDComponentHelper.newDataList(comps);
-        List<ECDEntryTree> tree = new ArrayList<>();
-        ECDEntryTree _tree;
+        List<ECDEntrySemantics> tree = new ArrayList<>();
+        ECDEntrySemantics _tree;
         for (ECDComponent component : lcs) {
-            _tree = new ECDEntryTree(component);
+            _tree = new ECDEntrySemantics(component);
             tree.add(_tree);
             _tree.setChildren(getTreeNode(_tree.getId()));
         }
         return tree;
     }
 
+    @GET
+    @Path("ECDEntryMorphology")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "ECDEntryMorphology",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Morphology of an entry",
+            notes = "This method returns the morphological forms of a dictionary entry")
+    public Response ECDEntryMorphology(
+            @HeaderParam("Authorization") String key,
+            @ApiParam(
+                    name = "id",
+                    value = "dictionary entry ID",
+                    required = true)
+            @QueryParam("id") String id) {
+        try {
+            userCheck(key);
+            String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
+            log(Level.INFO, "ecd/data/ECDEntryMorphology: <" + _id + ">");
+            TupleQueryResult ECDMorphs = ecdManager.getMorphologicalForms(id);
+            List<ECDEntryMorphology> morphs = ECDEntryMorphologyHelper.newDataList(ECDMorphs);
+            String json = ECDEntryMorphologyHelper.toJson(morphs);
+            return Response.ok(json)
+                    .type(MediaType.APPLICATION_JSON)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
+        } catch (ManagerException | UnsupportedEncodingException | AuthorizationException | ServiceException ex) {
+            log(Level.ERROR, ex.getMessage());
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        }
+    }
+    
     @POST
     @Path("ECDEntries")
     @Produces(MediaType.APPLICATION_JSON)

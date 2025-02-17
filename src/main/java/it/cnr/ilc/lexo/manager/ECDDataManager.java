@@ -69,4 +69,9 @@ public class ECDDataManager implements Manager, Cached {
         filter = filter + (!def.getStatus().isEmpty() ? " AND status:" + def.getStatus() : "");
         return filter;
     }
+    
+    public TupleQueryResult getMorphologicalForms(String id) throws ManagerException {
+        String query = SparqlSelectData.DATA_ECD_MORPHOLOGICAL_FORMS.replace("_ID_", id);
+        return RDFQueryUtil.evaluateTQuery(query);
+    }
 }
