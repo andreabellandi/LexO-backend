@@ -23,7 +23,7 @@ public class ECDEntryMorphologyHelper extends TripleStoreDataHelper<ECDEntryMorp
     public void fillData(ECDEntryMorphology data, BindingSet bs) {
         data.setNote(getStringValue(bs, SparqlVariable.NOTE));
         data.setPos(getStringValue(bs, SparqlVariable.LEXICAL_ENTRY_POS));
-        data.setType(getStringValue(bs, SparqlVariable.TYPE));
+        data.setType(getStringValue(bs, SparqlVariable.FORM_TYPE));
         data.setLabel(getStringValue(bs, SparqlVariable.WRITTEN_REPRESENTATION)
                 + (!getLiteralLanguage(bs, SparqlVariable.WRITTEN_REPRESENTATION).isEmpty() ? "@" + getLiteralLanguage(bs, SparqlVariable.WRITTEN_REPRESENTATION) : ""));
         data.setPhoneticRep(getStringValue(bs, SparqlVariable.PHONETIC_REPRESENTATION));

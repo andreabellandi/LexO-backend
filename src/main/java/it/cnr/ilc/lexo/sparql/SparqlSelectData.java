@@ -2411,7 +2411,7 @@ public class SparqlSelectData {
             + "   BIND ( IF (BOUND (?_trait), ?_trait, \"none\" )  as ?trait  )\n"
             + "   BIND ( IF (BOUND (?_value), ?_value, \"none\" )  as ?value  )\n"
             + "} GROUP BY ?" + SparqlVariable.FORM + " ?" + SparqlVariable.LEXICAL_ENTRY_POS
-            + " ?" + SparqlVariable.PHONETIC_REPRESENTATION + " ?" + SparqlVariable.NOTE
+            + " ?" + SparqlVariable.PHONETIC_REPRESENTATION + " ?" + SparqlVariable.NOTE +" ?" +  SparqlVariable.FORM_TYPE
             + " ?" + SparqlVariable.WRITTEN_REPRESENTATION + " ?" + SparqlVariable.TYPE;
 
 }
