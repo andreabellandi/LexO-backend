@@ -2433,7 +2433,7 @@ public class SparqlSelectData {
             + "        ?" + SparqlVariable.LEXICAL_ENTRY + " ontolex:sense ?" + SparqlVariable.TARGET + " ; "
             + "lexinfo:partOfSpeech ?" + SparqlVariable.LEXICAL_ENTRY_POS + " ; "
             + "rdfs:label ?le" + SparqlVariable.LABEL + ". \n"
-            + "        ?" + SparqlVariable.DICTIONARY_ENTRY + " lexicog:describes ?" + SparqlVariable.LEXICAL_ENTRY + " ; rdfs:label ?de" + SparqlVariable.LABEL + " . \n"
+            + "OPTIONAL { ?" + SparqlVariable.DICTIONARY_ENTRY + " lexicog:describes ?" + SparqlVariable.LEXICAL_ENTRY + " ; rdfs:label ?de" + SparqlVariable.LABEL + " . } \n"
             + "OPTIONAL { ?" + SparqlVariable.LF_IRI + " lfrel:hasGovPattern ?" + SparqlVariable.GOV_PATTERN + " }\n "
             + "OPTIONAL { ?" + SparqlVariable.LF_IRI + " lfrel:hasFusedElement ?" + SparqlVariable.FUSED_ELEMENT + " }\n "
             + "OPTIONAL { ?" + SparqlVariable.LF_IRI + " lfrel:hasLexicalFunction ?" + SparqlVariable.LF + " }\n "
