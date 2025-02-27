@@ -236,6 +236,10 @@ public class SparqlVariable {
     
     public static final String ECD_COMPONENT = "ECDComponent";
     public static final String ECD_SENSE_LABEL = "ECDSenseLabel"; 
+    public static final String LF_IRI = "lfIRI";
+    public static final String GOV_PATTERN = "govPattern";
+    public static final String FUSED_ELEMENT = "fusedElement";
+    public static final String LF = "lf";
 
     // skos variables
     public static final String CHILD = "child";

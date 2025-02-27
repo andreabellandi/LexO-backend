@@ -2385,7 +2385,7 @@ public class SparqlSelectData {
             + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
             + SparqlPrefix.DCT.getSparqlPrefix() + "\n"
             + "SELECT ?" + SparqlVariable.LEXICAL_ENTRY_POS + " ?" + SparqlVariable.MORPHOLOGY + " ?" + SparqlVariable.PHONETIC_REPRESENTATION
-            + " ?" + SparqlVariable.NOTE + " ?" + SparqlVariable.FORM_TYPE + " ?" + SparqlVariable.WRITTEN_REPRESENTATION + " ?" + SparqlVariable.FORM + "\n" 
+            + " ?" + SparqlVariable.NOTE + " ?" + SparqlVariable.FORM_TYPE + " ?" + SparqlVariable.WRITTEN_REPRESENTATION + " ?" + SparqlVariable.FORM + "\n"
             + "(GROUP_CONCAT(concat(str(?intrait),\"->\",str(?invalue));SEPARATOR=\";\") AS ?" + SparqlVariable.INHERITED_MORPHOLOGY + ")\n"
             + "(GROUP_CONCAT(concat(str(?trait),\"->\",str(?value));SEPARATOR=\";\") AS ?" + SparqlVariable.MORPHOLOGY + ")\n"
             + "FROM onto:explicit\n"
@@ -2411,7 +2411,31 @@ public class SparqlSelectData {
             + "   BIND ( IF (BOUND (?_trait), ?_trait, \"none\" )  as ?trait  )\n"
             + "   BIND ( IF (BOUND (?_value), ?_value, \"none\" )  as ?value  )\n"
             + "} GROUP BY ?" + SparqlVariable.FORM + " ?" + SparqlVariable.LEXICAL_ENTRY_POS
-            + " ?" + SparqlVariable.PHONETIC_REPRESENTATION + " ?" + SparqlVariable.NOTE +" ?" +  SparqlVariable.FORM_TYPE
+            + " ?" + SparqlVariable.PHONETIC_REPRESENTATION + " ?" + SparqlVariable.NOTE + " ?" + SparqlVariable.FORM_TYPE
             + " ?" + SparqlVariable.WRITTEN_REPRESENTATION + " ?" + SparqlVariable.TYPE;
 
+    public static final String DATA_ECD_LEXICAL_FUNCTIONS
+            = SparqlPrefix.RDF.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LFREL.getSparqlPrefix() + "\n"
+            + SparqlPrefix.SKOS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LFRLF.getSparqlPrefix() + "\n"
+            + "SELECT ?" + SparqlVariable.LF_IRI + " ?" + SparqlVariable.TARGET + " ?" + SparqlVariable.GOV_PATTERN + ""
+            + " ?" + SparqlVariable.FUSED_ELEMENT + " ?" + SparqlVariable.LF + " ?" + SparqlVariable.DEFINITION + " "
+            + "?" + SparqlVariable.LEXICAL_ENTRY_POS + " ?le" + SparqlVariable.LABEL + " ?de" + SparqlVariable.LABEL + " ?" + SparqlVariable.TYPE + "\n"
+            + "WHERE { ?" + SparqlVariable.LF_IRI + " lfrel:hasLFKeyword <_ID_> ;\n "
+            + "            rdf:type ?" + SparqlVariable.TYPE + " ; \n"
+            + "            lfrel:hasLFValue ?" + SparqlVariable.TARGET + " .\n "
+            + "        ?" + SparqlVariable.TARGET + " skos:definition ?" + SparqlVariable.DEFINITION + " . \n"
+            + "        ?" + SparqlVariable.LEXICAL_ENTRY + " ontolex:sense ?" + SparqlVariable.TARGET + " ; "
+            + "lexinfo:partOfSpeech ?" + SparqlVariable.LEXICAL_ENTRY_POS + " ; "
+            + "rdfs:label ?le" + SparqlVariable.LABEL + ". \n"
+            + "        ?" + SparqlVariable.DICTIONARY_ENTRY + " lexicog:describes ?" + SparqlVariable.LEXICAL_ENTRY + " ; rdfs:label ?de" + SparqlVariable.LABEL + " . \n"
+            + "OPTIONAL { ?" + SparqlVariable.LF_IRI + " lfrel:hasGovPattern ?" + SparqlVariable.GOV_PATTERN + " }\n "
+            + "OPTIONAL { ?" + SparqlVariable.LF_IRI + " lfrel:hasFusedElement ?" + SparqlVariable.FUSED_ELEMENT + " }\n "
+            + "OPTIONAL { ?" + SparqlVariable.LF_IRI + " lfrel:hasLexicalFunction ?" + SparqlVariable.LF + " }\n "
+            + "}";
 }

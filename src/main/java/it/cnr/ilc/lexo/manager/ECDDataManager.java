@@ -74,4 +74,9 @@ public class ECDDataManager implements Manager, Cached {
         String query = SparqlSelectData.DATA_ECD_MORPHOLOGICAL_FORMS.replace("_ID_", id);
         return RDFQueryUtil.evaluateTQuery(query);
     }
+    
+    public TupleQueryResult getLexicalFunctions(String id) throws ManagerException {
+        String query = SparqlSelectData.DATA_ECD_LEXICAL_FUNCTIONS.replace("_ID_", id);
+        return RDFQueryUtil.evaluateTQuery(query);
+    }
 }

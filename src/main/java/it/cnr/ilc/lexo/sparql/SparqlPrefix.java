@@ -26,13 +26,12 @@ public class SparqlPrefix {
 
     // wordnet
     public static Namespace WORDNET = new Namespace("wn:", "https://globalwordnet.github.io/schemas/wn#");
-    
+
     // metadata
     public static Namespace DCT = new Namespace("dct:", "http://purl.org/dc/terms/");
     public static Namespace LOC = new Namespace("loc:", "http://id.loc.gov/vocabulary/relators/");
     public static Namespace VS = new Namespace("vs:", "http://www.w3.org/2003/06/sw-vocab-status/ns#");
     public static Namespace FOAF = new Namespace("foaf:", "http://xmlns.com/foaf/0.1/");
-    
 
     // linguistic categories
     public static Namespace LEXINFO = new Namespace("lexinfo:", "http://www.lexinfo.net/ontology/3.0/lexinfo#");
@@ -57,8 +56,12 @@ public class SparqlPrefix {
 //    public static Namespace LEXCONCEPT = new Namespace("lexconcept:", LexOProperties.getProperty("repository.lexicon.lexicalConcept.namespace"));
 //    public static Namespace LEXBIB = new Namespace("lexbib:", LexOProperties.getProperty("repository.lexicon.bibliography.namespace"));
     public static Namespace ONTOLOGY = new Namespace("ontology:", LexOProperties.getProperty("repository.ontology.namespace"));
-    
+
     // extension vocabulary
     public static Namespace ITANT = new Namespace("itant:", "https://www.prin-italia-antica.unifi.it#");
+
+    // melchuk
+    public static Namespace LFREL = new Namespace("lfrel:", "https://github.com/alex-fonseca/lexfom/lfrel.owl#");
+    public static Namespace LFRLF = new Namespace("lfrlf:", "https://github.com/alex-fonseca/rlfowl/lfrlf.owl#");
 
 }
