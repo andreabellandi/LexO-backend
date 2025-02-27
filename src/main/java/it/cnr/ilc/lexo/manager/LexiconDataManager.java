@@ -428,7 +428,7 @@ public class LexiconDataManager implements Manager, Cached {
         String query = SparqlSelectData.DATA_COLLOCATIONS.replace("_ID_", id);
         return RDFQueryUtil.evaluateTQuery(query);
     }
-    
+
     public TupleQueryResult getCorpusFrequency(String id) throws ManagerException {
         String query = SparqlSelectData.DATA_CORPUS_FREQUENCY.replace("_ID_", id);
         return RDFQueryUtil.evaluateTQuery(query);
@@ -438,8 +438,8 @@ public class LexiconDataManager implements Manager, Cached {
         String query = SparqlSelectData.DATA_LINGUISTIC_RELATION
                 .replace("_ID_", lexicalEntryID)
                 .replace("_RELATION_", property);
-        if (property.equals(OntoLexEntity.LexicalConceptRel.isLexicalizedSenseOf.toString()) ||
-                property.equals(OntoLexEntity.LexicalConceptRel.evokes.toString())) {
+        if (property.equals(OntoLexEntity.LexicalConceptRel.isLexicalizedSenseOf.toString())
+                || property.equals(OntoLexEntity.LexicalConceptRel.evokes.toString())) {
             query = query.replaceAll("_PROPERTY_", lexicalizationModel.equals("skos") ? SparqlPrefix.SKOS.getPrefix() + "prefLabel" : SparqlPrefix.RDFS.getPrefix() + "label")
                     .replaceAll("_LEXICAL_CONCEPT_", "OPTIONAL { ?" + SparqlVariable.TARGET + " " + SparqlPrefix.SKOS.getPrefix() + "inScheme [ " + (lexicalizationModel.equals("skos") ? SparqlPrefix.SKOS.getPrefix() + "prefLabel" : SparqlPrefix.RDFS.getPrefix() + "label") + " ?_type ] }\n")
                     .replaceAll("_TYPE_", SparqlPrefix.SESAME.getPrefix() + "directType ?_type ");
@@ -466,8 +466,10 @@ public class LexiconDataManager implements Manager, Cached {
         return RDFQueryUtil.evaluateTQuery(query);
     }
 
-    public TupleQueryResult getLexicalEntityLinks(String lexicalEntryID) {
-        String query = SparqlSelectData.DATA_LEXICAL_ENTITY_LINKS.replace("[IRI]", "\\\"" + lexicalEntryID + "\\\"");
+    public TupleQueryResult getLexicalEntityLinks(String lexicalEntryID, String entityType) {
+        String query = SparqlSelectData.DATA_LEXICAL_ENTITY_LINKS.replace("[IRI]", "\\\"" + lexicalEntryID + "\\\"")
+                .replace("[INDEX]", entityType)
+                .replace("[FIELD]", entityType.replace("Index", "IRI"));
         return RDFQueryUtil.evaluateTQuery(query);
     }
 
@@ -575,8 +577,7 @@ public class LexiconDataManager implements Manager, Cached {
         String query = SparqlSelectData.DATA_DICT_ENTRY.replace("_ID_", id);
         return RDFQueryUtil.evaluateTQuery(query);
     }
-    
-    
+
     public TupleQueryResult getLexicographicComponents(String id) throws ManagerException {
         String query = SparqlSelectData.DATA_LEXICOGRAPHIC_COMPONENTS.replace("_ID_", id);
         return RDFQueryUtil.evaluateTQuery(query);

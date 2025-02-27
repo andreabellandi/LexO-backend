@@ -208,7 +208,7 @@ public class LexiconData extends Service {
                 TupleQueryResult lexicalEntry = lexiconManager.getLexicalEntry(_id);
                 List<LexicalEntryCore> _lec = lexicalEntryCoreHelper.newDataList(lexicalEntry);
                 LexicalEntryCore lec = lexiconManager.getLexicalEntityTypes(_lec);
-                TupleQueryResult lexicalEntityLinks = lexiconManager.getLexicalEntityLinks(_id);
+                TupleQueryResult lexicalEntityLinks = lexiconManager.getLexicalEntityLinks(_id, SparqlVariable.LEXICAL_ENTRY_INDEX);
                 LexicalEntityLinksItem links = lexicalEntityLinksItemHelper.newData(lexicalEntityLinks);
                 lexiconManager.addLexicalEntityLink(lec, links);
                 json = lexicalEntryCoreHelper.toJson(lec);
@@ -265,7 +265,7 @@ public class LexiconData extends Service {
                 TupleQueryResult form = lexiconManager.getForm(_id, module);
                 List<FormCore> fc = formCoreHelper.newDataList(form);
                 FormCore _fc = lexiconManager.getMorphologyInheritance(fc);
-                TupleQueryResult lexicalEntityLinks = lexiconManager.getLexicalEntityLinks(_id);
+                TupleQueryResult lexicalEntityLinks = lexiconManager.getLexicalEntityLinks(_id, SparqlVariable.FORM_INDEX);
                 LexicalEntityLinksItem links = lexicalEntityLinksItemHelper.newData(lexicalEntityLinks);
                 lexiconManager.addLexicalEntityLink(_fc, links);
                 json = formCoreHelper.toJson(_fc);
@@ -346,7 +346,7 @@ public class LexiconData extends Service {
                 log(Level.INFO, "data/lexicalSense <" + _id + "> with module: " + module);
                 TupleQueryResult lexicalSense = lexiconManager.getLexicalSense(_id);
                 LexicalSenseCore lsc = lexicalSenseCoreHelper.newData(lexicalSense);
-                TupleQueryResult lexicalEntityLinks = lexiconManager.getLexicalEntityLinks(_id);
+                TupleQueryResult lexicalEntityLinks = lexiconManager.getLexicalEntityLinks(_id, SparqlVariable.LEXICAL_SENSE_INDEX);
                 LexicalEntityLinksItem links = lexicalEntityLinksItemHelper.newData(lexicalEntityLinks);
                 lexiconManager.addLexicalEntityLink(lsc, links);
                 json = lexicalSenseCoreHelper.toJson(lsc);
@@ -432,7 +432,7 @@ public class LexiconData extends Service {
                 TupleQueryResult etymologicalLinks = lexiconManager.getEtymologicalLinks(_id);
                 Etymology e = etymologyHelper.newData(etymology);
                 List<EtymologicalLink> etyLinks = etymologicalLinks.hasNext() ? etymologicalLinkHelper.newDataList(etymologicalLinks) : new ArrayList();
-                TupleQueryResult lexicalEntityLinks = lexiconManager.getLexicalEntityLinks(_id);
+                TupleQueryResult lexicalEntityLinks = lexiconManager.getLexicalEntityLinks(_id, SparqlVariable.ETYMOLOGY_INDEX);
                 LexicalEntityLinksItem links = lexicalEntityLinks.hasNext() ? lexicalEntityLinksItemHelper.newData(lexicalEntityLinks) : null;
                 lexiconManager.addLexicalEntityLink(e, links);
                 EtymologyTree et = lexiconManager.getEtymologyTree(e, etyLinks);
