@@ -9,6 +9,7 @@ import it.cnr.ilc.lexo.LexOProperties;
 import static it.cnr.ilc.lexo.manager.LexiconDataManager.logger;
 import it.cnr.ilc.lexo.service.data.lexicon.input.DictionaryEntryFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.input.ECDEntryFilter;
+import it.cnr.ilc.lexo.service.data.lexicon.output.ecd.ECDLexicalFunction;
 import it.cnr.ilc.lexo.sparql.SparqlSelectData;
 import it.cnr.ilc.lexo.util.EnumUtil;
 import it.cnr.ilc.lexo.util.RDFQueryUtil;
@@ -78,5 +79,24 @@ public class ECDDataManager implements Manager, Cached {
     public TupleQueryResult getLexicalFunctions(String id) throws ManagerException {
         String query = SparqlSelectData.DATA_ECD_LEXICAL_FUNCTIONS.replace("_ID_", id);
         return RDFQueryUtil.evaluateTQuery(query);
+    }
+    
+    public ECDLexicalFunction setECDLexicalFunction(ECDLexicalFunction _lf) {
+        ECDLexicalFunction lf = new ECDLexicalFunction();
+        lf.setConfidence(_lf.getConfidence());
+        lf.setCreationDate(_lf.getCreationDate());
+        lf.setCreator(_lf.getCreator());
+        lf.setDefinition(_lf.getDefinition());
+        lf.setDictionaryEntryLabel(_lf.getDictionaryEntryLabel());
+        lf.setFusedElement(_lf.isFusedElement());
+        lf.setGovPattern(_lf.getGovPattern());
+        lf.setId(_lf.getId());
+        lf.setLastUpdate(_lf.getLastUpdate());
+        lf.setLexicalEntryLabel(_lf.getLexicalEntryLabel());
+        lf.setLexicalFunction(_lf.getLexicalFunction());
+        lf.setPos(_lf.getPos());
+        lf.setSenseTarget(_lf.getSenseTarget());
+        lf.setType(_lf.getType());
+        return lf;
     }
 }

@@ -344,5 +344,25 @@ public class SparqlInsertData {
             + "        dct:modified \"_MODIFIED_\" . \n"
             + "    <_LEID_> foaf:depiction <_ID_> .\n"
             + "}";
+    
+ /*--------------*/
+ /* Melcuk Model */
+ /*--------------*/
+    
+    public static final String CREATE_LEXICAL_FUNCTION
+            = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LFREL.getSparqlPrefix() + "\n"
+            + "_PREFIX_ \n"
+            + "INSERT DATA {\n"
+            + "    <_ID_> a <_TYPE_> ; \n"
+            + "        lfrel:hasLexicalFunction <_LF_> ;\n"
+            + "        lfrel:hasLFKeyword <_SOURCE_> ;\n"
+            + "        lfrel:hasLFValue <_TARGET_> ;\n"
+            + "        lfrel:hasFusedElement _FUSED_ ;\n"
+            + "        dct:created \"_CREATED_\" ;\n"
+            + "        dct:creator \"_AUTHOR_\" ;\n"
+            + "        dct:created \"_CREATED_\" ;\n"
+            + "        dct:modified \"_MODIFIED_\" . \n"
+            + "}";
 
 }

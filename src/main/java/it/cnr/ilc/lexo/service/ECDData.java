@@ -12,9 +12,7 @@ import it.cnr.ilc.lexo.LexOProperties;
 import it.cnr.ilc.lexo.manager.ECDDataManager;
 import it.cnr.ilc.lexo.manager.ManagerException;
 import it.cnr.ilc.lexo.manager.ManagerFactory;
-import it.cnr.ilc.lexo.service.data.lexicon.input.DictionaryEntryFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.input.ECDEntryFilter;
-import it.cnr.ilc.lexo.service.data.lexicon.output.DictionaryEntryItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ecd.ECDComponent;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ecd.ECDEntryItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ecd.ECDEntrySemantics;
@@ -242,7 +240,7 @@ public class ECDData extends Service {
         try {
             userCheck(key);
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
-            log(Level.INFO, "data/ECDLexicalFunctions<" + _id + ">");
+            log(Level.INFO, "data/ECDLexicalFunctions <" + _id + ">");
             TupleQueryResult lfs = ecdManager.getLexicalFunctions(_id);
             String json = "";
             if (lfs != null) {

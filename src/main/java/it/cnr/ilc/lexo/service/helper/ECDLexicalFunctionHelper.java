@@ -23,7 +23,7 @@ public class ECDLexicalFunctionHelper extends TripleStoreDataHelper<ECDLexicalFu
         data.setDefinition(getStringValue(bs, SparqlVariable.DEFINITION));
         data.setDictionaryEntryLabel(getStringValue(bs, "de" + SparqlVariable.LABEL)
                 + (!getLiteralLanguage(bs, "de" + SparqlVariable.LABEL).isEmpty() ? "@" + getLiteralLanguage(bs, "de" + SparqlVariable.LABEL) : ""));
-        data.setFusedElement(true);
+        data.setFusedElement(getStringValue(bs, SparqlVariable.FUSED_ELEMENT).equals("true"));
         data.setGovPattern(getStringValue(bs, SparqlVariable.GOV_PATTERN));
         data.setId(getStringValue(bs, SparqlVariable.LF_IRI));
         data.setLexicalEntryLabel(getStringValue(bs, "le" + SparqlVariable.LABEL)

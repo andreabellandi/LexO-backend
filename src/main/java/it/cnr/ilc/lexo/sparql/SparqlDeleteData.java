@@ -171,19 +171,6 @@ public class SparqlDeleteData {
     public static final String DELETE_LEXICAL_FUNCTION
             = SparqlPrefix.LFREL.getSparqlPrefix() + "\n"
             + SparqlPrefix.RDF.getSparqlPrefix() + "\n"
-            + "DELETE {  \n"
-            + "    <_ID_> a ?type . \n"
-            + "    <_ID_> lfrel:hasFusedElement	?fe .\n"
-            + "    <_ID_> lfrel:hasLFKeyword ?k .\n"
-            + "    <_ID_> lfrel:hasLFValue ?v .\n"
-            + "    <_ID_> lfrel:hasLexicalFunction ?lf .\n"
-            + "    <_ID_> lfrel:hasGovPattern ?gp .\n"
-            + "}\n"
-            + "WHERE {  <_ID_> a ?type . \n"
-            + "    OPTIONAL { <_ID_> lfrel:hasFusedElement ?fe } \n"
-            + "    OPTIONAL { <_ID_> lfrel:hasLFKeyword	?k } \n"
-            + "    OPTIONAL { <_ID_> lfrel:hasLFValue ?v } \n"
-            + "    OPTIONAL { <_ID_> lfrel:hasLexicalFunction ?lf } \n"
-            + "    OPTIONAL { <_ID_> lfrel:hasGovPattern ?gp } \n"
-            + "}";
+            + "DELETE { <_ID_> ?p ?o }\n"
+            + "WHERE {  <_ID_> ?p ?o }";
 }
