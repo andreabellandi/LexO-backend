@@ -474,7 +474,7 @@ public class LexiconDeletion extends Service {
     @Path("relation")
     @Produces(MediaType.APPLICATION_JSON)
     @RequestMapping(
-            method = RequestMethod.GET,
+            method = RequestMethod.POST,
             value = "relation",
             produces = "application/json; charset=UTF-8")
     @ApiOperation(value = "Relation deletion",

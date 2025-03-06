@@ -2231,7 +2231,7 @@ public class SparqlSelectData {
             + "WHERE {\n"
             + " ?x lime:linguisticCatalog ?" + SparqlVariable.VALUE + " }";
 
-    /*--------------*/
+ /*--------------*/
  /* Melcuk Model */
  /*--------------*/
     public static final String DATA_ECD_COMPONENTS

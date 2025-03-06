@@ -51,7 +51,7 @@ public class SparqlDeleteData {
             + "    ?lexComp ?p ?o .\n"
             + "    ?s ?_p ?lexComp .\n"
             + "}";
-    
+
     public static final String DELETE_DICTIONARY_ENTRY_ASSOCIATION
             = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
             + "DELETE { \n"
@@ -164,4 +164,26 @@ public class SparqlDeleteData {
             = SparqlPrefix.ETY.getSparqlPrefix() + "\n"
             + SparqlPrefix.RDF.getSparqlPrefix() + "\n"
             + "DELETE DATA {  <_ID_> a ety:Cognate . }";
+
+    /*--------------*/
+ /* Melcuk Model */
+ /*--------------*/
+    public static final String DELETE_LEXICAL_FUNCTION
+            = SparqlPrefix.LFREL.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDF.getSparqlPrefix() + "\n"
+            + "DELETE {  \n"
+            + "    <_ID_> a ?type . \n"
+            + "    <_ID_> lfrel:hasFusedElement	?fe .\n"
+            + "    <_ID_> lfrel:hasLFKeyword ?k .\n"
+            + "    <_ID_> lfrel:hasLFValue ?v .\n"
+            + "    <_ID_> lfrel:hasLexicalFunction ?lf .\n"
+            + "    <_ID_> lfrel:hasGovPattern ?gp .\n"
+            + "}\n"
+            + "WHERE {  <_ID_> a ?type . \n"
+            + "    OPTIONAL { <_ID_> lfrel:hasFusedElement ?fe } \n"
+            + "    OPTIONAL { <_ID_> lfrel:hasLFKeyword	?k } \n"
+            + "    OPTIONAL { <_ID_> lfrel:hasLFValue ?v } \n"
+            + "    OPTIONAL { <_ID_> lfrel:hasLexicalFunction ?lf } \n"
+            + "    OPTIONAL { <_ID_> lfrel:hasGovPattern ?gp } \n"
+            + "}";
 }
