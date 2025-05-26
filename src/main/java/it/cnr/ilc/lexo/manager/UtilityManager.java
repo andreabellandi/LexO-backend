@@ -87,6 +87,30 @@ public final class UtilityManager implements Manager, Cached {
         return null;
     }
 
+    public String getLexiconIDByLanguage(String lang) throws QueryEvaluationException {
+        String query = SparqlQueryUtil.LEXICON_BY_LANGUAGE.replaceAll("_LANG_", lang);
+        try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {
+            while (result.hasNext()) {
+                BindingSet bs = result.next();
+                return (bs.getBinding(SparqlVariable.LEXICON) != null) ? bs.getBinding(SparqlVariable.LEXICON).getValue().stringValue() : null;
+            }
+        } catch (QueryEvaluationException qee) {
+        }
+        return null;
+    }
+
+    public String getDictionaryIDByLanguage(String lang) throws QueryEvaluationException {
+        String query = SparqlQueryUtil.DICITONARY_BY_LANGUAGE.replaceAll("_LANG_", lang);
+        try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {
+            while (result.hasNext()) {
+                BindingSet bs = result.next();
+                return (bs.getBinding(SparqlVariable.DICTIONARY) != null) ? bs.getBinding(SparqlVariable.DICTIONARY).getValue().stringValue() : null;
+            }
+        } catch (QueryEvaluationException qee) {
+        }
+        return null;
+    }
+
     public String getFormLanguage(String id) throws QueryEvaluationException {
         String query = SparqlQueryUtil.FORM_LANGUAGE.replaceAll("_ID_", id);
         try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {
@@ -270,7 +294,7 @@ public final class UtilityManager implements Manager, Cached {
         String query = SparqlQueryUtil.HAS_DICTIONARYENTRY_COMPONENTS.replaceAll("_ID_", id);
         return RDFQueryUtil.evaluateBQuery(query);
     }
-    
+
     public String lexicalEntryWithSenses(String id) throws QueryEvaluationException {
         String query = SparqlQueryUtil.COMPONENT_DESCRIBES_LEXICALENTRY_WITH_SENSES.replaceAll("_ID_", id);
         try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {

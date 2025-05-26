@@ -14,7 +14,7 @@ import it.cnr.ilc.lexo.manager.ECDDeletionManager;
 import it.cnr.ilc.lexo.manager.ManagerException;
 import it.cnr.ilc.lexo.manager.ManagerFactory;
 import it.cnr.ilc.lexo.service.data.lexicon.input.DictionaryEntryFilter;
-import it.cnr.ilc.lexo.service.data.lexicon.input.ECDEntryFilter;
+import it.cnr.ilc.lexo.service.data.lexicon.input.ecd.ECDEntryFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.input.RelationDeleter;
 import it.cnr.ilc.lexo.service.data.lexicon.output.DictionaryEntryItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ecd.ECDComponent;

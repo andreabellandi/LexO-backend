@@ -8,7 +8,7 @@ package it.cnr.ilc.lexo.manager;
 import it.cnr.ilc.lexo.LexOProperties;
 import static it.cnr.ilc.lexo.manager.LexiconDataManager.logger;
 import it.cnr.ilc.lexo.service.data.lexicon.input.DictionaryEntryFilter;
-import it.cnr.ilc.lexo.service.data.lexicon.input.ECDEntryFilter;
+import it.cnr.ilc.lexo.service.data.lexicon.input.ecd.ECDEntryFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ecd.ECDLexicalFunction;
 import it.cnr.ilc.lexo.sparql.SparqlSelectData;
 import it.cnr.ilc.lexo.util.EnumUtil;

@@ -187,7 +187,7 @@ public class SparqlQueryUtil {
             + "SELECT ?lexicalEntry  \n"
             + "WHERE { <_ID_> lexicog:describes ?lexicalEntry .\n"
             + "       ?lexicalEntry ontolex:sense ?sense }";
-    
+
     public static final String EXISTS_ID
             = "ASK { <_ID_> a ?type }";
 
@@ -225,6 +225,19 @@ public class SparqlQueryUtil {
             + "SELECT ?" + SparqlVariable.LEXICON_LANGUAGE + " \n"
             + "WHERE { ?" + SparqlVariable.LEXICON + " " + SparqlPrefix.LIME.getPrefix() + "entry  <_ID_> ;\n"
             + "        " + SparqlPrefix.LIME.getPrefix() + "language ?" + SparqlVariable.LEXICON_LANGUAGE + " }";
+
+    public static final String LEXICON_BY_LANGUAGE
+            = SparqlPrefix.LIME.getSparqlPrefix() + "\n"
+            + "SELECT ?" + SparqlVariable.LEXICON + " \n"
+            + "WHERE { ?" + SparqlVariable.LEXICON + " a lime:Lexicon ;\n"
+            + SparqlPrefix.LIME.getPrefix() + "language \"_LANG_\" . }";
+    
+    public static final String DICITONARY_BY_LANGUAGE
+            = SparqlPrefix.LIME.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
+            + "SELECT ?" + SparqlVariable.DICTIONARY + " \n"
+            + "WHERE { ?" + SparqlVariable.DICTIONARY + " a lexicog:LexicographicResource ;\n"
+            + SparqlPrefix.LIME.getPrefix() + "language \"_LANG_\" . }";
 
     public static final String FORM_LANGUAGE
             = SparqlPrefix.LIME.getSparqlPrefix() + "\n"

@@ -42,6 +42,38 @@ public class SparqlInsertData {
             + "                   dct:modified \"[MODIFIED]\" . \n"
             + "}";
 
+    public static final String CREATE_ECD_ENTRY
+            = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.VS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LIME.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
+            + "_PREFIX_ \n"
+            + "INSERT DATA {\n"
+            + "    <[DICT]> lexicog:entry <[ID]> .\n"
+            + "    <[ID]> a lexicog:Entry ;\n"
+            + "                   rdfs:label \"[LABEL]\"@[LANG] ;\n"
+            + "                   dct:creator \"[AUTHOR]\" ;\n"
+            + "                   vs:term_status \"working\" ;\n"
+            + "                   dct:created \"[CREATED]\" ;\n"
+            + "                   dct:modified \"[MODIFIED]\" . \n"
+            + "     _LEXICAL_ENTRY_DESCRIBES_\n"
+            + "     _LEXICAL_ENTRY_ \n"
+            + "}";
+
+    public static final String CREATE_LEXICAL_ENTRY_FOR_ECD_ENTRY
+            = "<[LEX]> lime:entry <[ID]> .\n"
+            + "<[ID]> a <[TYPE]> ;\n"
+            + "      rdfs:label \"[LABEL]\"@[LANG] ;\n"
+            + "                   dct:creator \"[AUTHOR]\" ;\n"
+            + "                   vs:term_status \"working\" ;\n"
+            + "                   dct:created \"[CREATED]\" ;\n"
+            + "                   dct:modified \"[MODIFIED]\" ; \n"
+            + "                   lexinfo:partOfSpeech <[POS]> . \n"
+            + "";
+
     public static final String CREATE_LEXICON_LANGUAGE
             = SparqlPrefix.LIME.getSparqlPrefix() + "\n"
             + SparqlPrefix.DCT.getSparqlPrefix() + "\n"
@@ -344,11 +376,10 @@ public class SparqlInsertData {
             + "        dct:modified \"_MODIFIED_\" . \n"
             + "    <_LEID_> foaf:depiction <_ID_> .\n"
             + "}";
-    
- /*--------------*/
+
+    /*--------------*/
  /* Melcuk Model */
  /*--------------*/
-    
     public static final String CREATE_LEXICAL_FUNCTION
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
             + SparqlPrefix.LFREL.getSparqlPrefix() + "\n"

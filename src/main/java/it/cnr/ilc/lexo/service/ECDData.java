@@ -12,7 +12,7 @@ import it.cnr.ilc.lexo.LexOProperties;
 import it.cnr.ilc.lexo.manager.ECDDataManager;
 import it.cnr.ilc.lexo.manager.ManagerException;
 import it.cnr.ilc.lexo.manager.ManagerFactory;
-import it.cnr.ilc.lexo.service.data.lexicon.input.ECDEntryFilter;
+import it.cnr.ilc.lexo.service.data.lexicon.input.ecd.ECDEntryFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ecd.ECDComponent;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ecd.ECDEntryItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ecd.ECDEntrySemantics;
