@@ -75,8 +75,8 @@ public class ECDCreationManager implements Manager, Cached {
 
     private DictionaryEntryCore setDictionaryEntry(String id, String created, String author, ECDEntry ecdEntry) {
         ArrayList<String> types = new ArrayList<>();
-        types.add(SparqlPrefix.LEXICOG.getUri() + "Entry");
-        types.add(ecdEntry.getType());
+        types.add("Entry");
+        types.add(ecdEntry.getType().split("#")[1]);
         ArrayList<String> pos = new ArrayList<>();
         for (String _pos : ecdEntry.getPos()) {
             pos.add(_pos);

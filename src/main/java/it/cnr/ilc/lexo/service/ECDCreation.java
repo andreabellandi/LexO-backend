@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import it.cnr.ilc.lexo.manager.ECDCreationManager;
 import it.cnr.ilc.lexo.manager.ECDDataManager;
+import it.cnr.ilc.lexo.manager.Manager;
 import it.cnr.ilc.lexo.manager.ManagerException;
 import it.cnr.ilc.lexo.manager.ManagerFactory;
 import it.cnr.ilc.lexo.manager.UtilityManager;
@@ -19,6 +20,7 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.DictionaryEntryCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ecd.ECDLexicalFunction;
 import it.cnr.ilc.lexo.service.helper.DictionaryEntryHelper;
 import it.cnr.ilc.lexo.service.helper.ECDLexicalFunctionHelper;
+import it.cnr.ilc.lexo.util.OntoLexEntity;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -45,8 +47,8 @@ public class ECDCreation extends Service {
 
     private final ECDCreationManager ecdManager = ManagerFactory.getManager(ECDCreationManager.class);
     private final ECDDataManager ecdDataManager = ManagerFactory.getManager(ECDDataManager.class);
-    private final ECDLexicalFunctionHelper ECDLexicalFunctionHelper = new ECDLexicalFunctionHelper();
-    private final DictionaryEntryHelper dictionaryEntryHelper = new DictionaryEntryHelper();
+    private final ECDLexicalFunctionHelper ecdLexicalFunctionHelper = new ECDLexicalFunctionHelper();
+    private final DictionaryEntryHelper ecdDictionaryEntryHelper = new DictionaryEntryHelper();
 
     @POST
     @Path("lexicalFunction")
@@ -103,12 +105,12 @@ public class ECDCreation extends Service {
                 TupleQueryResult lfs = ecdDataManager.getLexicalFunctions(_id);
                 String json = "";
                 ECDLexicalFunction lf = null;
-                for (ECDLexicalFunction _lf : ECDLexicalFunctionHelper.newDataList(lfs)) {
+                for (ECDLexicalFunction _lf : ecdLexicalFunctionHelper.newDataList(lfs)) {
                     if (_lf.getId().equals(lfID)) {
                         lf = ecdDataManager.setECDLexicalFunction(_lf);
                     }
                 }
-                json = ECDLexicalFunctionHelper.toJson(lf);
+                json = ecdLexicalFunctionHelper.toJson(lf);
                 return Response.ok(json)
                         .type(MediaType.APPLICATION_JSON)
                         .header("Access-Control-Allow-Headers", "content-type")
@@ -176,6 +178,7 @@ public class ECDCreation extends Service {
                 }
                 UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
                 utilityManager.validateNamespace(prefix, baseIRI);
+                Manager.validateWithEnum("type", OntoLexEntity.LexicalEntryTypes.class, ecdEntry.getType().split("#")[1]);
                 String dictID = utilityManager.getDictionaryIDByLanguage(ecdEntry.getLanguage());
                 String lexiconID = utilityManager.getLexiconIDByLanguage(ecdEntry.getLanguage());
                 if (dictID == null) {
@@ -187,7 +190,7 @@ public class ECDCreation extends Service {
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("create/ECDEntry: lexicon language " + ecdEntry.getLanguage() + " does not exist").build();
                 }
                 DictionaryEntryCore dec = ecdManager.createDictionaryEntry(author, prefix, baseIRI, desiredID, ecdEntry, dictID, lexiconID);
-                String json = dictionaryEntryHelper.toJson(dec);
+                String json = ecdDictionaryEntryHelper.toJson(dec);
                 return Response.ok(json)
                         .type(MediaType.APPLICATION_JSON)
                         .header("Access-Control-Allow-Headers", "content-type")

@@ -13,12 +13,14 @@ import it.cnr.ilc.lexo.manager.ECDDataManager;
 import it.cnr.ilc.lexo.manager.ManagerException;
 import it.cnr.ilc.lexo.manager.ManagerFactory;
 import it.cnr.ilc.lexo.service.data.lexicon.input.ecd.ECDEntryFilter;
+import it.cnr.ilc.lexo.service.data.lexicon.output.DictionaryEntryCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ecd.ECDComponent;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ecd.ECDEntryItem;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ecd.ECDEntrySemantics;
 import it.cnr.ilc.lexo.service.data.lexicon.output.HitsDataList;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ecd.ECDEntryMorphology;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ecd.ECDLexicalFunction;
+import it.cnr.ilc.lexo.service.helper.DictionaryEntryHelper;
 import it.cnr.ilc.lexo.service.helper.ECDComponentHelper;
 import it.cnr.ilc.lexo.service.helper.ECDEntryFilterHelper;
 import it.cnr.ilc.lexo.service.helper.ECDEntryMorphologyHelper;
@@ -63,6 +65,7 @@ public class ECDData extends Service {
     private final ECDEntrySemanticsHelper ECDEntrySemanticsHelper = new ECDEntrySemanticsHelper();
     private final ECDEntryFilterHelper ECDEntryFilterHelper = new ECDEntryFilterHelper();
     private final ECDLexicalFunctionHelper ECDLexicalFunctionHelper = new ECDLexicalFunctionHelper();
+    private final DictionaryEntryHelper ECDDictionaryEntryHelper = new DictionaryEntryHelper();
 
     private void userCheck(String key) throws AuthorizationException, ServiceException {
         if (LexOProperties.getProperty("keycloack.freeViewer") != null) {
@@ -175,6 +178,40 @@ public class ECDData extends Service {
             TupleQueryResult ECDMorphs = ecdManager.getMorphologicalForms(id);
             List<ECDEntryMorphology> morphs = ECDEntryMorphologyHelper.newDataList(ECDMorphs);
             String json = ECDEntryMorphologyHelper.toJson(morphs);
+            return Response.ok(json)
+                    .type(MediaType.APPLICATION_JSON)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
+        } catch (ManagerException | UnsupportedEncodingException | AuthorizationException | ServiceException ex) {
+            log(Level.ERROR, ex.getMessage());
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        }
+    }
+    
+    @GET
+    @Path("ECDEntry")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "ECDEntry",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "ECD entry details",
+            notes = "This method returns the details of a dictionary entry")
+    public Response ECDEntry(
+            @HeaderParam("Authorization") String key,
+            @ApiParam(
+                    name = "id",
+                    value = "dictionary entry ID",
+                    required = true)
+            @QueryParam("id") String id) {
+        try {
+            userCheck(key);
+            String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
+            log(Level.INFO, "ecd/data/ECDEntry: <" + _id + ">");
+            TupleQueryResult entry = ecdManager.getECDEntry(id);
+            DictionaryEntryCore dec = ECDDictionaryEntryHelper.newData(entry);
+            String json = ECDDictionaryEntryHelper.toJson(dec);
             return Response.ok(json)
                     .type(MediaType.APPLICATION_JSON)
                     .header("Access-Control-Allow-Headers", "content-type")
