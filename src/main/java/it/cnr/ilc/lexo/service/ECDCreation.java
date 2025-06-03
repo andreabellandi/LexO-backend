@@ -178,7 +178,7 @@ public class ECDCreation extends Service {
                 }
                 UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
                 utilityManager.validateNamespace(prefix, baseIRI);
-                Manager.validateWithEnum("type", OntoLexEntity.LexicalEntryTypes.class, ecdEntry.getType().split("#")[1]);
+                Manager.validateWithEnum("type", OntoLexEntity.LexicalEntryTypes.class, ecdEntry.getType());
                 String dictID = utilityManager.getDictionaryIDByLanguage(ecdEntry.getLanguage());
                 String lexiconID = utilityManager.getLexiconIDByLanguage(ecdEntry.getLanguage());
                 if (dictID == null) {
