@@ -20,12 +20,14 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.ecd.ECDEntrySemantics;
 import it.cnr.ilc.lexo.service.data.lexicon.output.HitsDataList;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ecd.ECDEntryMorphology;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ecd.ECDLexicalFunction;
+import it.cnr.ilc.lexo.service.data.lexicon.output.ecd.ECDMeaning;
 import it.cnr.ilc.lexo.service.helper.DictionaryEntryHelper;
 import it.cnr.ilc.lexo.service.helper.ECDComponentHelper;
 import it.cnr.ilc.lexo.service.helper.ECDEntryFilterHelper;
 import it.cnr.ilc.lexo.service.helper.ECDEntryMorphologyHelper;
 import it.cnr.ilc.lexo.service.helper.ECDEntrySemanticsHelper;
 import it.cnr.ilc.lexo.service.helper.ECDLexicalFunctionHelper;
+import it.cnr.ilc.lexo.service.helper.ECDMeaningHelper;
 import it.cnr.ilc.lexo.service.helper.HelperException;
 import it.cnr.ilc.lexo.util.LogUtil;
 import java.io.UnsupportedEncodingException;
@@ -64,6 +66,7 @@ public class ECDData extends Service {
     private final ECDEntryMorphologyHelper ECDEntryMorphologyHelper = new ECDEntryMorphologyHelper();
     private final ECDEntrySemanticsHelper ECDEntrySemanticsHelper = new ECDEntrySemanticsHelper();
     private final ECDEntryFilterHelper ECDEntryFilterHelper = new ECDEntryFilterHelper();
+    private final ECDMeaningHelper ECDMeaningHelper = new ECDMeaningHelper();
     private final ECDLexicalFunctionHelper ECDLexicalFunctionHelper = new ECDLexicalFunctionHelper();
     private final DictionaryEntryHelper ECDDictionaryEntryHelper = new DictionaryEntryHelper();
 
@@ -292,6 +295,40 @@ public class ECDData extends Service {
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
         } catch (AuthorizationException | ServiceException | UnsupportedEncodingException | ManagerException ex) {
+            log(Level.ERROR, ex.getMessage());
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        }
+    }
+    
+    @GET
+    @Path("ECDMeaning")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "ECDMeaning",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "ECD meaning details",
+            notes = "This method returns the details of meaning EDC entry")
+    public Response ECDMeaning(
+            @HeaderParam("Authorization") String key,
+            @ApiParam(
+                    name = "id",
+                    value = "lexical sense ID",
+                    required = true)
+            @QueryParam("id") String id) {
+        try {
+            userCheck(key);
+            String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
+            log(Level.INFO, "ecd/data/ECDMeaning: <" + _id + ">");
+            TupleQueryResult entry = ecdManager.getECDMeaning(id);
+            ECDMeaning mean = ECDMeaningHelper.newData(entry);
+            String json = ECDMeaningHelper.toJson(mean);
+            return Response.ok(json)
+                    .type(MediaType.APPLICATION_JSON)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
+        } catch (ManagerException | UnsupportedEncodingException | AuthorizationException | ServiceException ex) {
             log(Level.ERROR, ex.getMessage());
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }

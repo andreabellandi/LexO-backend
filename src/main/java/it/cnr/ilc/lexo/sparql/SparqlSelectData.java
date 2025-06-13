@@ -2231,7 +2231,7 @@ public class SparqlSelectData {
             + "WHERE {\n"
             + " ?x lime:linguisticCatalog ?" + SparqlVariable.VALUE + " }";
 
- /*--------------*/
+    /*--------------*/
  /* Melcuk Model */
  /*--------------*/
     public static final String DATA_ECD_COMPONENTS
@@ -2438,7 +2438,7 @@ public class SparqlSelectData {
             + "OPTIONAL { ?" + SparqlVariable.LF_IRI + " lfrel:hasFusedElement ?" + SparqlVariable.FUSED_ELEMENT + " }\n "
             + "OPTIONAL { ?" + SparqlVariable.LF_IRI + " lfrel:hasLexicalFunction ?" + SparqlVariable.LF + " }\n "
             + "}";
-    
+
     public static final String DATA_ECD_ENTRY
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
             + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
@@ -2472,7 +2472,7 @@ public class SparqlSelectData {
             + "      luc:query \"dictionaryEntryIRI:\\\"_ID_\\\"\" ;\n"
             + "      luc:entities ?" + SparqlVariable.DICTIONARY_ENTRY + " .\n"
             + "  ?" + SparqlVariable.DICTIONARY_ENTRY + " rdfs:label ?" + SparqlVariable.LABEL + " ;\n"
-//            + "                   sesame:directType ?_" + SparqlVariable.TYPE + "\n"
+            //            + "                   sesame:directType ?_" + SparqlVariable.TYPE + "\n"
             + "                   sesame:directType|lexicog:describes/sesame:directType ?_" + SparqlVariable.TYPE + " .\n"
             + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " lexinfo:confidence ?confidence . }\n"
             + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " dct:creator ?" + SparqlVariable.CREATOR + "} .\n"
@@ -2513,4 +2513,53 @@ public class SparqlSelectData {
             + SparqlVariable.COMPLETION_DATE + " ?"
             + SparqlVariable.NOTE + " ?"
             + SparqlVariable.REVISION_DATE + " ?confidence";
+
+    public static final String DATA_ECD_MEANING
+            = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LOC.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTO.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDF.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.SESAME.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LUC.getSparqlPrefix() + "\n"
+            + SparqlPrefix.VS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.FOAF.getSparqlPrefix() + "\n"
+            + SparqlPrefix.SKOS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
+            + SparqlPrefix.INST.getSparqlPrefix() + "\n"
+            + "SELECT ?" + SparqlVariable.DICTIONARY_ENTRY + " ?" + SparqlVariable.DICTIONARY_ENTRY_LABEL
+            + " ?" + SparqlVariable.SENSE_DEFINITION + " ?" + SparqlVariable.DESCRIBE_LABEL + "\n"
+            + " ?" + SparqlVariable.CREATOR + " ?" + SparqlVariable.NOTE
+            + " ?" + SparqlVariable.CREATION_DATE + " ?" + SparqlVariable.LAST_UPDATE + " ?confidence \n"
+            + "(GROUP_CONCAT(str(?_" + SparqlVariable.DICTIONARY_ENTRY_POS + ");SEPARATOR=\";\") AS ?" + SparqlVariable.DICTIONARY_ENTRY_POS + ")\n"
+            + "WHERE {\n"
+            + "  ?search a inst:" + SparqlVariable.LEXICAL_SENSE_INDEX + " ;\n"
+            + "      luc:query \"lexicalSenseIRI:\\\"_ID_\\\"\" ;\n"
+            + "      luc:entities ?" + SparqlVariable.SENSE + " .\n"
+            + "    ?" + SparqlVariable.LEXICAL_ENTRY + " ontolex:sense ?" + SparqlVariable.SENSE + " ;\n"
+            + "                      lexinfo:partOfSpeech ?_" + SparqlVariable.LEXICAL_ENTRY_POS + " .\n"
+            + "    ?" + SparqlVariable.DICTIONARY_ENTRY + " lexicog:describes ?" + SparqlVariable.LEXICAL_ENTRY + " ;\n"
+            + "                     rdfs:label ?" + SparqlVariable.DICTIONARY_ENTRY_LABEL + " .\n"
+            + "    ?" + SparqlVariable.LEXICOGRAPHIC_COMPONENT + " lexicog:describes ?" + SparqlVariable.SENSE + " .\n"
+            + "   OPTIONAL {?" + SparqlVariable.LEXICOGRAPHIC_COMPONENT + " rdfs:label ?" + SparqlVariable.DESCRIBE_LABEL + " . }\n"
+            + "   OPTIONAL {?" + SparqlVariable.SENSE + " skos:definition ?" + SparqlVariable.SENSE_DEFINITION + ". }\n"
+            + "   OPTIONAL {?" + SparqlVariable.SENSE + " lexinfo:confidence ?" + SparqlVariable.CONFIDENCE + " . }\n"
+            + "   OPTIONAL {?" + SparqlVariable.SENSE + " dct:creator ?" + SparqlVariable.CREATOR + "} .\n"
+            + "   OPTIONAL {?" + SparqlVariable.SENSE + " dct:created ?" + SparqlVariable.CREATION_DATE + "} .\n"
+            + "   OPTIONAL {?" + SparqlVariable.SENSE + " dct:modified ?" + SparqlVariable.LAST_UPDATE + "} .\n"
+            + "   OPTIONAL {?" + SparqlVariable.SENSE + " skos:note ?" + SparqlVariable.NOTE + "} .\n"
+            + "} GROUP BY ?"
+            + SparqlVariable.SENSE + " ?"
+            + SparqlVariable.DICTIONARY_ENTRY + " ?"
+            + SparqlVariable.CREATOR + " "
+            + "?"
+            + SparqlVariable.CREATION_DATE + " ?"
+            + SparqlVariable.LAST_UPDATE
+            + " ?" + SparqlVariable.DICTIONARY_ENTRY_LABEL + " "
+            + "?"
+            + SparqlVariable.DESCRIBE_LABEL + " ?"
+            + SparqlVariable.NOTE + " ?"
+            + SparqlVariable.SENSE_DEFINITION + " ?confidence";
 }

@@ -52,6 +52,7 @@ public class SparqlVariable {
     
     public static final String DICTIONARY = "dictionary";
     public static final String DICTIONARY_ENTRY = "dictionaryEntry";
+    public static final String DICTIONARY_ENTRY_LABEL = "dictionaryEntryLabel";
     public static final String DICTIONARY_ENTRY_STATUS = "status";
     public static final String DICTIONARY_ENTRY_REVISOR = "revisor";
     public static final String DICTIONARY_ENTRY_COMPLETING_AUTHOR = "author";

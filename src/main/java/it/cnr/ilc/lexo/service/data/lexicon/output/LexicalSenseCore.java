@@ -38,6 +38,8 @@ public class LexicalSenseCore extends Entity implements Data {
     private String note;
     @ApiModelProperty(value = "IRI of the concept denoted by", example = "namespace:conceptID")
     private String concept;
+    @ApiModelProperty(value = "the language of the lexical entry the sense belongs to")
+    private String language;
 //    @ApiModelProperty(value = "short IRI of the concept denoted by", example = "conceptID")
 //    private String conceptInstanceName;
 
@@ -77,6 +79,14 @@ public class LexicalSenseCore extends Entity implements Data {
 
     public void setDefinition(List<Property> definition) {
         this.definition = definition;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
     }
 
     public String getTopic() {
