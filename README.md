@@ -2,19 +2,20 @@
 
 [![Build Status](images/build-passing.png)](https://github.com/andreabellandi/LexO-backend) [![N|Solid](images/clarin.png)](https://ilc4clarin.ilc.cnr.it/) 
 
-LexO-server is a software backend providing REST services for building and managing lexical and terminological resources in the context of the Semantic Web. 
-It relies on the [_OntoLex-Lemon_](https://www.w3.org/2016/05/ontolex/) model.
+LexO-server is a software backend providing REST services for building and managing linguistic resources in the context of the Semantic Web, in particular:
+- lexical and terminological resources based on the [_OntoLex-Lemon_](https://www.w3.org/2016/05/ontolex/) model;
+- lexicograohic dictionaries (dictionaries) based on the [_Lexicog_](https://www.w3.org/2019/09/lexicog/) model.
 
-Services can be consulted [here](https://lari2.ilc.cnr.it/LexO-backend-itant/) via a [Swagger](https://swagger.io/) interface 
+LexO-server uses the [Swagger](https://swagger.io/) open source tool. It helps one to design and to document APIs at scale, for easing and supporting the front end GUI development process
 
 ## Features
 
 - Targeted for web apps oriented at different lexicographic-based tasks, such as editing, linking, data visualization, dictionary making, linguistic annotation
-- Lexical level implemented by the [_OntoLex-Lemon_](https://www.w3.org/2016/05/ontolex/) model
+- Lexical level implemented by the [_OntoLex-Lemon_](https://www.w3.org/2016/05/ontolex/) and the [_Lexicog_](https://www.w3.org/2019/09/lexicog/) models.
 - Conceptual level implemented by the [_SKOS_](https://www.w3.org/2004/02/skos/) model 
-- Integrated user authentication addressed by [KeyCloak](https://www.keycloak.org/) (forthcoming)
-- Possibility to manage bibliographical items with [Zotero](https://www.zotero.org/) (forthcoming)
-- Integration with remote SPARQL endpoints (forthcoming)
+- Integrated user authentication addressed by [KeyCloak](https://www.keycloak.org/) 
+- Possibility to manage bibliographical items with [Zotero](https://www.zotero.org/) 
+- Integration with remote SPARQL endpoints 
 - Export data as Linked Data (RDF/XML, Turtle, N3, NQuads)
 
 ## Tech
