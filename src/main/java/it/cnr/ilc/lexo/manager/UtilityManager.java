@@ -456,6 +456,11 @@ public final class UtilityManager implements Manager, Cached {
         String query = SparqlQueryUtil.LEXICOGRAPHIC_COMPONENT_LEAF.replaceAll("_ID_", id);
         return RDFQueryUtil.evaluateBQuery(query);
     }
+    
+    public boolean isLexicalEntryJustAssociatedToDictionaryEntry(String deid, String leid) {
+        String query = SparqlQueryUtil.IS_LEXICAL_ENTRY_JUST_ASSOCIATED_TO_DICT_ENTRY.replaceAll("_DEID_", deid).replaceAll("_LEID_", leid);
+        return RDFQueryUtil.evaluateBQuery(query);
+    }
 
     public String getIndirectRelationType(String id) {
         String type = null;

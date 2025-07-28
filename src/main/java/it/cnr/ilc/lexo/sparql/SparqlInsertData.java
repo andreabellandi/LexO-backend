@@ -377,6 +377,20 @@ public class SparqlInsertData {
             + "    <_LEID_> foaf:depiction <_ID_> .\n"
             + "}";
 
+    public static final String CREATE_ASSOCIATION_BETWEEN_DICT_ENTRY_AND_LEXICAL_ENTRY
+            = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDF.getSparqlPrefix() + "\n"
+            + "_PREFIX_ \n"
+            + "INSERT DATA {\n"
+            + "    <_ID_COMPONENT_> a lexicog:LexicographicComponent ;\n"
+            + "                   dct:creator \"_AUTHOR_\" ;\n"
+            + "                   dct:created \"_CREATED_\" ;\n"
+            + "                   dct:modified \"_MODIFIED_\" . \n"
+            + "    <_ID_DICT_ENTRY_> rdf:_POSITION <_ID_COMPONENT_>. \n"
+            + "    <_ID_COMPONENT_> lexicog:describes <_ID_LEX_ENTRY_>. \n"
+            + "}";
+
     /*--------------*/
  /* Melcuk Model */
  /*--------------*/

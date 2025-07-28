@@ -197,9 +197,9 @@ public class LexiconDeletion extends Service {
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
             try {
                 UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
-//                    if (!utilityManager.isDictEntry(_id)) {
-//                        return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " does not exist").build();
-//                    }
+                if (!utilityManager.isDictEntry(_id)) {
+                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("IRI " + _id + " does not exist").build();
+                }
                 return Response.ok(lexiconManager.deleteDictionaryEntry(_id))
                         .type(MediaType.TEXT_PLAIN).header("Access-Control-Allow-Headers", "content-type")
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")

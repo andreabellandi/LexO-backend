@@ -53,6 +53,7 @@ import it.cnr.ilc.lexo.service.helper.FormRestrictionHelper;
 import it.cnr.ilc.lexo.service.helper.IndirectLexicalRelationHelper;
 import it.cnr.ilc.lexo.service.helper.LexicographicComponentHelper;
 import it.cnr.ilc.lexo.service.helper.TranslationSetHelper;
+import it.cnr.ilc.lexo.sparql.SparqlPrefix;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -1340,6 +1341,91 @@ public class LexiconCreation extends Service {
             }
         } catch (AuthorizationException | ServiceException ex) {
             log(Level.ERROR, "create/lexicographicComponent: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
+        }
+    }
+
+    @GET
+    @Path("lexicographicAssociation")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "lexicographicAssociation",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Lexicographic association creation",
+            notes = "This method associates a lexical entry to a dictionary entry and it returns the lexicographic component that represents the association")
+    public Response lexicographicAssociation(
+            @HeaderParam("Authorization") String key,
+            @ApiParam(
+                    name = "author",
+                    value = "the account that is creating the association (if LexO user management disabled)",
+                    example = "user7",
+                    required = false)
+            @QueryParam("author") String author,
+            @ApiParam(
+                    name = "dictionaryEntryID",
+                    value = "the dictionary entry ID to which the lexical entry has to be associated with",
+                    required = true)
+            @QueryParam("dictionaryEntryID") String dictionaryEntryID,
+            @ApiParam(
+                    name = "lexicalEntryID",
+                    value = "prefthe lexical entry ID to associate to the dictionary entry",
+                    required = true)
+            @QueryParam("lexicalEntryID") String lexicalEntryID,
+            @ApiParam(
+                    name = "prefix",
+                    value = "prefix of the namespace of the entity that represents the association",
+                    example = "myprefix",
+                    required = true)
+            @QueryParam("prefix") String prefix,
+            @ApiParam(
+                    name = "baseIRI",
+                    value = "base IRI of the entity that represents the association",
+                    example = "http://mydata.com#",
+                    required = true)
+            @QueryParam("baseIRI") String baseIRI,
+            @ApiParam(
+                    name = "position",
+                    value = "lexical entry position within the dictionary entry",
+                    example = "1",
+                    required = true)
+            @QueryParam("position") int position) {
+        try {
+            checkKey(key);
+            try {
+                UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+                // duplicated association check 
+                if (utilityManager.isLexicalEntryJustAssociatedToDictionaryEntry(dictionaryEntryID, lexicalEntryID)) {
+                    return Response.status(Response.Status.CONFLICT).type(MediaType.TEXT_PLAIN).entity("The required association already exists").build();
+                }
+                // required position check 
+                if (position != 0) {
+                    if (utilityManager.existsGenericRelation(dictionaryEntryID, SparqlPrefix.RDF.getUri() + "_" + position, "?x")) {
+                        return Response.status(Response.Status.CONFLICT).type(MediaType.TEXT_PLAIN).entity(
+                                dictionaryEntryID + " has just a component in position #" + position + ". Please, first remove it").build();
+                    }
+                } else {
+                    return Response.status(Response.Status.CONFLICT).type(MediaType.TEXT_PLAIN).entity("Position cannot be set to 0").build();
+                }
+                if (!utilityManager.isDictEntry(dictionaryEntryID)) {
+                    return Response.status(Response.Status.CONFLICT).type(MediaType.TEXT_PLAIN).entity(dictionaryEntryID + " is not a dictionary entry").build();
+                }
+                if (!utilityManager.isLexicalEntry(lexicalEntryID)) {
+                    return Response.status(Response.Status.CONFLICT).type(MediaType.TEXT_PLAIN).entity(lexicalEntryID + " is not a lexical entry").build();
+                }
+                LexicographicComponent lc = lexiconManager.createLexicographicAssociation(author, prefix, baseIRI, dictionaryEntryID, lexicalEntryID, position);
+                log(Level.INFO, "Lexicographic association created (dictEntry=" + dictionaryEntryID + " lexEntry=" + lexicalEntryID + " in position " + position);
+                return Response.ok(lc)
+                        .type(MediaType.APPLICATION_JSON)
+                        .header("Access-Control-Allow-Headers", "content-type")
+                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                        .build();
+            } catch (ManagerException ex) {
+                log(Level.ERROR, "create/lexicographicAssociation: " + ex.getMessage());
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            }
+        } catch (AuthorizationException | ServiceException ex) {
+            log(Level.ERROR, "create/lexicographicAssociation: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }

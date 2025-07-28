@@ -83,8 +83,8 @@ public class SparqlQueryUtil {
     public static final String IS_DICTENTRY_ID
             = SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
             + "ASK { \n"
-            + "<_ID_> a " + SparqlPrefix.LEXICOG.getPrefix() + "Entry ; \n"
-            + " " + SparqlPrefix.LEXICOG.getPrefix() + "describes|" + SparqlPrefix.RDF.getPrefix() + "_1 ?x "
+            + "<_ID_> a " + SparqlPrefix.LEXICOG.getPrefix() + "Entry . \n"
+//            + " " + SparqlPrefix.LEXICOG.getPrefix() + "describes|" + SparqlPrefix.RDF.getPrefix() + "_1 ?x "
             + "}";
 
     public static final String LEXICALENTRY_TYPE
@@ -274,6 +274,10 @@ public class SparqlQueryUtil {
 
     public static final String LEXICOGRAPHIC_COMPONENT_LEAF
             = "ASK { <_ID_> ?propName ?x . FILTER (strstarts(str(?propName), str(rdf:_))) }";
+    
+    public static final String IS_LEXICAL_ENTRY_JUST_ASSOCIATED_TO_DICT_ENTRY
+            = SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n" + 
+            "ASK { <_DEID_> ?propName ?comp . ?comp lexicog:describes <_LEID_> . FILTER (strstarts(str(?propName), str(rdf:_))) }";
 
     public static final String INDIRECT_RELATION_TYPE
             = SparqlPrefix.ONTO.getSparqlPrefix() + "\n"
