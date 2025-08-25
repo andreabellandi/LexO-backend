@@ -1,10 +1,6 @@
 package it.cnr.ilc.lexo;
 
-import it.cnr.ilc.lexo.service.data.vocabulary.PropertyHierarchy;
-import it.cnr.ilc.lexo.sparql.Namespace;
-import it.cnr.ilc.lexo.sparql.SparqlPrefix;
 import it.cnr.ilc.lexo.sparql.SparqlSelectData;
-import it.cnr.ilc.lexo.sparql.SparqlSelectLexinfoData;
 import it.cnr.ilc.lexo.sparql.SparqlVariable;
 import it.cnr.ilc.lexo.util.RDFQueryUtil;
 import java.io.File;
@@ -23,7 +19,6 @@ import org.apache.log4j.DailyRollingFileAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
-import org.eclipse.rdf4j.model.Literal;
 import org.eclipse.rdf4j.query.BindingSet;
 import org.eclipse.rdf4j.query.QueryEvaluationException;
 import org.eclipse.rdf4j.query.TupleQueryResult;

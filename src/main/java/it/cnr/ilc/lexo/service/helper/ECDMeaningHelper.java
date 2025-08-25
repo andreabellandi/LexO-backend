@@ -5,13 +5,8 @@
  */
 package it.cnr.ilc.lexo.service.helper;
 
-import it.cnr.ilc.lexo.service.data.lexicon.output.Morphology;
-import it.cnr.ilc.lexo.service.data.lexicon.output.ecd.ECDEntryMorphology;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ecd.ECDMeaning;
 import it.cnr.ilc.lexo.sparql.SparqlVariable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import org.eclipse.rdf4j.query.BindingSet;
 
 /**
@@ -30,7 +25,7 @@ public class ECDMeaningHelper extends TripleStoreDataHelper<ECDMeaning> {
         data.setDefinition(getStringValue(bs, SparqlVariable.SENSE_DEFINITION));
         data.setDictionaryEntry(getStringValue(bs, SparqlVariable.DICTIONARY_ENTRY));
         data.setLanguage((!getLiteralLanguage(bs, SparqlVariable.DICTIONARY_ENTRY_LABEL).isEmpty() ? getLiteralLanguage(bs, SparqlVariable.DICTIONARY_ENTRY_LABEL) : ""));
-        data.setLastUpdate(getStringValue(bs, SparqlVariable.NOTE));
+        data.setLastUpdate(getStringValue(bs, SparqlVariable.LAST_UPDATE));
         data.setSenseLabel(getStringValue(bs, SparqlVariable.DESCRIBE_LABEL));
         data.setLabel(getStringValue(bs, SparqlVariable.DICTIONARY_ENTRY_LABEL)
                 + (!getLiteralLanguage(bs, SparqlVariable.DICTIONARY_ENTRY_LABEL).isEmpty() ? "@" + getLiteralLanguage(bs, SparqlVariable.DICTIONARY_ENTRY_LABEL) : ""));
