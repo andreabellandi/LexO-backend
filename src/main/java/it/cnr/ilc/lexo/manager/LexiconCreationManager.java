@@ -345,6 +345,22 @@ public class LexiconCreationManager implements Manager, Cached {
                 .replace("POSITION", String.valueOf(position)));
         return setLexicographicComponent(component_id, created, author, position);
     }
+    
+    public void createFlatOrderedSenseList(String author, String prefix, String baseIRI, String leid, String lsid, int position) throws ManagerException {
+        Timestamp tm = new Timestamp(System.currentTimeMillis());
+        String component_id = baseIRI + (idInstancePrefix + tm.toString()).replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
+        String created = timestampFormat.format(tm);
+        String sparqlPrefix = (prefix != null) ? ("PREFIX " + prefix + ": <" + baseIRI + ">") : "";
+        RDFQueryUtil.update(SparqlInsertData.PUT_LEXICAL_SENSES_IN_FLAT_ORDERED_LIST
+                .replaceAll("_ID_COMPONENT_", component_id)
+                .replace("_AUTHOR_", author)
+                .replace("_CREATED_", created)
+                .replace("_PREFIX_", sparqlPrefix)
+                .replace("_MODIFIED_", created)
+                .replace("_ID_LEX_ENTRY_", leid)
+                .replace("_ID_LEX_SENSE_", lsid)
+                .replace("POSITION", String.valueOf(position)));
+    }
 
     public Collocation createCollocation(String leID, String author, String prefix, String baseIRI, String desiredID) throws ManagerException {
         Timestamp tm = new Timestamp(System.currentTimeMillis());

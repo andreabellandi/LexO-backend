@@ -58,6 +58,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Map;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -1412,6 +1413,12 @@ public class LexiconCreation extends Service {
                 }
                 if (!utilityManager.isLexicalEntry(lexicalEntryID)) {
                     return Response.status(Response.Status.CONFLICT).type(MediaType.TEXT_PLAIN).entity(lexicalEntryID + " is not a lexical entry").build();
+                }
+                // check if lexical entry has some senses. If yes, they have been put in an ordered list
+                int sensePosition = 1;
+                for (Map.Entry<String, String> entry : utilityManager.getLexicalSensesByLexicalEntry(lexicalEntryID).entrySet()) {
+                    lexiconManager.createFlatOrderedSenseList(entry.getValue(), prefix, baseIRI, lexicalEntryID, entry.getKey(), sensePosition);
+                    sensePosition = sensePosition + 1;
                 }
                 LexicographicComponent lc = lexiconManager.createLexicographicAssociation(author, prefix, baseIRI, dictionaryEntryID, lexicalEntryID, position);
                 log(Level.INFO, "Lexicographic association created (dictEntry=" + dictionaryEntryID + " lexEntry=" + lexicalEntryID + " in position " + position);

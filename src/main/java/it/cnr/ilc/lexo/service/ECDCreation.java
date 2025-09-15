@@ -24,6 +24,8 @@ import it.cnr.ilc.lexo.util.OntoLexEntity;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
+import java.util.Optional;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -206,5 +208,105 @@ public class ECDCreation extends Service {
         }
 
     }
+
+//    @POST
+//    @Path("ECDMeaning")
+//    @Produces(MediaType.APPLICATION_JSON)
+//    @Consumes(MediaType.APPLICATION_JSON)
+//    @RequestMapping(
+//            method = RequestMethod.POST,
+//            value = "ECDMeaning",
+//            produces = "application/json; charset=UTF-8")
+//    @ApiOperation(value = "ECD meaning creation",
+//            notes = "This method creates a new dictionary entry meaning and returns it")
+//    public Response ECDMeaning(
+//            @HeaderParam("Authorization") String key,
+//            @ApiParam(
+//                    name = "author",
+//                    value = "the account that is creating the dictionary entry meaning (if LexO user management disabled)",
+//                    example = "user7",
+//                    required = false)
+//            @QueryParam("author") String author,
+//            @ApiParam(
+//                    name = "desiredID",
+//                    value = "the ID name to assign to the created entity",
+//                    example = "idName",
+//                    required = false)
+//            @QueryParam("desiredID") String desiredID,
+//            @ApiParam(
+//                    name = "prefix",
+//                    value = "prefix of the namespace",
+//                    example = "myprefix",
+//                    required = true)
+//            @QueryParam("prefix") String prefix,
+//            @ApiParam(
+//                    name = "baseIRI",
+//                    value = "base IRI of the entity",
+//                    example = "http://mydata.com#",
+//                    required = true)
+//            @QueryParam("baseIRI") String baseIRI,
+//            @ApiParam(
+//                    name = "pos",
+//                    value = "the full IRI of the meaning part of speech",
+//                    required = true)
+//            @QueryParam("pos") String pos,
+//            @ApiParam(
+//                    name = "parentID",
+//                    value = "the full IRI of the parent of the meaning is being created (entry or meaning)",
+//                    required = true)
+//            @QueryParam("parentID") String parentID) {
+//        try {
+//            checkKey(key);
+//            log(Level.INFO, "create/ECDMeaning with pos " + pos + " and parent " + parentID);
+//            try {
+//                if (parentID == null || pos == null) {
+//                    log(Level.ERROR, "create/ECDMeaning: missing parameter");
+//                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("create/ECDMeaning: missing parameter").build();
+//                }
+//                UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+//                utilityManager.validateNamespace(prefix, baseIRI);
+//                if (utilityManager.isLexicalSense(parentID)) {
+//                    Optional<String> _pos = utilityManager.getLexicalSensePoS(parentID).keySet().stream().findFirst();
+//                    if (_pos.isPresent()) {
+//                        if (!_pos.get().equals(pos)) {
+//                            log(Level.ERROR, "create/ECDMeaning: " + parentID + " has not the required pos " + pos);
+//                            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("create/ECDMeaning: " + parentID + " has not the required pos " + pos).build();
+//                        } else {
+//                            // è ok fai qualcosa
+//                        }
+//                    }
+//                } else if (utilityManager.isDictionaryEntry(parentID)) {
+//                    for (Map.Entry<String, String> entry : utilityManager.getECDEntryPoS(parentID).entrySet()) {
+//                        System.out.println(entry.getKey() + "/" + entry.getValue());
+//                    }
+//                }
+//
+//                String dictID = utilityManager.getDictionaryIDByLanguage(ecdEntry.getLanguage());
+//                String lexiconID = utilityManager.getLexiconIDByLanguage(ecdEntry.getLanguage());
+//                if (dictID == null) {
+//                    log(Level.ERROR, "create/ECDEntry: dictionary language " + ecdEntry.getLanguage() + " does not exist");
+//                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("create/ECDEntry: dictionary language " + ecdEntry.getLanguage() + " does not exist").build();
+//                }
+//                if (lexiconID == null) {
+//                    log(Level.ERROR, "create/ECDEntry: lexicon language " + ecdEntry.getLanguage() + " does not exist");
+//                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("create/ECDEntry: lexicon language " + ecdEntry.getLanguage() + " does not exist").build();
+//                }
+//                DictionaryEntryCore dec = ecdManager.createDictionaryEntry(author, prefix, baseIRI, desiredID, ecdEntry, dictID, lexiconID);
+//                String json = ecdDictionaryEntryHelper.toJson(dec);
+//                return Response.ok(json)
+//                        .type(MediaType.APPLICATION_JSON)
+//                        .header("Access-Control-Allow-Headers", "content-type")
+//                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+//                        .build();
+//            } catch (ManagerException ex) {
+//                log(Level.ERROR, "create/bibliography: " + ex.getMessage());
+//                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+//            }
+//        } catch (AuthorizationException | ServiceException ex) {
+//            log(Level.ERROR, "create/bibliography: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+//            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
+//        }
+//
+//    }
 
 }

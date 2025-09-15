@@ -333,5 +333,24 @@ public class SparqlQueryUtil {
             + "    <_LE_ID_> ?list ?member\n"
             + "    FILTER(regex(str(?list), \"http://www.w3.org/1999/02/22-rdf-syntax-ns#_\"))\n"
             + "} ";
+    
+    public static final String GET_MEANING_LAST_LABEL_OF_ECD_ENTRY
+            = SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
+            + "SELECT ?" + SparqlVariable.DICTIONARY_ENTRY_POS + " ?" + SparqlVariable.LEXICAL_ENTRY + "\n"
+            + "WHERE {\n"
+            + "    <_ID_> lexicog:describes ?" + SparqlVariable.LEXICAL_ENTRY + " ; \n"
+            + "           "
+            + "    ?" + SparqlVariable.LEXICAL_ENTRY + " lexinfo:partOfSpeech <_POS_> . \n"
+            + "} ";
+    
+    public static final String GET_POS_OF_LEXICAL_SENSE
+            = SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
+            + "SELECT ?" + SparqlVariable.LEXICAL_ENTRY_POS + " ?" + SparqlVariable.LEXICAL_ENTRY + "\n"
+            + "WHERE {\n"
+            + "    <_ID_> ontolex:isSenseOf ?" + SparqlVariable.LEXICAL_ENTRY + " . \n"
+            + "    ?" + SparqlVariable.LEXICAL_ENTRY + " lexinfo:partOfSpeech ?" + SparqlVariable.LEXICAL_ENTRY_POS + " . \n"
+            + "} ";
 
 }
