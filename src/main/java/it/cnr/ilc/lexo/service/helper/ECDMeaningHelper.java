@@ -18,6 +18,7 @@ public class ECDMeaningHelper extends TripleStoreDataHelper<ECDMeaning> {
     @Override
     public void fillData(ECDMeaning data, BindingSet bs) {
         data.setNote(getStringValue(bs, SparqlVariable.NOTE));
+        data.setSense(getStringValue(bs, SparqlVariable.SENSE));
         data.setPos(getPosList(bs, getStringValue(bs, SparqlVariable.DICTIONARY_ENTRY_POS)));
         data.setConfidence(getDoubleNumber(bs, SparqlVariable.CONFIDENCE));
         data.setCreationDate(getStringValue(bs, SparqlVariable.CREATION_DATE));

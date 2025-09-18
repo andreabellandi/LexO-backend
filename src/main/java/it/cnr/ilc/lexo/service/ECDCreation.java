@@ -18,8 +18,12 @@ import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalFunction;
 import it.cnr.ilc.lexo.service.data.lexicon.input.ecd.ECDEntry;
 import it.cnr.ilc.lexo.service.data.lexicon.output.DictionaryEntryCore;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ecd.ECDLexicalFunction;
+import it.cnr.ilc.lexo.service.data.lexicon.output.ecd.ECDMeaning;
+import it.cnr.ilc.lexo.service.data.lexicon.output.ecd.ECDictionary;
 import it.cnr.ilc.lexo.service.helper.DictionaryEntryHelper;
 import it.cnr.ilc.lexo.service.helper.ECDLexicalFunctionHelper;
+import it.cnr.ilc.lexo.service.helper.ECDMeaningHelper;
+import it.cnr.ilc.lexo.service.helper.ECDictionaryHelper;
 import it.cnr.ilc.lexo.util.OntoLexEntity;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -27,6 +31,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Optional;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -49,9 +54,75 @@ public class ECDCreation extends Service {
 
     private final ECDCreationManager ecdManager = ManagerFactory.getManager(ECDCreationManager.class);
     private final ECDDataManager ecdDataManager = ManagerFactory.getManager(ECDDataManager.class);
+    private final ECDMeaningHelper ecdMeaningHelper = new ECDMeaningHelper();
     private final ECDLexicalFunctionHelper ecdLexicalFunctionHelper = new ECDLexicalFunctionHelper();
     private final DictionaryEntryHelper ecdDictionaryEntryHelper = new DictionaryEntryHelper();
+    private final ECDictionaryHelper ecdDictionary = new ECDictionaryHelper();
 
+    
+    @GET
+    @Path("ECDictionary")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "ECDictionary",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "Explanatory Combinatorial Dictionary creation",
+            notes = "This method creates a new EC Dictionary according to Melchuck theory")
+    public Response ECDictionary(
+            @HeaderParam("Authorization") String key,
+            @ApiParam(
+                    name = "lang",
+                    value = "language code (2 or 3 digits)",
+                    example = "en",
+                    required = true)
+            @QueryParam("lang") String lang,
+            @ApiParam(
+                    name = "desiredID",
+                    value = "the ID name to assign to the created entity",
+                    example = "idName",
+                    required = false)
+            @QueryParam("desiredID") String desiredID,
+            @ApiParam(
+                    name = "author",
+                    value = "the account that is creating the dictionary (if LexO user management disabled)",
+                    example = "user7",
+                    required = false)
+            @QueryParam("author") String author,
+            @ApiParam(
+                    name = "prefix",
+                    value = "prefix of the namespace",
+                    example = "myprefix",
+                    required = true)
+            @QueryParam("prefix") String prefix,
+            @ApiParam(
+                    name = "baseIRI",
+                    value = "base IRI of the entity",
+                    example = "http://mydata.com#",
+                    required = true)
+            @QueryParam("baseIRI") String baseIRI) {
+        try {
+            checkKey(key);
+            log(Level.INFO, "create/ECDictionary: lang=" + lang);
+            UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+            utilityManager.validateNamespace(prefix, baseIRI);
+            ECDictionary d = ecdManager.createECDictionary(author, prefix, baseIRI, desiredID, lang);
+            String json = ecdDictionary.toJson(d);
+            log(Level.INFO, "Explanatory Combinatorial Dictionary for language " + lang + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
+            return Response.ok(json)
+                    .type(MediaType.APPLICATION_JSON)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
+        } catch (ManagerException ex) {
+            log(Level.ERROR, "create/ECDictionary: " + ex.getMessage());
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        } catch (AuthorizationException | ServiceException ex) {
+            log(Level.ERROR, "create/ECDictionary: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
+        }
+    }
+    
     @POST
     @Path("lexicalFunction")
     @Produces(MediaType.APPLICATION_JSON)
@@ -209,104 +280,90 @@ public class ECDCreation extends Service {
 
     }
 
-//    @POST
-//    @Path("ECDMeaning")
-//    @Produces(MediaType.APPLICATION_JSON)
-//    @Consumes(MediaType.APPLICATION_JSON)
-//    @RequestMapping(
-//            method = RequestMethod.POST,
-//            value = "ECDMeaning",
-//            produces = "application/json; charset=UTF-8")
-//    @ApiOperation(value = "ECD meaning creation",
-//            notes = "This method creates a new dictionary entry meaning and returns it")
-//    public Response ECDMeaning(
-//            @HeaderParam("Authorization") String key,
-//            @ApiParam(
-//                    name = "author",
-//                    value = "the account that is creating the dictionary entry meaning (if LexO user management disabled)",
-//                    example = "user7",
-//                    required = false)
-//            @QueryParam("author") String author,
-//            @ApiParam(
-//                    name = "desiredID",
-//                    value = "the ID name to assign to the created entity",
-//                    example = "idName",
-//                    required = false)
-//            @QueryParam("desiredID") String desiredID,
-//            @ApiParam(
-//                    name = "prefix",
-//                    value = "prefix of the namespace",
-//                    example = "myprefix",
-//                    required = true)
-//            @QueryParam("prefix") String prefix,
-//            @ApiParam(
-//                    name = "baseIRI",
-//                    value = "base IRI of the entity",
-//                    example = "http://mydata.com#",
-//                    required = true)
-//            @QueryParam("baseIRI") String baseIRI,
-//            @ApiParam(
-//                    name = "pos",
-//                    value = "the full IRI of the meaning part of speech",
-//                    required = true)
-//            @QueryParam("pos") String pos,
-//            @ApiParam(
-//                    name = "parentID",
-//                    value = "the full IRI of the parent of the meaning is being created (entry or meaning)",
-//                    required = true)
-//            @QueryParam("parentID") String parentID) {
-//        try {
-//            checkKey(key);
-//            log(Level.INFO, "create/ECDMeaning with pos " + pos + " and parent " + parentID);
-//            try {
-//                if (parentID == null || pos == null) {
-//                    log(Level.ERROR, "create/ECDMeaning: missing parameter");
-//                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("create/ECDMeaning: missing parameter").build();
-//                }
-//                UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
-//                utilityManager.validateNamespace(prefix, baseIRI);
-//                if (utilityManager.isLexicalSense(parentID)) {
-//                    Optional<String> _pos = utilityManager.getLexicalSensePoS(parentID).keySet().stream().findFirst();
-//                    if (_pos.isPresent()) {
-//                        if (!_pos.get().equals(pos)) {
-//                            log(Level.ERROR, "create/ECDMeaning: " + parentID + " has not the required pos " + pos);
-//                            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("create/ECDMeaning: " + parentID + " has not the required pos " + pos).build();
-//                        } else {
-//                            // è ok fai qualcosa
-//                        }
-//                    }
-//                } else if (utilityManager.isDictionaryEntry(parentID)) {
-//                    for (Map.Entry<String, String> entry : utilityManager.getECDEntryPoS(parentID).entrySet()) {
-//                        System.out.println(entry.getKey() + "/" + entry.getValue());
-//                    }
-//                }
-//
-//                String dictID = utilityManager.getDictionaryIDByLanguage(ecdEntry.getLanguage());
-//                String lexiconID = utilityManager.getLexiconIDByLanguage(ecdEntry.getLanguage());
-//                if (dictID == null) {
-//                    log(Level.ERROR, "create/ECDEntry: dictionary language " + ecdEntry.getLanguage() + " does not exist");
-//                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("create/ECDEntry: dictionary language " + ecdEntry.getLanguage() + " does not exist").build();
-//                }
-//                if (lexiconID == null) {
-//                    log(Level.ERROR, "create/ECDEntry: lexicon language " + ecdEntry.getLanguage() + " does not exist");
-//                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("create/ECDEntry: lexicon language " + ecdEntry.getLanguage() + " does not exist").build();
-//                }
-//                DictionaryEntryCore dec = ecdManager.createDictionaryEntry(author, prefix, baseIRI, desiredID, ecdEntry, dictID, lexiconID);
-//                String json = ecdDictionaryEntryHelper.toJson(dec);
-//                return Response.ok(json)
-//                        .type(MediaType.APPLICATION_JSON)
-//                        .header("Access-Control-Allow-Headers", "content-type")
-//                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-//                        .build();
-//            } catch (ManagerException ex) {
-//                log(Level.ERROR, "create/bibliography: " + ex.getMessage());
-//                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
-//            }
-//        } catch (AuthorizationException | ServiceException ex) {
-//            log(Level.ERROR, "create/bibliography: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
-//            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
-//        }
-//
-//    }
+    @GET
+    @Path("ECDMeaning")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.POST,
+            value = "ECDMeaning",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "ECD meaning creation",
+            notes = "This method creates a new dictionary entry meaning and returns it")
+    public Response ECDMeaning(
+            @HeaderParam("Authorization") String key,
+            @ApiParam(
+                    name = "author",
+                    value = "the account that is creating the dictionary entry meaning (if LexO user management disabled)",
+                    example = "user7",
+                    required = false)
+            @QueryParam("author") String author,
+            @ApiParam(
+                    name = "desiredID",
+                    value = "the ID name to assign to the created entity",
+                    example = "idName",
+                    required = false)
+            @QueryParam("desiredID") String desiredID,
+            @ApiParam(
+                    name = "prefix",
+                    value = "prefix of the namespace",
+                    example = "myprefix",
+                    required = true)
+            @QueryParam("prefix") String prefix,
+            @ApiParam(
+                    name = "baseIRI",
+                    value = "base IRI of the entity",
+                    example = "http://mydata.com#",
+                    required = true)
+            @QueryParam("baseIRI") String baseIRI,
+            @ApiParam(
+                    name = "pos",
+                    value = "the full IRI of the meaning part of speech",
+                    required = true)
+            @QueryParam("pos") String pos,
+            @ApiParam(
+                    name = "DictEntryID",
+                    value = "the full IRI of the dictionary entry",
+                    required = true)
+            @QueryParam("DictEntryID") String DictEntryID) {
+        try {
+            checkKey(key);
+            log(Level.INFO, "create/ECDMeaning with pos " + pos + " and dictionary entry " + DictEntryID);
+            String json = "";
+            try {
+                if (DictEntryID == null || pos == null) {
+                    log(Level.ERROR, "create/ECDMeaning: missing parameter");
+                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("create/ECDMeaning: missing parameter").build();
+                }
+                UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+                utilityManager.validateNamespace(prefix, baseIRI);
+
+                if (utilityManager.isDictionaryEntry(DictEntryID)) {
+                    Map<String, Integer> meanings = utilityManager.getECDMeaningsCountOfEntity(DictEntryID, pos);
+                    if (meanings != null) {
+                        for (Map.Entry<String, Integer> entry : meanings.entrySet()) {
+                            ECDMeaning meaning = ecdManager.createMeaning(author, prefix, baseIRI, desiredID, entry.getKey(), DictEntryID, entry.getValue() + 1, pos);
+                            json = ecdMeaningHelper.toJson(meaning);
+                        }
+                    } else {
+                        log(Level.ERROR, "create/ECDMeaning: " + DictEntryID + " has not the required pos " + pos);
+                        return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("create/ECDMeaning: " + DictEntryID + " has not the required pos " + pos).build();
+                    }
+                }
+                return Response.ok(json)
+                        .type(MediaType.APPLICATION_JSON)
+                        .header("Access-Control-Allow-Headers", "content-type")
+                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                        .build();
+            } catch (ManagerException ex) {
+                log(Level.ERROR, "create/ECDMeaning: " + ex.getMessage());
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            }
+        } catch (AuthorizationException | ServiceException ex) {
+            log(Level.ERROR, "create/ECDMeaning: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
+        }
+
+    }
 
 }

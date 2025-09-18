@@ -9,9 +9,12 @@ import it.cnr.ilc.lexo.LexOProperties;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalFunction;
 import it.cnr.ilc.lexo.service.data.lexicon.input.ecd.ECDEntry;
 import it.cnr.ilc.lexo.service.data.lexicon.output.DictionaryEntryCore;
+import it.cnr.ilc.lexo.service.data.lexicon.output.ecd.ECDMeaning;
+import it.cnr.ilc.lexo.service.data.lexicon.output.ecd.ECDictionary;
 import it.cnr.ilc.lexo.sparql.SparqlInsertData;
 import it.cnr.ilc.lexo.sparql.SparqlPrefix;
 import it.cnr.ilc.lexo.util.RDFQueryUtil;
+import it.cnr.ilc.lexo.util.StringUtil;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -30,6 +33,38 @@ public class ECDCreationManager implements Manager, Cached {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    public ECDictionary createECDictionary(String author, String prefix, String baseIRI, String desiredID, String lang) throws ManagerException {
+        Timestamp tm = new Timestamp(System.currentTimeMillis());
+        String id = (desiredID != null ? (!desiredID.isEmpty() ? (Manager.IDAlreadyExists(baseIRI + desiredID) ? null : desiredID) : idInstancePrefix + tm.toString()) : idInstancePrefix + tm.toString());
+        if (id == null) {
+            throw new ManagerException("ID " + desiredID + " already exists");
+        }
+        String created = timestampFormat.format(tm);
+        String sparqlPrefix = "PREFIX " + prefix + ": <" + baseIRI + ">";
+        String idLabel = id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
+        String _id = baseIRI + idLabel;
+        RDFQueryUtil.update(SparqlInsertData.CREATE_EC_DICTIONARY.replace("_ID_LEX_", _id + "_lex")
+                .replace("_ID_ECD_", _id)
+                .replace("_PREFIX_", sparqlPrefix)
+                .replaceAll("_LANG_", lang)
+                .replaceAll("_AUTHOR_", created)
+                .replaceAll("_MODIFIED_", idLabel)
+                .replaceAll("_CREATED_", idLabel));
+        return setECDictionary(_id, created, author, lang);
+    }
+
+    private ECDictionary setECDictionary(String id, String created, String author, String lang) {
+        ECDictionary d = new ECDictionary();
+        d.setCreator(author);
+        d.setConfidence(-1);
+        d.setLanguage(id);
+        d.setLabel(lang);
+        d.setLastUpdate(created);
+        d.setCreationDate(created);
+        d.setEntries(0);
+        return d;
+    }
+    
     public DictionaryEntryCore createDictionaryEntry(String author, String prefix, String baseIRI, String desiredID, ECDEntry ecdEntry, String dictID, String lexiconID) throws ManagerException {
         Timestamp tm = new Timestamp(System.currentTimeMillis());
         String id = (desiredID != null ? (!desiredID.isEmpty() ? (Manager.IDAlreadyExists(baseIRI + desiredID) ? null : desiredID) : idInstancePrefix + tm.toString()) : idInstancePrefix + tm.toString());
@@ -43,7 +78,7 @@ public class ECDCreationManager implements Manager, Cached {
         String lexicalEntryQuery = "";
         ArrayList<String> leids = new ArrayList();
         for (String pos : ecdEntry.getPos()) {
-            Timestamp _tm = new Timestamp((new Timestamp(System.currentTimeMillis())).getTime() + (long)(Math.random() * 5));
+            Timestamp _tm = new Timestamp((new Timestamp(System.currentTimeMillis())).getTime() + (long) (Math.random() * 5));
             String leid = baseIRI + idInstancePrefix + _tm.toString().replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
             leids.add(leid);
             lexicalEntryQuery = lexicalEntryQuery + SparqlInsertData.CREATE_LEXICAL_ENTRY_FOR_ECD_ENTRY.replace("[ID]", leid)
@@ -122,4 +157,37 @@ public class ECDCreationManager implements Manager, Cached {
         return _id;
     }
 
+    public ECDMeaning createMeaning(String author, String prefix, String baseIRI, String desiredID, String le, String de, int position, String pos) throws ManagerException {
+        Timestamp tm = new Timestamp(System.currentTimeMillis());
+        String id = (desiredID != null ? (!desiredID.isEmpty() ? (Manager.IDAlreadyExists(baseIRI + desiredID) ? null : desiredID) : idInstancePrefix + tm.toString()) : idInstancePrefix + tm.toString());
+        if (id == null) {
+            throw new ManagerException("ID " + desiredID + " already exists");
+        }
+        String created = timestampFormat.format(tm);
+        String sparqlPrefix = "PREFIX " + prefix + ": <" + baseIRI + ">";
+        String idLabel = id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
+        String _id = baseIRI + idLabel;
+        RDFQueryUtil.update(SparqlInsertData.CREATE_ECD_MEANING
+                .replaceAll("_PREFIX_", sparqlPrefix)
+                .replaceAll("_LE_ID_", le)
+                .replaceAll("_SENSE_ID_", _id)
+                .replaceAll("[AUTHOR]", author)
+                .replaceAll("[CREATED]", created)
+                .replaceAll("[MODIFIED]", created)
+                .replaceAll("_NEW_COMP_ID_", _id + "_comp")
+                .replaceAll("_SENSE_LABEL_", StringUtil.getRomanNumber(position))
+                .replaceAll("_DE_ID_", de)
+                .replaceAll("[POSITION]", Integer.toString(position)));
+        return setMeaning(_id, created, author);
+    }
+
+    private ECDMeaning setMeaning(String id, String created, String author) {
+        ECDMeaning mean = new ECDMeaning();
+        mean.setCreator(author);
+        mean.setConfidence(-1);
+        mean.setLastUpdate(created);
+        mean.setCreationDate(created);
+        mean.setSense(id);
+        return mean;
+    }
 }

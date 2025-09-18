@@ -56,11 +56,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
  *
  * @author andreabellandi
  */
-@Path("ecd/delete")
+@Path("ecd/update")
 @Api("Explanatory Combinatorial Dictionary")
-public class ECDDeletion extends Service {
+public class ECDUpdate extends Service {
 
-    private static final Logger logger = LoggerFactory.getLogger(ECDDeletion.class);
+    private static final Logger logger = LoggerFactory.getLogger(ECDUpdate.class);
 
     private final ECDDeletionManager ecdManager = ManagerFactory.getManager(ECDDeletionManager.class);
 
@@ -72,36 +72,5 @@ public class ECDDeletion extends Service {
         }
     }
 
-    @GET
-    @Path("lexicalFunction")
-    @Produces(MediaType.APPLICATION_JSON)
-    @RequestMapping(
-            method = RequestMethod.GET,
-            value = "lexicalFunction",
-            produces = "application/json; charset=UTF-8")
-    @ApiOperation(value = "Lexical function deletion",
-            notes = "This method deletes a lexical function relation")
-    public Response lexicalFunction(
-            @HeaderParam("Authorization") String key,
-            @ApiParam(
-                    name = "id",
-                    value = "lexical function ID",
-                    required = true)
-            @QueryParam("id") String id) {
-        try {
-            checkKey(key);
-            String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
-            log(Level.INFO, "ecd/delete/lexicalFunction <" + _id + ">");
-            return Response.ok(ecdManager.deleteRelation(_id))
-                    .type(MediaType.TEXT_PLAIN).header("Access-Control-Allow-Headers", "content-type")
-                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-                    .build();
-        } catch (UnsupportedEncodingException | ManagerException ex) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
-        } catch (AuthorizationException | ServiceException ex) {
-            log(Level.ERROR, "ecd/delete/lexicalFunction: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
-            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
-        }
-    }
-
+    
 }

@@ -23,6 +23,7 @@ public class ECDMeaning extends Entity implements Data {
     private String language;
     private String dictionaryEntry;
     private String definition;
+    private String sense;
 
     public ECDMeaning() {
     }
@@ -33,6 +34,14 @@ public class ECDMeaning extends Entity implements Data {
 
     public void setDefinition(String definition) {
         this.definition = definition;
+    }
+
+    public String getSense() {
+        return sense;
+    }
+
+    public void setSense(String sense) {
+        this.sense = sense;
     }
 
     

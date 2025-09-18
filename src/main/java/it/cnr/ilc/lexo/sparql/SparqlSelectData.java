@@ -2531,7 +2531,7 @@ public class SparqlSelectData {
             + SparqlPrefix.INST.getSparqlPrefix() + "\n"
             + "SELECT ?" + SparqlVariable.DICTIONARY_ENTRY + " ?" + SparqlVariable.DICTIONARY_ENTRY_LABEL
             + " ?" + SparqlVariable.SENSE_DEFINITION + " ?" + SparqlVariable.DESCRIBE_LABEL + "\n"
-            + " ?" + SparqlVariable.CREATOR + " ?" + SparqlVariable.NOTE
+            + " ?" + SparqlVariable.CREATOR + " ?" + SparqlVariable.NOTE + " ?" + SparqlVariable.SENSE
             + " ?" + SparqlVariable.CREATION_DATE + " ?" + SparqlVariable.LAST_UPDATE + " ?confidence \n"
             + "(GROUP_CONCAT(str(?_" + SparqlVariable.DICTIONARY_ENTRY_POS + ");SEPARATOR=\";\") AS ?" + SparqlVariable.DICTIONARY_ENTRY_POS + ")\n"
             + "WHERE {\n"

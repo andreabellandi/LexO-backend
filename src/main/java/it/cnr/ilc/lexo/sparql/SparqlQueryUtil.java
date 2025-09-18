@@ -84,7 +84,7 @@ public class SparqlQueryUtil {
             = SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
             + "ASK { \n"
             + "<_ID_> a " + SparqlPrefix.LEXICOG.getPrefix() + "Entry . \n"
-//            + " " + SparqlPrefix.LEXICOG.getPrefix() + "describes|" + SparqlPrefix.RDF.getPrefix() + "_1 ?x "
+            //            + " " + SparqlPrefix.LEXICOG.getPrefix() + "describes|" + SparqlPrefix.RDF.getPrefix() + "_1 ?x "
             + "}";
 
     public static final String LEXICALENTRY_TYPE
@@ -231,7 +231,7 @@ public class SparqlQueryUtil {
             + "SELECT ?" + SparqlVariable.LEXICON + " \n"
             + "WHERE { ?" + SparqlVariable.LEXICON + " a lime:Lexicon ;\n"
             + SparqlPrefix.LIME.getPrefix() + "language \"_LANG_\" . }";
-    
+
     public static final String DICITONARY_BY_LANGUAGE
             = SparqlPrefix.LIME.getSparqlPrefix() + "\n"
             + SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
@@ -274,10 +274,10 @@ public class SparqlQueryUtil {
 
     public static final String LEXICOGRAPHIC_COMPONENT_LEAF
             = "ASK { <_ID_> ?propName ?x . FILTER (strstarts(str(?propName), str(rdf:_))) }";
-    
+
     public static final String IS_LEXICAL_ENTRY_JUST_ASSOCIATED_TO_DICT_ENTRY
-            = SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n" + 
-            "ASK { <_DEID_> ?propName ?comp . ?comp lexicog:describes <_LEID_> . FILTER (strstarts(str(?propName), str(rdf:_))) }";
+            = SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
+            + "ASK { <_DEID_> ?propName ?comp . ?comp lexicog:describes <_LEID_> . FILTER (strstarts(str(?propName), str(rdf:_))) }";
 
     public static final String INDIRECT_RELATION_TYPE
             = SparqlPrefix.ONTO.getSparqlPrefix() + "\n"
@@ -333,7 +333,7 @@ public class SparqlQueryUtil {
             + "    <_LE_ID_> ?list ?member\n"
             + "    FILTER(regex(str(?list), \"http://www.w3.org/1999/02/22-rdf-syntax-ns#_\"))\n"
             + "} ";
-    
+
     public static final String GET_MEANING_LAST_LABEL_OF_ECD_ENTRY
             = SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
             + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
@@ -343,7 +343,7 @@ public class SparqlQueryUtil {
             + "           "
             + "    ?" + SparqlVariable.LEXICAL_ENTRY + " lexinfo:partOfSpeech <_POS_> . \n"
             + "} ";
-    
+
     public static final String GET_POS_OF_LEXICAL_SENSE
             = SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
             + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
@@ -352,5 +352,22 @@ public class SparqlQueryUtil {
             + "    <_ID_> ontolex:isSenseOf ?" + SparqlVariable.LEXICAL_ENTRY + " . \n"
             + "    ?" + SparqlVariable.LEXICAL_ENTRY + " lexinfo:partOfSpeech ?" + SparqlVariable.LEXICAL_ENTRY_POS + " . \n"
             + "} ";
+
+    public static final String GET_ECD_MEANINGS_COUNT_OF_DICTIONARY_ENTRY
+            = SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDF.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
+            + "SELECT ?" + SparqlVariable.LEXICAL_ENTRY + "\n"
+            + "(count(?comp) as ?" + SparqlVariable.LABEL_COUNT + ") \n"
+            + "WHERE {\n"
+            + "  <_ID_DE_> a lexicog:Entry ;\n"
+            + "      lexicog:describes ?" + SparqlVariable.LEXICAL_ENTRY + " .\n"
+            + "    ?" + SparqlVariable.LEXICAL_ENTRY + " lexinfo:partOfSpeech <_POS_> .\n"
+            + "    OPTIONAL { <_ID_DE_> ?rdf_n ?comp .\n"
+            + "               ?comp rdfs:label ?label . \n"
+            + "        FILTER(regex(str(?rdf_n), \"_\"))\n"
+            + "    }\n"
+            + "} GROUP BY ?" + SparqlVariable.LEXICAL_ENTRY;
 
 }

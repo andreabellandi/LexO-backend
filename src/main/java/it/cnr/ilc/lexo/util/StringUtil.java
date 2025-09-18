@@ -87,7 +87,7 @@ public class StringUtil {
         }
         return true;
     }
-    
+
     public static boolean existsTypedIRI(String id, String type) throws ManagerException {
         UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
         if (!utilityManager.existsTyped(id, type)) {
@@ -95,7 +95,7 @@ public class StringUtil {
         }
         return true;
     }
-    
+
     public static void validateIRI(String iri) throws ManagerException {
         if (iri != null) {
             if (iri.isEmpty()) {
@@ -103,11 +103,38 @@ public class StringUtil {
             } else {
                 if (!ManagerFactory.getManager(UtilityManager.class).existsNamespace(iri)) {
                     throw new ManagerException("is not a valid IRI");
-                } 
+                }
             }
         } else {
             throw new ManagerException("cannot be undefined");
         }
     }
-    
+
+    public static String getRomanNumber(int n) {
+        switch (n) {
+            case 1:
+                return "I";
+            case 2:
+                return "II";
+            case 3:
+                return "III";
+            case 4:
+                return "IV";
+            case 5:
+                return "V";
+            case 6:
+                return "VI";
+            case 7:
+                return "VII";
+            case 8:
+                return "VIII";
+            case 9:
+                return "IX";
+            case 10:
+                return "X";
+            default:
+                return null;
+        }
+    }
+
 }

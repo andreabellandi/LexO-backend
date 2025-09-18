@@ -111,27 +111,18 @@ public final class UtilityManager implements Manager, Cached {
         return null;
     }
 
-    public Map<String, String> getECDMeaningLastLabel(String id) throws QueryEvaluationException {
-        return null;
+    public Map<String, Integer> getECDMeaningsCountOfEntity(String idDe, String pos) throws QueryEvaluationException {
+        Map<String, Integer> meaningsCount = new HashMap();
+        String query = SparqlQueryUtil.GET_ECD_MEANINGS_COUNT_OF_DICTIONARY_ENTRY.replaceAll("_ID_DE_", idDe).replaceAll("_POS_", pos);
+        try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {
+            while (result.hasNext()) {
+                BindingSet bs = result.next();
+                meaningsCount.put((bs.getBinding(SparqlVariable.LEXICAL_ENTRY) != null) ? bs.getBinding(SparqlVariable.LEXICAL_ENTRY).getValue().stringValue() : "", 
+                        (bs.getBinding(SparqlVariable.LABEL_COUNT) != null) ? Integer.parseInt(bs.getBinding(SparqlVariable.LABEL_COUNT).getValue().stringValue()) : 0);            }
+        } catch (QueryEvaluationException qee) {
+        }
+        return meaningsCount.size() > 0 ? meaningsCount : null;
     }
-    
-    
-//    public Map<String, String> getECDEntryPoS(String id) throws QueryEvaluationException {
-//        String query = SparqlQueryUtil.GET_POS_OF_ECD_ENTRY.replaceAll("_ID_", id);
-//        Map<String, String> lepos = new HashMap();
-//        try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {
-//            while (result.hasNext()) {
-//                BindingSet bs = result.next();
-//                lepos.put((bs.getBinding(SparqlVariable.LEXICAL_ENTRY) != null) ? bs.getBinding(SparqlVariable.LEXICAL_ENTRY).getValue().stringValue()
-//                        : "",
-//                        (bs.getBinding(SparqlVariable.DICTIONARY_ENTRY_POS) != null) ? bs.getBinding(SparqlVariable.DICTIONARY_ENTRY_POS).getValue().stringValue()
-//                        : "");
-//            }
-//        } catch (QueryEvaluationException qee) {
-//        }
-//        return lepos;
-//
-//    }
 
     public Map<String, String> getLexicalSensePoS(String id) throws QueryEvaluationException {
         String query = SparqlQueryUtil.GET_POS_OF_LEXICAL_SENSE.replaceAll("_ID_", id);
