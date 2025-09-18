@@ -466,5 +466,25 @@ public class SparqlInsertData {
             + "        dct:created \"_CREATED_\" ;\n"
             + "        dct:modified \"_MODIFIED_\" . \n"
             + "}";
+    
+    public static final String CREATE_LEXICAL_ENTRY_POS_FOR_ECD_ENTRY
+            = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.VS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LIME.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
+            + "INSERT DATA {\n"
+            + "    <_ID_> a <_LE_TYPE_> ;\n"
+            + "                   rdfs:label \"[LABEL]\"@_LANG_ ;\n"
+            + "                   dct:creator \"[AUTHOR]\" ;\n"
+            + "                   vs:term_status \"working\" ;\n"
+            + "                   dct:created \"[CREATED]\" ;\n"
+            + "                   lexinfo:partOfSpeech <_POS_> ;\n"
+            + "                   dct:modified \"[MODIFIED]\" . \n"
+            + "    <_ID_LEXICON_> lime:entry <_ID_> .\n"
+            + "    <_ID_DE_> lexicog:describes <_ID_> .\n"
+            + "}";
 
 }

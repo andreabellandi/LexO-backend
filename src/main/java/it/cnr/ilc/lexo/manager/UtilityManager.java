@@ -5,6 +5,7 @@
  */
 package it.cnr.ilc.lexo.manager;
 
+import it.cnr.ilc.lexo.service.data.output.Entity;
 import it.cnr.ilc.lexo.sparql.SparqlIndex;
 import it.cnr.ilc.lexo.sparql.SparqlQueryUtil;
 import it.cnr.ilc.lexo.sparql.SparqlVariable;
@@ -98,6 +99,18 @@ public final class UtilityManager implements Manager, Cached {
         }
         return null;
     }
+    
+    public String getLexiconIDByLexicalEntry(String le) throws QueryEvaluationException {
+        String query = SparqlQueryUtil.LEXICON_BY_LEXICAL_ENTRY.replaceAll("_ID_LE_", le);
+        try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {
+            while (result.hasNext()) {
+                BindingSet bs = result.next();
+                return (bs.getBinding(SparqlVariable.LEXICON) != null) ? bs.getBinding(SparqlVariable.LEXICON).getValue().stringValue() : null;
+            }
+        } catch (QueryEvaluationException qee) {
+        }
+        return null;
+    }
 
     public String getDictionaryIDByLanguage(String lang) throws QueryEvaluationException {
         String query = SparqlQueryUtil.DICITONARY_BY_LANGUAGE.replaceAll("_LANG_", lang);
@@ -175,6 +188,21 @@ public final class UtilityManager implements Manager, Cached {
         }
         return null;
     }
+    
+    public Entity getMetadata(String id) throws QueryEvaluationException {
+        String query = SparqlQueryUtil.LEXICAL_ENTITY_METADATA.replaceAll("_ID_", id);
+        Entity e = new Entity();
+        try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {
+            while (result.hasNext()) {
+                BindingSet bs = result.next(); 
+                e.setCreationDate((bs.getBinding(SparqlVariable.CREATION_DATE) != null) ? bs.getBinding(SparqlVariable.CREATION_DATE).getValue().stringValue() : null);
+                e.setCreator((bs.getBinding(SparqlVariable.CREATOR) != null) ? bs.getBinding(SparqlVariable.CREATOR).getValue().stringValue() : null);
+                e.setLastUpdate((bs.getBinding(SparqlVariable.LAST_UPDATE) != null) ? bs.getBinding(SparqlVariable.LAST_UPDATE).getValue().stringValue() : null);
+            }
+        } catch (QueryEvaluationException qee) {
+        }
+        return e;
+    }
 
     public String getLexicalEntryByForm(String id) throws QueryEvaluationException {
         String query = SparqlQueryUtil.LEXICAL_ENTRY_BY_FORM.replaceAll("_ID_", id);
@@ -188,10 +216,22 @@ public final class UtilityManager implements Manager, Cached {
         }
         return null;
     }
+    
+    public String getLexicalEntryByECDPoS(String id, String pos) throws QueryEvaluationException {
+        String query = SparqlQueryUtil.LEXICAL_ENTRY_BY_ECD_POS.replaceAll("_ID_DE_", id).replaceAll("_POS_", pos);
+        try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {
+            while (result.hasNext()) {
+                BindingSet bs = result.next();
+                return (bs.getBinding(SparqlVariable.LEXICAL_ENTRY) != null)
+                        ? (bs.getBinding(SparqlVariable.LEXICAL_ENTRY).getValue().toString()) : null;
+            }
+        } catch (QueryEvaluationException qee) {
+        }
+        return null;
+    }
 
     public String getLexicalEntryType(String id) throws QueryEvaluationException {
-        String query = SparqlQueryUtil.LEXICALENTRY_TYPE.replaceAll("_ID_", id);
-        ArrayList<String> types = new ArrayList();
+        String query = SparqlQueryUtil.LEXICAL_ENTRY_TYPE.replaceAll("_ID_", id);
         try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {
             while (result.hasNext()) {
                 BindingSet bs = result.next();

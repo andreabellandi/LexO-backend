@@ -47,6 +47,25 @@ public class SparqlUpdateData {
             + "                  dct:modified _LAST_UPDATE_ . }\n"
             + "WHERE {  OPTIONAL { <_ID_> dct:modified ?modified .} \n"
             + "         OPTIONAL { <_ID_> <_RELATION_> _VALUE_TO_DELETE_ . } }";
+    
+    public static final String UPDATE_ECD_ENTRY
+            = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+            + "DELETE { <_ID_> <_RELATION_> _VALUE_TO_DELETE_ ;\n "
+            + "                  dct:modified ?modified . } \n"
+            + "INSERT { <_ID_> <_RELATION_> _VALUE_TO_INSERT_ ;\n"
+            + "                  dct:modified _LAST_UPDATE_ . }\n"
+            + "WHERE {  OPTIONAL { <_ID_> dct:modified ?modified .} \n"
+            + "         OPTIONAL { <_ID_> <_RELATION_> _VALUE_TO_DELETE_ . } }";
+    
+    public static final String UPDATE_ECD_ENTRY_POS
+            = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
+            + "DELETE { <_ID_LE_> lexinfo:partOfSpeech <_VALUE_TO_DELETE_> ;\n "
+            + "                  dct:modified ?modified . } \n"
+            + "INSERT { <_ID_LE_> lexinfo:partOfSpeech <_VALUE_TO_INSERT_> ;\n"
+            + "                  dct:modified _LAST_UPDATE_ . }\n"
+            + "WHERE {  OPTIONAL { <_ID_LE_> dct:modified ?modified .} \n"
+            + "         OPTIONAL { <_ID_LE_> lexinfo:partOfSpeech <_VALUE_TO_DELETE_> . } }";
 
     public static final String UPDATE_LEXICAL_ENTRY_BACKWARDING_STATUS
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
@@ -99,6 +118,7 @@ public class SparqlUpdateData {
             + "WHERE { <_ID_> " + SparqlPrefix.RDFS.getPrefix() + "label ?" + SparqlVariable.LABEL + " ;\n"
             + "             " + SparqlPrefix.DCT.getPrefix() + "modified ?modified . } \n";
 
+    // TODO: update the related lexical entry too !!!
     public static final String UPDATE_DICTIONARY_ENTRY_LANGUAGE
             = SparqlPrefix.LIME.getSparqlPrefix() + "\n"
             + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"

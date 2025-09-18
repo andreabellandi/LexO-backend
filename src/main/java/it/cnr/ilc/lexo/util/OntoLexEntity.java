@@ -383,6 +383,7 @@ public class OntoLexEntity {
         Note(SparqlPrefix.SKOS.getUri() + "note"),
         Language(SparqlPrefix.LEXICOG.getUri() + "entry"),
         Status(SparqlPrefix.VS.getUri() + "term_status"),
+        PoS(SparqlPrefix.LEXINFO.getUri() + "partOfSpeech"),
         Confidence(SparqlPrefix.LEXINFO.getUri() + "confidence");
 
         private final String dictionaryEntryAttributes;

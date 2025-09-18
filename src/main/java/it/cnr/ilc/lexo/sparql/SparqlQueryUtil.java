@@ -87,7 +87,7 @@ public class SparqlQueryUtil {
             //            + " " + SparqlPrefix.LEXICOG.getPrefix() + "describes|" + SparqlPrefix.RDF.getPrefix() + "_1 ?x "
             + "}";
 
-    public static final String LEXICALENTRY_TYPE
+    public static final String LEXICAL_ENTRY_TYPE
             = SparqlPrefix.SESAME.getSparqlPrefix() + "\n"
             + "SELECT ?" + SparqlVariable.LEXICAL_ENTRY_TYPE + "\n"
             + "WHERE { <_ID_> rdf:type ?" + SparqlVariable.LEXICAL_ENTRY_TYPE + " .\n"
@@ -231,6 +231,12 @@ public class SparqlQueryUtil {
             + "SELECT ?" + SparqlVariable.LEXICON + " \n"
             + "WHERE { ?" + SparqlVariable.LEXICON + " a lime:Lexicon ;\n"
             + SparqlPrefix.LIME.getPrefix() + "language \"_LANG_\" . }";
+    
+    public static final String LEXICON_BY_LEXICAL_ENTRY
+            = SparqlPrefix.LIME.getSparqlPrefix() + "\n"
+            + "SELECT ?" + SparqlVariable.LEXICON + " \n"
+            + "WHERE { ?" + SparqlVariable.LEXICON + " a lime:Lexicon ;\n"
+            + "        lime:entry <_ID_LE_> . }";
 
     public static final String DICITONARY_BY_LANGUAGE
             = SparqlPrefix.LIME.getSparqlPrefix() + "\n"
@@ -258,6 +264,13 @@ public class SparqlQueryUtil {
             = SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
             + "SELECT ?" + SparqlVariable.LEXICAL_ENTRY + " \n"
             + "WHERE { ?" + SparqlVariable.LEXICAL_ENTRY + " " + SparqlPrefix.ONTOLEX.getPrefix() + "lexicalForm <_ID_> }";
+    
+    public static final String LEXICAL_ENTRY_BY_ECD_POS
+            = SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
+            + "SELECT ?" + SparqlVariable.LEXICAL_ENTRY + " \n"
+            + "WHERE { <_ID_DE_> lexicog:describes ?" + SparqlVariable.LEXICAL_ENTRY + " . \n "
+            + "        ?" + SparqlVariable.LEXICAL_ENTRY + " lexinfo:partOfSpeech <_POS_> . }";
 
     public static final String LEXICAL_ENTRY_NUMBER_BY_LANGUAGE
             = SparqlPrefix.LIME.getSparqlPrefix() + "\n"
@@ -268,6 +281,17 @@ public class SparqlQueryUtil {
             = SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
             + "SELECT ?" + SparqlVariable.LABEL + " \n"
             + "WHERE { <_ID_> " + SparqlPrefix.RDFS.getPrefix() + "label ?" + SparqlVariable.LABEL + " }";
+    
+    public static final String LEXICAL_ENTITY_METADATA
+            = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
+            + "SELECT ?" + SparqlVariable.CREATION_DATE + " ?" + SparqlVariable.CREATOR + " ?" + SparqlVariable.LAST_UPDATE + " ?" + SparqlVariable.CONFIDENCE + " \n"
+            + "WHERE { \n"
+            + " OPTIONAL { <_ID_> dct:creator ?" + SparqlVariable.CREATOR + "  } .\n"
+            + " OPTIONAL { <_ID_> dct:modified ?" + SparqlVariable.LAST_UPDATE + " } .\n"
+            + " OPTIONAL { <_ID_> dct:created ?" + SparqlVariable.CREATION_DATE + " } .\n"
+            + " OPTIONAL { <_ID_> lexinfo:confidence ?" + SparqlVariable.CONFIDENCE + " } .\n"
+            + " }";
 
     public static final String UNIQUE_ID
             = "ASK { <_ID_> ?p ?o }";
