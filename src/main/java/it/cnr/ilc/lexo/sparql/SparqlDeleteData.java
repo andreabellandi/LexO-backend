@@ -173,4 +173,11 @@ public class SparqlDeleteData {
             + SparqlPrefix.RDF.getSparqlPrefix() + "\n"
             + "DELETE { <_ID_> ?p ?o }\n"
             + "WHERE {  <_ID_> ?p ?o }";
+    
+    
+    public static final String DELETE_ECD_FORM
+            = "DELETE { <_ID_> ?predicate ?object . \n"
+            + "         ?subject ?_predicate <_ID_> . }\n"
+            + "WHERE { <_ID_> ?predicate ?object . \n"
+            + "         OPTIONAL { ?subject ?_predicate <_ID_> . } }";
 }

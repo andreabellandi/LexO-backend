@@ -10,43 +10,20 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import it.cnr.ilc.lexo.LexOProperties;
-import it.cnr.ilc.lexo.manager.ECDDataManager;
 import it.cnr.ilc.lexo.manager.ECDDeletionManager;
 import it.cnr.ilc.lexo.manager.ManagerException;
 import it.cnr.ilc.lexo.manager.ManagerFactory;
-import it.cnr.ilc.lexo.service.data.lexicon.input.DictionaryEntryFilter;
-import it.cnr.ilc.lexo.service.data.lexicon.input.ecd.ECDEntryFilter;
-import it.cnr.ilc.lexo.service.data.lexicon.input.RelationDeleter;
-import it.cnr.ilc.lexo.service.data.lexicon.output.DictionaryEntryItem;
-import it.cnr.ilc.lexo.service.data.lexicon.output.ecd.ECDComponent;
-import it.cnr.ilc.lexo.service.data.lexicon.output.ecd.ECDEntryItem;
-import it.cnr.ilc.lexo.service.data.lexicon.output.ecd.ECDEntrySemantics;
-import it.cnr.ilc.lexo.service.data.lexicon.output.HitsDataList;
-import it.cnr.ilc.lexo.service.data.lexicon.output.ecd.ECDEntryMorphology;
-import it.cnr.ilc.lexo.service.data.lexicon.output.ecd.ECDLexicalFunction;
-import it.cnr.ilc.lexo.service.helper.ECDComponentHelper;
-import it.cnr.ilc.lexo.service.helper.ECDEntryFilterHelper;
-import it.cnr.ilc.lexo.service.helper.ECDEntryMorphologyHelper;
-import it.cnr.ilc.lexo.service.helper.ECDEntrySemanticsHelper;
-import it.cnr.ilc.lexo.service.helper.ECDLexicalFunctionHelper;
-import it.cnr.ilc.lexo.service.helper.HelperException;
-import it.cnr.ilc.lexo.util.LogUtil;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.apache.log4j.Level;
-import org.eclipse.rdf4j.query.TupleQueryResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -100,6 +77,38 @@ public class ECDDeletion extends Service {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         } catch (AuthorizationException | ServiceException ex) {
             log(Level.ERROR, "ecd/delete/lexicalFunction: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
+        }
+    }
+    
+    @GET
+    @Path("ECDForm")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "ECDForm",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "ECD form deletion",
+            notes = "This method deletes a form of a ECD entry")
+    public Response ECDForm(
+            @HeaderParam("Authorization") String key,
+            @ApiParam(
+                    name = "id",
+                    value = "form IRI",
+                    required = true)
+            @QueryParam("id") String id) {
+        try {
+            checkKey(key);
+            String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
+            log(Level.INFO, "ecd/delete/ECDForm <" + _id + ">");
+            return Response.ok(ecdManager.deleteECDForm(_id))
+                    .type(MediaType.TEXT_PLAIN).header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
+        } catch (UnsupportedEncodingException | ManagerException ex) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        } catch (AuthorizationException | ServiceException ex) {
+            log(Level.ERROR, "ecd/delete/ECDForm: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
