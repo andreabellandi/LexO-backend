@@ -157,6 +157,21 @@ public class SparqlInsertData {
             + "                   dct:modified \"_MODIFIED_\" . \n"
             + "    <_LEID_> ontolex:lexicalForm <_ID_> .\n"
             + "}";
+    
+    public static final String CREATE_ECD_FORM
+            = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.VS.getSparqlPrefix() + "\n"
+            + "_PREFIX_ \n"
+            + "INSERT DATA {\n"
+            + "    <_ID_> a ontolex:Form ;\n"
+            + "                   ontolex:writtenRep \"_LABEL_\"@_LANG_ ;\n"
+            + "                   dct:creator \"_AUTHOR_\" ;\n"
+            + "                   dct:created \"_CREATED_\" ;\n"
+            + "                   dct:modified \"_MODIFIED_\" . \n"
+            + "    <_LEID_> <_TYPE_> <_ID_> .\n"
+            + "}";
 
     public static final String CREATE_ETYMOLOGY
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"

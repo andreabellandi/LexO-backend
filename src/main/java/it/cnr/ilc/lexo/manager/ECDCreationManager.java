@@ -8,7 +8,9 @@ package it.cnr.ilc.lexo.manager;
 import it.cnr.ilc.lexo.LexOProperties;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalFunction;
 import it.cnr.ilc.lexo.service.data.lexicon.input.ecd.ECDEntry;
+import it.cnr.ilc.lexo.service.data.lexicon.input.ecd.ECDForm;
 import it.cnr.ilc.lexo.service.data.lexicon.output.DictionaryEntryCore;
+import it.cnr.ilc.lexo.service.data.lexicon.output.ecd.ECDFormDetail;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ecd.ECDMeaning;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ecd.ECDictionary;
 import it.cnr.ilc.lexo.sparql.SparqlInsertData;
@@ -18,6 +20,9 @@ import it.cnr.ilc.lexo.util.StringUtil;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  *
@@ -64,7 +69,7 @@ public class ECDCreationManager implements Manager, Cached {
         d.setEntries(0);
         return d;
     }
-    
+
     public DictionaryEntryCore createDictionaryEntry(String author, String prefix, String baseIRI, String desiredID, ECDEntry ecdEntry, String dictID, String lexiconID) throws ManagerException {
         Timestamp tm = new Timestamp(System.currentTimeMillis());
         String id = (desiredID != null ? (!desiredID.isEmpty() ? (Manager.IDAlreadyExists(baseIRI + desiredID) ? null : desiredID) : idInstancePrefix + tm.toString()) : idInstancePrefix + tm.toString());
@@ -129,6 +134,48 @@ public class ECDCreationManager implements Manager, Cached {
         dec.setDictionaryEntry(id);
         dec.setPos(pos);
         return dec;
+    }
+
+    public List<ECDFormDetail> createECDForm(String author, String prefix, String baseIRI, String desiredID, ECDForm form, Map<String, String> les) throws ManagerException {
+        Timestamp tm = new Timestamp(System.currentTimeMillis());
+        String id = (desiredID != null ? (!desiredID.isEmpty() ? (Manager.IDAlreadyExists(baseIRI + desiredID) ? null : desiredID) : idInstancePrefix + tm.toString()) : idInstancePrefix + tm.toString());
+        if (id == null) {
+            throw new ManagerException("ID " + desiredID + " already exists");
+        }
+        String created = timestampFormat.format(tm);
+        String sparqlPrefix = "PREFIX " + prefix + ": <" + baseIRI + ">";
+        String idLabel = id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
+        String _id = baseIRI + idLabel;
+        ArrayList<ECDFormDetail> ecdfd = new ArrayList();
+        for (Entry<String, String> entry : les.entrySet()) {
+            String chiave = entry.getKey();
+            String valore = entry.getValue();
+            RDFQueryUtil.update(SparqlInsertData.CREATE_ECD_FORM.replaceAll("_ID_", _id)
+                    .replace("_LABEL_", form.getLabel())
+                    .replace("_PREFIX_", sparqlPrefix)
+                    .replaceAll("_LANG_", form.getLanguage())
+                    .replaceAll("_LEID_", entry.getKey())
+                    .replaceAll("_AUTHOR_", created)
+                    .replaceAll("_MODIFIED_", idLabel)
+                    .replaceAll("_TYPE_", form.getType())
+                    .replaceAll("_CREATED_", idLabel));
+            ecdfd.add(setECDForm(_id, created, author, form.getLabel(), form.getLanguage(), form.getType(), entry.getValue()));
+        }
+        return ecdfd;
+    }
+
+    private ECDFormDetail setECDForm(String id, String created, String author, String label, String lang, String type, String pos) {
+        ECDFormDetail form = new ECDFormDetail();
+        form.setLanguage(lang);
+        form.setLabel(label);
+        form.setConfidence(-1);
+        form.setType(type);
+        form.setLastUpdate(created);
+        form.setCreationDate(created);
+        form.setCreator(author);
+        form.setForm(id);
+        form.setPos(pos);
+        return form;
     }
 
     public String createLexicalFunction(String prefix, String baseIRI, String author, String desiredID, LexicalFunction lf) throws ManagerException {

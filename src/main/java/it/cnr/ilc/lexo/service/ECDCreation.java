@@ -16,11 +16,14 @@ import it.cnr.ilc.lexo.manager.ManagerFactory;
 import it.cnr.ilc.lexo.manager.UtilityManager;
 import it.cnr.ilc.lexo.service.data.lexicon.input.LexicalFunction;
 import it.cnr.ilc.lexo.service.data.lexicon.input.ecd.ECDEntry;
+import it.cnr.ilc.lexo.service.data.lexicon.input.ecd.ECDForm;
 import it.cnr.ilc.lexo.service.data.lexicon.output.DictionaryEntryCore;
+import it.cnr.ilc.lexo.service.data.lexicon.output.ecd.ECDFormDetail;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ecd.ECDLexicalFunction;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ecd.ECDMeaning;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ecd.ECDictionary;
 import it.cnr.ilc.lexo.service.helper.DictionaryEntryHelper;
+import it.cnr.ilc.lexo.service.helper.ECDFormHelper;
 import it.cnr.ilc.lexo.service.helper.ECDLexicalFunctionHelper;
 import it.cnr.ilc.lexo.service.helper.ECDMeaningHelper;
 import it.cnr.ilc.lexo.service.helper.ECDictionaryHelper;
@@ -28,8 +31,12 @@ import it.cnr.ilc.lexo.util.OntoLexEntity;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.logging.Logger;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -57,7 +64,8 @@ public class ECDCreation extends Service {
     private final ECDMeaningHelper ecdMeaningHelper = new ECDMeaningHelper();
     private final ECDLexicalFunctionHelper ecdLexicalFunctionHelper = new ECDLexicalFunctionHelper();
     private final DictionaryEntryHelper ecdDictionaryEntryHelper = new DictionaryEntryHelper();
-    private final ECDictionaryHelper ecdDictionary = new ECDictionaryHelper();
+    private final ECDFormHelper ecdFormHelper = new ECDFormHelper();
+    private final ECDictionaryHelper ecdDictionaryHelper = new ECDictionaryHelper();
 
     
     @GET
@@ -107,7 +115,7 @@ public class ECDCreation extends Service {
             UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
             utilityManager.validateNamespace(prefix, baseIRI);
             ECDictionary d = ecdManager.createECDictionary(author, prefix, baseIRI, desiredID, lang);
-            String json = ecdDictionary.toJson(d);
+            String json = ecdDictionaryHelper.toJson(d);
             log(Level.INFO, "Explanatory Combinatorial Dictionary for language " + lang + " created (prefix=" + prefix + " baseIRI=" + baseIRI);
             return Response.ok(json)
                     .type(MediaType.APPLICATION_JSON)
@@ -190,14 +198,14 @@ public class ECDCreation extends Service {
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
             } catch (ManagerException ex) {
-                log(Level.ERROR, "create/bibliography: " + ex.getMessage());
+                log(Level.ERROR, "create/lexicalFunction: " + ex.getMessage());
                 return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
             }
         } catch (UnsupportedEncodingException ex) {
-            log(Level.ERROR, "create/bibliography: " + ex.getMessage());
+            log(Level.ERROR, "create/lexicalFunction: " + ex.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         } catch (AuthorizationException | ServiceException ex) {
-            log(Level.ERROR, "create/bibliography: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            log(Level.ERROR, "create/lexicalFunction: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
 
@@ -270,11 +278,96 @@ public class ECDCreation extends Service {
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                         .build();
             } catch (ManagerException ex) {
-                log(Level.ERROR, "create/bibliography: " + ex.getMessage());
+                log(Level.ERROR, "create/ECDEntry: " + ex.getMessage());
                 return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
             }
         } catch (AuthorizationException | ServiceException ex) {
-            log(Level.ERROR, "create/bibliography: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            log(Level.ERROR, "create/ECDEntry: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
+        }
+
+    }
+    
+    @POST
+    @Path("ECDForm")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.POST,
+            value = "ECDForm",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "ECD form creation",
+            notes = "This method creates a new form of a ECD entry and returns it")
+    public Response ECDForm(
+            @ApiParam(
+                    name = "ECDEntry",
+                    value = "the ECD entry the form belongs to",
+                    required = true)
+            @QueryParam("lexicalEntryID") String ECDEntry,
+            @HeaderParam("Authorization") String key,
+            @ApiParam(
+                    name = "author",
+                    value = "the account that is creating the dictionary entry(if LexO user management disabled)",
+                    example = "user7",
+                    required = false)
+            @QueryParam("author") String author,
+            @ApiParam(
+                    name = "desiredID",
+                    value = "the ID name to assign to the created entity",
+                    example = "idName",
+                    required = false)
+            @QueryParam("desiredID") String desiredID,
+            @ApiParam(
+                    name = "prefix",
+                    value = "prefix of the namespace",
+                    example = "myprefix",
+                    required = true)
+            @QueryParam("prefix") String prefix,
+            @ApiParam(
+                    name = "baseIRI",
+                    value = "base IRI of the entity",
+                    example = "http://mydata.com#",
+                    required = true)
+            @QueryParam("baseIRI") String baseIRI,
+            ECDForm ecdForm) {
+        try {
+            checkKey(key);
+            log(Level.INFO, "create/ECDForm " + ecdForm.getLabel() + " with type " + ecdForm.getType());
+            try {
+                String ecdEntry = URLDecoder.decode(ECDEntry, StandardCharsets.UTF_8.name());
+                if (ecdForm.getLabel() == null || ecdForm.getLanguage() == null || ecdForm.getType() == null
+                        || ecdForm.getPos() == null) {
+                    log(Level.ERROR, "create/ECDForm: missing parameter");
+                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("create/ECDForm: missing parameter").build();
+                }
+                UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+                utilityManager.validateNamespace(prefix, baseIRI);
+                Manager.validateWithEnum("type", OntoLexEntity.FormTypes.class, ecdForm.getType());
+                String lang = utilityManager.getLanguage(ecdEntry);
+                if (!ecdForm.getLanguage().equals(lang)) {
+                    log(Level.ERROR, "create/ECDForm: wrong language parameter: " + ecdForm.getLanguage() + " instead of " + lang);
+                    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("create/ECDForm: wrong language parameter: " + ecdForm.getLanguage() + " instead of " + lang).build();
+                }
+                Map<String, String> les = new HashMap();
+                for (String _pos : ecdForm.getPos()) {
+                    les.put(utilityManager.getLexicalEntryByECDPoS(ecdEntry, _pos), _pos);
+                }
+                List<ECDFormDetail> fl = ecdManager.createECDForm(author, prefix, baseIRI, desiredID, ecdForm, les);
+                String json = ecdFormHelper.toJson(fl);
+                return Response.ok(json)
+                        .type(MediaType.APPLICATION_JSON)
+                        .header("Access-Control-Allow-Headers", "content-type")
+                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                        .build();
+            } catch (ManagerException ex) {
+                log(Level.ERROR, "create/ECDForm: " + ex.getMessage());
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            } catch (UnsupportedEncodingException ex) {
+                Logger.getLogger(ECDCreation.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+            }
+        } catch (AuthorizationException | ServiceException ex) {
+            log(Level.ERROR, "create/ECDForm: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
 
