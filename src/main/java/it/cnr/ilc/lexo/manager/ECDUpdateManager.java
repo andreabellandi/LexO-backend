@@ -20,6 +20,7 @@ import it.cnr.ilc.lexo.util.OntoLexEntity;
 import it.cnr.ilc.lexo.util.RDFQueryUtil;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.Map;
 import org.eclipse.rdf4j.model.Literal;
 import org.eclipse.rdf4j.query.BindingSet;
 import org.eclipse.rdf4j.query.QueryEvaluationException;
@@ -50,7 +51,7 @@ public class ECDUpdateManager implements Manager, Cached {
     public void validateECDMeaningAttribute(String attribute) throws ManagerException {
         Manager.validateWithEnum("attribute", OntoLexEntity.ECDMeaningAttributes.class, attribute);
     }
-    
+
     public void validateECDFormAttribute(String attribute) throws ManagerException {
         Manager.validateWithEnum("attribute", OntoLexEntity.ECDFormAttributes.class, attribute);
     }
@@ -161,7 +162,6 @@ public class ECDUpdateManager implements Manager, Cached {
 //                .replaceAll("_LAST_UPDATE_", "\"" + lastupdate + "\""));
 //        return lastupdate;
 //    }
-
     public String createLexicalEntryForECDEntryNewPoS(String de, String le, String lexicon, String leType, String lePoS, String label, Entity metadata, String lang) throws ManagerException, UpdateExecutionException {
         String lastupdate = timestampFormat.format(new Timestamp(System.currentTimeMillis()));
         RDFQueryUtil.update(SparqlInsertData.CREATE_LEXICAL_ENTRY_POS_FOR_ECD_ENTRY.replaceAll("_ID_", le)
@@ -290,8 +290,7 @@ public class ECDUpdateManager implements Manager, Cached {
             return null;
         }
     }
-    
-    
+
     public String updateECDForm(String idForm, ECDFormUpdater ecdfu, String user) throws ManagerException {
         if (!ecdfu.getValue().isEmpty()) {
             validateECDFormAttribute(ecdfu.getRelation());
@@ -312,10 +311,9 @@ public class ECDUpdateManager implements Manager, Cached {
                     if (lang == null) {
                         throw new ManagerException("The language of the lexical entry associated to the form " + idForm + " could not be found");
                     }
-                    Entity metadata = utilityManager.getMetadata(idForm);
                     String label = utilityManager.getLabel(idForm);
                     String type = utilityManager.getType(idForm);
-                    return createECDFormPos(newLe, label, lang, type, metadata);
+                    return createECDFormPos(newLe, label, lang, type, user);
                 }
             } else {
                 return null;
@@ -324,7 +322,7 @@ public class ECDUpdateManager implements Manager, Cached {
             throw new ManagerException("The relation value cannot be empty");
         }
     }
-    
+
     public String updateECDFormPos(String idForm, String newLe, String oldLe) throws ManagerException {
         String lastupdate = timestampFormat.format(new Timestamp(System.currentTimeMillis()));
         RDFQueryUtil.update(SparqlUpdateData.UPDATE_ECD_MEANING_POS.replaceAll("_ID_FORM_", idForm)
@@ -332,8 +330,8 @@ public class ECDUpdateManager implements Manager, Cached {
                 .replaceAll("_ID_NEW_LE_", newLe));
         return lastupdate;
     }
-    
-    public String createECDFormPos(String le, String label, String lang, String type, Entity metadata) throws ManagerException {
+
+    public String createECDFormPos(String le, String label, String lang, String type, String user) throws ManagerException {
         Timestamp tm = new Timestamp(System.currentTimeMillis());
         String id = idInstancePrefix + tm.toString();
         String created = timestampFormat.format(tm);
@@ -346,40 +344,38 @@ public class ECDUpdateManager implements Manager, Cached {
                 .replaceAll("_FORM_TYPE_", type)
                 .replaceAll("[MODIFIED]", created)
                 .replaceAll("[CREATED]", created)
-                .replaceAll("[AUTHOR]", metadata.getCreator())
+                .replaceAll("[AUTHOR]", user)
                 .replaceAll("[LABEL]", label));
         return lastupdate;
     }
-    
-//    public String updateECDMeaning(String idForm, ECDMeaningUpdater ecdmu, String user) throws ManagerException {
-//        if (!ecdmu.getValue().isEmpty()) {
-//            validateECDMeaningAttribute(ecdmu.getRelation());
-//            if (ecdmu.getRelation().equals(OntoLexEntity.ECDMeaningAttributes.PoS.toString())) {
-//                UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
-//                String oldLe = utilityManager.getLexicalEntryByForm(idForm);
-//                if (ecdmu.getOldPoS() != null) {
-//                    // update the pos
+
+    public String updateECDMeaning(String id, ECDMeaningUpdater ecdmu, String user) throws ManagerException {
+        if (!ecdmu.getValue().isEmpty()) {
+            validateECDMeaningAttribute(ecdmu.getRelation());
+            if (ecdmu.getRelation().equals(OntoLexEntity.ECDMeaningAttributes.PoS.toString())) {
+                if (ecdmu.getOldPoS() != null) {
+                    // update the pos
+                    // TODO
+                    throw new ManagerException("TODO!!!");
+//                    UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+//                    Map<String, String> oldLe = utilityManager.getLexicalSensePoS(id);
 //                    if (oldLe != null) {
 //                        String newLe = utilityManager.getLexicalEntryForUpdatingPoSMeaning(oldLe, ecdmu.getOldPoS(), ecdmu.getValue());
 //                        return updateECDMeaningPoS(idForm, newLe, oldLe);
 //                    } else {
 //                        throw new ManagerException("The required part of speech " + ecdmu.getOldPoS() + " does not exist");
 //                    }
-//                } else {
-//                    // add new pos 
-//                    Entity metadata = utilityManager.getMetadata(idForm);
-//                    String label = utilityManager.getLabel(idForm);
-//                    String type = utilityManager.getType(oldLe);
-//                    return createECDMeaningPoS(idForm, oldLe);
-//                }
-//            } else {
-//                return null;
-//            }
-//        } else {
-//            throw new ManagerException("The relation value cannot be empty");
-//        }
-//    }
-//
+                } else {
+                    throw new ManagerException("Part of speech parameter is missing");
+                }
+            } else {
+                return null;
+            }
+        } else {
+            throw new ManagerException("The relation value cannot be empty");
+        }
+    }
+
 //    public String updateECDMeaningPos(String idForm, String newLe, String oldLe) throws ManagerException {
 //        String lastupdate = timestampFormat.format(new Timestamp(System.currentTimeMillis()));
 //        RDFQueryUtil.update(SparqlUpdateData.UPDATE_ECD_MEANING_POS.replaceAll("_ID_FORM_", idForm)
@@ -395,5 +391,4 @@ public class ECDUpdateManager implements Manager, Cached {
 //                .replaceAll("_ID_NEW_LE_", newLe));
 //        return lastupdate;
 //    }
-
 }

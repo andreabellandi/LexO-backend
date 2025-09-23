@@ -179,6 +179,17 @@ public class SparqlQueryUtil {
             + "          UNION \n"
             + "       { <_ID_> lexicog:describes [ ontolex:sense ?sense ]  }\n"
             + "    }";
+    
+    public static final String HAS_ECD_ENTRY_COMPONENTS
+            = SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
+            + "ASK { \n"
+            + "       { <_ID_> rdfs:member ?m }\n"
+            + "          UNION \n"
+            + "       { <_ID_> rdf:_1 ?sc }\n"
+            + "          UNION \n"
+            + "       { <_ID_> lexicog:describes ?entity  }\n"
+            + "    }";
 
     public static final String COMPONENT_DESCRIBES_LEXICALENTRY_WITH_SENSES
             = SparqlPrefix.RDFS.getSparqlPrefix() + "\n"

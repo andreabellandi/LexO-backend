@@ -13,6 +13,7 @@ import it.cnr.ilc.lexo.LexOProperties;
 import it.cnr.ilc.lexo.manager.ECDDeletionManager;
 import it.cnr.ilc.lexo.manager.ManagerException;
 import it.cnr.ilc.lexo.manager.ManagerFactory;
+import it.cnr.ilc.lexo.manager.UtilityManager;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -109,6 +110,43 @@ public class ECDDeletion extends Service {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         } catch (AuthorizationException | ServiceException ex) {
             log(Level.ERROR, "ecd/delete/ECDForm: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
+        }
+    }
+    
+    @GET
+    @Path("ECDEntry")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "ECDEntry",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "ECD entry deletion",
+            notes = "This method deletes an ECD entry")
+    public Response ECDEntry(
+            @HeaderParam("Authorization") String key,
+            @ApiParam(
+                    name = "id",
+                    value = "ECD entry IRI",
+                    required = true)
+            @QueryParam("id") String id) {
+        try {
+            checkKey(key);
+            String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
+            log(Level.INFO, "ecd/delete/ECDEntry <" + _id + ">");
+            UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+            if (utilityManager.hasECDEntryComponents(id)) {
+                log(Level.ERROR, "ecd/delete/ECDEntry: Entry cannot be deleted because is not empty");
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("ecd/delete/ECDEntry: Entry cannot be deleted because is not empty").build();
+            }
+            return Response.ok(ecdManager.deleteECDEntry(_id))
+                    .type(MediaType.TEXT_PLAIN).header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
+        } catch (UnsupportedEncodingException | ManagerException ex) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        } catch (AuthorizationException | ServiceException ex) {
+            log(Level.ERROR, "ecd/delete/ECDEntry: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }

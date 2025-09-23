@@ -133,44 +133,44 @@ public class ECDUpdate extends Service {
         }
     }
     
-//    @POST
-//    @Path("ECDMeaning")
-//    @Produces(MediaType.APPLICATION_JSON)
-//    @RequestMapping(
-//            method = RequestMethod.POST,
-//            value = "ECDMeaning",
-//            produces = "application/json; charset=UTF-8")
-//    @ApiOperation(value = "ECD meaning update",
-//            notes = "This method updates the ECD meaning according to the input updater")
-//    public Response ECDMeaning(
-//            @HeaderParam("Authorization") String key, @QueryParam("id") String id,
-//            @ApiParam(
-//                    name = "author",
-//                    value = "if LexO user management is disabled, the account that is updating the status of the lexical entry",
-//                    example = "user7",
-//                    required = true)
-//            @QueryParam("author") String author,
-//            ECDEntryUpdater ecdeu) {
-//        try {
-//            checkKey(key);
-//            String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
-//            UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
-//            if (!utilityManager.isLexicalSense(_id)) {
-//                log(Level.ERROR, "ecd/update/ECDMeaning: " + _id + " is not an ECD meaning");
-//                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("ecd/update/ECDMeaning: " + _id + " is not an ECD meaning").build();
-//            }
-//            return Response.ok(ecdManager.updateECDEntry(id, ecdeu, author))
-//                    .type(MediaType.TEXT_PLAIN)
-//                    .header("Access-Control-Allow-Headers", "content-type")
-//                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-//                    .build();
-//        } catch (ManagerException | UpdateExecutionException | UnsupportedEncodingException ex) {
-//            log(Level.ERROR, "ecd/update/ECDMeaning: " + ex.getMessage());
-//            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
-//        } catch (AuthorizationException | ServiceException ex) {
-//            log(Level.ERROR, "ecd/update/ECDMeaning: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
-//            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
-//        }
-//    }
+    @POST
+    @Path("ECDMeaning")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.POST,
+            value = "ECDMeaning",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "ECD meaning update",
+            notes = "This method updates the ECD meaning according to the input updater")
+    public Response ECDMeaning(
+            @HeaderParam("Authorization") String key, @QueryParam("id") String id,
+            @ApiParam(
+                    name = "author",
+                    value = "if LexO user management is disabled, the account that is updating the status of the lexical entry",
+                    example = "user7",
+                    required = true)
+            @QueryParam("author") String author,
+            ECDEntryUpdater ecdeu) {
+        try {
+            checkKey(key);
+            String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
+            UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+            if (!utilityManager.isLexicalSense(_id)) {
+                log(Level.ERROR, "ecd/update/ECDMeaning: " + _id + " is not an ECD meaning");
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("ecd/update/ECDMeaning: " + _id + " is not an ECD meaning").build();
+            }
+            return Response.ok(ecdManager.updateECDEntry(id, ecdeu, author))
+                    .type(MediaType.TEXT_PLAIN)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
+        } catch (ManagerException | UpdateExecutionException | UnsupportedEncodingException ex) {
+            log(Level.ERROR, "ecd/update/ECDMeaning: " + ex.getMessage());
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        } catch (AuthorizationException | ServiceException ex) {
+            log(Level.ERROR, "ecd/update/ECDMeaning: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
+        }
+    }
 
 }
