@@ -43,5 +43,10 @@ public class ECDDeletionManager implements Manager, Cached {
         RDFQueryUtil.update(SparqlDeleteData.DELETE_ECD_ENTRY.replaceAll("_ID_", id));
         return timestampFormat.format(new Timestamp(System.currentTimeMillis()));
     }
+    
+    public String deleteECDictionary(String id) throws ManagerException {
+        RDFQueryUtil.update(SparqlDeleteData.DELETE_EC_DICTIONARY.replaceAll("_ID_", id));
+        return timestampFormat.format(new Timestamp(System.currentTimeMillis()));
+    }
 
 }

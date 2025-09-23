@@ -186,4 +186,10 @@ public class SparqlDeleteData {
             + "         ?subject ?_predicate <_ID_> . }\n"
             + "WHERE { <_ID_> ?predicate ?object . \n"
             + "         OPTIONAL { ?subject ?_predicate <_ID_> . } }";
+    
+    public static final String DELETE_EC_DICTIONARY
+            = "DELETE { <_ID_> ?predicate ?object . \n"
+            + "         ?subject ?_predicate <_ID_> . }\n"
+            + "WHERE { <_ID_> ?predicate ?object . \n"
+            + "         OPTIONAL { ?subject ?_predicate <_ID_> . } }";
 }

@@ -135,9 +135,9 @@ public class ECDDeletion extends Service {
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
             log(Level.INFO, "ecd/delete/ECDEntry <" + _id + ">");
             UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
-            if (utilityManager.hasECDEntryComponents(id)) {
+            if (utilityManager.hasECDEntryComponents(_id)) {
                 log(Level.ERROR, "ecd/delete/ECDEntry: Entry cannot be deleted because is not empty");
-            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("ecd/delete/ECDEntry: Entry cannot be deleted because is not empty").build();
+            return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("ecd/delete/ECDEntry: Entry cannot be deleted because is not empty").build();
             }
             return Response.ok(ecdManager.deleteECDEntry(_id))
                     .type(MediaType.TEXT_PLAIN).header("Access-Control-Allow-Headers", "content-type")
@@ -147,6 +147,43 @@ public class ECDDeletion extends Service {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         } catch (AuthorizationException | ServiceException ex) {
             log(Level.ERROR, "ecd/delete/ECDEntry: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
+        }
+    }
+    
+    @GET
+    @Path("ECDictionary")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "ECDictionary",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "EC Dictionary deletion",
+            notes = "This method deletes an EC Dictionary")
+    public Response ECDictionary(
+            @HeaderParam("Authorization") String key,
+            @ApiParam(
+                    name = "id",
+                    value = "EC Dictionary IRI",
+                    required = true)
+            @QueryParam("id") String id) {
+        try {
+            checkKey(key);
+            String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
+            log(Level.INFO, "ecd/delete/ECDictionary <" + _id + ">");
+            UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+            if (utilityManager.dictionaryHasEntry(_id)) {
+                log(Level.ERROR, "ecd/delete/ECDictionary: Entry cannot be deleted because is not empty");
+            return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("ecd/delete/ECDictionary: Dictionary cannot be deleted because is not empty").build();
+            }
+            return Response.ok(ecdManager.deleteECDictionary(_id))
+                    .type(MediaType.TEXT_PLAIN).header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
+        } catch (UnsupportedEncodingException | ManagerException ex) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        } catch (AuthorizationException | ServiceException ex) {
+            log(Level.ERROR, "ecd/delete/ECDictionary: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
