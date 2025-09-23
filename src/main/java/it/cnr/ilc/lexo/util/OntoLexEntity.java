@@ -398,6 +398,38 @@ public class OntoLexEntity {
         }
 
     }
+    
+    public static enum ECDMeaningAttributes {
+        PoS(SparqlPrefix.LEXINFO.getUri() + "partOfSpeech");
+
+        private final String ecdMeaningAttributes;
+
+        private ECDMeaningAttributes(String ecdMeaningAttributes) {
+            this.ecdMeaningAttributes = ecdMeaningAttributes;
+        }
+
+        @Override
+        public String toString() {
+            return this.ecdMeaningAttributes;
+        }
+
+    }
+    
+    public static enum ECDFormAttributes {
+        PoS(SparqlPrefix.LEXINFO.getUri() + "partOfSpeech");
+
+        private final String ecdFormAttributes;
+
+        private ECDFormAttributes(String ecdFormAttributes) {
+            this.ecdFormAttributes = ecdFormAttributes;
+        }
+
+        @Override
+        public String toString() {
+            return this.ecdFormAttributes;
+        }
+
+    }
 
     public static enum FormAttributes {
         Note(SparqlPrefix.SKOS.getUri() + "note"),

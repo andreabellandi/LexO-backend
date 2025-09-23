@@ -57,6 +57,16 @@ public class SparqlUpdateData {
             + "WHERE {  OPTIONAL { <_ID_> dct:modified ?modified .} \n"
             + "         OPTIONAL { <_ID_> <_RELATION_> _VALUE_TO_DELETE_ . } }";
     
+    public static final String UPDATE_ECD_MEANING_POS
+            = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+            + "DELETE { <_ID_OLD_LE_> ?relation <_ID_FORM_> ;\n "
+            + "                  dct:modified ?modified . } \n"
+            + "INSERT { <_ID_NEW_LE_> ?relation <_ID_FORM_> ;\n"
+            + "                  dct:modified _LAST_UPDATE_ . }\n"
+            + "WHERE {  <_ID_OLD_LE_> ?relation <_ID_FORM_> . "
+            + "         ?relation rdfs:subPropertyOf ontolex:lexicalForm . \n"
+            + "         OPTIONAL { <_ID_OLD_LE_> dct:modified ?modified .} }";
+    
     public static final String UPDATE_ECD_ENTRY_POS
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
             + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"

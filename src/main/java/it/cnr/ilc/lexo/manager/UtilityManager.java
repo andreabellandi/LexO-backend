@@ -189,6 +189,18 @@ public final class UtilityManager implements Manager, Cached {
         return null;
     }
     
+    public String getType(String id) throws QueryEvaluationException {
+        String query = SparqlQueryUtil.FORM_TYPE.replaceAll("_ID_FORM_", id);
+        try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {
+            while (result.hasNext()) {
+                BindingSet bs = result.next();
+                return (bs.getBinding(SparqlVariable.FORM_TYPE) != null) ? ((Literal) bs.getBinding(SparqlVariable.FORM_TYPE).getValue()).getLabel() : null;
+            }
+        } catch (QueryEvaluationException qee) {
+        }
+        return null;
+    }
+    
     public Entity getMetadata(String id) throws QueryEvaluationException {
         String query = SparqlQueryUtil.LEXICAL_ENTITY_METADATA.replaceAll("_ID_", id);
         Entity e = new Entity();
@@ -206,6 +218,21 @@ public final class UtilityManager implements Manager, Cached {
 
     public String getLexicalEntryByForm(String id) throws QueryEvaluationException {
         String query = SparqlQueryUtil.LEXICAL_ENTRY_BY_FORM.replaceAll("_ID_", id);
+        try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {
+            while (result.hasNext()) {
+                BindingSet bs = result.next();
+                return (bs.getBinding(SparqlVariable.LEXICAL_ENTRY) != null)
+                        ? (bs.getBinding(SparqlVariable.LEXICAL_ENTRY).getValue().toString()) : null;
+            }
+        } catch (QueryEvaluationException qee) {
+        }
+        return null;
+    }
+    
+    public String getLexicalEntryForUpdatingPoSForm(String oldLe, String oldPoS, String newPoS) throws QueryEvaluationException {
+        String query = SparqlQueryUtil.LEXICAL_ENTRY_FOR_UPDATING_POS_FORM.replaceAll("_ID_OLD_LE_", oldLe)
+                .replaceAll("_OLD_POS_", oldPoS)
+                .replaceAll("_NEW_POS_", newPoS);
         try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {
             while (result.hasNext()) {
                 BindingSet bs = result.next();

@@ -231,7 +231,7 @@ public class SparqlQueryUtil {
             + "SELECT ?" + SparqlVariable.LEXICON + " \n"
             + "WHERE { ?" + SparqlVariable.LEXICON + " a lime:Lexicon ;\n"
             + SparqlPrefix.LIME.getPrefix() + "language \"_LANG_\" . }";
-    
+
     public static final String LEXICON_BY_LEXICAL_ENTRY
             = SparqlPrefix.LIME.getSparqlPrefix() + "\n"
             + "SELECT ?" + SparqlVariable.LEXICON + " \n"
@@ -264,7 +264,17 @@ public class SparqlQueryUtil {
             = SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
             + "SELECT ?" + SparqlVariable.LEXICAL_ENTRY + " \n"
             + "WHERE { ?" + SparqlVariable.LEXICAL_ENTRY + " " + SparqlPrefix.ONTOLEX.getPrefix() + "lexicalForm <_ID_> }";
-    
+
+    public static final String LEXICAL_ENTRY_FOR_UPDATING_POS_FORM
+            = SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
+            + "SELECT ?" + SparqlVariable.LEXICAL_ENTRY + " \n"
+            + "WHERE { ?" + SparqlVariable.DICTIONARY_ENTRY + " lexicog:describes <_ID_OLD_LE_> ;\n"
+            + "             lexicog:describes ?" + SparqlVariable.LEXICAL_ENTRY + " .\n"
+            + "        ?" + SparqlVariable.LEXICAL_ENTRY + " lexinfo:partOfSpeech <_NEW_POS_> ;\n"
+            + "        <_ID_OLD_LE_> lexinfo:partOfSpeech <_OLD_POS_> .\n"
+            + " }";
+
     public static final String LEXICAL_ENTRY_BY_ECD_POS
             = SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
             + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
@@ -281,7 +291,22 @@ public class SparqlQueryUtil {
             = SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
             + "SELECT ?" + SparqlVariable.LABEL + " \n"
             + "WHERE { <_ID_> " + SparqlPrefix.RDFS.getPrefix() + "label ?" + SparqlVariable.LABEL + " }";
-    
+
+    public static final String FORM_TYPE
+            = SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTO.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
+            + "SELECT ?" + SparqlVariable.FORM_TYPE + " \n"
+            + "FROM NAMED onto:explicit\n"
+            + "FROM NAMED onto:implicit\n"
+            + "WHERE {\n"
+            + "    GRAPH ?" + SparqlVariable.GRAPH + " { \n"
+            + "        ?" + SparqlVariable.LEXICAL_ENTRY + " ?" + SparqlVariable.FORM_TYPE + " <_ID_FORM_> .\n"
+            + "    }\n"
+            + "    ?" + SparqlVariable.FORM_TYPE + " rdfs:subPropertyOf ontolex:lexicalForm\n"
+            + "    FILTER(regex(str(?" + SparqlVariable.GRAPH + "), \"explicit\"))\n"
+            + "}";
+
     public static final String LEXICAL_ENTITY_METADATA
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
             + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
