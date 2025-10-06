@@ -45,7 +45,7 @@ public class ECDDeletionManager implements Manager, Cached {
     }
     
     public String deleteECDEntryPos(String id) throws ManagerException {
-        RDFQueryUtil.update(SparqlDeleteData.DELETE_ECD_ENTRY.replaceAll("_ID_", id));
+        RDFQueryUtil.update(SparqlDeleteData.DELETE_ECD_ENTRY_POS.replaceAll("_ID_", id));
         return timestampFormat.format(new Timestamp(System.currentTimeMillis()));
     }
     

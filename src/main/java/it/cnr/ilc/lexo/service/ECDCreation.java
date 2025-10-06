@@ -303,7 +303,7 @@ public class ECDCreation extends Service {
                     name = "ECDEntry",
                     value = "the ECD entry the form belongs to",
                     required = true)
-            @QueryParam("lexicalEntryID") String ECDEntry,
+            @QueryParam("ECDEntry") String ECDEntry,
             @HeaderParam("Authorization") String key,
             @ApiParam(
                     name = "author",
@@ -343,7 +343,7 @@ public class ECDCreation extends Service {
                 UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
                 utilityManager.validateNamespace(prefix, baseIRI);
                 Manager.validateWithEnum("type", OntoLexEntity.FormTypes.class, ecdForm.getType());
-                String lang = utilityManager.getLanguage(ecdEntry);
+                String lang = utilityManager.getDictLanguage(ecdEntry);
                 if (!ecdForm.getLanguage().equals(lang)) {
                     log(Level.ERROR, "create/ECDForm: wrong language parameter: " + ecdForm.getLanguage() + " instead of " + lang);
                     return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("create/ECDForm: wrong language parameter: " + ecdForm.getLanguage() + " instead of " + lang).build();

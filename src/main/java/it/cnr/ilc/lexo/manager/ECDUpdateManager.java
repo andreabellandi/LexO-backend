@@ -20,6 +20,8 @@ import it.cnr.ilc.lexo.util.OntoLexEntity;
 import it.cnr.ilc.lexo.util.RDFQueryUtil;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import org.eclipse.rdf4j.model.Literal;
 import org.eclipse.rdf4j.query.BindingSet;
@@ -79,7 +81,9 @@ public class ECDUpdateManager implements Manager, Cached {
                 if (lang == null) {
                     throw new ManagerException("The language of the ECD entry could not be found");
                 }
-                return updateECDEntry(id, ecdeu.getRelation(), "\"" + ecdeu.getValue() + "\"@" + lang, "?" + SparqlVariable.TARGET);
+                UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+                List<String> les = utilityManager.getLexicalEntryByECDEntry(id);
+                return updateECDEntryLabel(id, ecdeu.getRelation(), "\"" + ecdeu.getValue() + "\"@" + lang, "?" + SparqlVariable.TARGET, les);
             } else if (ecdeu.getRelation().equals(OntoLexEntity.DictionaryEntryAttributes.PoS.toString())) {
                 UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
                 if (ecdeu.getOldPoS() != null) {
@@ -92,7 +96,10 @@ public class ECDUpdateManager implements Manager, Cached {
                     }
                 } else {
                     // add new pos 
-                    String le = utilityManager.getLexicalEntryByECDEntry(id);
+                    String le = (utilityManager.getLexicalEntryByECDEntry(id) != null) ? utilityManager.getLexicalEntryByECDEntry(id).get(0) : null;
+                    if (le == null) {
+                        throw new ManagerException("ECD entry has no lexical entries");
+                    }
                     String lang = ManagerFactory.getManager(UtilityManager.class).getDictLanguage(id);
                     if (lang == null) {
                         throw new ManagerException("The language of the ECD entry could not be found");
@@ -100,7 +107,6 @@ public class ECDUpdateManager implements Manager, Cached {
                     String type = utilityManager.getLexicalEntryType(le);
                     String lexicon = utilityManager.getLexiconIDByLexicalEntry(le);
                     String label = utilityManager.getLabel(le);
-                    Entity metadata = utilityManager.getMetadata(le);
                     if (type == null) {
                         throw new ManagerException("The type of the lexical entry " + le + " is not defined");
                     }
@@ -143,6 +149,24 @@ public class ECDUpdateManager implements Manager, Cached {
                 .replaceAll("_VALUE_TO_INSERT_", valueToInsert)
                 .replaceAll("_VALUE_TO_DELETE_", valueToDelete)
                 .replaceAll("_LAST_UPDATE_", "\"" + lastupdate + "\""));
+        return lastupdate;
+    }
+    
+    public String updateECDEntryLabel(String id, String relation, String valueToInsert, String valueToDelete, List<String> les) throws ManagerException, UpdateExecutionException {
+        if (valueToInsert.isEmpty()) {
+            throw new ManagerException("value cannot be empty");
+        }
+        String lastupdate = timestampFormat.format(new Timestamp(System.currentTimeMillis()));
+        RDFQueryUtil.update(SparqlUpdateData.UPDATE_ECD_ENTRY_LABEL.replaceAll("_ID_", id)
+                .replaceAll("_VALUE_TO_INSERT_", valueToInsert)
+                .replaceAll("_VALUE_TO_DELETE_", valueToDelete)
+                .replaceAll("_LAST_UPDATE_", "\"" + lastupdate + "\""));
+        for (String le : les) {
+            RDFQueryUtil.update(SparqlUpdateData.UPDATE_ECD_ENTRY_LABEL.replaceAll("_ID_", le)
+                .replaceAll("_VALUE_TO_INSERT_", valueToInsert)
+                .replaceAll("_VALUE_TO_DELETE_", valueToDelete)
+                .replaceAll("_LAST_UPDATE_", "\"" + lastupdate + "\""));
+        }
         return lastupdate;
     }
 

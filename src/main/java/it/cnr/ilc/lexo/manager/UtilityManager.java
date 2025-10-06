@@ -13,6 +13,7 @@ import it.cnr.ilc.lexo.util.RDFQueryUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import org.eclipse.rdf4j.model.IRI;
@@ -99,7 +100,7 @@ public final class UtilityManager implements Manager, Cached {
         }
         return null;
     }
-    
+
     public String getLexiconIDByLexicalEntry(String le) throws QueryEvaluationException {
         String query = SparqlQueryUtil.LEXICON_BY_LEXICAL_ENTRY.replaceAll("_ID_LE_", le);
         try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {
@@ -130,8 +131,9 @@ public final class UtilityManager implements Manager, Cached {
         try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {
             while (result.hasNext()) {
                 BindingSet bs = result.next();
-                meaningsCount.put((bs.getBinding(SparqlVariable.LEXICAL_ENTRY) != null) ? bs.getBinding(SparqlVariable.LEXICAL_ENTRY).getValue().stringValue() : "", 
-                        (bs.getBinding(SparqlVariable.LABEL_COUNT) != null) ? Integer.parseInt(bs.getBinding(SparqlVariable.LABEL_COUNT).getValue().stringValue()) : 0);            }
+                meaningsCount.put((bs.getBinding(SparqlVariable.LEXICAL_ENTRY) != null) ? bs.getBinding(SparqlVariable.LEXICAL_ENTRY).getValue().stringValue() : "",
+                        (bs.getBinding(SparqlVariable.LABEL_COUNT) != null) ? Integer.parseInt(bs.getBinding(SparqlVariable.LABEL_COUNT).getValue().stringValue()) : 0);
+            }
         } catch (QueryEvaluationException qee) {
         }
         return meaningsCount.size() > 0 ? meaningsCount : null;
@@ -188,7 +190,7 @@ public final class UtilityManager implements Manager, Cached {
         }
         return null;
     }
-    
+
     public String getType(String id) throws QueryEvaluationException {
         String query = SparqlQueryUtil.FORM_TYPE.replaceAll("_ID_FORM_", id);
         try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {
@@ -200,13 +202,13 @@ public final class UtilityManager implements Manager, Cached {
         }
         return null;
     }
-    
+
     public Entity getMetadata(String id) throws QueryEvaluationException {
         String query = SparqlQueryUtil.LEXICAL_ENTITY_METADATA.replaceAll("_ID_", id);
         Entity e = new Entity();
         try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {
             while (result.hasNext()) {
-                BindingSet bs = result.next(); 
+                BindingSet bs = result.next();
                 e.setCreationDate((bs.getBinding(SparqlVariable.CREATION_DATE) != null) ? bs.getBinding(SparqlVariable.CREATION_DATE).getValue().stringValue() : null);
                 e.setCreator((bs.getBinding(SparqlVariable.CREATOR) != null) ? bs.getBinding(SparqlVariable.CREATOR).getValue().stringValue() : null);
                 e.setLastUpdate((bs.getBinding(SparqlVariable.LAST_UPDATE) != null) ? bs.getBinding(SparqlVariable.LAST_UPDATE).getValue().stringValue() : null);
@@ -228,7 +230,7 @@ public final class UtilityManager implements Manager, Cached {
         }
         return null;
     }
-    
+
     public String getLexicalEntryForUpdatingPoSForm(String oldLe, String oldPoS, String newPoS) throws QueryEvaluationException {
         String query = SparqlQueryUtil.LEXICAL_ENTRY_FOR_UPDATING_POS_FORM.replaceAll("_ID_OLD_LE_", oldLe)
                 .replaceAll("_OLD_POS_", oldPoS)
@@ -243,7 +245,7 @@ public final class UtilityManager implements Manager, Cached {
         }
         return null;
     }
-    
+
     public String getLexicalEntryByECDPoS(String id, String pos) throws QueryEvaluationException {
         String query = SparqlQueryUtil.LEXICAL_ENTRY_BY_ECD_POS.replaceAll("_ID_DE_", id).replaceAll("_POS_", pos);
         try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {
@@ -256,18 +258,20 @@ public final class UtilityManager implements Manager, Cached {
         }
         return null;
     }
-    
-    public String getLexicalEntryByECDEntry(String id) throws QueryEvaluationException {
+
+    public List<String> getLexicalEntryByECDEntry(String id) throws QueryEvaluationException {
         String query = SparqlQueryUtil.LEXICAL_ENTRY_BY_ECD_ENTRY.replaceAll("_ID_DE_", id);
+        ArrayList<String> al = new ArrayList();
         try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {
             while (result.hasNext()) {
                 BindingSet bs = result.next();
-                return (bs.getBinding(SparqlVariable.LEXICAL_ENTRY) != null)
-                        ? (bs.getBinding(SparqlVariable.LEXICAL_ENTRY).getValue().toString()) : null;
+                if (bs.getBinding(SparqlVariable.LEXICAL_ENTRY) != null) {
+                    al.add(bs.getBinding(SparqlVariable.LEXICAL_ENTRY).getValue().toString());
+                }
             }
         } catch (QueryEvaluationException qee) {
         }
-        return null;
+        return !al.isEmpty() ? al : null;
     }
 
     public String getLexicalEntryType(String id) throws QueryEvaluationException {
@@ -398,7 +402,7 @@ public final class UtilityManager implements Manager, Cached {
         boolean b = RDFQueryUtil.evaluateBQuery(query);
         return RDFQueryUtil.evaluateBQuery(query);
     }
-    
+
     public boolean hasLexicalEntryFormsOrSenses(String id) throws QueryEvaluationException {
         String query = SparqlQueryUtil.HAS_LEXICALENTRY_FORMS_OR_SENSES.replaceAll("_ID_", id);
         boolean b = RDFQueryUtil.evaluateBQuery(query);
@@ -414,7 +418,7 @@ public final class UtilityManager implements Manager, Cached {
         String query = SparqlQueryUtil.HAS_ECD_ENTRY_COMPONENTS.replaceAll("_ID_", id);
         return RDFQueryUtil.evaluateBQuery(query);
     }
-    
+
     public String lexicalEntryWithSenses(String id) throws QueryEvaluationException {
         String query = SparqlQueryUtil.COMPONENT_DESCRIBES_LEXICALENTRY_WITH_SENSES.replaceAll("_ID_", id);
         try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {

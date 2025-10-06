@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import org.eclipse.rdf4j.model.util.Values;
 
 /**
  *
@@ -83,8 +84,8 @@ public class ECDCreationManager implements Manager, Cached {
         String lexicalEntryQuery = "";
         ArrayList<String> leids = new ArrayList();
         for (String pos : ecdEntry.getPos()) {
-            Timestamp _tm = new Timestamp((new Timestamp(System.currentTimeMillis())).getTime() + (long) (Math.random() * 5));
-            String leid = baseIRI + idInstancePrefix + _tm.toString().replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
+//            Timestamp _tm = new Timestamp((new Timestamp(System.currentTimeMillis())).getTime() + (long) (Math.random() * 5));
+            String leid = baseIRI + idLabel + "_" + Values.iri(pos).getLocalName() + (int)(Math.random() * 101);
             leids.add(leid);
             lexicalEntryQuery = lexicalEntryQuery + SparqlInsertData.CREATE_LEXICAL_ENTRY_FOR_ECD_ENTRY.replace("[ID]", leid)
                     .replace("[LEX]", lexiconID)
@@ -155,7 +156,7 @@ public class ECDCreationManager implements Manager, Cached {
                     .replace("_PREFIX_", sparqlPrefix)
                     .replaceAll("_LANG_", form.getLanguage())
                     .replaceAll("_LEID_", entry.getKey())
-                    .replaceAll("_AUTHOR_", created)
+                    .replaceAll("_AUTHOR_", author)
                     .replaceAll("_MODIFIED_", idLabel)
                     .replaceAll("_TYPE_", form.getType())
                     .replaceAll("_CREATED_", idLabel));

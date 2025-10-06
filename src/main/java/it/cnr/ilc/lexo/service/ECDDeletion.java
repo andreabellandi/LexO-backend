@@ -167,6 +167,10 @@ public class ECDDeletion extends Service {
                     value = "ECD entry IRI",
                     required = true)
             @QueryParam("id") String id,
+            @ApiParam(
+                    name = "pos",
+                    value = "ECD entry part of speech",
+                    required = true)
             @QueryParam("pos") String pos) {
         try {
             checkKey(key);
@@ -178,11 +182,11 @@ public class ECDDeletion extends Service {
                 log(Level.ERROR, "ecd/delete/ECDEntryPoS: " + _id + " has not " + pos + " as part of speech");
                 return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("ecd/delete/ECDEntryPoS: " + _id + " has not " + pos + " as part of speech").build();
             }
-            if (utilityManager.hasLexicalEntryFormsOrSenses(id)) {
+            if (utilityManager.hasLexicalEntryFormsOrSenses(le)) {
                 log(Level.ERROR, "ecd/delete/ECDEntryPoS: " + _id + " has associated some forms and/or senses. Delete them first");
                 return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("ecd/delete/ECDEntryPoS: " + _id + " has associated some forms and/or senses. Delete them first").build();
             }
-            return Response.ok(ecdManager.deleteECDEntry(_id))
+            return Response.ok(ecdManager.deleteECDEntryPos(le))
                     .type(MediaType.TEXT_PLAIN).header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();

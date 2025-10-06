@@ -171,7 +171,7 @@ public class SparqlQueryUtil {
     public static final String HAS_LEXICALENTRY_FORMS_OR_SENSES
             = SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
             + "ASK { "
-            + "{ <_ID_> " + SparqlPrefix.ONTOLEX.getPrefix() + "sense|" + SparqlPrefix.ONTOLEX.getPrefix() + "lexicalForm ?f }";
+            + " <_ID_> " + SparqlPrefix.ONTOLEX.getPrefix() + "sense|" + SparqlPrefix.ONTOLEX.getPrefix() + "lexicalForm ?f }";
 
     public static final String HAS_DICTIONARYENTRY_COMPONENTS
             = SparqlPrefix.RDFS.getSparqlPrefix() + "\n"

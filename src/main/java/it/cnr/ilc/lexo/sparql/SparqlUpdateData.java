@@ -57,6 +57,15 @@ public class SparqlUpdateData {
             + "WHERE {  OPTIONAL { <_ID_> dct:modified ?modified .} \n"
             + "         OPTIONAL { <_ID_> <_RELATION_> _VALUE_TO_DELETE_ . } }";
     
+    public static final String UPDATE_ECD_ENTRY_LABEL
+            = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+            + "DELETE { <_ID_> rdfs:label _VALUE_TO_DELETE_ ;\n "
+            + "                  dct:modified ?modified . } \n"
+            + "INSERT { <_ID_> rdfs:label _VALUE_TO_INSERT_ ;\n"
+            + "                  dct:modified _LAST_UPDATE_ . }\n"
+            + "WHERE {  OPTIONAL { <_ID_> dct:modified ?modified .} \n"
+            + "         OPTIONAL { <_ID_> rdfs:label _VALUE_TO_DELETE_ . } }";
+    
     public static final String UPDATE_ECD_MEANING_POS
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
             + "DELETE { <_ID_OLD_LE_> ?relation <_ID_FORM_> ;\n "

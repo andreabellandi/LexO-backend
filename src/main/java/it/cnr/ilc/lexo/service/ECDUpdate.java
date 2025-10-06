@@ -63,7 +63,11 @@ public class ECDUpdate extends Service {
     @ApiOperation(value = "ECD entry update",
             notes = "This method updates the ECD entry according to the input updater")
     public Response ECDEntry(
-            @HeaderParam("Authorization") String key, @QueryParam("id") String id,
+            @HeaderParam("Authorization") String key, 
+            @ApiParam(
+                    name = "id",
+                    required = true)
+            @QueryParam("id") String id,
             @ApiParam(
                     name = "author",
                     value = "if LexO user management is disabled, the account that is updating the status of the lexical entry",
