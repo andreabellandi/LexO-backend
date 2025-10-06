@@ -512,7 +512,7 @@ public class SparqlInsertData {
             + SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
             + "INSERT DATA {\n"
             + "    <_ID_FORM_> a ontolex:Form ;\n"
-            + "                   rdfs:label \"[LABEL]\"@_LANG_ ;\n"
+            + "                   ontolex:writtenRep \"[LABEL]\"@_LANG_ ;\n"
             + "                   dct:creator \"[AUTHOR]\" ;\n"
             + "                   dct:created \"[CREATED]\" ;\n"
             + "                   dct:modified \"[MODIFIED]\" . \n"

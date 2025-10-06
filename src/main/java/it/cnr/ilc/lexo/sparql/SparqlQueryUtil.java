@@ -287,8 +287,7 @@ public class SparqlQueryUtil {
             + "SELECT ?" + SparqlVariable.LEXICAL_ENTRY + " \n"
             + "WHERE { ?" + SparqlVariable.DICTIONARY_ENTRY + " lexicog:describes <_ID_OLD_LE_> ;\n"
             + "             lexicog:describes ?" + SparqlVariable.LEXICAL_ENTRY + " .\n"
-            + "        ?" + SparqlVariable.LEXICAL_ENTRY + " lexinfo:partOfSpeech <_NEW_POS_> ;\n"
-            + "        <_ID_OLD_LE_> lexinfo:partOfSpeech <_OLD_POS_> .\n"
+            + "        ?" + SparqlVariable.LEXICAL_ENTRY + " lexinfo:partOfSpeech <_NEW_POS_> .\n"
             + " }";
 
     public static final String LEXICAL_ENTRY_BY_ECD_POS
@@ -315,6 +314,11 @@ public class SparqlQueryUtil {
             = SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
             + "SELECT ?" + SparqlVariable.LABEL + " \n"
             + "WHERE { <_ID_> " + SparqlPrefix.RDFS.getPrefix() + "label ?" + SparqlVariable.LABEL + " }";
+    
+    public static final String FORM_WRITTEN_REP
+            = SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
+            + "SELECT ?" + SparqlVariable.LABEL + " \n"
+            + "WHERE { <_ID_> " + SparqlPrefix.ONTOLEX.getPrefix() + "writtenRep ?" + SparqlVariable.LABEL + " }";
 
     public static final String FORM_TYPE
             = SparqlPrefix.RDFS.getSparqlPrefix() + "\n"

@@ -68,6 +68,8 @@ public class SparqlUpdateData {
     
     public static final String UPDATE_ECD_MEANING_POS
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
             + "DELETE { <_ID_OLD_LE_> ?relation <_ID_FORM_> ;\n "
             + "                  dct:modified ?modified . } \n"
             + "INSERT { <_ID_NEW_LE_> ?relation <_ID_FORM_> ;\n"

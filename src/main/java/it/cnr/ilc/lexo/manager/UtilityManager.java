@@ -190,13 +190,25 @@ public final class UtilityManager implements Manager, Cached {
         }
         return null;
     }
+    
+    public String getWrittenRep(String id) throws QueryEvaluationException {
+        String query = SparqlQueryUtil.FORM_WRITTEN_REP.replaceAll("_ID_", id);
+        try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {
+            while (result.hasNext()) {
+                BindingSet bs = result.next();
+                return (bs.getBinding(SparqlVariable.LABEL) != null) ? ((Literal) bs.getBinding(SparqlVariable.LABEL).getValue()).getLabel() : null;
+            }
+        } catch (QueryEvaluationException qee) {
+        }
+        return null;
+    }
 
     public String getType(String id) throws QueryEvaluationException {
         String query = SparqlQueryUtil.FORM_TYPE.replaceAll("_ID_FORM_", id);
         try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {
             while (result.hasNext()) {
                 BindingSet bs = result.next();
-                return (bs.getBinding(SparqlVariable.FORM_TYPE) != null) ? ((Literal) bs.getBinding(SparqlVariable.FORM_TYPE).getValue()).getLabel() : null;
+                return (bs.getBinding(SparqlVariable.FORM_TYPE) != null) ? bs.getBinding(SparqlVariable.FORM_TYPE).getValue().stringValue() : null;
             }
         } catch (QueryEvaluationException qee) {
         }
@@ -231,9 +243,8 @@ public final class UtilityManager implements Manager, Cached {
         return null;
     }
 
-    public String getLexicalEntryForUpdatingPoSForm(String oldLe, String oldPoS, String newPoS) throws QueryEvaluationException {
+    public String getLexicalEntryForUpdatingPoSForm(String oldLe, String newPoS) throws QueryEvaluationException {
         String query = SparqlQueryUtil.LEXICAL_ENTRY_FOR_UPDATING_POS_FORM.replaceAll("_ID_OLD_LE_", oldLe)
-                .replaceAll("_OLD_POS_", oldPoS)
                 .replaceAll("_NEW_POS_", newPoS);
         try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {
             while (result.hasNext()) {

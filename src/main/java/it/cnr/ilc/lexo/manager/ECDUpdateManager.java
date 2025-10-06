@@ -327,7 +327,7 @@ public class ECDUpdateManager implements Manager, Cached {
             if (ecdfu.getRelation().equals(OntoLexEntity.ECDFormAttributes.PoS.toString())) {
                 UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
                 String oldLe = utilityManager.getLexicalEntryByForm(idForm);
-                String newLe = utilityManager.getLexicalEntryForUpdatingPoSForm(oldLe, ecdfu.getOldPoS(), ecdfu.getValue());
+                String newLe = utilityManager.getLexicalEntryForUpdatingPoSForm(oldLe, ecdfu.getValue());
                 if (ecdfu.getOldPoS() != null) {
                     // update the pos
                     if (oldLe != null) {
@@ -341,7 +341,7 @@ public class ECDUpdateManager implements Manager, Cached {
                     if (lang == null) {
                         throw new ManagerException("The language of the lexical entry associated to the form " + idForm + " could not be found");
                     }
-                    String label = utilityManager.getLabel(idForm);
+                    String label = utilityManager.getWrittenRep(idForm);
                     String type = utilityManager.getType(idForm);
                     return createECDFormPos(newLe, label, lang, type, user);
                 }
@@ -357,6 +357,7 @@ public class ECDUpdateManager implements Manager, Cached {
         String lastupdate = timestampFormat.format(new Timestamp(System.currentTimeMillis()));
         RDFQueryUtil.update(SparqlUpdateData.UPDATE_ECD_MEANING_POS.replaceAll("_ID_FORM_", idForm)
                 .replaceAll("_ID_OLD_LE_", oldLe)
+                .replaceAll("_LAST_UPDATE_", "\"" + lastupdate + "\"")
                 .replaceAll("_ID_NEW_LE_", newLe));
         return lastupdate;
     }
@@ -372,10 +373,10 @@ public class ECDUpdateManager implements Manager, Cached {
                 .replaceAll("_LANG_", lang)
                 .replaceAll("_ID_LE_", le)
                 .replaceAll("_FORM_TYPE_", type)
-                .replaceAll("[MODIFIED]", created)
-                .replaceAll("[CREATED]", created)
-                .replaceAll("[AUTHOR]", user)
-                .replaceAll("[LABEL]", label));
+                .replace("[MODIFIED]", created)
+                .replace("[CREATED]", created)
+                .replace("[AUTHOR]", user)
+                .replace("[LABEL]", label));
         return lastupdate;
     }
 
