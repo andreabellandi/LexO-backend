@@ -167,6 +167,11 @@ public class SparqlQueryUtil {
             + " UNION "
             + "{ ?x " + SparqlPrefix.LEXICOG.getPrefix() + "describes <_ID_> } "
             + "}";
+    
+    public static final String HAS_LEXICALENTRY_FORMS_OR_SENSES
+            = SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
+            + "ASK { "
+            + "{ <_ID_> " + SparqlPrefix.ONTOLEX.getPrefix() + "sense|" + SparqlPrefix.ONTOLEX.getPrefix() + "lexicalForm ?f }";
 
     public static final String HAS_DICTIONARYENTRY_COMPONENTS
             = SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
@@ -250,11 +255,11 @@ public class SparqlQueryUtil {
             + "        lime:entry <_ID_LE_> . }";
 
     public static final String DICITONARY_BY_LANGUAGE
-            = SparqlPrefix.LIME.getSparqlPrefix() + "\n"
+            = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
             + SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
             + "SELECT ?" + SparqlVariable.DICTIONARY + " \n"
             + "WHERE { ?" + SparqlVariable.DICTIONARY + " a lexicog:LexicographicResource ;\n"
-            + SparqlPrefix.LIME.getPrefix() + "language \"_LANG_\" . }";
+            + SparqlPrefix.DCT.getPrefix() + "language \"_LANG_\" . }";
 
     public static final String FORM_LANGUAGE
             = SparqlPrefix.LIME.getSparqlPrefix() + "\n"
@@ -289,9 +294,17 @@ public class SparqlQueryUtil {
     public static final String LEXICAL_ENTRY_BY_ECD_POS
             = SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
             + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
             + "SELECT ?" + SparqlVariable.LEXICAL_ENTRY + " \n"
             + "WHERE { <_ID_DE_> lexicog:describes ?" + SparqlVariable.LEXICAL_ENTRY + " . \n "
             + "        ?" + SparqlVariable.LEXICAL_ENTRY + " lexinfo:partOfSpeech <_POS_> . }";
+    
+    public static final String LEXICAL_ENTRY_BY_ECD_ENTRY
+            = SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
+            + "SELECT ?" + SparqlVariable.LEXICAL_ENTRY + " \n"
+            + "WHERE { <_ID_DE_> lexicog:describes ?" + SparqlVariable.LEXICAL_ENTRY + " . }";
 
     public static final String LEXICAL_ENTRY_NUMBER_BY_LANGUAGE
             = SparqlPrefix.LIME.getSparqlPrefix() + "\n"

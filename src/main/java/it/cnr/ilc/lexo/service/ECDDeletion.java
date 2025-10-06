@@ -81,7 +81,7 @@ public class ECDDeletion extends Service {
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
-    
+
     @GET
     @Path("ECDForm")
     @Produces(MediaType.APPLICATION_JSON)
@@ -113,7 +113,7 @@ public class ECDDeletion extends Service {
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
-    
+
     @GET
     @Path("ECDEntry")
     @Produces(MediaType.APPLICATION_JSON)
@@ -137,7 +137,7 @@ public class ECDDeletion extends Service {
             UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
             if (utilityManager.hasECDEntryComponents(_id)) {
                 log(Level.ERROR, "ecd/delete/ECDEntry: Entry cannot be deleted because is not empty");
-            return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("ecd/delete/ECDEntry: Entry cannot be deleted because is not empty").build();
+                return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("ecd/delete/ECDEntry: Entry cannot be deleted because is not empty").build();
             }
             return Response.ok(ecdManager.deleteECDEntry(_id))
                     .type(MediaType.TEXT_PLAIN).header("Access-Control-Allow-Headers", "content-type")
@@ -150,7 +150,50 @@ public class ECDDeletion extends Service {
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
-    
+
+    @GET
+    @Path("ECDEntryPoS")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "ECDEntryPoS",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "ECD entry pos deletion",
+            notes = "This method deletes an ECD entry pos")
+    public Response ECDEntryPoS(
+            @HeaderParam("Authorization") String key,
+            @ApiParam(
+                    name = "id",
+                    value = "ECD entry IRI",
+                    required = true)
+            @QueryParam("id") String id,
+            @QueryParam("pos") String pos) {
+        try {
+            checkKey(key);
+            String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
+            log(Level.INFO, "ecd/delete/ECDEntryPoS <" + _id + ">");
+            UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+            String le = utilityManager.getLexicalEntryByECDPoS(_id, pos);
+            if (le == null) {
+                log(Level.ERROR, "ecd/delete/ECDEntryPoS: " + _id + " has not " + pos + " as part of speech");
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("ecd/delete/ECDEntryPoS: " + _id + " has not " + pos + " as part of speech").build();
+            }
+            if (utilityManager.hasLexicalEntryFormsOrSenses(id)) {
+                log(Level.ERROR, "ecd/delete/ECDEntryPoS: " + _id + " has associated some forms and/or senses. Delete them first");
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("ecd/delete/ECDEntryPoS: " + _id + " has associated some forms and/or senses. Delete them first").build();
+            }
+            return Response.ok(ecdManager.deleteECDEntry(_id))
+                    .type(MediaType.TEXT_PLAIN).header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
+        } catch (UnsupportedEncodingException | ManagerException ex) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        } catch (AuthorizationException | ServiceException ex) {
+            log(Level.ERROR, "ecd/delete/ECDEntry: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
+        }
+    }
+
     @GET
     @Path("ECDictionary")
     @Produces(MediaType.APPLICATION_JSON)
@@ -174,7 +217,7 @@ public class ECDDeletion extends Service {
             UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
             if (utilityManager.dictionaryHasEntry(_id)) {
                 log(Level.ERROR, "ecd/delete/ECDictionary: Entry cannot be deleted because is not empty");
-            return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("ecd/delete/ECDictionary: Dictionary cannot be deleted because is not empty").build();
+                return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("ecd/delete/ECDictionary: Dictionary cannot be deleted because is not empty").build();
             }
             return Response.ok(ecdManager.deleteECDictionary(_id))
                     .type(MediaType.TEXT_PLAIN).header("Access-Control-Allow-Headers", "content-type")

@@ -256,6 +256,19 @@ public final class UtilityManager implements Manager, Cached {
         }
         return null;
     }
+    
+    public String getLexicalEntryByECDEntry(String id) throws QueryEvaluationException {
+        String query = SparqlQueryUtil.LEXICAL_ENTRY_BY_ECD_ENTRY.replaceAll("_ID_DE_", id);
+        try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {
+            while (result.hasNext()) {
+                BindingSet bs = result.next();
+                return (bs.getBinding(SparqlVariable.LEXICAL_ENTRY) != null)
+                        ? (bs.getBinding(SparqlVariable.LEXICAL_ENTRY).getValue().toString()) : null;
+            }
+        } catch (QueryEvaluationException qee) {
+        }
+        return null;
+    }
 
     public String getLexicalEntryType(String id) throws QueryEvaluationException {
         String query = SparqlQueryUtil.LEXICAL_ENTRY_TYPE.replaceAll("_ID_", id);
@@ -382,6 +395,12 @@ public final class UtilityManager implements Manager, Cached {
 
     public boolean hasLexicalEntryChildren(String id) throws QueryEvaluationException {
         String query = SparqlQueryUtil.HAS_LEXICALENTRY_CHILDREN.replaceAll("_ID_", id);
+        boolean b = RDFQueryUtil.evaluateBQuery(query);
+        return RDFQueryUtil.evaluateBQuery(query);
+    }
+    
+    public boolean hasLexicalEntryFormsOrSenses(String id) throws QueryEvaluationException {
+        String query = SparqlQueryUtil.HAS_LEXICALENTRY_FORMS_OR_SENSES.replaceAll("_ID_", id);
         boolean b = RDFQueryUtil.evaluateBQuery(query);
         return RDFQueryUtil.evaluateBQuery(query);
     }

@@ -82,8 +82,8 @@ public class ECDUpdateManager implements Manager, Cached {
                 return updateECDEntry(id, ecdeu.getRelation(), "\"" + ecdeu.getValue() + "\"@" + lang, "?" + SparqlVariable.TARGET);
             } else if (ecdeu.getRelation().equals(OntoLexEntity.DictionaryEntryAttributes.PoS.toString())) {
                 UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
-                String le = utilityManager.getLexicalEntryByECDPoS(id, ecdeu.getOldPoS());
                 if (ecdeu.getOldPoS() != null) {
+                    String le = utilityManager.getLexicalEntryByECDPoS(id, ecdeu.getOldPoS());
                     // update the pos
                     if (le != null) {
                         return updateECDEntryPoS(le, ecdeu.getValue(), ecdeu.getOldPoS());
@@ -92,6 +92,7 @@ public class ECDUpdateManager implements Manager, Cached {
                     }
                 } else {
                     // add new pos 
+                    String le = utilityManager.getLexicalEntryByECDEntry(id);
                     String lang = ManagerFactory.getManager(UtilityManager.class).getDictLanguage(id);
                     if (lang == null) {
                         throw new ManagerException("The language of the ECD entry could not be found");
@@ -109,7 +110,7 @@ public class ECDUpdateManager implements Manager, Cached {
                     if (label == null) {
                         throw new ManagerException("The lexical entry " + le + " has not label");
                     }
-                    return createLexicalEntryForECDEntryNewPoS(id, le, lexicon, type, ecdeu.getValue(), label, metadata, lang);
+                    return createLexicalEntryForECDEntryNewPoS(id, lexicon, type, ecdeu.getValue(), label, lang, user);
                 }
             } else if (ecdeu.getRelation().equals(OntoLexEntity.DictionaryEntryAttributes.Note.toString())) {
                 return updateECDEntry(id, ecdeu.getRelation(), "\"" + ecdeu.getValue() + "\"", "?" + SparqlVariable.TARGET);
@@ -162,18 +163,23 @@ public class ECDUpdateManager implements Manager, Cached {
 //                .replaceAll("_LAST_UPDATE_", "\"" + lastupdate + "\""));
 //        return lastupdate;
 //    }
-    public String createLexicalEntryForECDEntryNewPoS(String de, String le, String lexicon, String leType, String lePoS, String label, Entity metadata, String lang) throws ManagerException, UpdateExecutionException {
+    public String createLexicalEntryForECDEntryNewPoS(String de, String lexicon, String leType, String lePoS, String label, String lang, String author) throws ManagerException, UpdateExecutionException {
+        Timestamp tm = new Timestamp(System.currentTimeMillis());
+        String id = idInstancePrefix + tm.toString();
+        String created = timestampFormat.format(tm);
+        String idLabel = id.replaceAll("\\s+", "").replaceAll(":", "_").replaceAll("\\.", "_");
+        String _id = LexOProperties.getProperty("repository.lexicon.namespace") + idLabel;
         String lastupdate = timestampFormat.format(new Timestamp(System.currentTimeMillis()));
-        RDFQueryUtil.update(SparqlInsertData.CREATE_LEXICAL_ENTRY_POS_FOR_ECD_ENTRY.replaceAll("_ID_", le)
+        RDFQueryUtil.update(SparqlInsertData.CREATE_LEXICAL_ENTRY_POS_FOR_ECD_ENTRY.replaceAll("_ID_", _id)
                 .replaceAll("_LE_TYPE_", leType)
                 .replaceAll("_POS_", lePoS)
                 .replaceAll("_LANG_", lang)
-                .replaceAll("_ID_LEXICON_", lexicon)
-                .replaceAll("_ID_DE_", de)
-                .replaceAll("[AUTHOR]", metadata.getCreator())
-                .replaceAll("[CREATED]", metadata.getCreationDate())
-                .replaceAll("[MODIFIED]", metadata.getLastUpdate())
-                .replaceAll("[LABEL]", label));
+                .replaceAll("_LEXICON_", lexicon)
+                .replaceAll("_DE_", de)
+                .replace("[AUTHOR]", author)
+                .replace("[CREATED]", created)
+                .replace("[MODIFIED]", lastupdate)
+                .replace("[LABEL]", label));
         return lastupdate;
     }
 

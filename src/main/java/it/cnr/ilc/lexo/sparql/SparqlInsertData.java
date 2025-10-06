@@ -498,8 +498,8 @@ public class SparqlInsertData {
             + "                   dct:created \"[CREATED]\" ;\n"
             + "                   lexinfo:partOfSpeech <_POS_> ;\n"
             + "                   dct:modified \"[MODIFIED]\" . \n"
-            + "    <_ID_LEXICON_> lime:entry <_ID_> .\n"
-            + "    <_ID_DE_> lexicog:describes <_ID_> .\n"
+            + "    <_LEXICON_> lime:entry <_ID_> .\n"
+            + "    <_DE_> lexicog:describes <_ID_> .\n"
             + "}";
     
     public static final String CREATE_ECD_FORM_POS_FOR_ECD_ENTRY

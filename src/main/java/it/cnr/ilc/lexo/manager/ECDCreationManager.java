@@ -54,7 +54,7 @@ public class ECDCreationManager implements Manager, Cached {
                 .replaceAll("_LANG_", lang)
                 .replaceAll("_AUTHOR_", created)
                 .replaceAll("_MODIFIED_", idLabel)
-                .replaceAll("_CREATED_", idLabel));
+                .replaceAll("_CREATED_", author));
         return setECDictionary(_id, created, author, lang);
     }
 
@@ -62,8 +62,8 @@ public class ECDCreationManager implements Manager, Cached {
         ECDictionary d = new ECDictionary();
         d.setCreator(author);
         d.setConfidence(-1);
-        d.setLanguage(id);
-        d.setLabel(lang);
+        d.setLanguage(lang);
+        d.setDictionary(id);
         d.setLastUpdate(created);
         d.setCreationDate(created);
         d.setEntries(0);

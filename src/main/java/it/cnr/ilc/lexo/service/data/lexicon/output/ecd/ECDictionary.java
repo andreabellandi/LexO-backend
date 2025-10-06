@@ -27,6 +27,7 @@ public class ECDictionary extends Entity implements Data {
     private String description;
     @ApiModelProperty(value = "number of entries")
     private int entries;
+    private String dictionary;
 
     public String getLanguage() {
         return language;
@@ -38,6 +39,14 @@ public class ECDictionary extends Entity implements Data {
 
     public String getLabel() {
         return label;
+    }
+
+    public String getDictionary() {
+        return dictionary;
+    }
+
+    public void setDictionary(String dictionary) {
+        this.dictionary = dictionary;
     }
 
     public void setLabel(String label) {
