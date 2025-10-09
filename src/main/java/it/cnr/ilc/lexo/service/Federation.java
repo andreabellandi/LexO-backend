@@ -29,8 +29,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
  *
  * @author andreabellandi
  */
-@Path("fedex")
-@Api("Query Federation")
+@Path("federation")
+@Api("Federation from multiple SPARQL endpoints")
 public class Federation extends Service {
 
     private static final Logger logger = LoggerFactory.getLogger(Federation.class);
@@ -40,7 +40,7 @@ public class Federation extends Service {
     private final FederatedObjectHelper federatedObjectHelper = new FederatedObjectHelper();
 
     @POST
-    @Path("search")
+    @Path("fedx")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @RequestMapping(
@@ -48,7 +48,7 @@ public class Federation extends Service {
             value = "search",
             produces = "application/json; charset=UTF-8")
     @ApiOperation(value = "Search on external endpoints",
-            notes = "This method runs a query on a specific sparql endpoint")
+            notes = "This method runs a query on a specific external sparql endpoint")
     public Response search(
             @ApiParam(
             name = "sparqlQuery",

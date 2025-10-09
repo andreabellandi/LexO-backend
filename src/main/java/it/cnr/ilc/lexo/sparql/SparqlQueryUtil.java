@@ -443,7 +443,7 @@ public class SparqlQueryUtil {
             + "    ?" + SparqlVariable.LEXICAL_ENTRY + " lexinfo:partOfSpeech <_POS_> .\n"
             + "    OPTIONAL { <_ID_DE_> ?rdf_n ?comp .\n"
             + "               ?comp rdfs:label ?label . \n"
-            + "        FILTER(regex(str(?rdf_n), \"_\"))\n"
+            + "        FILTER(regex(str(?rdf_n), \"http://www.w3.org/1999/02/22-rdf-syntax-ns#_\"))\n"
             + "    }\n"
             + "} GROUP BY ?" + SparqlVariable.LEXICAL_ENTRY;
 

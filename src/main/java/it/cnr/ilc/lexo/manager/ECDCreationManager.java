@@ -219,13 +219,13 @@ public class ECDCreationManager implements Manager, Cached {
                 .replaceAll("_PREFIX_", sparqlPrefix)
                 .replaceAll("_LE_ID_", le)
                 .replaceAll("_SENSE_ID_", _id)
-                .replaceAll("[AUTHOR]", author)
-                .replaceAll("[CREATED]", created)
-                .replaceAll("[MODIFIED]", created)
+                .replace("[AUTHOR]", author)
+                .replace("[CREATED]", created)
+                .replace("[MODIFIED]", created)
                 .replaceAll("_NEW_COMP_ID_", _id + "_comp")
                 .replaceAll("_SENSE_LABEL_", StringUtil.getRomanNumber(position))
                 .replaceAll("_DE_ID_", de)
-                .replaceAll("[POSITION]", Integer.toString(position)));
+                .replace("[POSITION]", Integer.toString(position)));
         return setMeaning(_id, created, author);
     }
 
