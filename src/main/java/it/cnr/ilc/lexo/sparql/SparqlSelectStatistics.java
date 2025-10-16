@@ -56,13 +56,30 @@ public class SparqlSelectStatistics {
 //            + "  _:f luc:facetValue ?" + SparqlVariable.LABEL + " .\n"
 //            + "  _:f luc:facetCount ?" + SparqlVariable.LABEL_COUNT + " .\n"
 //            + "} order by ?" + SparqlVariable.LABEL;
-    public static final String STATISTICS_LANGUAGES
+//    public static final String STATISTICS_LANGUAGES
+//            = SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
+//            + SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+//            + "SELECT ?" + SparqlVariable.LABEL + " (count(distinct ?entry) as ?" + SparqlVariable.LABEL_COUNT + ") WHERE {\n"
+//            + "  ?dict a lexicog:LexicographicResource ;\n"
+//            + "        dct:language ?" + SparqlVariable.LABEL + " .\n"
+//            + "  OPTIONAL { ?dict lexicog:entry ?entry }\n"
+//            + "} GROUP BY ?" + SparqlVariable.LABEL + "";
+    
+    public static final String STATISTICS_LANGUAGES_DICT
             = SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
             + SparqlPrefix.DCT.getSparqlPrefix() + "\n"
             + "SELECT ?" + SparqlVariable.LABEL + " (count(distinct ?entry) as ?" + SparqlVariable.LABEL_COUNT + ") WHERE {\n"
             + "  ?dict a lexicog:LexicographicResource ;\n"
             + "        dct:language ?" + SparqlVariable.LABEL + " .\n"
             + "  OPTIONAL { ?dict lexicog:entry ?entry }\n"
+            + "} GROUP BY ?" + SparqlVariable.LABEL + "";
+    
+    public static final String STATISTICS_LANGUAGES
+            = SparqlPrefix.LIME.getSparqlPrefix() + "\n"
+            + "SELECT ?" + SparqlVariable.LABEL + " (count(distinct ?entry) as ?" + SparqlVariable.LABEL_COUNT + ") WHERE {\n"
+            + "  ?lex a lime:Lexicon ;\n"
+            + "        lime:language ?" + SparqlVariable.LABEL + " .\n"
+            + "  OPTIONAL { ?lex lime:entry ?entry }\n"
             + "} GROUP BY ?" + SparqlVariable.LABEL + "";
 
     public static final String STATISTICS_POS

@@ -63,9 +63,17 @@ public final class LexiconStatisticsManager implements Manager, Cached {
         return RDFQueryUtil.evaluateTQuery(SparqlSelectStatistics.STATISTICS_AUTHORS.replace("_INDEX_", SparqlVariable.LEXICAL_ENTRY_INDEX));
     }
 
+    public TupleQueryResult getDictLanguages() {
+//        TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL, SparqlSelectStatistics.STATISTICS_LANGUAGES);
+//        return RDFQueryUtil.evaluateTQuery(SparqlSelectStatistics.STATISTICS_LANGUAGES.replace("_INDEX_", SparqlVariable.LEXICAL_ENTRY_INDEX)
+//        .replace("_LANG_FIELD_", "writtenFormLanguage"));
+        return RDFQueryUtil.evaluateTQuery(SparqlSelectStatistics.STATISTICS_LANGUAGES_DICT);
+    }
+
     public TupleQueryResult getLanguages() {
 //        TupleQuery tupleQuery = GraphDbUtil.getConnection().prepareTupleQuery(QueryLanguage.SPARQL, SparqlSelectStatistics.STATISTICS_LANGUAGES);
-        return RDFQueryUtil.evaluateTQuery(SparqlSelectStatistics.STATISTICS_LANGUAGES.replace("_INDEX_", SparqlVariable.LEXICAL_ENTRY_INDEX)
-        .replace("_LANG_FIELD_", "writtenFormLanguage"));
+//        return RDFQueryUtil.evaluateTQuery(SparqlSelectStatistics.STATISTICS_LANGUAGES.replace("_INDEX_", SparqlVariable.LEXICAL_ENTRY_INDEX)
+//        .replace("_LANG_FIELD_", "writtenFormLanguage"));
+        return RDFQueryUtil.evaluateTQuery(SparqlSelectStatistics.STATISTICS_LANGUAGES);
     }
 }

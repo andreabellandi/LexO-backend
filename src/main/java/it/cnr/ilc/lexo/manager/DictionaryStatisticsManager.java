@@ -63,6 +63,6 @@ public final class DictionaryStatisticsManager implements Manager, Cached {
     public TupleQueryResult getLanguages() {
 //        return RDFQueryUtil.evaluateTQuery(SparqlSelectStatistics.STATISTICS_LANGUAGES.replace("_INDEX_", SparqlVariable.DICTIONARY_ENTRY_INDEX)
 //        .replace("_LANG_FIELD_", "entryLanguage"));
-        return RDFQueryUtil.evaluateTQuery(SparqlSelectStatistics.STATISTICS_LANGUAGES);
+        return RDFQueryUtil.evaluateTQuery(SparqlSelectStatistics.STATISTICS_LANGUAGES_DICT);
     }
 }
