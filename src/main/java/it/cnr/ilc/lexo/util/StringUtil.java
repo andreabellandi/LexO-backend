@@ -3,6 +3,9 @@ package it.cnr.ilc.lexo.util;
 import it.cnr.ilc.lexo.manager.ManagerException;
 import it.cnr.ilc.lexo.manager.ManagerFactory;
 import it.cnr.ilc.lexo.manager.UtilityManager;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -137,4 +140,8 @@ public class StringUtil {
         }
     }
 
+    public static String sanitize(String name) {
+        return name.replaceAll("[^a-zA-Z0-9._-]", "_");
+    }
+   
 }

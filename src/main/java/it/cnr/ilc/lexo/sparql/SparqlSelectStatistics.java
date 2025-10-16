@@ -42,20 +42,28 @@ public class SparqlSelectStatistics {
             + "  FILTER (regex(str(?" + SparqlVariable.LABEL + "), \"lexical entry|word|multi-word expression|affix|etymon|cognate\"))"
             + "}";
 
+//    public static final String STATISTICS_LANGUAGES
+//            = SparqlPrefix.INST.getSparqlPrefix() + "\n"
+//            + SparqlPrefix.LUC.getSparqlPrefix() + "\n"
+//            + "SELECT ?"
+//            + SparqlVariable.LABEL
+//            + " ?"
+//            + SparqlVariable.LABEL_COUNT
+//            + " WHERE {\n"
+//            + "  ?r a inst:_INDEX_ ;\n"
+//            + "    luc:facetFields \"_LANG_FIELD_\" ;\n"
+//            + "    luc:facets _:f .\n"
+//            + "  _:f luc:facetValue ?" + SparqlVariable.LABEL + " .\n"
+//            + "  _:f luc:facetCount ?" + SparqlVariable.LABEL_COUNT + " .\n"
+//            + "} order by ?" + SparqlVariable.LABEL;
     public static final String STATISTICS_LANGUAGES
-            = SparqlPrefix.INST.getSparqlPrefix() + "\n"
-            + SparqlPrefix.LUC.getSparqlPrefix() + "\n"
-            + "SELECT ?"
-            + SparqlVariable.LABEL
-            + " ?"
-            + SparqlVariable.LABEL_COUNT
-            + " WHERE {\n"
-            + "  ?r a inst:_INDEX_ ;\n"
-            + "    luc:facetFields \"_LANG_FIELD_\" ;\n"
-            + "    luc:facets _:f .\n"
-            + "  _:f luc:facetValue ?" + SparqlVariable.LABEL + " .\n"
-            + "  _:f luc:facetCount ?" + SparqlVariable.LABEL_COUNT + " .\n"
-            + "} order by ?" + SparqlVariable.LABEL;
+            = SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
+            + SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+            + "SELECT ?" + SparqlVariable.LABEL + " (count(distinct ?entry) as ?" + SparqlVariable.LABEL_COUNT + ") WHERE {\n"
+            + "  ?dict a lexicog:LexicographicResource ;\n"
+            + "        dct:language ?" + SparqlVariable.LABEL + " .\n"
+            + "  OPTIONAL { ?dict lexicog:entry ?entry }\n"
+            + "} GROUP BY ?" + SparqlVariable.LABEL + "";
 
     public static final String STATISTICS_POS
             = SparqlPrefix.INST.getSparqlPrefix() + "\n"
@@ -97,7 +105,7 @@ public class SparqlSelectStatistics {
             + "WHERE { ?" + SparqlVariable.LEXICON + " a " + SparqlPrefix.LIME.getPrefix() + "Lexicon ;\n"
             + "                 " + SparqlPrefix.LIME.getPrefix() + "language ?" + SparqlVariable.LEXICON_LANGUAGE + " . }\n"
             + "ORDER BY ?" + SparqlVariable.LEXICON_LANGUAGE + "";
-    
+
     public static final String STATISTICS_DICT_LANGUAGES_LIST
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
             + SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
@@ -131,4 +139,4 @@ public class SparqlSelectStatistics {
             + "    OPTIONAL {?" + SparqlVariable.LEXICAL_ENTITY + " loc:rev ?" + SparqlVariable.LEXICAL_ENTRY_REVISOR + " . }\n"
             + "}";
 
-    }
+}
