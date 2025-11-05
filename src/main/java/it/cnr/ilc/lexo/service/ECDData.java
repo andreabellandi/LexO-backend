@@ -21,6 +21,7 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.HitsDataList;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ecd.ECDEntryMorphology;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ecd.ECDLexicalFunction;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ecd.ECDMeaning;
+import it.cnr.ilc.lexo.service.data.lexicon.output.ecd.ECDictionary;
 import it.cnr.ilc.lexo.service.helper.DictionaryEntryHelper;
 import it.cnr.ilc.lexo.service.helper.ECDComponentHelper;
 import it.cnr.ilc.lexo.service.helper.ECDEntryFilterHelper;
@@ -28,6 +29,7 @@ import it.cnr.ilc.lexo.service.helper.ECDEntryMorphologyHelper;
 import it.cnr.ilc.lexo.service.helper.ECDEntrySemanticsHelper;
 import it.cnr.ilc.lexo.service.helper.ECDLexicalFunctionHelper;
 import it.cnr.ilc.lexo.service.helper.ECDMeaningHelper;
+import it.cnr.ilc.lexo.service.helper.ECDictionaryHelper;
 import it.cnr.ilc.lexo.service.helper.HelperException;
 import it.cnr.ilc.lexo.util.LogUtil;
 import java.io.UnsupportedEncodingException;
@@ -66,6 +68,7 @@ public class ECDData extends Service {
     private final ECDEntryMorphologyHelper ECDEntryMorphologyHelper = new ECDEntryMorphologyHelper();
     private final ECDEntrySemanticsHelper ECDEntrySemanticsHelper = new ECDEntrySemanticsHelper();
     private final ECDEntryFilterHelper ECDEntryFilterHelper = new ECDEntryFilterHelper();
+    private final ECDictionaryHelper ECDictionaryHelper = new ECDictionaryHelper();
     private final ECDMeaningHelper ECDMeaningHelper = new ECDMeaningHelper();
     private final ECDLexicalFunctionHelper ECDLexicalFunctionHelper = new ECDLexicalFunctionHelper();
     private final DictionaryEntryHelper ECDDictionaryEntryHelper = new DictionaryEntryHelper();
@@ -191,7 +194,7 @@ public class ECDData extends Service {
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }
     }
-    
+
     @GET
     @Path("ECDEntry")
     @Produces(MediaType.APPLICATION_JSON)
@@ -221,6 +224,34 @@ public class ECDData extends Service {
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
         } catch (ManagerException | UnsupportedEncodingException | AuthorizationException | ServiceException ex) {
+            log(Level.ERROR, ex.getMessage());
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        }
+    }
+
+    @GET
+    @Path("ECDictionaries")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.POST,
+            value = "ECDictionaries",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "EC Dictionaries list",
+            notes = "This method returns the list of existant dictionaries")
+    public Response ECDictionaries(@HeaderParam("Authorization") String key) throws HelperException {
+        try {
+            userCheck(key);
+            log(Level.INFO, "data/ECDictionaries\n");
+            TupleQueryResult ECDictionaries = ecdManager.getECDicitonaries();
+            String json = "";
+            List<ECDictionary> lecds = ECDictionaryHelper.newDataList(ECDictionaries);
+            json = ECDictionaryHelper.toJson(lecds);
+            return Response.ok(json)
+                    .type(MediaType.APPLICATION_JSON)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
+        } catch (AuthorizationException | ServiceException ex) {
             log(Level.ERROR, ex.getMessage());
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }
@@ -299,7 +330,7 @@ public class ECDData extends Service {
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }
     }
-    
+
     @GET
     @Path("ECDMeaning")
     @Produces(MediaType.APPLICATION_JSON)

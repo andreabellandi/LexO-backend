@@ -2493,13 +2493,13 @@ public class SparqlSelectData {
             + "   OPTIONAL { \n"
             + "        	GRAPH ?graph" + SparqlVariable.SEEALSO + " { ?" + SparqlVariable.DICTIONARY_ENTRY + " rdfs:seeAlso ?_" + SparqlVariable.SEEALSO + " . } \n"
             + "        	   OPTIONAL { ?_" + SparqlVariable.SEEALSO + " rdfs:label ?" + SparqlVariable.SEEALSO_LABEL + " }\n"
-            + "    	}\n"            
+            + "    	}\n"
             + "   OPTIONAL { \n"
             + "            ?" + SparqlVariable.DICTIONARY_ENTRY + " lexicog:describes [ lexinfo:partOfSpeech ?_" + SparqlVariable.DICTIONARY_ENTRY_POS + " ] \n"
             + "   }\n"
             + "   OPTIONAL {?" + SparqlVariable.DICTIONARY_ENTRY + " ?" + SparqlVariable.PROPERTY_NAME + " ?_" + SparqlVariable.CHILD + "    \n"
             + "              FILTER (strstarts(str(?" + SparqlVariable.PROPERTY_NAME + "), str(rdf:_)))\n"
-            + "   } \n"            
+            + "   } \n"
             + "} GROUP BY ?" + SparqlVariable.DICTIONARY_ENTRY + " ?"
             + SparqlVariable.LABEL + " ?"
             + SparqlVariable.DICTIONARY_ENTRY_REVISOR + " ?"
@@ -2562,4 +2562,23 @@ public class SparqlSelectData {
             + SparqlVariable.DESCRIBE_LABEL + " ?"
             + SparqlVariable.NOTE + " ?"
             + SparqlVariable.SENSE_DEFINITION + " ?confidence";
+
+    public static final String DATA_ECDICTIONARIES = SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
+            + SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+            + SparqlPrefix.SKOS.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
+            + "SELECT ?" + SparqlVariable.DICTIONARY + " ?" + SparqlVariable.DESCRIPTION + " ?" + SparqlVariable.LABEL + 
+            " ?" + SparqlVariable.DICT_LANGUAGE + " ?" + SparqlVariable.CREATION_DATE + " ?" + SparqlVariable.CREATOR + 
+            " ?" + SparqlVariable.LAST_UPDATE + "(COUNT(?_entries) AS ?" + SparqlVariable.DICT_ELEMENT + ") \n"
+            + "WHERE {\n"
+            + "    ?" + SparqlVariable.DICTIONARY + " a lexicog:LexicographicResource .\n"
+            + "    OPTIONAL { ?" + SparqlVariable.DICTIONARY + " dct:description ?" + SparqlVariable.DESCRIPTION + " }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.DICTIONARY + " rdfs:label ?" + SparqlVariable.LABEL + " }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.DICTIONARY + " dct:language ?" + SparqlVariable.DICT_LANGUAGE + " }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.DICTIONARY + " dct:created ?" + SparqlVariable.CREATION_DATE + " }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.DICTIONARY + " dct:creator ?" + SparqlVariable.CREATOR + " }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.DICTIONARY + " dct:modified ?" + SparqlVariable.LAST_UPDATE + " }\n"
+            + "    OPTIONAL { ?" + SparqlVariable.DICTIONARY + " lexicog:entry ?_entries }\n"
+            + "} GROUP BY ?" + SparqlVariable.DICTIONARY + " ?" + SparqlVariable.DESCRIPTION + " ?" + SparqlVariable.LABEL +
+            " ?" + SparqlVariable.DICT_LANGUAGE + " ?" + SparqlVariable.CREATION_DATE + " ?" + SparqlVariable.CREATOR + " ?" + SparqlVariable.LAST_UPDATE + " ";
 }

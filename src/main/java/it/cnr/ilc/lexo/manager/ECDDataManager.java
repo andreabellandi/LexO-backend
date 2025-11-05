@@ -6,8 +6,6 @@
 package it.cnr.ilc.lexo.manager;
 
 import it.cnr.ilc.lexo.LexOProperties;
-import static it.cnr.ilc.lexo.manager.LexiconDataManager.logger;
-import it.cnr.ilc.lexo.service.data.lexicon.input.DictionaryEntryFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.input.ecd.ECDEntryFilter;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ecd.ECDLexicalFunction;
 import it.cnr.ilc.lexo.sparql.SparqlSelectData;
@@ -39,6 +37,11 @@ public class ECDDataManager implements Manager, Cached {
         return RDFQueryUtil.evaluateTQuery(query);
     }
 
+    public TupleQueryResult getECDicitonaries() {
+        String query = SparqlSelectData.DATA_ECDICTIONARIES;
+        return RDFQueryUtil.evaluateTQuery(query);
+    }
+    
     public TupleQueryResult getFilterdECDEntries(ECDEntryFilter def) throws ManagerException {
         logger.info(def.toString());
 //        Manager.validateWithEnum("formType", FormTypes.class, lef.getFormType());
