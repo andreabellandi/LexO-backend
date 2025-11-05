@@ -57,7 +57,7 @@ public class ParserUtil {
             + "SELECT (count(distinct ?" + SparqlVariable.LEXICAL_ENTRY + ") as ?" + SparqlVariable.LABEL_COUNT + ") \n"
             + "WHERE { ?lexicon a lime:Lexicon ;\n"
             + "                 lime:language \"_LANG_\" ;\n"
-            + "                 lime:entry " + SparqlVariable.LEXICAL_ENTRY + " . }\n";
+            + "                 lime:entry ?" + SparqlVariable.LEXICAL_ENTRY + " . }\n";
     
     public static final String COUNT_FORM_BY_LANGUAGE
             = SparqlPrefix.LIME.getSparqlPrefix() + "\n"

@@ -5,123 +5,601 @@
  */
 package it.cnr.ilc.lexo.manager;
 
-import it.cnr.ilc.lexo.util.Converter;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.Instant;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import org.eclipse.rdf4j.rio.RDFFormat;
+import org.eclipse.rdf4j.rio.Rio;
+import org.eclipse.rdf4j.query.BindingSet;
+import org.eclipse.rdf4j.query.TupleQuery;
+import org.eclipse.rdf4j.query.TupleQueryResult;
+import org.eclipse.rdf4j.repository.Repository;
+import org.eclipse.rdf4j.repository.RepositoryConnection;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.util.*;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
+import it.cnr.ilc.lexo.util.RepositoryRegistry;
 
 /**
  *
  * @author andreabellandi
  */
-public class JobManager implements Manager {
+public class JobManager {
 
-    public static enum Status {
-        UPLOADED, PROCESSING, READY, FAILED
+    private static final JobManager INSTANCE = new JobManager();
+
+    public static JobManager get() {
+        return INSTANCE;
     }
 
-    public static final class JobInfo {
+    public enum JobType {
+        PARSE, QUERY, CONVERT
+    }
 
-        public final String id;
-        public volatile Status status;
-        public volatile String message;
-        public volatile int progress = 0;   // 0..100
-        public final Instant createdAt = Instant.now();
+    public enum JobState {
+        PENDING, RUNNING, COMPLETED, FAILED, CANCELLED
+    }
 
-        JobInfo(String id, Status status) {
-            this.id = id;
-            this.status = status;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public class JobInfo {
+
+        public String fileId;
+        public JobType type;
+        public JobState state;
+        public int progress; // 0..100
+        public String message;
+        public String resultId; // for QUERY: queryId; CONVERT: out path
+
+        public JobInfo() {
+        }
+
+        public JobInfo(String fileId, JobType type) {
+            this.fileId = fileId;
+            this.type = type;
+            this.state = JobState.PENDING;
+            this.progress = 0;
         }
     }
 
-    private final Map<String, JobInfo> JOBS = new ConcurrentHashMap<>();
-    private final ExecutorService EXEC = new ThreadPoolExecutor(
-            2, 4, 60, TimeUnit.SECONDS, new LinkedBlockingQueue<>(),
-            r -> {
-                Thread t = new Thread(r, "converter");
-                t.setDaemon(true);
-                return t;
-            }
-    );
-
-    public String newId() {
-        return UUID.randomUUID().toString();
+    public enum ResultFormat {
+        JSON, CSV, BOTH
     }
 
-    public void registerUpload(String id) {
-        JOBS.putIfAbsent(id, new JobInfo(id, Status.UPLOADED));
+    // Default result size limits (can be overridden per request)
+    public static final long DEFAULT_MAX_RESULT_BYTES = 25L * 1024 * 1024; // 25 MiB
+    public static final int DEFAULT_MAX_RESULT_ROWS = 1_000_000;
+
+    private final ExecutorService ioPool = Executors.newFixedThreadPool(4);
+    private final ExecutorService cpuPool = Executors.newFixedThreadPool(4);
+
+    private final Map<String, Path> uploads = new ConcurrentHashMap<>();
+    private final Map<String, Path> converted = new ConcurrentHashMap<>();
+
+    private final Map<String, JobInfo> jobs = new ConcurrentHashMap<>();
+    private final Map<String, Future<?>> futures = new ConcurrentHashMap<>();
+
+    // fileId -> queryId -> paths
+    private static class QueryPaths {
+
+        Path json;
+        Path csv;
+    }
+    private final Map<String, Map<String, QueryPaths>> queryResults = new ConcurrentHashMap<>();
+
+    private JobManager() {
+        try {
+        Files.createDirectories(Paths.get("data/uploads"));
+        Files.createDirectories(Paths.get("data/converted"));
+        Files.createDirectories(Paths.get("data/query"));
+         } catch (IOException e) {}
     }
 
-    public JobInfo ensureExists(String id) {
-        JobInfo j = JOBS.get(id);
-        if (j == null) {
-            throw new NotFound("Unknown id: " + id);
-        }
-        return j;
+    private String key(String fileId, JobType type) {
+        return fileId + ":" + type.name();
     }
 
-    public JobInfo get(String id) {
-        JobInfo j = JOBS.get(id);
-        if (j == null) {
-            throw new NotFound("Unknown id: " + id);
-        }
-        return j;
-    }
-
-    public JobInfo startAsync(String id, Path src, Path out) {
-        JobInfo job = ensureExists(id);
-        synchronized (job) {
-            if (job.status == Status.PROCESSING || job.status == Status.READY) {
-                return job;
-            }
-            job.status = Status.PROCESSING;
-            job.message = null;
-            job.progress = 0;
-            CompletableFuture.runAsync(() -> {
-                try {
-                    Converter.convert(src, out, p -> job.progress = p);
-                    job.progress = 100;
-                    job.status = Status.READY;
-                } catch (IOException e) {
-                    job.status = Status.FAILED;
-                    job.message = e.getClass().getSimpleName() + ": " + e.getMessage();
+    // ---------- Upload handling ----------
+    public Path saveUploadEnforcingLimit(String fileId, InputStream in, String origName, long maxBytes) throws IOException {
+        Path out = Paths.get("data/uploads/" + fileId + getExt(origName));
+        long written = 0L;
+        byte[] buf = new byte[8192];
+        int r;
+        try ( OutputStream os = Files.newOutputStream(out, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
+            while ((r = in.read(buf)) != -1) {
+                written += r;
+                if (written > maxBytes) {
+                    throw new IOException("File exceeds 50MB limit");
                 }
-            }, EXEC);
-            return job;
+                os.write(buf, 0, r);
+            }
+        }
+        uploads.put(fileId, out);
+        return out;
+    }
+
+    private static String getExt(String name) {
+        int i = name.lastIndexOf('.');
+        return i >= 0 ? name.substring(i) : "";
+    }
+
+    public Path getUpload(String fileId) {
+        return uploads.get(fileId);
+    }
+
+    public Path getConverted(String fileId) {
+        return converted.get(fileId);
+    }
+
+    public JobInfo getJob(String fileId, JobType type) {
+        return jobs.get(key(fileId, type));
+    }
+
+    public Collection<JobInfo> getAllJobsFor(String fileId) {
+        List<JobInfo> out = new ArrayList<>();
+        for (JobType t : JobType.values()) {
+            JobInfo ji = getJob(fileId, t);
+            if (ji != null) {
+                out.add(ji);
+            }
+        }
+        return out;
+    }
+
+    // ---------- Async: Parse ----------
+    public JobInfo startParse(String fileId) {
+        Path file = getUpload(fileId);
+        if (file == null) {
+            throw new IllegalStateException("No uploaded file for " + fileId);
+        }
+        JobInfo ji = new JobInfo(fileId, JobType.PARSE);
+        jobs.put(key(fileId, JobType.PARSE), ji);
+        Future<?> f = ioPool.submit(() -> {
+            try {
+                ji.state = JobState.RUNNING;
+                ji.progress = 1;
+                Repository repo = RepositoryRegistry.create(fileId);
+                RDFFormat fmt = Rio.getParserFormatForFileName(file.getFileName().toString()).orElse(RDFFormat.TURTLE);
+                long size = Files.size(file);
+                try ( InputStream in = Files.newInputStream(file);  RepositoryConnection conn = repo.getConnection()) {
+                    ProgressInputStream pin = new ProgressInputStream(in, size, p -> {
+                        ji.progress = p;
+                    });
+                    conn.add(pin, "urn:base:", fmt);
+                }
+                ji.progress = 100;
+                ji.state = JobState.COMPLETED;
+                ji.message = "Parsed at " + Instant.now();
+            } catch (Throwable t) {
+                if (Thread.currentThread().isInterrupted()) {
+                    ji.state = JobState.CANCELLED;
+                    ji.message = "Parse cancelled";
+                } else {
+                    ji.state = JobState.FAILED;
+                    ji.message = t.getMessage();
+                }
+            }
+        });
+        futures.put(key(fileId, JobType.PARSE), f);
+        return ji;
+    }
+
+    // ---------- Async: Convert ----------
+    public JobInfo startConvert(String fileId) {
+        Path file = getUpload(fileId);
+        if (file == null) {
+            throw new IllegalStateException("No uploaded file for " + fileId);
+        }
+        JobInfo ji = new JobInfo(fileId, JobType.CONVERT);
+        jobs.put(key(fileId, JobType.CONVERT), ji);
+        Future<?> f = ioPool.submit(() -> {
+            try {
+                ji.state = JobState.RUNNING;
+                ji.progress = 1;
+                Path out = Paths.get("data/converted/" + file.getFileName().toString());
+                long size = Files.size(file);
+                try ( BufferedReader br = Files.newBufferedReader(file, StandardCharsets.UTF_8);  BufferedWriter bw = Files.newBufferedWriter(out, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
+                    char[] buf = new char[8192];
+                    int r;
+                    long seen = 0;
+                    while ((r = br.read(buf)) != -1) {
+                        if (Thread.currentThread().isInterrupted()) {
+                            throw new InterruptedException();
+                        }
+                        bw.write(new String(buf, 0, r).toUpperCase());
+                        seen += r;
+                        ji.progress = (int) Math.min(99, (seen * 100 / Math.max(1, size)));
+                    }
+                }
+                converted.put(fileId, out);
+                ji.progress = 100;
+                ji.state = JobState.COMPLETED;
+                ji.resultId = out.toString();
+            } catch (InterruptedException ie) {
+                ji.state = JobState.CANCELLED;
+                ji.message = "Conversion cancelled";
+            } catch (Throwable t) {
+                ji.state = JobState.FAILED;
+                ji.message = t.getMessage();
+            }
+        });
+        futures.put(key(fileId, JobType.CONVERT), f);
+        return ji;
+    }
+
+    // ---------- Async: Query (SELECT only, inference + export + limits) ----------
+    public JobInfo startQuery(String fileId, String sparql, long timeoutMillis, boolean includeInferred,
+            ResultFormat fmt, long maxBytes, int maxRows) {
+        JobInfo ji = new JobInfo(fileId, JobType.QUERY);
+        jobs.put(key(fileId, JobType.QUERY), ji);
+        Future<?> f = cpuPool.submit(() -> {
+            long start = System.currentTimeMillis();
+            String queryId = UUID.randomUUID().toString();
+            Path baseDir = Paths.get("data/query", fileId, queryId);
+            boolean truncated = false;
+            try {
+                ji.state = JobState.RUNNING;
+                ji.progress = 1;
+                ji.resultId = queryId;
+                Files.createDirectories(baseDir);
+                Repository repo = RepositoryRegistry.get(fileId);
+                if (repo == null) {
+                    throw new IllegalStateException("No repository for fileId: " + fileId);
+                }
+                int rowCount = 0;
+                List<String> headers;
+                Path jsonPath = (fmt == ResultFormat.JSON || fmt == ResultFormat.BOTH) ? baseDir.resolve("result.json") : null;
+                Path csvPath = (fmt == ResultFormat.CSV || fmt == ResultFormat.BOTH) ? baseDir.resolve("result.csv") : null;
+
+                // Counting streams
+                CountingOutputStream jsonCounting = null;
+                CountingOutputStream csvCounting = null;
+                JsonGenerator jgen = null;
+                BufferedWriter csvWriter = null;
+
+                try ( RepositoryConnection conn = repo.getConnection()) {
+                    TupleQuery tq = conn.prepareTupleQuery(sparql);
+                    tq.setMaxExecutionTime((int) (timeoutMillis / 1000));
+                    tq.setIncludeInferred(includeInferred);
+                    try ( TupleQueryResult res = tq.evaluate()) {
+                        headers = res.getBindingNames();
+                        // Open writers lazily
+                        if (jsonPath != null) {
+                            jsonCounting = new CountingOutputStream(Files.newOutputStream(jsonPath, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING));
+                            jgen = new JsonFactory().createGenerator(jsonCounting, com.fasterxml.jackson.core.JsonEncoding.UTF8);
+                            jgen.writeStartArray();
+                        }
+                        if (csvPath != null) {
+                            csvCounting = new CountingOutputStream(Files.newOutputStream(csvPath, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING));
+                            csvWriter = new BufferedWriter(new OutputStreamWriter(csvCounting, StandardCharsets.UTF_8));
+                            writeCsvLine(csvWriter, headers);
+                        }
+                        while (res.hasNext()) {
+                            if (Thread.currentThread().isInterrupted()) {
+                                throw new InterruptedException();
+                            }
+                            if (rowCount >= maxRows) {
+                                truncated = true;
+                                break;
+                            }
+                            BindingSet bs = res.next();
+                            // JSON row
+                            if (jgen != null) {
+                                jgen.writeStartObject();
+                                for (String h : headers) {
+                                    String v = (bs.hasBinding(h) && bs.getValue(h) != null) ? bs.getValue(h).stringValue() : null;
+                                    if (v == null) {
+                                        jgen.writeNullField(h);
+                                    } else {
+                                        jgen.writeStringField(h, v);
+                                    }
+                                }
+                                jgen.writeEndObject();
+                                jgen.flush();
+                                if (jsonCounting.getCount() > maxBytes) {
+                                    truncated = true;
+                                    break;
+                                }
+                            }
+                            // CSV row
+                            if (csvWriter != null) {
+                                List<String> vals = new ArrayList<>(headers.size());
+                                for (String h : headers) {
+                                    String v = (bs.hasBinding(h) && bs.getValue(h) != null) ? bs.getValue(h).stringValue() : "";
+                                    vals.add(v);
+                                }
+                                writeCsvLine(csvWriter, vals);
+                                csvWriter.flush();
+                                if (csvCounting.getCount() > maxBytes) {
+                                    truncated = true;
+                                    break;
+                                }
+                            }
+                            rowCount++;
+                            long elapsed = System.currentTimeMillis() - start;
+                            ji.progress = (int) Math.min(99, (elapsed * 100 / Math.max(1, timeoutMillis)));
+                        }
+                    }
+                } finally {
+                    if (jgen != null) {
+                        try {
+                            jgen.writeEndArray();
+                            jgen.close();
+                        } catch (Exception ignore) {
+                        }
+                    }
+                    if (csvWriter != null) {
+                        try {
+                            csvWriter.flush();
+                            csvWriter.close();
+                        } catch (Exception ignore) {
+                        }
+                    }
+                }
+
+                // register paths
+                QueryPaths qp = new QueryPaths();
+                qp.json = jsonPath;
+                qp.csv = csvPath;
+                queryResults.computeIfAbsent(fileId, k -> new ConcurrentHashMap<>()).put(queryId, qp);
+
+                ji.message = "Rows=" + rowCount + "; includeInferred=" + includeInferred + "; format=" + fmt + "; truncated=" + truncated;
+                ji.progress = 100;
+                ji.state = JobState.COMPLETED;
+                ji.resultId = queryId;
+            } catch (org.eclipse.rdf4j.query.QueryInterruptedException tie) {
+                ji.state = JobState.FAILED;
+                ji.message = "Timeout or interrupted";
+                safeDeleteDir(baseDir);
+            } catch (InterruptedException ie) {
+                ji.state = JobState.CANCELLED;
+                ji.message = "Query cancelled";
+                safeDeleteDir(baseDir);
+            } catch (Throwable t) {
+                ji.state = JobState.FAILED;
+                ji.message = t.getMessage();
+                safeDeleteDir(baseDir);
+            }
+        });
+        futures.put(key(fileId, JobType.QUERY), f);
+        return ji;
+    }
+
+    private static void writeCsvLine(Writer w, List<String> cols) throws IOException {
+        boolean first = true;
+        for (String c : cols) {
+            if (!first) {
+                w.write(',');
+            }
+            first = false;
+            w.write(escapeCsv(c));
+        }
+        w.write("");
+    }
+
+    private static String escapeCsv(String v) {
+        if (v == null) {
+            return "";
+        }
+        boolean need = v.contains(",") || v.contains(
+                "") || v.contains("\"");
+        if (!need) {
+            return v;
+        }
+        return '"' + v.replace("\"", "\"\"") + '"';
+    }
+
+    // ---------- Query results retrieval & cleanup ----------
+    public Path getQueryResult(String fileId, String queryId, String format) {
+        Map<String, QueryPaths> byQ = queryResults.get(fileId);
+        if (byQ == null) {
+            return null;
+        }
+        QueryPaths qp = byQ.get(queryId);
+        if (qp == null) {
+            return null;
+        }
+        if ("json".equalsIgnoreCase(format)) {
+            return qp.json;
+        }
+        if ("csv".equalsIgnoreCase(format)) {
+            return qp.csv;
+        }
+        return null;
+    }
+
+    public void cleanupQueryResult(String fileId, String queryId) {
+        Map<String, QueryPaths> byQ = queryResults.get(fileId);
+        if (byQ != null) {
+            QueryPaths qp = byQ.remove(queryId);
+            if (qp != null) {
+                safeDelete(qp.json);
+                safeDelete(qp.csv);
+                // also remove directory
+                Path dir = Paths.get("data/query", fileId, queryId);
+                safeDeleteDir(dir);
+            }
+            if (byQ.isEmpty()) {
+                queryResults.remove(fileId);
+            }
+        }
+        // remove job record for QUERY
+        jobs.remove(key(fileId, JobType.QUERY));
+        futures.remove(key(fileId, JobType.QUERY));
+    }
+
+    private static void safeDelete(Path p) {
+        if (p != null) try {
+            Files.deleteIfExists(p);
+        } catch (IOException ignore) {
+        }
+    }
+
+    private static void safeDeleteDir(Path p) {
+        if (p != null) try {
+            if (Files.exists(p)) {
+                Files.walk(p).sorted(Comparator.reverseOrder()).forEach(path -> {
+                    try {
+                        Files.deleteIfExists(path);
+                    } catch (IOException ignore) {
+                    }
+                });
+            }
+        } catch (IOException ignore) {
+        }
+    }
+
+    // ---------- Cancel & Cleanup ----------
+    public boolean cancel(String fileId, JobType type) {
+        String k = key(fileId, type);
+        Future<?> f = futures.get(k);
+        if (f != null) {
+            boolean ok = f.cancel(true);
+            JobInfo ji = jobs.get(k);
+            if (ji != null) {
+                ji.state = JobState.CANCELLED;
+                ji.message = "Cancelled by user";
+            }
+            return ok;
+        }
+        return false;
+    }
+
+    public void cleanupAllFor(String fileId) throws IOException, Exception {
+        for (JobType t : JobType.values()) {
+            cancel(fileId, t);
+        }
+        // clean query artifacts
+        Map<String, QueryPaths> byQ = queryResults.remove(fileId);
+        if (byQ != null) {
+            for (Map.Entry<String, QueryPaths> e : byQ.entrySet()) {
+                safeDelete(e.getValue().json);
+                safeDelete(e.getValue().csv);
+                safeDeleteDir(Paths.get("data/query", fileId, e.getKey()));
+            }
+        }
+        RepositoryRegistry.remove(fileId);
+        Path up = uploads.remove(fileId);
+        if (up != null) {
+            Files.deleteIfExists(up);
+        }
+        Path cv = converted.remove(fileId);
+        if (cv != null) {
+            Files.deleteIfExists(cv);
+        }
+        for (JobType t : JobType.values()) {
+            jobs.remove(key(fileId, t));
+            futures.remove(key(fileId, t));
         }
     }
 
     public void shutdown() {
-        EXEC.shutdown();
+        ioPool.shutdownNow();
+        cpuPool.shutdownNow();
     }
 
-    public static class NotFound extends RuntimeException {
+    private static String shorten(String s) {
+        if (s == null) {
+            return null;
+        }
+        s = s.replaceAll("", " ");
+        return s.length() > 200 ? s.substring(0, 200) + "…" : s;
+    }
 
-        public NotFound(String m) {
-            super(m);
+    // Progress wrapper
+    static class ProgressInputStream extends FilterInputStream {
+
+        private final long total;
+        private long seen;
+        private final java.util.function.IntConsumer onProgress;
+
+        protected ProgressInputStream(InputStream in, long total, java.util.function.IntConsumer onProgress) {
+            super(in);
+            this.total = total;
+            this.onProgress = onProgress;
+        }
+
+        @Override
+        public int read(byte[] b, int off, int len) throws IOException {
+            int r = super.read(b, off, len);
+            if (r > 0) {
+                update(r);
+            }
+            return r;
+        }
+
+        @Override
+        public int read() throws IOException {
+            int r = super.read();
+            if (r != -1) {
+                update(1);
+            }
+            return r;
+        }
+
+        private void update(int r) throws IOException {
+            seen += r;
+            int p = (int) Math.min(99, (seen * 100 / Math.max(1, total)));
+            onProgress.accept(p);
+            if (Thread.currentThread().isInterrupted()) {
+                throw new IOException("Interrupted");
+            }
         }
     }
 
-    public void copyWithLimit(InputStream in, OutputStream out, long limit) throws IOException, ManagerException {
-        byte[] buf = new byte[8192];
-        long total = 0;
-        int r;
-        while ((r = in.read(buf)) != -1) {
-            total += r;
-            if (total > limit) {
-                throw new ManagerException("file size exceeded " + limit);
-            }
-            out.write(buf, 0, r);
+    // CountingOutputStream (no exceptions; caller inspects getCount())
+    static class CountingOutputStream extends OutputStream {
+
+        private final OutputStream delegate;
+        private long count = 0L;
+
+        CountingOutputStream(OutputStream d) {
+            this.delegate = d;
+        }
+
+        public long getCount() {
+            return count;
+        }
+
+        @Override
+        public void write(int b) throws IOException {
+            delegate.write(b);
+            count++;
+        }
+
+        @Override
+        public void write(byte[] b, int off, int len) throws IOException {
+            delegate.write(b, off, len);
+            count += len;
+        }
+
+        @Override
+        public void flush() throws IOException {
+            delegate.flush();
+        }
+
+        @Override
+        public void close() throws IOException {
+            delegate.close();
         }
     }
 

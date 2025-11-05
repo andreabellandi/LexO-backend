@@ -3,7 +3,6 @@ package it.cnr.ilc.lexo.manager;
 import it.cnr.ilc.lexo.service.data.vocabulary.PropertyHierarchy;
 import it.cnr.ilc.lexo.service.data.vocabulary.RangedProperty;
 import it.cnr.ilc.lexo.service.data.vocabulary.Value;
-import it.cnr.ilc.lexo.sparql.SparqlInsertData;
 import it.cnr.ilc.lexo.sparql.SparqlQueryUtil;
 import it.cnr.ilc.lexo.util.EnumUtil;
 import it.cnr.ilc.lexo.util.RDFQueryUtil;
