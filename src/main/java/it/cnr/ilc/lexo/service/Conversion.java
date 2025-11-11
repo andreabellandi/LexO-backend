@@ -31,14 +31,19 @@ import org.apache.log4j.Level;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.List;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.StreamingOutput;
+import javax.ws.rs.core.UriInfo;
 
 /**
  *
  * @author andreabellandi
  */
-@Path("convertion")
+@Path("conversion")
 @Api("Linguistic Model Converter")
 public class Conversion extends Service {
 
@@ -167,26 +172,26 @@ public class Conversion extends Service {
         }
     }
 
-    @POST
-    @Path("/{fileId}/convert")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response convert(@HeaderParam("Authorization") String key, @PathParam("fileId") String fileId) {
-        try {
-            checkKey(key);
-            log(Level.INFO, "/{fileId}/convert: required for id " + fileId);
-            JobInfo ji = JobManager.get().startConvert(fileId);
-            return Response.ok(new ObjectMapper().writeValueAsString(ji)).build();
-        } catch (IllegalStateException ise) {
-            log(Level.ERROR, "/{fileId}/convert: bad state for id " + fileId + ": " + ise.getMessage());
-            return Response.status(Response.Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity(ise.getMessage()).build();
-        } catch (JsonProcessingException e) {
-            log(Level.ERROR, "/{fileId}/convert: failed for id " + fileId + ": " + e.getMessage());
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(e.getMessage()).build();
-        } catch (AuthorizationException | ServiceException ex) {
-            log(Level.ERROR, "/{fileId}/convert: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
-            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
-        }
-    }
+//    @POST
+//    @Path("/{fileId}/convert")
+//    @Produces(MediaType.APPLICATION_JSON)
+//    public Response convert(@HeaderParam("Authorization") String key, @PathParam("fileId") String fileId) {
+//        try {
+//            checkKey(key);
+//            log(Level.INFO, "/{fileId}/convert: required for id " + fileId);
+//            JobInfo ji = JobManager.get().startConvert(fileId, null);
+//            return Response.ok(new ObjectMapper().writeValueAsString(ji)).build();
+//        } catch (IllegalStateException ise) {
+//            log(Level.ERROR, "/{fileId}/convert: bad state for id " + fileId + ": " + ise.getMessage());
+//            return Response.status(Response.Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity(ise.getMessage()).build();
+//        } catch (JsonProcessingException e) {
+//            log(Level.ERROR, "/{fileId}/convert: failed for id " + fileId + ": " + e.getMessage());
+//            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(e.getMessage()).build();
+//        } catch (AuthorizationException | ServiceException ex) {
+//            log(Level.ERROR, "/{fileId}/convert: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+//            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
+//        }
+//    }
 
     @GET
     @Path("/{fileId}/status")
@@ -334,4 +339,44 @@ public class Conversion extends Service {
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
+
+    @POST
+    @Path("/{fileId}/convert")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response convert(@HeaderParam("Authorization") String key,
+            @PathParam("fileId") String fileId,
+            @QueryParam("from") String from,
+            @QueryParam("to") String to,
+            @Context UriInfo uriInfo) {
+        try {
+            checkKey(key);
+            if (from == null || to == null) {
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .type(MediaType.TEXT_PLAIN)
+                        .entity("'from' and 'to' query params are required").build();
+            }
+            // Raccogli tutte le query param come opzioni libere (format, delimiter, rdfFormat, ecc.)
+            MultivaluedMap<String, String> qp = uriInfo.getQueryParameters();
+            Map<String, String> options = new HashMap<>();
+            for (Map.Entry<String, List<String>> e : qp.entrySet()) {
+                String k = e.getKey();
+                if (!"from".equalsIgnoreCase(k) && !"to".equalsIgnoreCase(k)) {
+                    options.put(k, e.getValue().get(0));
+                }
+            }
+            log(Level.INFO, String.format("/%s/convert?from=%s&to=%s options=%s", fileId, from, to, options));
+            JobInfo ji = JobManager.get().startGenericConvert(fileId, from, to, options);
+            return Response.ok(new ObjectMapper().writeValueAsString(ji)).build();
+        } catch (IllegalStateException ise) {
+            log(Level.ERROR, "/{fileId}/convert: bad state for id " + fileId + ": " + ise.getMessage());
+            return Response.status(Response.Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity(ise.getMessage()).build();
+        } catch (JsonProcessingException e) {
+            log(Level.ERROR, "/{fileId}/convert: failed for id " + fileId + ": " + e.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(e.getMessage()).build();
+        } catch (AuthorizationException | ServiceException ex) {
+            log(Level.ERROR, "/{fileId}/convert: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
+        }
+    }
+
 }

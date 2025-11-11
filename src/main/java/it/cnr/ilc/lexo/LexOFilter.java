@@ -1,7 +1,9 @@
 package it.cnr.ilc.lexo;
 
+import it.cnr.ilc.lexo.manager.converter.OntoLexToTBXConverterAdapter;
 import it.cnr.ilc.lexo.sparql.SparqlSelectData;
 import it.cnr.ilc.lexo.sparql.SparqlVariable;
+import it.cnr.ilc.lexo.util.ConverterRegistry;
 import it.cnr.ilc.lexo.util.RDFQueryUtil;
 import java.io.File;
 import java.io.IOException;
@@ -55,6 +57,7 @@ public class LexOFilter implements Filter {
         rollingAppender.setDatePattern("'.'yyyy-MM-dd");
         rollingAppender.setLayout(layout);
         rollingAppender.activateOptions();
+        ConverterRegistry.get().register(new OntoLexToTBXConverterAdapter());
         Logger logger = Logger.getLogger(CONTEXT);
         logger.setLevel(Level.INFO);
         logger.addAppender(rollingAppender);
