@@ -6,11 +6,9 @@
 package it.cnr.ilc.lexo.util;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Locale;
 import java.util.Map;
 import java.util.function.BooleanSupplier;
 import java.util.function.IntConsumer;
@@ -18,13 +16,7 @@ import java.util.function.LongConsumer;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-import org.eclipse.rdf4j.model.Model;
-import org.eclipse.rdf4j.model.impl.TreeModel;
 import org.eclipse.rdf4j.repository.Repository;
-import org.eclipse.rdf4j.rio.RDFFormat;
-import org.eclipse.rdf4j.rio.RDFParser;
-import org.eclipse.rdf4j.rio.Rio;
-import org.eclipse.rdf4j.rio.helpers.StatementCollector;
 
 /**
  *
@@ -35,11 +27,12 @@ public final class OntoLexToTBXConverter {
     public static final class Result {
 
         public final Path outputPath;
-        public final long processed;
+//        public final long processed;
 
-        public Result(Path out, long processed) {
+        public Result(Path out//, long processed
+        ) {
             this.outputPath = out;
-            this.processed = processed;
+//            this.processed = processed;
         }
     }
 
@@ -63,10 +56,11 @@ public final class OntoLexToTBXConverter {
         } else {
             automaticConversion(input, output, options.get("model"));
         }
-        long processedTriples = repo.getConnection().size();
-        onProcessed.accept(processedTriples);
+//        long processedTriples = repo.getConnection().size();
+//        onProcessed.accept(processedTriples);
         onProgress.accept(100);
-        return new Result(output, processedTriples);
+//        return new Result(output, processedTriples);
+        return new Result(output);
     }
     
     private static void automaticConversion(Path input, Path output, String model) throws IOException, XMLStreamException {

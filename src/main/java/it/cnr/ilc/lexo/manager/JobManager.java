@@ -7,7 +7,6 @@ package it.cnr.ilc.lexo.manager;
 
 import it.cnr.ilc.lexo.manager.converter.Converter;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FilterInputStream;
 import java.io.IOException;
@@ -40,7 +39,6 @@ import java.util.*;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import it.cnr.ilc.lexo.util.ConverterRegistry;
-import it.cnr.ilc.lexo.util.OntoLexToTBXConverter;
 import it.cnr.ilc.lexo.util.RepositoryRegistry;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileVisitResult;
@@ -99,7 +97,9 @@ public class JobManager {
     private final ExecutorService ioPool = Executors.newFixedThreadPool(4);
     private final ExecutorService cpuPool = Executors.newFixedThreadPool(4);
 
-    private final Map<String, Path> uploads = new ConcurrentHashMap<>();
+//    private final Map<String, Path> uploads = new ConcurrentHashMap<>();
+    // fileId -> uploaded files list
+    private final Map<String, java.util.List<Path>> uploads = new ConcurrentHashMap<>();
     private final Map<String, Path> converted = new ConcurrentHashMap<>();
 
     private final Map<String, JobInfo> jobs = new ConcurrentHashMap<>();
@@ -127,8 +127,27 @@ public class JobManager {
     }
 
     // ---------- Upload handling ----------
+//    public Path saveUploadEnforcingLimit(String fileId, InputStream in, String origName, long maxBytes) throws IOException {
+//        Path out = Paths.get("data/uploads/" + fileId + getExt(origName));
+//        long written = 0L;
+//        byte[] buf = new byte[8192];
+//        int r;
+//        try ( OutputStream os = Files.newOutputStream(out, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
+//            while ((r = in.read(buf)) != -1) {
+//                written += r;
+//                if (written > maxBytes) {
+//                    throw new IOException("File exceeds 50MB limit");
+//                }
+//                os.write(buf, 0, r);
+//            }
+//        }
+//        uploads.put(fileId, out);
+//        return out;
+//    }
     public Path saveUploadEnforcingLimit(String fileId, InputStream in, String origName, long maxBytes) throws IOException {
-        Path out = Paths.get("data/uploads/" + fileId + getExt(origName));
+        // nome fisico: fileId-UUID.estensione
+        String ext = getExt(origName);
+        Path out = Paths.get("data/uploads/" + fileId + "-" + java.util.UUID.randomUUID().toString() + ext);
         long written = 0L;
         byte[] buf = new byte[8192];
         int r;
@@ -141,7 +160,8 @@ public class JobManager {
                 os.write(buf, 0, r);
             }
         }
-        uploads.put(fileId, out);
+        uploads.computeIfAbsent(fileId, k -> new java.util.concurrent.CopyOnWriteArrayList<Path>())
+                .add(out);
         return out;
     }
 
@@ -150,8 +170,21 @@ public class JobManager {
         return i >= 0 ? name.substring(i) : "";
     }
 
+//    public Path getUpload(String fileId) {
+//        return uploads.get(fileId);
+//    }
+    public java.util.List<Path> getUploads(String fileId) {
+        java.util.List<Path> list = uploads.get(fileId);
+        return (list != null) ? list : java.util.Collections.<Path>emptyList();
+    }
+
+// Compatibilità: primo file (usato da convert, ecc.)
     public Path getUpload(String fileId) {
-        return uploads.get(fileId);
+        java.util.List<Path> list = uploads.get(fileId);
+        if (list == null || list.isEmpty()) {
+            return null;
+        }
+        return list.get(0);
     }
 
     public Path getConverted(String fileId) {
@@ -173,11 +206,10 @@ public class JobManager {
         return out;
     }
 
-    // ---------- Async: Parse ----------
     public JobInfo startParse(String fileId) {
-        Path file = getUpload(fileId);
-        if (file == null) {
-            throw new IllegalStateException("No uploaded file for " + fileId);
+        java.util.List<Path> files = getUploads(fileId);
+        if (files == null || files.isEmpty()) {
+            throw new IllegalStateException("No uploaded files for " + fileId);
         }
         JobInfo ji = new JobInfo(fileId, JobType.PARSE);
         jobs.put(key(fileId, JobType.PARSE), ji);
@@ -185,197 +217,147 @@ public class JobManager {
             try {
                 ji.state = JobState.RUNNING;
                 ji.progress = 1;
+                // Only a repository for all files
                 Repository repo = RepositoryRegistry.create(fileId);
-                RDFFormat fmt = Rio.getParserFormatForFileName(file.getFileName().toString()).orElse(RDFFormat.TURTLE);
-                long size = Files.size(file);
-                try ( InputStream in = Files.newInputStream(file);  RepositoryConnection conn = repo.getConnection()) {
-                    ProgressInputStream pin = new ProgressInputStream(in, size, p -> {
-                        ji.progress = p;
-                    });
-                    conn.add(pin, "urn:base:", fmt);
+                int totalFiles = files.size();
+                int index = 0;
+                for (Path file : files) {
+                    index++;
+                    if (Thread.currentThread().isInterrupted()) {
+                        throw new InterruptedException();
+                    }
+                    if (!Files.exists(file)) {
+                        continue;
+                    }
+                    RDFFormat fmt = Rio.getParserFormatForFileName(file.getFileName().toString())
+                            .orElse(RDFFormat.TURTLE);
+                    long size = Files.size(file);
+                    try ( InputStream in = Files.newInputStream(file);  RepositoryConnection conn = repo.getConnection()) {
+
+                        final int fileIndex = index;
+                        ProgressInputStream pin = new ProgressInputStream(in, size, pSingle -> {
+                            // progress globale approssimato: parte già completata + porzione del file corrente
+                            int base = (int) (((fileIndex - 1) * 100.0) / totalFiles);
+                            int step = (int) (pSingle / (double) totalFiles);
+                            int global = Math.min(99, base + step);
+                            ji.progress = global;
+                        });
+                        conn.add(pin, "urn:base:", fmt);
+                    }
                 }
                 ji.progress = 100;
                 ji.state = JobState.COMPLETED;
-                ji.message = "Parsed at " + Instant.now();
+                ji.message = "Parsed " + files.size() + " file(s) at " + java.time.Instant.now();
+            } catch (InterruptedException ie) {
+                ji.state = JobState.CANCELLED;
+                ji.message = "Parse cancelled";
             } catch (Throwable t) {
-                if (Thread.currentThread().isInterrupted()) {
-                    ji.state = JobState.CANCELLED;
-                    ji.message = "Parse cancelled";
-                } else {
-                    ji.state = JobState.FAILED;
-                    ji.message = t.getMessage();
-                }
+                ji.state = JobState.FAILED;
+                ji.message = t.getMessage();
             }
         });
         futures.put(key(fileId, JobType.PARSE), f);
         return ji;
     }
 
-    // ---------- Async: Convert ---------- ORIGINAL CHE CHIAMA UPPERCASE
-//    public JobInfo startConvert(String fileId) {
+    // ---------- Async: Parse ----------
+//    public JobInfo startParse(String fileId) {
 //        Path file = getUpload(fileId);
 //        if (file == null) {
 //            throw new IllegalStateException("No uploaded file for " + fileId);
 //        }
-//        JobInfo ji = new JobInfo(fileId, JobType.CONVERT);
-//        jobs.put(key(fileId, JobType.CONVERT), ji);
+//        JobInfo ji = new JobInfo(fileId, JobType.PARSE);
+//        jobs.put(key(fileId, JobType.PARSE), ji);
 //        Future<?> f = ioPool.submit(() -> {
 //            try {
 //                ji.state = JobState.RUNNING;
 //                ji.progress = 1;
-//                Path out = Paths.get("data/converted/" + file.getFileName().toString());
+//                Repository repo = RepositoryRegistry.create(fileId);
+//                RDFFormat fmt = Rio.getParserFormatForFileName(file.getFileName().toString()).orElse(RDFFormat.TURTLE);
 //                long size = Files.size(file);
-//                try ( BufferedReader br = Files.newBufferedReader(file, StandardCharsets.UTF_8);  BufferedWriter bw = Files.newBufferedWriter(out, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
-//                    char[] buf = new char[8192];
-//                    int r;
-//                    long seen = 0;
-//                    while ((r = br.read(buf)) != -1) {
-//                        if (Thread.currentThread().isInterrupted()) {
-//                            throw new InterruptedException();
-//                        }
-//                        bw.write(new String(buf, 0, r).toUpperCase());
-//                        seen += r;
-//                        ji.progress = (int) Math.min(99, (seen * 100 / Math.max(1, size)));
-//                    }
+//                try ( InputStream in = Files.newInputStream(file);  RepositoryConnection conn = repo.getConnection()) {
+//                    ProgressInputStream pin = new ProgressInputStream(in, size, p -> {
+//                        ji.progress = p;
+//                    });
+//                    conn.add(pin, "urn:base:", fmt);
 //                }
-//                converted.put(fileId, out);
 //                ji.progress = 100;
 //                ji.state = JobState.COMPLETED;
-//                ji.resultId = out.toString();
-//            } catch (InterruptedException ie) {
-//                ji.state = JobState.CANCELLED;
-//                ji.message = "Conversion cancelled";
+//                ji.message = "Parsed at " + Instant.now();
 //            } catch (Throwable t) {
-//                ji.state = JobState.FAILED;
-//                ji.message = t.getMessage();
-//            }
-//        });
-//        futures.put(key(fileId, JobType.CONVERT), f);
-//        return ji;
-//    }
-    
-    // UPDATED CHE CHIAMA RDF2TBX
-//    public JobInfo startConvert(String fileId, String formatOpt) {
-//        Path input = getUpload(fileId);
-//        if (input == null) {
-//            throw new IllegalStateException("No uploaded file for " + fileId);
-//        }
-//
-//        JobInfo ji = new JobInfo(fileId, JobType.CONVERT);
-//        jobs.put(key(fileId, JobType.CONVERT), ji);
-//
-//        Future<?> f = ioPool.submit(() -> {
-//            Path out = null;
-//            try {
-//                ji.state = JobState.RUNNING;
-//                ji.progress = 1;
-//
-//                // Prepara cartella/filename di output .tbx
-//                Path outDir = Paths.get("data/converted");
-//                Files.createDirectories(outDir);
-//                String base = input.getFileName().toString();
-//                int dot = base.lastIndexOf('.');
-//                if (dot > 0) {
-//                    base = base.substring(0, dot);
+//                if (Thread.currentThread().isInterrupted()) {
+//                    ji.state = JobState.CANCELLED;
+//                    ji.message = "Parse cancelled";
+//                } else {
+//                    ji.state = JobState.FAILED;
+//                    ji.message = t.getMessage();
 //                }
-//                out = outDir.resolve(base + ".tbx");
-//
-//                // Esegui la conversione RDF -> TBX
-//                RdfToTbxConverter.Result res = RdfToTbxConverter.convert(
-//                        input,
-//                        out,
-//                        formatOpt,
-//                        // onProgress
-//                        (int pct) -> {
-//                            // tieni l’avanzamento sotto al 100 finché non completi
-//                            ji.progress = Math.max(1, Math.min(99, pct));
-//                        },
-//                        // onProcessed
-//                        (long processed) -> {
-//                            ji.message = "Processed statements: " + processed;
-//                        },
-//                        // shouldCancel
-//                        () -> Thread.currentThread().isInterrupted()
-//                );
-//
-//                // Successo
-//                converted.put(fileId, res.outputPath);
-//                ji.resultId = res.outputPath.toString();
-//                ji.progress = 100;
-//                ji.state = JobState.COMPLETED;
-//
-//            } catch (InterruptedException ie) {
-//                ji.state = JobState.CANCELLED;
-//                ji.message = "Conversion cancelled";
-//                safeDelete(out);
-//            } catch (Throwable t) {
-//                ji.state = JobState.FAILED;
-//                ji.message = t.getMessage();
-//                safeDelete(out);
 //            }
 //        });
-//
-//        futures.put(key(fileId, JobType.CONVERT), f);
+//        futures.put(key(fileId, JobType.PARSE), f);
 //        return ji;
 //    }
-    
     public JobInfo startGenericConvert(String fileId,
-                                   String from,
-                                   String to,
-                                   Map<String,String> options) {
-    Path input = getUpload(fileId);
-    if (input == null) throw new IllegalStateException("No uploaded file for " + fileId);
-
-    Converter converter = ConverterRegistry.get().resolve(from, to);
-    converter.validateOptions(options);
-
-    JobInfo ji = new JobInfo(fileId, JobType.CONVERT);
-    jobs.put(key(fileId, JobType.CONVERT), ji);
-
-    Future<?> f = ioPool.submit(() -> {
-        Path out = null;
-        try {
-            ji.state = JobState.RUNNING;
-            ji.progress = 1;
-
-            Path outDir = Paths.get("data/converted");
-            Files.createDirectories(outDir);
-
-            // basename + estensione suggerita dal converter
-            String base = input.getFileName().toString();
-            int dot = base.lastIndexOf('.');
-            if (dot > 0) base = base.substring(0, dot);
-            out = outDir.resolve(base + converter.outputExtension(options));
-
-            converter.convert(
-                fileId,
-                input,
-                out,
-                options,
-                pct -> ji.progress = Math.max(1, Math.min(99, pct)),
-                processed -> ji.message = "Processed: " + processed,
-                () -> Thread.currentThread().isInterrupted()
-            );
-
-            converted.put(fileId, out);
-            ji.resultId = out.toString();
-            ji.progress = 100;
-            ji.state = JobState.COMPLETED;
-
-        } catch (InterruptedException ie) {
-            ji.state = JobState.CANCELLED;
-            ji.message = "Conversion cancelled";
-            safeDelete(out);
-        } catch (Throwable t) {
-            ji.state = JobState.FAILED;
-            ji.message = t.getMessage();
-            safeDelete(out);
+            String from,
+            String to,
+            Map<String, String> options) {
+        Path input = getUpload(fileId);
+        if (input == null) {
+            throw new IllegalStateException("No uploaded file for " + fileId);
         }
-    });
 
-    futures.put(key(fileId, JobType.CONVERT), f);
-    return ji;
-}
+        Converter converter = ConverterRegistry.get().resolve(from, to);
+        converter.validateOptions(options);
+
+        JobInfo ji = new JobInfo(fileId, JobType.CONVERT);
+        jobs.put(key(fileId, JobType.CONVERT), ji);
+
+        Future<?> f = ioPool.submit(() -> {
+            Path out = null;
+            try {
+                ji.state = JobState.RUNNING;
+                ji.progress = 1;
+
+                Path outDir = Paths.get("data/converted");
+                Files.createDirectories(outDir);
+
+                // basename + estensione suggerita dal converter
+                String base = input.getFileName().toString();
+                int dot = base.lastIndexOf('.');
+                if (dot > 0) {
+                    base = base.substring(0, dot);
+                }
+                out = outDir.resolve(base + converter.outputExtension(options));
+
+                converter.convert(
+                        fileId,
+                        input,
+                        out,
+                        options,
+                        pct -> ji.progress = Math.max(1, Math.min(99, pct)),
+                        processed -> ji.message = "Processed: " + processed,
+                        () -> Thread.currentThread().isInterrupted()
+                );
+
+                converted.put(fileId, out);
+                ji.resultId = out.toString();
+                ji.progress = 100;
+                ji.state = JobState.COMPLETED;
+
+            } catch (InterruptedException ie) {
+                ji.state = JobState.CANCELLED;
+                ji.message = "Conversion cancelled";
+                safeDelete(out);
+            } catch (Throwable t) {
+                ji.state = JobState.FAILED;
+                ji.message = t.getMessage();
+                safeDelete(out);
+            }
+        });
+
+        futures.put(key(fileId, JobType.CONVERT), f);
+        return ji;
+    }
 
     // ---------- Async: Query (SELECT only, inference + export + limits) ----------
     public JobInfo startQuery(String fileId, String sparql, long timeoutMillis, boolean includeInferred,
@@ -731,9 +713,13 @@ public class JobManager {
             }
         }
         RepositoryRegistry.remove(fileId);
-        Path up = uploads.remove(fileId);
-        if (up != null) {
-            Files.deleteIfExists(up);
+        java.util.List<Path> ups = uploads.remove(fileId);
+        if (ups != null) {
+            for (Path up : ups) {
+                if (up != null) {
+                    Files.deleteIfExists(up);
+                }
+            }
         }
         Path cv = converted.remove(fileId);
         if (cv != null) {

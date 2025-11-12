@@ -28,8 +28,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.apache.log4j.Level;
-import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
-import org.glassfish.jersey.media.multipart.FormDataParam;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
@@ -49,39 +47,41 @@ public class Conversion extends Service {
 
     private static final long MAX_BYTES = 50L * 1024 * 1024; // 50 MB
 
-//    private Response json(Response.Status status, Map<String, ?> body) {
-//        return Response.status(status).entity(body).build();
-//    }
-//    private Response ok(Map<String, ?> body) {
-//        return json(Response.Status.OK, body);
-//    }
     private Response ok(Object body) throws JsonProcessingException {
         return Response.ok(new ObjectMapper().writeValueAsString(body)).build();
     }
 
-//    private Response error(Response.Status status, String message) {
-//        Map<String, Object> m = new LinkedHashMap<>();
-//        m.put("error", message);
-//        return json(status, m);
-//    }
     @POST
     @Path("/upload")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response upload(@HeaderParam("Authorization") String key, @FormDataParam("file") InputStream fileStream,
-            @FormDataParam("file") FormDataContentDisposition meta) {
+    public Response upload(@HeaderParam("Authorization") String key, org.glassfish.jersey.media.multipart.FormDataMultiPart multiPart) {
         try {
             checkKey(key);
-            if (fileStream == null || meta == null) {
+            if (multiPart == null) {
                 return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("Missing file").build();
             }
-            final String name = meta.getFileName();
-            if (name == null || !(name.endsWith(".ttl") || name.endsWith(".rdf"))) {
-                return Response.status(Response.Status.UNSUPPORTED_MEDIA_TYPE).type(MediaType.TEXT_PLAIN).entity("Only .ttl or .rdf allowed").build();
+            java.util.List<org.glassfish.jersey.media.multipart.FormDataBodyPart> fileParts
+                    = multiPart.getFields("file");
+            if (fileParts == null || fileParts.isEmpty()) {
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("Missing file").build();
             }
+            // single fileId for all files
             final String fileId = java.util.UUID.randomUUID().toString();
-            log(Level.INFO, "/upload: file " + name + " - " + meta.getSize() + " with id = " + fileId);
-            JobManager.get().saveUploadEnforcingLimit(fileId, fileStream, name, MAX_BYTES);
+            log(Level.INFO, "/upload: request with " + fileParts.size() + " file(s); assigned fileId=" + fileId);
+            for (org.glassfish.jersey.media.multipart.FormDataBodyPart part : fileParts) {
+                if (part == null) {
+                    continue;
+                }
+                org.glassfish.jersey.media.multipart.FormDataContentDisposition meta = part.getFormDataContentDisposition();
+                String name = (meta != null) ? meta.getFileName() : null;
+                if (name == null || !(name.endsWith(".ttl") || name.endsWith(".rdf"))) {
+                    return Response.status(Response.Status.UNSUPPORTED_MEDIA_TYPE).type(MediaType.TEXT_PLAIN).entity("Only .ttl or .rdf allowed").build();
+                }
+                try ( InputStream fileStream = part.getEntityAs(InputStream.class)) {
+                    JobManager.get().saveUploadEnforcingLimit(fileId, fileStream, name, MAX_BYTES);
+                }
+            }
             Map<String, String> resp = new LinkedHashMap<>();
             resp.put("fileId", fileId);
             return Response.ok().entity(new ObjectMapper().writeValueAsString(resp)).build();
@@ -91,8 +91,45 @@ public class Conversion extends Service {
         } catch (AuthorizationException | ServiceException e) {
             log(Level.ERROR, "/upload: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
+        } finally {
+            if (multiPart != null) {
+                try {
+                    multiPart.close();
+                } catch (IOException ignore) {
+                }
+            }
         }
     }
+
+//    @POST
+//    @Path("/upload")
+//    @Consumes(MediaType.MULTIPART_FORM_DATA)
+//    @Produces(MediaType.APPLICATION_JSON)
+//    public Response upload(@HeaderParam("Authorization") String key, @FormDataParam("file") InputStream fileStream,
+//            @FormDataParam("file") FormDataContentDisposition meta) {
+//        try {
+//            checkKey(key);
+//            if (fileStream == null || meta == null) {
+//                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("Missing file").build();
+//            }
+//            final String name = meta.getFileName();
+//            if (name == null || !(name.endsWith(".ttl") || name.endsWith(".rdf"))) {
+//                return Response.status(Response.Status.UNSUPPORTED_MEDIA_TYPE).type(MediaType.TEXT_PLAIN).entity("Only .ttl or .rdf allowed").build();
+//            }
+//            final String fileId = java.util.UUID.randomUUID().toString();
+//            log(Level.INFO, "/upload: file " + name + " - " + meta.getSize() + " with id = " + fileId);
+//            JobManager.get().saveUploadEnforcingLimit(fileId, fileStream, name, MAX_BYTES);
+//            Map<String, String> resp = new LinkedHashMap<>();
+//            resp.put("fileId", fileId);
+//            return Response.ok().entity(new ObjectMapper().writeValueAsString(resp)).build();
+//        } catch (IOException e) {
+//            log(Level.ERROR, "/upload: " + e.getMessage());
+//            return Response.status(Response.Status.REQUEST_ENTITY_TOO_LARGE).type(MediaType.TEXT_PLAIN).entity(e.getMessage()).build();
+//        } catch (AuthorizationException | ServiceException e) {
+//            log(Level.ERROR, "/upload: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+//            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
+//        }
+//    }
 
     @POST
     @Path("/{fileId}/parse")
@@ -192,7 +229,6 @@ public class Conversion extends Service {
 //            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
 //        }
 //    }
-
     @GET
     @Path("/{fileId}/status")
     @Produces(MediaType.APPLICATION_JSON)
