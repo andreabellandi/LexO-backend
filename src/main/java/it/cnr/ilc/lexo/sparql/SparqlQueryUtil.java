@@ -281,13 +281,14 @@ public class SparqlQueryUtil {
             + "SELECT ?" + SparqlVariable.LEXICAL_ENTRY + " \n"
             + "WHERE { ?" + SparqlVariable.LEXICAL_ENTRY + " " + SparqlPrefix.ONTOLEX.getPrefix() + "lexicalForm <_ID_> }";
 
-    public static final String LEXICAL_ENTRY_FOR_UPDATING_POS_FORM
+    public static final String LEXICAL_ENTRY_FOR_UPDATING_POS
             = SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
             + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
             + "SELECT ?" + SparqlVariable.LEXICAL_ENTRY + " \n"
             + "WHERE { ?" + SparqlVariable.DICTIONARY_ENTRY + " lexicog:describes <_ID_OLD_LE_> ;\n"
             + "             lexicog:describes ?" + SparqlVariable.LEXICAL_ENTRY + " .\n"
             + "        ?" + SparqlVariable.LEXICAL_ENTRY + " lexinfo:partOfSpeech <_NEW_POS_> .\n"
+            + "        FILTER(<_ID_OLD_LE_> != ?" + SparqlVariable.LEXICAL_ENTRY + ")\n"
             + " }";
 
     public static final String LEXICAL_ENTRY_BY_ECD_POS

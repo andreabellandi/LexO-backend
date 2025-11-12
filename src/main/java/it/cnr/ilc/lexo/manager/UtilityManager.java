@@ -139,20 +139,17 @@ public final class UtilityManager implements Manager, Cached {
         return meaningsCount.size() > 0 ? meaningsCount : null;
     }
 
-    public Map<String, String> getLexicalSensePoS(String id) throws QueryEvaluationException {
+    public String getLexicalSensePoS(String id) throws QueryEvaluationException {
         String query = SparqlQueryUtil.GET_POS_OF_LEXICAL_SENSE.replaceAll("_ID_", id);
         Map<String, String> lepos = new HashMap();
         try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {
             while (result.hasNext()) {
                 BindingSet bs = result.next();
-                lepos.put((bs.getBinding(SparqlVariable.LEXICAL_ENTRY) != null) ? bs.getBinding(SparqlVariable.LEXICAL_ENTRY).getValue().stringValue()
-                        : "",
-                        (bs.getBinding(SparqlVariable.LEXICAL_ENTRY_POS) != null) ? bs.getBinding(SparqlVariable.LEXICAL_ENTRY_POS).getValue().stringValue()
-                        : "");
+                return (bs.getBinding(SparqlVariable.LEXICAL_ENTRY) != null) ? bs.getBinding(SparqlVariable.LEXICAL_ENTRY).getValue().stringValue() : null;
             }
         } catch (QueryEvaluationException qee) {
         }
-        return lepos;
+        return null;
     }
 
     public String getFormLanguage(String id) throws QueryEvaluationException {
@@ -243,8 +240,8 @@ public final class UtilityManager implements Manager, Cached {
         return null;
     }
 
-    public String getLexicalEntryForUpdatingPoSForm(String oldLe, String newPoS) throws QueryEvaluationException {
-        String query = SparqlQueryUtil.LEXICAL_ENTRY_FOR_UPDATING_POS_FORM.replaceAll("_ID_OLD_LE_", oldLe)
+    public String getLexicalEntryForUpdatingPoS(String oldLe, String newPoS) throws QueryEvaluationException {
+        String query = SparqlQueryUtil.LEXICAL_ENTRY_FOR_UPDATING_POS.replaceAll("_ID_OLD_LE_", oldLe)
                 .replaceAll("_NEW_POS_", newPoS);
         try ( TupleQueryResult result = RDFQueryUtil.evaluateTQuery(query)) {
             while (result.hasNext()) {

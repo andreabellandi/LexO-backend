@@ -66,7 +66,7 @@ public class SparqlUpdateData {
             + "WHERE {  OPTIONAL { <_ID_> dct:modified ?modified .} \n"
             + "         OPTIONAL { <_ID_> rdfs:label _VALUE_TO_DELETE_ . } }";
     
-    public static final String UPDATE_ECD_MEANING_POS
+    public static final String UPDATE_ECD_FORM_POS
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
             + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
             + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
@@ -87,6 +87,16 @@ public class SparqlUpdateData {
             + "                  dct:modified _LAST_UPDATE_ . }\n"
             + "WHERE {  OPTIONAL { <_ID_LE_> dct:modified ?modified .} \n"
             + "         OPTIONAL { <_ID_LE_> lexinfo:partOfSpeech <_VALUE_TO_DELETE_> . } }";
+    
+    public static final String UPDATE_ECD_MEANING_POS
+            = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
+            + "DELETE { <_ID_OLD_LE_> ontolex:sense <_ID_SENSE_> ;\n "
+            + "                  dct:modified ?modified . } \n"
+            + "INSERT { <_ID_NEW_LE_> ontolex:sense <_ID_SENSE_> ;\n"
+            + "                  dct:modified _LAST_UPDATE_ . }\n"
+            + "WHERE {  OPTIONAL { <_ID_LE_> dct:modified ?modified .} \n"
+            + "         OPTIONAL { <_ID_OLD_LE_> ontolex:sense <_ID_SENSE_> . } }";
 
     public static final String UPDATE_LEXICAL_ENTRY_BACKWARDING_STATUS
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"

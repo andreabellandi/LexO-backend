@@ -13,13 +13,12 @@ import it.cnr.ilc.lexo.service.data.Data;
  *
  * @author andreabellandi
  */
-@ApiModel(description = "Input model representing an ECD form updater")
+@ApiModel(description = "Input model representing an ECD form pos updater")
 public class ECDFormUpdater implements Data {
 
-    @ApiModelProperty(value = "sense relation/attribute", example = "definition", allowEmptyValue = false,
+    @ApiModelProperty(allowEmptyValue = false,
             allowableValues = "http://www.lexinfo.net/ontology/3.0/lexinfo#partOfSpeech")
     private String relation;
-    @ApiModelProperty(value = "realtion/attribute value", example = "test", allowEmptyValue = false)
     private String value;
     private String oldPoS;
 
