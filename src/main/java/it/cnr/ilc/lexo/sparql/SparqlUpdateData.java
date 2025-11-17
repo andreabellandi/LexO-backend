@@ -47,7 +47,7 @@ public class SparqlUpdateData {
             + "                  dct:modified _LAST_UPDATE_ . }\n"
             + "WHERE {  OPTIONAL { <_ID_> dct:modified ?modified .} \n"
             + "         OPTIONAL { <_ID_> <_RELATION_> _VALUE_TO_DELETE_ . } }";
-    
+
     public static final String UPDATE_ECD_ENTRY
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
             + "DELETE { <_ID_> <_RELATION_> _VALUE_TO_DELETE_ ;\n "
@@ -56,7 +56,7 @@ public class SparqlUpdateData {
             + "                  dct:modified _LAST_UPDATE_ . }\n"
             + "WHERE {  OPTIONAL { <_ID_> dct:modified ?modified .} \n"
             + "         OPTIONAL { <_ID_> <_RELATION_> _VALUE_TO_DELETE_ . } }";
-    
+
     public static final String UPDATE_ECD_ENTRY_LABEL
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
             + "DELETE { <_ID_> rdfs:label _VALUE_TO_DELETE_ ;\n "
@@ -65,7 +65,7 @@ public class SparqlUpdateData {
             + "                  dct:modified _LAST_UPDATE_ . }\n"
             + "WHERE {  OPTIONAL { <_ID_> dct:modified ?modified .} \n"
             + "         OPTIONAL { <_ID_> rdfs:label _VALUE_TO_DELETE_ . } }";
-    
+
     public static final String UPDATE_ECD_FORM_POS
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
             + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
@@ -77,7 +77,7 @@ public class SparqlUpdateData {
             + "WHERE {  <_ID_OLD_LE_> ?relation <_ID_FORM_> . "
             + "         ?relation rdfs:subPropertyOf ontolex:lexicalForm . \n"
             + "         OPTIONAL { <_ID_OLD_LE_> dct:modified ?modified .} }";
-    
+
     public static final String UPDATE_ECD_ENTRY_POS
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
             + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
@@ -87,7 +87,7 @@ public class SparqlUpdateData {
             + "                  dct:modified _LAST_UPDATE_ . }\n"
             + "WHERE {  OPTIONAL { <_ID_LE_> dct:modified ?modified .} \n"
             + "         OPTIONAL { <_ID_LE_> lexinfo:partOfSpeech <_VALUE_TO_DELETE_> . } }";
-    
+
     public static final String UPDATE_ECD_MEANING_POS
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
             + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
@@ -298,8 +298,8 @@ public class SparqlUpdateData {
     public static final String ADD_SENSE_TO_LEXICOGRAPHIC_COMPONENT
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
             + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
-             + SparqlPrefix.RDF.getSparqlPrefix() + "\n"
-             + SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDF.getSparqlPrefix() + "\n"
+            + SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
             + "DELETE { <_ID_> dct:modified ?modified . } \n"
             + "INSERT { \n"
             + "    <_LCID_> lexicog:describes <_SENSEID_> .\n"
@@ -307,5 +307,36 @@ public class SparqlUpdateData {
             + "    <_ID_> dct:modified _LAST_UPDATE_ . \n"
             + "}\n "
             + "WHERE { <_ID_> dct:modified ?modified . } \n";
+
+    public static final String ECD_MEANING_RENUMBERING
+            = "DELETE {\n"
+            + "  _PARENT_IRI_ ?m ?child .\n"
+            + "  ?child rdfs:label ?oldLabel .\n"
+            + "}\n"
+            + "INSERT {\n"
+            + "  _PARENT_IRI_ ?newProp ?child .\n"
+            + "  ?child rdfs:label ?newLabel .\n"
+            + "}\n"
+            + "WHERE {\n"
+            + "  _PARENT_IRI_ ?m ?child .\n"
+            + "  FILTER(STRSTARTS(STR(?m), CONCAT(STR(rdf:), \"_\")))\n"
+            + // SOLO rdf:_n
+            "  OPTIONAL { ?child rdfs:label ?oldLabel }\n"
+            + // calcolo del nuovo indice come ROW_NUMBER su oldIdx
+            "  BIND(xsd:integer(STRAFTER(STR(?m), CONCAT(STR(rdf:), \"_\"))) AS ?oldIdx)\n"
+            + "  {\n"
+            + "    SELECT ?child (1 + COUNT(?prev)) AS ?newIdx WHERE {\n"
+            + "      _PARENT_IRI_ ?m1 ?child . FILTER(STRSTARTS(STR(?m1), CONCAT(STR(rdf:), \"_\")))\n"
+            + "      BIND(xsd:integer(STRAFTER(STR(?m1), CONCAT(STR(rdf:), \"_\"))) AS ?i)\n"
+            + "      OPTIONAL {\n"
+            + "        _PARENT_IRI_ ?m2 ?prev . FILTER(STRSTARTS(STR(?m2), CONCAT(STR(rdf:), \"_\")))\n"
+            + "        BIND(xsd:integer(STRAFTER(STR(?m2), CONCAT(STR(rdf:), \"_\"))) AS ?j)\n"
+            + "        FILTER(?j < ?i)\n"
+            + "      }\n"
+            + "    } GROUP BY ?child\n"
+            + "  }\n"
+            + "  BIND( IRI(CONCAT(STR(rdf:), \"_\", STR(?newIdx))) AS ?newProp)\n"
+            + "_LABEL_BLOCK_"
+            + "}";
 
 }

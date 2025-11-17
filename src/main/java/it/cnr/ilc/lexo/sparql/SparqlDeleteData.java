@@ -173,29 +173,56 @@ public class SparqlDeleteData {
             + SparqlPrefix.RDF.getSparqlPrefix() + "\n"
             + "DELETE { <_ID_> ?p ?o }\n"
             + "WHERE {  <_ID_> ?p ?o }";
-    
-    
+
     public static final String DELETE_ECD_FORM
             = "DELETE { <_ID_> ?predicate ?object . \n"
             + "         ?subject ?_predicate <_ID_> . }\n"
             + "WHERE { <_ID_> ?predicate ?object . \n"
             + "         OPTIONAL { ?subject ?_predicate <_ID_> . } }";
-    
+
     public static final String DELETE_ECD_ENTRY
             = "DELETE { <_ID_> ?predicate ?object . \n"
             + "         ?subject ?_predicate <_ID_> . }\n"
             + "WHERE { <_ID_> ?predicate ?object . \n"
             + "         OPTIONAL { ?subject ?_predicate <_ID_> . } }";
-    
-     public static final String DELETE_ECD_ENTRY_POS
+
+    public static final String DELETE_ECD_ENTRY_POS
             = "DELETE { <_ID_> ?predicate ?object . \n"
             + "         ?subject ?_predicate <_ID_> . }\n"
             + "WHERE { <_ID_> ?predicate ?object . \n"
             + "         OPTIONAL { ?subject ?_predicate <_ID_> . } }";
-    
+
     public static final String DELETE_EC_DICTIONARY
             = "DELETE { <_ID_> ?predicate ?object . \n"
             + "         ?subject ?_predicate <_ID_> . }\n"
             + "WHERE { <_ID_> ?predicate ?object . \n"
             + "         OPTIONAL { ?subject ?_predicate <_ID_> . } }";
+
+    public static final String DELETE_ECD_MEANINGS
+            = SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDF.getSparqlPrefix() + "\n"
+            + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
+            + "\n"
+            + "DELETE {\n"
+            + "  # Detach top-level components from the target de (only rdf:_n membership)\n"
+            + "  <_ID_> ?m ?topComp .\n"
+            + "\n"
+            + "  # Delete all triples of the components (top-level and descendants)\n"
+            + "  ?topComp ?cp0 ?co0 .\n"
+            + "  ?anyComp ?cp  ?co  .\n"
+            + "}\n"
+            + "WHERE {\n"
+            + "  # Components directly linked from ?de via rdf:_n indices\n"
+            + "  <_ID_> ?m ?topComp .\n"
+            + "  FILTER( STRSTARTS(STR(?m), STR(rdf:_)) )\n"
+            + "\n"
+            + "  # Triples of the top-level component\n"
+            + "  OPTIONAL { ?topComp ?cp0 ?co0 . }\n"
+            + "\n"
+            + "  # Traverse all sub-components via rdf:_n\n"
+            + "  OPTIONAL {\n"
+            + "    ?topComp (rdf:_1|rdf:_2|rdf:_3|rdf:_4|rdf:_5|rdf:_6|rdf:_7|rdf:_8|rdf:_9|rdf:_10)* ?anyComp .\n"
+            + "    OPTIONAL { ?anyComp ?cp ?co . }\n"
+            + "  }\n"
+            + "}";
 }

@@ -6,8 +6,8 @@
 package it.cnr.ilc.lexo.service.data.lexicon.input.ecd;
 
 import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import it.cnr.ilc.lexo.service.data.Data;
+import java.util.ArrayList;
 
 /**
  *
@@ -16,41 +16,54 @@ import it.cnr.ilc.lexo.service.data.Data;
 @ApiModel(description = "Input model representing an ECD meaning order updater")
 public class ECDMeaningOrdering implements Data {
 
-    private String sense;
-    private String romanNumber;
-    private String arabicNumber;
-    private String letter;
+    private ArrayList<MeaningOrder> meanings;
 
-    public String getSense() {
-        return sense;
+    public ArrayList<MeaningOrder> getMeanings() {
+        return meanings;
     }
 
-    public void setSense(String sense) {
-        this.sense = sense;
+    public void setMeanings(ArrayList<MeaningOrder> meanings) {
+        this.meanings = meanings;
     }
 
-    public String getRomanNumber() {
-        return romanNumber;
-    }
+    public class MeaningOrder {
 
-    public void setRomanNumber(String romanNumber) {
-        this.romanNumber = romanNumber;
-    }
+        private String sense;
+        private String romanNumber;
+        private String arabicNumber;
+        private String letter;
 
-    public String getArabicNumber() {
-        return arabicNumber;
-    }
+        public String getSense() {
+            return sense;
+        }
 
-    public void setArabicNumber(String arabicNumber) {
-        this.arabicNumber = arabicNumber;
-    }
+        public void setSense(String sense) {
+            this.sense = sense;
+        }
 
-    public String getLetter() {
-        return letter;
-    }
+        public String getRomanNumber() {
+            return romanNumber;
+        }
 
-    public void setLetter(String letter) {
-        this.letter = letter;
+        public void setRomanNumber(String romanNumber) {
+            this.romanNumber = romanNumber;
+        }
+
+        public String getArabicNumber() {
+            return arabicNumber;
+        }
+
+        public void setArabicNumber(String arabicNumber) {
+            this.arabicNumber = arabicNumber;
+        }
+
+        public String getLetter() {
+            return letter;
+        }
+
+        public void setLetter(String letter) {
+            this.letter = letter;
+        }
     }
 
 }

@@ -42,6 +42,11 @@ public class ECDDataManager implements Manager, Cached {
         return RDFQueryUtil.evaluateTQuery(query);
     }
     
+    public TupleQueryResult getECDicitonary() {
+        String query = SparqlSelectData.DATA_ECDICTIONARY;
+        return RDFQueryUtil.evaluateTQuery(query);
+    }
+    
     public TupleQueryResult getFilterdECDEntries(ECDEntryFilter def) throws ManagerException {
         logger.info(def.toString());
 //        Manager.validateWithEnum("formType", FormTypes.class, lef.getFormType());

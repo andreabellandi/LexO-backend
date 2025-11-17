@@ -234,5 +234,52 @@ public class ECDDeletion extends Service {
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
+    
+    @GET
+    @Path("ECDMeaning")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "ECDMeaning",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "ECD meaning deletion",
+            notes = "This method deletes an ECD meaning")
+    public Response ECDMeaning(
+            @HeaderParam("Authorization") String key,
+            @ApiParam(
+                    name = "id",
+                    value = "EC Dictionary IRI",
+                    required = true)
+            @QueryParam("id") String idECDEntry,
+            @ApiParam(
+                    name = "id",
+                    value = "ECD meaning IRI",
+                    required = true)
+            @QueryParam("id") String idECDMeaning) {
+        try {
+            checkKey(key);
+            String _idECDEntry = URLDecoder.decode(idECDEntry, StandardCharsets.UTF_8.name());
+            String _idECDMeaning = URLDecoder.decode(idECDMeaning, StandardCharsets.UTF_8.name());
+            log(Level.INFO, "ecd/delete/ECDMeaning:  ECD entry: <" + _idECDEntry + "> - ECD meaning: <" + _idECDMeaning + ">");
+            UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
+            if (utilityManager.isDictionaryEntry(_idECDEntry)) {
+                log(Level.ERROR, "ecd/delete/ECDMeaning: <" + _idECDEntry + "> is not a dictionary entry");
+                return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("ecd/delete/ECDMeaning: <" + _idECDEntry + "> is not a dictionary entry").build();
+            }
+            if (utilityManager.isLexicalSense(_idECDMeaning)) {
+                log(Level.ERROR, "ecd/delete/ECDMeaning: <" + _idECDMeaning + "> is not a dictionary meaning");
+                return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("ecd/delete/ECDMeaning: <" + _idECDMeaning + "> is not a dictionary meaning").build();
+            }
+            return Response.ok(ecdManager.deleteECDMeaning(_idECDEntry, _idECDMeaning))
+                    .type(MediaType.TEXT_PLAIN).header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
+        } catch (UnsupportedEncodingException | ManagerException ex) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        } catch (AuthorizationException | ServiceException ex) {
+            log(Level.ERROR, "ecd/delete/ECDMeaning: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
+        }
+    }
 
 }

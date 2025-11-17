@@ -167,7 +167,7 @@ public class SparqlQueryUtil {
             + " UNION "
             + "{ ?x " + SparqlPrefix.LEXICOG.getPrefix() + "describes <_ID_> } "
             + "}";
-    
+
     public static final String HAS_LEXICALENTRY_FORMS_OR_SENSES
             = SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
             + "ASK { "
@@ -184,7 +184,7 @@ public class SparqlQueryUtil {
             + "          UNION \n"
             + "       { <_ID_> lexicog:describes [ ontolex:sense ?sense ]  }\n"
             + "    }";
-    
+
     public static final String HAS_ECD_ENTRY_COMPONENTS
             = SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
             + SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
@@ -298,7 +298,7 @@ public class SparqlQueryUtil {
             + "SELECT ?" + SparqlVariable.LEXICAL_ENTRY + " \n"
             + "WHERE { <_ID_DE_> lexicog:describes ?" + SparqlVariable.LEXICAL_ENTRY + " . \n "
             + "        ?" + SparqlVariable.LEXICAL_ENTRY + " lexinfo:partOfSpeech <_POS_> . }";
-    
+
     public static final String LEXICAL_ENTRY_BY_ECD_ENTRY
             = SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
             + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
@@ -315,7 +315,7 @@ public class SparqlQueryUtil {
             = SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
             + "SELECT ?" + SparqlVariable.LABEL + " \n"
             + "WHERE { <_ID_> " + SparqlPrefix.RDFS.getPrefix() + "label ?" + SparqlVariable.LABEL + " }";
-    
+
     public static final String FORM_WRITTEN_REP
             = SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
             + "SELECT ?" + SparqlVariable.LABEL + " \n"
@@ -447,5 +447,9 @@ public class SparqlQueryUtil {
             + "        FILTER(regex(str(?rdf_n), \"http://www.w3.org/1999/02/22-rdf-syntax-ns#_\"))\n"
             + "    }\n"
             + "} GROUP BY ?" + SparqlVariable.LEXICAL_ENTRY;
+
+    public static final String ASK_MEMBERSHIP_LEVEL
+            = SparqlPrefix.RDF.getSparqlPrefix() + "\n"
+            + "ASK { <_ENTRY_> ?m <_PARENT_> . FILTER(STRSTARTS(STR(?m), CONCAT(STR(rdf:), \"_\"))) }";
 
 }

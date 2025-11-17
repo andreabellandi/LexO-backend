@@ -257,6 +257,40 @@ public class ECDData extends Service {
         }
     }
 
+    @GET
+    @Path("ECDictionary")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.POST,
+            value = "ECDictionary",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "EC ECDictionary detail",
+            notes = "This method returns the deatils of a specific ECDictionary")
+    public Response ECDictionary(@HeaderParam("Authorization") String key,
+            @ApiParam(
+                    name = "id",
+                    value = "ECDictionary ID",
+                    required = true)
+            @QueryParam("id") String id) throws HelperException {
+        try {
+            userCheck(key);
+            String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
+            log(Level.INFO, "data/ECDictionary: <" + _id + ">\n");
+            TupleQueryResult ECDictionary = ecdManager.getECDicitonary();
+            String json = "";
+            ECDictionary lecd = ECDictionaryHelper.newData(ECDictionary);
+            json = ECDictionaryHelper.toJson(lecd);
+            return Response.ok(json)
+                    .type(MediaType.APPLICATION_JSON)
+                    .header("Access-Control-Allow-Headers", "content-type")
+                    .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+                    .build();
+        } catch (AuthorizationException | ServiceException | UnsupportedEncodingException ex) {
+            log(Level.ERROR, ex.getMessage());
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
+        }
+    }
+
     @POST
     @Path("ECDEntries")
     @Produces(MediaType.APPLICATION_JSON)

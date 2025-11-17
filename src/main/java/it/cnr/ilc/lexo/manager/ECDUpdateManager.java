@@ -8,8 +8,11 @@ package it.cnr.ilc.lexo.manager;
 import it.cnr.ilc.lexo.LexOProperties;
 import it.cnr.ilc.lexo.service.data.lexicon.input.ecd.ECDEntryUpdater;
 import it.cnr.ilc.lexo.service.data.lexicon.input.ecd.ECDFormUpdater;
+import it.cnr.ilc.lexo.service.data.lexicon.input.ecd.ECDMeaningOrdering;
+import it.cnr.ilc.lexo.service.data.lexicon.input.ecd.ECDMeaningOrdering.MeaningOrder;
 import it.cnr.ilc.lexo.service.data.lexicon.input.ecd.ECDMeaningUpdater;
 import it.cnr.ilc.lexo.service.data.output.Entity;
+import it.cnr.ilc.lexo.sparql.SparqlDeleteData;
 import it.cnr.ilc.lexo.sparql.SparqlInsertData;
 import it.cnr.ilc.lexo.sparql.SparqlPrefix;
 import it.cnr.ilc.lexo.sparql.SparqlSelectData;
@@ -18,6 +21,7 @@ import it.cnr.ilc.lexo.sparql.SparqlVariable;
 import it.cnr.ilc.lexo.util.EnumUtil;
 import it.cnr.ilc.lexo.util.OntoLexEntity;
 import it.cnr.ilc.lexo.util.RDFQueryUtil;
+import it.cnr.ilc.lexo.util.StringUtil;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -71,6 +75,104 @@ public class ECDUpdateManager implements Manager, Cached {
         if ((v < 0.0) || (v > 1.0)) {
             throw new ManagerException("the confidence value is not valid");
         }
+    }
+
+    public String updateMeaningOrder(String id, ECDMeaningOrdering ecdmo) {
+        StringBuilder query = new StringBuilder();
+        query.append(SparqlDeleteData.DELETE_ECD_MEANINGS.replaceAll("_ID_", id)).append(";\n");
+        sortByRomanArabicLetter(ecdmo);
+        for (int i = 0; i < (ecdmo.getMeanings() == null ? 0 : ecdmo.getMeanings().size()); i++) {
+            final int R = i + 1;
+            MeaningOrder m = ecdmo.getMeanings().get(i);
+            String col1 = StringUtil.req(m.getSense(), "(R,1) sense");
+            String col2 = StringUtil.nz(m.getRomanNumber());
+            String col3 = StringUtil.nz(m.getArabicNumber());
+            String col4 = StringUtil.nz(m.getLetter());
+            // Se (R,4) valorizzata -> branch 1
+            if (!col4.isEmpty()) {
+                int idxLetter = StringUtil.letterIndex(col4); // a→1, b→2, ...
+                int arNum = StringUtil.parsePositiveInt(col3, "(R,3) arabicNumber (richiesto se (R,4) è valorizzata)");
+                String u12 = StringUtil.concatUris(col1, col2);
+                String u123 = StringUtil.concatUris(col1, col2, col3);
+                String u1234 = StringUtil.concatUris(col1, col2, col3, col4);
+                // <_ID_> rdf:_R <concat((R,1),(R,2))> .
+                query.append('<').append(id).append("> rdf:_").append(R).append(' ')
+                        .append('<').append(u12).append("> .\n");
+                // <concat((R,1),(R,2))> a lexicog:LexicographicComponent ; rdfs:label "(R,2)" ; rdf:_(R,3) <concat((R,1),(R,2),(R,3))> .
+                query.append('<').append(u12).append("> a lexicog:LexicographicComponent ;\n")
+                        .append("   rdfs:label \"").append(StringUtil.esc(col2)).append("\" ;\n")
+                        .append("   rdf:_").append(arNum).append(' ')
+                        .append('<').append(u123).append("> .\n");
+                // <concat((R,1),(R,2),(R,3))> a lexicog:LexicographicComponent ; rdfs:label "(R,3)" ; rdf:_number((R,4)) <concat((R,1),(R,2),(R,3),(R,4))> .
+                query.append('<').append(u123).append("> a lexicog:LexicographicComponent ;\n")
+                        .append("   rdfs:label \"").append(StringUtil.esc(col3)).append("\" ;\n")
+                        .append("   rdf:_").append(idxLetter).append(' ')
+                        .append('<').append(u1234).append("> .\n");
+                // <concat((R,1),(R,2),(R,3),(R,4))> a lexicog:LexicographicComponent ; rdfs:label "(R,4)" ; lexicog:describes <(R,1)> .
+                query.append('<').append(u1234).append("> a lexicog:LexicographicComponent ;\n")
+                        .append("   rdfs:label \"").append(StringUtil.esc(col4)).append("\" ;\n")
+                        .append("   lexicog:describes <").append(col1).append("> .\n");
+                continue;
+            }
+            // Se (R,4) vuota ma (R,3) valorizzata -> branch 2
+            if (!col3.isEmpty()) {
+                int arNum = StringUtil.parsePositiveInt(col3, "(R,3) arabicNumber");
+                String u12 = StringUtil.concatUris(col1, col2);
+                String u123 = StringUtil.concatUris(col1, col2, col3);
+                query.append('<').append(id).append("> rdf:_").append(R).append(' ')
+                        .append('<').append(u12).append("> .\n");
+                query.append('<').append(u12).append("> a lexicog:LexicographicComponent ;\n")
+                        .append("   rdfs:label \"").append(StringUtil.esc(col2)).append("\" ;\n")
+                        .append("   rdf:_").append(arNum).append(' ')
+                        .append('<').append(u123).append("> .\n");
+                query.append('<').append(u123).append("> a lexicog:LexicographicComponent ;\n")
+                        .append("   rdfs:label \"").append(StringUtil.esc(col3)).append("\" ;\n")
+                        .append("   lexicog:describes <").append(col1).append("> .\n");
+                continue;
+            }
+            // Se (R,3) vuota ma (R,2) valorizzata -> branch 3
+            if (!col2.isEmpty()) {
+                String u12 = StringUtil.concatUris(col1, col2);
+                query.append('<').append(id).append("> rdf:_").append(R).append(' ')
+                        .append('<').append(u12).append("> .\n");
+                query.append('<').append(u12).append("> a lexicog:LexicographicComponent ;\n")
+                        .append("   rdfs:label \"").append(StringUtil.esc(col2)).append("\" ;\n")
+                        .append("   lexicog:describes <").append(col1).append("> .\n");
+                // Se (R,2) è valorizzata e basta, non aggiungiamo altro.
+                continue;
+            }
+            // Se (R,2) non valorizzata: non fare nulla.
+        }
+        StringBuilder full = new StringBuilder();
+        full.append("INSERT DATA {\n")
+                .append(query)
+                .append("}\n");
+        String lastupdate = timestampFormat.format(new Timestamp(System.currentTimeMillis()));
+        RDFQueryUtil.update(full.toString());
+        return lastupdate;
+    }
+
+    private void sortByRomanArabicLetter(ECDMeaningOrdering meanings) {
+        if (meanings == null) {
+            return;
+        }
+        meanings.getMeanings().sort((a, b) -> {
+            int ra = StringUtil.romanToInt(StringUtil.req(a.getRomanNumber(), "romanNumber"));
+            int rb = StringUtil.romanToInt(StringUtil.req(b.getRomanNumber(), "romanNumber"));
+            int cmp = Integer.compare(ra, rb);
+            if (cmp != 0) {
+                return cmp;
+            }
+            int aa = StringUtil.parseArabic(StringUtil.req(a.getArabicNumber(), "arabicNumber"));
+            int ab = StringUtil.parseArabic(StringUtil.req(b.getArabicNumber(), "arabicNumber"));
+            cmp = Integer.compare(aa, ab);
+            if (cmp != 0) {
+                return cmp;
+            }
+            String la = StringUtil.req(a.getLetter(), "letter");
+            String lb = StringUtil.req(b.getLetter(), "letter");
+            return la.compareTo(lb);
+        });
     }
 
     public String updateECDEntry(String id, ECDEntryUpdater ecdeu, String user) throws ManagerException {
@@ -151,7 +253,7 @@ public class ECDUpdateManager implements Manager, Cached {
                 .replaceAll("_LAST_UPDATE_", "\"" + lastupdate + "\""));
         return lastupdate;
     }
-    
+
     public String updateECDEntryLabel(String id, String relation, String valueToInsert, String valueToDelete, List<String> les) throws ManagerException, UpdateExecutionException {
         if (valueToInsert.isEmpty()) {
             throw new ManagerException("value cannot be empty");
@@ -163,9 +265,9 @@ public class ECDUpdateManager implements Manager, Cached {
                 .replaceAll("_LAST_UPDATE_", "\"" + lastupdate + "\""));
         for (String le : les) {
             RDFQueryUtil.update(SparqlUpdateData.UPDATE_ECD_ENTRY_LABEL.replaceAll("_ID_", le)
-                .replaceAll("_VALUE_TO_INSERT_", valueToInsert)
-                .replaceAll("_VALUE_TO_DELETE_", valueToDelete)
-                .replaceAll("_LAST_UPDATE_", "\"" + lastupdate + "\""));
+                    .replaceAll("_VALUE_TO_INSERT_", valueToInsert)
+                    .replaceAll("_VALUE_TO_DELETE_", valueToDelete)
+                    .replaceAll("_LAST_UPDATE_", "\"" + lastupdate + "\""));
         }
         return lastupdate;
     }
@@ -186,7 +288,7 @@ public class ECDUpdateManager implements Manager, Cached {
                 .replaceAll("_ID_SENSE_", id));
         return lastupdate;
     }
-    
+
     public String createLexicalEntryForECDEntryNewPoS(String de, String lexicon, String leType, String lePoS, String label, String lang, String author) throws ManagerException, UpdateExecutionException {
         Timestamp tm = new Timestamp(System.currentTimeMillis());
         String id = idInstancePrefix + tm.toString();
@@ -385,7 +487,9 @@ public class ECDUpdateManager implements Manager, Cached {
             validateECDMeaningAttribute(ecdmu.getRelation());
             if (ecdmu.getRelation().equals(OntoLexEntity.ECDMeaningAttributes.PoS.toString())) {
                 if (ecdmu.getOldPoS() != null) {
-                    if (ecdmu.getValue() == null) throw new ManagerException("Part of speech parameter is missing");
+                    if (ecdmu.getValue() == null) {
+                        throw new ManagerException("Part of speech parameter is missing");
+                    }
                     // update the pos
                     UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
                     String oldLe = utilityManager.getLexicalSensePoS(id);
