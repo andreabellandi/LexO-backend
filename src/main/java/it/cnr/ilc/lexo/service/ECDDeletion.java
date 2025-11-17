@@ -129,15 +129,22 @@ public class ECDDeletion extends Service {
                     name = "id",
                     value = "ECD entry IRI",
                     required = true)
-            @QueryParam("id") String id) {
+            @QueryParam("id") String id,
+            @ApiParam(
+                    name = "force",
+                    value = "true or false depending on the entry must be deleted also if it has some components",
+                    required = false)
+            @QueryParam("force") Boolean force) {
         try {
             checkKey(key);
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
             log(Level.INFO, "ecd/delete/ECDEntry <" + _id + ">");
             UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
-            if (utilityManager.hasECDEntryComponents(_id)) {
-                log(Level.ERROR, "ecd/delete/ECDEntry: Entry cannot be deleted because is not empty");
-                return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("ecd/delete/ECDEntry: Entry cannot be deleted because is not empty").build();
+            if (force == null || !force) {
+                if (utilityManager.hasECDEntryComponents(_id)) {
+                    log(Level.ERROR, "ecd/delete/ECDEntry: Entry cannot be deleted because is not empty");
+                    return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("ecd/delete/ECDEntry: Entry cannot be deleted because is not empty").build();
+                }
             }
             return Response.ok(ecdManager.deleteECDEntry(_id))
                     .type(MediaType.TEXT_PLAIN).header("Access-Control-Allow-Headers", "content-type")
@@ -234,7 +241,7 @@ public class ECDDeletion extends Service {
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
     }
-    
+
     @GET
     @Path("ECDMeaning")
     @Produces(MediaType.APPLICATION_JSON)
