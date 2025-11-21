@@ -25,6 +25,7 @@ public class ECDictionaryHelper extends TripleStoreDataHelper<ECDictionary> {
         data.setLastUpdate(getStringValue(bs, SparqlVariable.LAST_UPDATE));
         data.setCreationDate(getStringValue(bs, SparqlVariable.CREATION_DATE));
         data.setCreator(getStringValue(bs, SparqlVariable.CREATOR));
+        data.setConfidence(getDoubleNumber(bs, SparqlVariable.CONFIDENCE));
     }
 
     @Override

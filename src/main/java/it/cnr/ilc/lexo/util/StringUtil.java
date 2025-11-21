@@ -6,6 +6,7 @@ import it.cnr.ilc.lexo.manager.UtilityManager;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.security.MessageDigest;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
@@ -291,6 +292,18 @@ public class StringUtil {
                 x -= vals[i];
             }
         }
+        return sb.toString();
+    }
+    
+    public static String escapeForSPARQLString(String s) {
+        return s.replace("\\", "\\\\").replace("\"", "\\\"");
+    }
+    
+    public static String sha1Hex(String s) throws Exception {
+        MessageDigest md = MessageDigest.getInstance("SHA-1");
+        byte[] h = md.digest(s.getBytes("UTF-8"));
+        StringBuilder sb = new StringBuilder();
+        for (byte b : h) sb.append(String.format("%02x", b));
         return sb.toString();
     }
 }

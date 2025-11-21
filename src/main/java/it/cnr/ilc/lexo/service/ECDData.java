@@ -276,7 +276,7 @@ public class ECDData extends Service {
             userCheck(key);
             String _id = URLDecoder.decode(id, StandardCharsets.UTF_8.name());
             log(Level.INFO, "data/ECDictionary: <" + _id + ">\n");
-            TupleQueryResult ECDictionary = ecdManager.getECDicitonary();
+            TupleQueryResult ECDictionary = ecdManager.getECDicitonary(_id);
             String json = "";
             ECDictionary lecd = ECDictionaryHelper.newData(ECDictionary);
             json = ECDictionaryHelper.toJson(lecd);

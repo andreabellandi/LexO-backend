@@ -254,26 +254,26 @@ public class ECDDeletion extends Service {
     public Response ECDMeaning(
             @HeaderParam("Authorization") String key,
             @ApiParam(
-                    name = "id",
+                    name = "idECDEntry",
                     value = "EC Dictionary IRI",
                     required = true)
-            @QueryParam("id") String idECDEntry,
+            @QueryParam("idECDEntry") String idECDEntry,
             @ApiParam(
-                    name = "id",
+                    name = "idECDMeaning",
                     value = "ECD meaning IRI",
                     required = true)
-            @QueryParam("id") String idECDMeaning) {
+            @QueryParam("idECDMeaning") String idECDMeaning) {
         try {
             checkKey(key);
             String _idECDEntry = URLDecoder.decode(idECDEntry, StandardCharsets.UTF_8.name());
             String _idECDMeaning = URLDecoder.decode(idECDMeaning, StandardCharsets.UTF_8.name());
             log(Level.INFO, "ecd/delete/ECDMeaning:  ECD entry: <" + _idECDEntry + "> - ECD meaning: <" + _idECDMeaning + ">");
             UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
-            if (utilityManager.isDictionaryEntry(_idECDEntry)) {
+            if (!utilityManager.isDictionaryEntry(_idECDEntry)) {
                 log(Level.ERROR, "ecd/delete/ECDMeaning: <" + _idECDEntry + "> is not a dictionary entry");
                 return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("ecd/delete/ECDMeaning: <" + _idECDEntry + "> is not a dictionary entry").build();
             }
-            if (utilityManager.isLexicalSense(_idECDMeaning)) {
+            if (!utilityManager.isLexicalSense(_idECDMeaning)) {
                 log(Level.ERROR, "ecd/delete/ECDMeaning: <" + _idECDMeaning + "> is not a dictionary meaning");
                 return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("ecd/delete/ECDMeaning: <" + _idECDMeaning + "> is not a dictionary meaning").build();
             }

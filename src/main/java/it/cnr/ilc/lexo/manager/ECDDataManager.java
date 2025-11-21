@@ -42,8 +42,8 @@ public class ECDDataManager implements Manager, Cached {
         return RDFQueryUtil.evaluateTQuery(query);
     }
     
-    public TupleQueryResult getECDicitonary() {
-        String query = SparqlSelectData.DATA_ECDICTIONARY;
+    public TupleQueryResult getECDicitonary(String id) {
+        String query = SparqlSelectData.DATA_ECDICTIONARY.replaceAll("_ID_DICT_", id);
         return RDFQueryUtil.evaluateTQuery(query);
     }
     

@@ -208,7 +208,7 @@ public class SparqlDeleteData {
             + "}\n"
             + "WHERE {\n"
             + "  # Replace ex:de with your specific de\n"
-            + "  VALUES ?de { ex:de }\n"
+            + "  VALUES ?de { <_ID_> }\n"
             + "\n"
             + "  # --- remove :de (outgoing and incoming) ---\n"
             + "  OPTIONAL { ?de  ?p_de  ?o_de . }\n"

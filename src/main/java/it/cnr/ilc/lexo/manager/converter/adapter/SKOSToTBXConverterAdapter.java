@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package it.cnr.ilc.lexo.manager.converter;
+package it.cnr.ilc.lexo.manager.converter.adapter;
 
-import it.cnr.ilc.lexo.util.OntoLexToTBXConverter;
+import it.cnr.ilc.lexo.manager.converter.implementation.OntoLexToTBXConverter;
 import it.cnr.ilc.lexo.util.RepositoryRegistry;
 import java.nio.file.Path;
 import java.util.Map;

@@ -285,6 +285,7 @@ public class ECDUpdateManager implements Manager, Cached {
         String lastupdate = timestampFormat.format(new Timestamp(System.currentTimeMillis()));
         RDFQueryUtil.update(SparqlUpdateData.UPDATE_ECD_MEANING_POS.replaceAll("_ID_OLD_LE_", oldLe)
                 .replaceAll("_ID_NEW_LE_", newLe)
+                .replace("_LAST_UPDATE_", "\"" + lastupdate + "\"")
                 .replaceAll("_ID_SENSE_", id));
         return lastupdate;
     }

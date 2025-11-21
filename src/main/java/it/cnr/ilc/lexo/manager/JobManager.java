@@ -5,7 +5,7 @@
  */
 package it.cnr.ilc.lexo.manager;
 
-import it.cnr.ilc.lexo.manager.converter.Converter;
+import it.cnr.ilc.lexo.manager.converter.adapter.Converter;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.io.BufferedWriter;
 import java.io.FilterInputStream;

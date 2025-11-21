@@ -1,6 +1,6 @@
 package it.cnr.ilc.lexo;
 
-import it.cnr.ilc.lexo.manager.converter.OntoLexToTBXConverterAdapter;
+import it.cnr.ilc.lexo.manager.converter.adapter.OntoLexToTBXConverterAdapter;
 import it.cnr.ilc.lexo.sparql.SparqlSelectData;
 import it.cnr.ilc.lexo.sparql.SparqlVariable;
 import it.cnr.ilc.lexo.util.ConverterRegistry;

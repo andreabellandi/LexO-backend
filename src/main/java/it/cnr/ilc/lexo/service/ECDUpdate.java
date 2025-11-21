@@ -149,7 +149,12 @@ public class ECDUpdate extends Service {
     @ApiOperation(value = "ECD meaning update",
             notes = "This method updates the ECD meaning according to the input updater")
     public Response ECDMeaning(
-            @HeaderParam("Authorization") String key, @QueryParam("id") String id,
+            @HeaderParam("Authorization") String key, 
+            @ApiParam(
+                    name = "id",
+                    value = "ECD meaning id",
+                    required = true)
+            @QueryParam("id") String id,
             @ApiParam(
                     name = "author",
                     value = "if LexO user management is disabled, the account that is updating the status of the lexical entry",

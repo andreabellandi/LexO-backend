@@ -14,9 +14,8 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.BooleanSupplier;
 import java.util.function.IntConsumer;
 import java.util.function.LongConsumer;
-import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.query.BindingSet;
 import org.eclipse.rdf4j.repository.Repository;
-import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.repository.RepositoryException;
 import org.eclipse.rdf4j.repository.sail.SailRepository;
 import org.eclipse.rdf4j.repository.util.RDFInserter;
@@ -26,14 +25,15 @@ import org.eclipse.rdf4j.rio.RDFParseException;
 import org.eclipse.rdf4j.rio.RDFParser;
 import org.eclipse.rdf4j.rio.Rio;
 import org.eclipse.rdf4j.rio.UnsupportedRDFormatException;
-import org.eclipse.rdf4j.rio.helpers.AbstractRDFHandler;
 import org.eclipse.rdf4j.sail.memory.MemoryStore;
+import org.eclipse.rdf4j.model.*;
+import org.eclipse.rdf4j.repository.RepositoryConnection;
 
 /**
  *
  * @author andreabellandi
  */
-public final class Rdf4jLoadUtil {
+public final class RDF4jLoadUtil {
 
     public static final class Result {
 
@@ -46,7 +46,7 @@ public final class Rdf4jLoadUtil {
         }
     }
 
-    private Rdf4jLoadUtil() {
+    private RDF4jLoadUtil() {
     }
 
     public static Result loadIntoMemory(Path file,
@@ -54,7 +54,7 @@ public final class Rdf4jLoadUtil {
             String baseUriOpt,
             final IntConsumer onProgress,
             final LongConsumer onTriples,
-            final BooleanSupplier shouldCancel) throws  RepositoryException, IOException, UnsupportedRDFormatException, RDFParseException, RDFHandlerException, Exception {
+            final BooleanSupplier shouldCancel) throws RepositoryException, IOException, UnsupportedRDFormatException, RDFParseException, RDFHandlerException, Exception {
         long total = Files.size(file);
         if (total <= 0) {
             total = 1;
@@ -134,6 +134,30 @@ public final class Rdf4jLoadUtil {
         }
         RDFFormat guess = Rio.getParserFormatForFileName(file.getFileName().toString()).orElse(RDFFormat.TURTLE);
         return guess;
+    }
+
+    public static String getUri(BindingSet bs, String name) {
+        Value v = bs.getValue(name);
+        return (v != null && v instanceof IRI) ? v.stringValue() : null;
+    }
+
+    public static String getLiteralString(BindingSet bs, String name) {
+        Value v = bs.getValue(name);
+        return (v != null && v.isLiteral()) ? v.stringValue() : null;
+    }
+
+    public static String getResourceId(BindingSet bs, String name) {
+        Value v = bs.getValue(name);
+        if (v == null) {
+            return null;
+        }
+        if (v instanceof IRI) {
+            return v.stringValue();
+        }
+        if (v instanceof BNode) {
+            return "_:" + ((BNode) v).getID();
+        }
+        return null;
     }
 
     /**

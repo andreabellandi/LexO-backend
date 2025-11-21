@@ -149,7 +149,7 @@ public class ECDDeletionManager implements Manager, Cached {
     
     private static String deleteSubjectsWhere(Set<Resource> subjects) {
         String values = subjects.stream().map(r -> "(<" + r.stringValue() + ">)").collect(Collectors.joining(" "));
-        return "DELETE WHERE {\n"
+        return "DELETE { ?s ?p ?o } WHERE {\n"
                 + "  VALUES (?s) { " + values + " }\n"
                 + "  ?s ?p ?o .\n"
                 + "}";
@@ -157,8 +157,9 @@ public class ECDDeletionManager implements Manager, Cached {
     
     private static String deleteIncomingWhere(Set<Resource> objects) {
         String values = objects.stream().map(r -> "(<" + r.stringValue() + ">)").collect(Collectors.joining(" "));
-        return "DELETE WHERE {\n"
-                + "  ?s ?p ?o . VALUES (?o) { " + values + " }\n"
+        return "DELETE { ?s ?p ?o } WHERE {\n"
+                + "  VALUES (?o) { " + values + " }\n"
+                + "  ?s ?p ?o .\n"
                 + "}";
     }
     

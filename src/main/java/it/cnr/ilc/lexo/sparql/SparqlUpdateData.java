@@ -91,11 +91,12 @@ public class SparqlUpdateData {
     public static final String UPDATE_ECD_MEANING_POS
             = SparqlPrefix.DCT.getSparqlPrefix() + "\n"
             + SparqlPrefix.LEXINFO.getSparqlPrefix() + "\n"
+            + SparqlPrefix.ONTOLEX.getSparqlPrefix() + "\n"
             + "DELETE { <_ID_OLD_LE_> ontolex:sense <_ID_SENSE_> ;\n "
             + "                  dct:modified ?modified . } \n"
             + "INSERT { <_ID_NEW_LE_> ontolex:sense <_ID_SENSE_> ;\n"
             + "                  dct:modified _LAST_UPDATE_ . }\n"
-            + "WHERE {  OPTIONAL { <_ID_LE_> dct:modified ?modified .} \n"
+            + "WHERE {  OPTIONAL { <_ID_OLD_LE_> dct:modified ?modified .} \n"
             + "         OPTIONAL { <_ID_OLD_LE_> ontolex:sense <_ID_SENSE_> . } }";
 
     public static final String UPDATE_LEXICAL_ENTRY_BACKWARDING_STATUS
@@ -325,7 +326,7 @@ public class SparqlUpdateData {
             + // calcolo del nuovo indice come ROW_NUMBER su oldIdx
             "  BIND(xsd:integer(STRAFTER(STR(?m), CONCAT(STR(rdf:), \"_\"))) AS ?oldIdx)\n"
             + "  {\n"
-            + "    SELECT ?child (1 + COUNT(?prev)) AS ?newIdx WHERE {\n"
+            + "    SELECT ?child (COUNT(?prev) AS ?newIdx) WHERE {\n"
             + "      _PARENT_IRI_ ?m1 ?child . FILTER(STRSTARTS(STR(?m1), CONCAT(STR(rdf:), \"_\")))\n"
             + "      BIND(xsd:integer(STRAFTER(STR(?m1), CONCAT(STR(rdf:), \"_\"))) AS ?i)\n"
             + "      OPTIONAL {\n"
@@ -335,6 +336,7 @@ public class SparqlUpdateData {
             + "      }\n"
             + "    } GROUP BY ?child\n"
             + "  }\n"
+            + "  BIND(xsd:integer(?prevCount) + 1 AS ?newIdx)\n"
             + "  BIND( IRI(CONCAT(STR(rdf:), \"_\", STR(?newIdx))) AS ?newProp)\n"
             + "_LABEL_BLOCK_"
             + "}";

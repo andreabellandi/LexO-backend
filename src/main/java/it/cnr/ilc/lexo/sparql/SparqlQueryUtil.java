@@ -288,7 +288,7 @@ public class SparqlQueryUtil {
             + "WHERE { ?" + SparqlVariable.DICTIONARY_ENTRY + " lexicog:describes <_ID_OLD_LE_> ;\n"
             + "             lexicog:describes ?" + SparqlVariable.LEXICAL_ENTRY + " .\n"
             + "        ?" + SparqlVariable.LEXICAL_ENTRY + " lexinfo:partOfSpeech <_NEW_POS_> .\n"
-            + "        FILTER(<_ID_OLD_LE_> != ?" + SparqlVariable.LEXICAL_ENTRY + ")\n"
+//            + "        FILTER(<_ID_OLD_LE_> != ?" + SparqlVariable.LEXICAL_ENTRY + ")\n"
             + " }";
 
     public static final String LEXICAL_ENTRY_BY_ECD_POS

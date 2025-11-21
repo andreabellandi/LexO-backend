@@ -5,7 +5,7 @@
  */
 package it.cnr.ilc.lexo.util;
 
-import it.cnr.ilc.lexo.manager.converter.Converter;
+import it.cnr.ilc.lexo.manager.converter.adapter.Converter;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

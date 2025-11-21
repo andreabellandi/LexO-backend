@@ -2581,14 +2581,14 @@ public class SparqlSelectData {
             + "    OPTIONAL { ?" + SparqlVariable.DICTIONARY + " lexicog:entry ?_entries }\n"
             + "} GROUP BY ?" + SparqlVariable.DICTIONARY + " ?" + SparqlVariable.DESCRIPTION + " ?" + SparqlVariable.LABEL
             + " ?" + SparqlVariable.DICT_LANGUAGE + " ?" + SparqlVariable.CREATION_DATE + " ?" + SparqlVariable.CREATOR + " ?" + SparqlVariable.LAST_UPDATE + " ";
-    
+
     public static final String DATA_ECDICTIONARY = SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
             + SparqlPrefix.DCT.getSparqlPrefix() + "\n"
             + SparqlPrefix.SKOS.getSparqlPrefix() + "\n"
             + SparqlPrefix.RDFS.getSparqlPrefix() + "\n"
             + "SELECT ?" + SparqlVariable.DICTIONARY + " ?" + SparqlVariable.DESCRIPTION + " ?" + SparqlVariable.LABEL
             + " ?" + SparqlVariable.DICT_LANGUAGE + " ?" + SparqlVariable.CREATION_DATE + " ?" + SparqlVariable.CREATOR
-            + " ?" + SparqlVariable.LAST_UPDATE + "(COUNT(?_entries) AS ?" + SparqlVariable.DICT_ELEMENT + ") \n"
+            + " ?" + SparqlVariable.LAST_UPDATE + " (COUNT(?_entries) AS ?" + SparqlVariable.DICT_ELEMENT + ") \n"
             + "WHERE {\n"
             + "    ?" + SparqlVariable.DICTIONARY + " a lexicog:LexicographicResource .\n"
             + "    OPTIONAL { <_ID_DICT_> dct:description ?" + SparqlVariable.DESCRIPTION + " }\n"
@@ -2599,10 +2599,12 @@ public class SparqlSelectData {
             + "    OPTIONAL { <_ID_DICT_> dct:modified ?" + SparqlVariable.LAST_UPDATE + " }\n"
             + "    OPTIONAL { <_ID_DICT_> lexicog:entry ?_entries }\n"
             + "    VALUES ?" + SparqlVariable.DICTIONARY + " { <_ID_DICT_> } \n"
-            + "}";
+            + "} GROUP BY ?" + SparqlVariable.DICTIONARY + " ?" + SparqlVariable.DESCRIPTION + " ?" + SparqlVariable.LABEL
+            + " ?" + SparqlVariable.DICT_LANGUAGE + " ?" + SparqlVariable.CREATION_DATE + " ?" + SparqlVariable.CREATOR
+            + " ?" + SparqlVariable.LAST_UPDATE;
 
     public static final String DATA_GET_LEXICOGRAPHIC_COMPONENT_BY_SENSE = SparqlPrefix.LEXICOG.getSparqlPrefix() + "\n"
-            + "SELECT DISTINCT " + SparqlVariable.LEXICOGRAPHIC_COMPONENT + " WHERE { ?" + SparqlVariable.LEXICOGRAPHIC_COMPONENT + " lexicog:describes <_ID_SENSE_> . }";
+            + "SELECT DISTINCT ?" + SparqlVariable.LEXICOGRAPHIC_COMPONENT + " WHERE { ?" + SparqlVariable.LEXICOGRAPHIC_COMPONENT + " lexicog:describes <_ID_SENSE_> . }";
 
     public static final String DATA_GET_PARENT_MEMBERSHIP = SparqlPrefix.RDF.getSparqlPrefix() + "\n"
             + "SELECT DISTINCT ?parent ?m ?child WHERE {\n"
@@ -2610,5 +2612,5 @@ public class SparqlSelectData {
             + "  ?parent ?m ?child .\n"
             + "  FILTER(STRSTARTS(STR(?m), CONCAT(STR(rdf:), \"_\")))\n"
             + "}";
-    
+
 }
