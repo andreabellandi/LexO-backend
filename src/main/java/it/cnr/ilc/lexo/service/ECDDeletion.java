@@ -254,30 +254,20 @@ public class ECDDeletion extends Service {
     public Response ECDMeaning(
             @HeaderParam("Authorization") String key,
             @ApiParam(
-                    name = "idECDEntry",
-                    value = "EC Dictionary IRI",
-                    required = true)
-            @QueryParam("idECDEntry") String idECDEntry,
-            @ApiParam(
                     name = "idECDMeaning",
                     value = "ECD meaning IRI",
                     required = true)
             @QueryParam("idECDMeaning") String idECDMeaning) {
         try {
             checkKey(key);
-            String _idECDEntry = URLDecoder.decode(idECDEntry, StandardCharsets.UTF_8.name());
             String _idECDMeaning = URLDecoder.decode(idECDMeaning, StandardCharsets.UTF_8.name());
-            log(Level.INFO, "ecd/delete/ECDMeaning:  ECD entry: <" + _idECDEntry + "> - ECD meaning: <" + _idECDMeaning + ">");
+            log(Level.INFO, "ecd/delete/ECDMeaning: ECD meaning: <" + _idECDMeaning + ">");
             UtilityManager utilityManager = ManagerFactory.getManager(UtilityManager.class);
-            if (!utilityManager.isDictionaryEntry(_idECDEntry)) {
-                log(Level.ERROR, "ecd/delete/ECDMeaning: <" + _idECDEntry + "> is not a dictionary entry");
-                return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("ecd/delete/ECDMeaning: <" + _idECDEntry + "> is not a dictionary entry").build();
-            }
             if (!utilityManager.isLexicalSense(_idECDMeaning)) {
                 log(Level.ERROR, "ecd/delete/ECDMeaning: <" + _idECDMeaning + "> is not a dictionary meaning");
                 return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN).entity("ecd/delete/ECDMeaning: <" + _idECDMeaning + "> is not a dictionary meaning").build();
             }
-            return Response.ok(ecdManager.deleteECDMeaning(_idECDEntry, _idECDMeaning))
+            return Response.ok(ecdManager.deleteECDMeaning(_idECDMeaning))
                     .type(MediaType.TEXT_PLAIN).header("Access-Control-Allow-Headers", "content-type")
                     .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
                     .build();
