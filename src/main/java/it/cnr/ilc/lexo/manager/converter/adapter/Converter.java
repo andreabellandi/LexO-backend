@@ -34,7 +34,8 @@ public interface Converter {
                  Map<String, String> options,
                  IntConsumer onProgress,
                  LongConsumer onProcessed,
-                 BooleanSupplier shouldCancel) throws Exception;
+                 BooleanSupplier shouldCancel,
+                 java.util.function.Consumer<String> onMessage) throws Exception;
 
     /** Suggerisce estensione output (es. ".tbx", ".ttl", ".csv") */
     String outputExtension(Map<String,String> options);

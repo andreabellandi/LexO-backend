@@ -40,7 +40,7 @@ public class OntoLexEntity {
         LexicalEntry(SparqlPrefix.ONTOLEX.getUri() + "LexicalEntry"),
         Word(SparqlPrefix.ONTOLEX.getUri() + "Word"),
         Etymon(SparqlPrefix.ETY.getUri() + "Etymon"),
-        Multiword(SparqlPrefix.ONTOLEX.getUri() + "MultiWordExpression"),
+        Multiword(SparqlPrefix.ONTOLEX.getUri() + "MultiwordExpression"),
         Affix(SparqlPrefix.ONTOLEX.getUri() + "Affix");
 
         private final String type;

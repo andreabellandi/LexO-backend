@@ -34,8 +34,6 @@ public class ECDEntryMorphology extends Entity implements Data {
     private String phoneticRep;
     @ApiModelProperty(value = "form IRI")
     private String form;
-    @ApiModelProperty(value = "pos of the lexical entry")
-    private String pos;
 
     public ArrayList<Morphology> getMorphology() {
         return morphology;
@@ -91,14 +89,6 @@ public class ECDEntryMorphology extends Entity implements Data {
 
     public void setForm(String form) {
         this.form = form;
-    }
-
-    public String getPos() {
-        return pos;
-    }
-
-    public void setPos(String pos) {
-        this.pos = pos;
     }
 
 }

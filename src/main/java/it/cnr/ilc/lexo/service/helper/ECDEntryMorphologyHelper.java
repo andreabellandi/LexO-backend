@@ -9,8 +9,6 @@ import it.cnr.ilc.lexo.service.data.lexicon.output.Morphology;
 import it.cnr.ilc.lexo.service.data.lexicon.output.ecd.ECDEntryMorphology;
 import it.cnr.ilc.lexo.sparql.SparqlVariable;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import org.eclipse.rdf4j.query.BindingSet;
 
 /**
@@ -22,7 +20,6 @@ public class ECDEntryMorphologyHelper extends TripleStoreDataHelper<ECDEntryMorp
     @Override
     public void fillData(ECDEntryMorphology data, BindingSet bs) {
         data.setNote(getStringValue(bs, SparqlVariable.NOTE));
-        data.setPos(getStringValue(bs, SparqlVariable.LEXICAL_ENTRY_POS));
         data.setType(getStringValue(bs, SparqlVariable.FORM_TYPE));
         data.setLabel(getStringValue(bs, SparqlVariable.WRITTEN_REPRESENTATION)
                 + (!getLiteralLanguage(bs, SparqlVariable.WRITTEN_REPRESENTATION).isEmpty() ? "@" + getLiteralLanguage(bs, SparqlVariable.WRITTEN_REPRESENTATION) : ""));

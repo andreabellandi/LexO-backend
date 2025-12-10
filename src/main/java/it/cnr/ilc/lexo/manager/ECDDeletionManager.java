@@ -114,29 +114,57 @@ public class ECDDeletionManager implements Manager, Cached {
         return timestampFormat.format(new Timestamp(System.currentTimeMillis()));
     }
 
-    public String deleteECDMeaning(String ECDMeaning) throws ManagerException {
+//    public String deleteECDMeaning(String ECDMeaning) throws ManagerException {
+//        RepositoryConnection conn = GraphDbUtil.getConnection();
+//        try {
+//            List<IRI> components = findComponentsDescribingSense(conn, VF.createIRI(ECDMeaning));
+//            if (components.isEmpty()) {
+//                conn.commit();
+//                return timestampFormat.format(new Timestamp(System.currentTimeMillis()));
+//            }
+//            // delete all triples involving the sense
+//            deleteAllTriplesAbout(conn, VF.createIRI(ECDMeaning));
+//
+//            // for each leaf component, delete and rebalance
+//            for (IRI comp : components) {
+//                deleteComponentRecursive(conn, comp);
+//            }
+//            conn.commit();
+//        } catch (RepositoryException e) {
+//            conn.rollback();
+//            throw new RuntimeException("Error while deleting sense " + ECDMeaning, e);
+//        } finally {
+//            GraphDbUtil.releaseConnection(conn);
+//        }
+//        return timestampFormat.format(new Timestamp(System.currentTimeMillis()));
+//    }
+    public String deleteECDMeaning(String ecdMeaning) throws ManagerException {
         RepositoryConnection conn = GraphDbUtil.getConnection();
         try {
-            List<IRI> components = findComponentsDescribingSense(conn, VF.createIRI(ECDMeaning));
+            conn.begin();
+            IRI senseIri = VF.createIRI(ecdMeaning);
+            List<IRI> components = findComponentsDescribingSense(conn, senseIri);
             if (components.isEmpty()) {
-                conn.commit();
+                conn.commit(); 
                 return timestampFormat.format(new Timestamp(System.currentTimeMillis()));
             }
-            // delete all triples involving the sense
-            deleteAllTriplesAbout(conn, VF.createIRI(ECDMeaning));
-
-            // for each leaf component, delete and rebalance
+            deleteAllTriplesAbout(conn, senseIri);
             for (IRI comp : components) {
                 deleteComponentRecursive(conn, comp);
             }
             conn.commit();
+            return timestampFormat.format(new Timestamp(System.currentTimeMillis()));
         } catch (RepositoryException e) {
-            conn.rollback();
-            throw new RuntimeException("Error while deleting sense " + ECDMeaning, e);
+            try {
+                if (conn != null && conn.isActive()) {
+                    conn.rollback();
+                }
+            } catch (RepositoryException rollbackEx) {
+            }
+            throw new ManagerException("Error while deleting sense " + ecdMeaning + ": " +  e);
         } finally {
             GraphDbUtil.releaseConnection(conn);
         }
-        return timestampFormat.format(new Timestamp(System.currentTimeMillis()));
     }
 
     private static List<IRI> findComponentsDescribingSense(RepositoryConnection conn, IRI sense) {

@@ -336,7 +336,8 @@ public class JobManager {
                         options,
                         pct -> ji.progress = Math.max(1, Math.min(99, pct)),
                         processed -> ji.message = "Processed: " + processed,
-                        () -> Thread.currentThread().isInterrupted()
+                        () -> Thread.currentThread().isInterrupted(),
+                        msg -> ji.message = msg
                 );
 
                 converted.put(fileId, out);

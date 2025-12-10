@@ -41,12 +41,13 @@ public class OntoLexToTBXConverterAdapter implements Converter {
     
     @Override
     public void convert(String fileId, Path input, Path output, Map<String, String> options,
-            IntConsumer onProgress, LongConsumer onProcessed, BooleanSupplier shouldCancel) throws Exception {
+            IntConsumer onProgress, LongConsumer onProcessed, BooleanSupplier shouldCancel,
+            java.util.function.Consumer<String> onMessage) throws Exception {
         Repository repo = RepositoryRegistry.get(fileId);
         if (repo == null) {
             throw new IllegalStateException("No repository for fileId: " + fileId);
         }
-        OntoLexToTBXConverter.Result res = OntoLexToTBXConverter.convert(repo, input, output, options, onProgress, onProcessed, shouldCancel
+        OntoLexToTBXConverter.Result res = OntoLexToTBXConverter.convert(repo, input, output, options, onProgress, onProcessed, shouldCancel, onMessage
         );
     }
 }
