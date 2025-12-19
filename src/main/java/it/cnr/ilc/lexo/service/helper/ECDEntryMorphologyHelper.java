@@ -20,11 +20,13 @@ public class ECDEntryMorphologyHelper extends TripleStoreDataHelper<ECDEntryMorp
     @Override
     public void fillData(ECDEntryMorphology data, BindingSet bs) {
         data.setNote(getStringValue(bs, SparqlVariable.NOTE));
+        data.setPos(getStringValue(bs, SparqlVariable.LEXICAL_ENTRY_POS));
         data.setType(getStringValue(bs, SparqlVariable.FORM_TYPE));
         data.setLabel(getStringValue(bs, SparqlVariable.WRITTEN_REPRESENTATION)
                 + (!getLiteralLanguage(bs, SparqlVariable.WRITTEN_REPRESENTATION).isEmpty() ? "@" + getLiteralLanguage(bs, SparqlVariable.WRITTEN_REPRESENTATION) : ""));
         data.setPhoneticRep(getStringValue(bs, SparqlVariable.PHONETIC_REPRESENTATION));
         data.setForm(getStringValue(bs, SparqlVariable.FORM));
+        
         data.setInheritedMorphology(getECDMorphology(getStringValue(bs, SparqlVariable.INHERITED_MORPHOLOGY)));
         data.setMorphology(getECDMorphology(getStringValue(bs, SparqlVariable.MORPHOLOGY)));
     }
