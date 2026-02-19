@@ -26,12 +26,15 @@ public class ECDMeaningOrdering implements Data {
         this.meanings = meanings;
     }
 
-    public class MeaningOrder {
+    public static class MeaningOrder {
 
         private String sense;
         private String romanNumber;
         private String arabicNumber;
         private String letter;
+
+        public MeaningOrder() {
+        }
 
         public String getSense() {
             return sense;
