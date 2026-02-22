@@ -79,6 +79,7 @@ public class ECDUpdateManager implements Manager, Cached {
 
     public String updateMeaningOrder(String id, ECDMeaningOrdering ecdmo) {
         StringBuilder query = new StringBuilder();
+        StringBuilder insertQuery = new StringBuilder();
         query.append(SparqlDeleteData.DELETE_ECD_MEANINGS.replaceAll("_ID_", id)).append(";\n");
         sortByRomanArabicLetter(ecdmo);
         for (int i = 0; i < (ecdmo.getMeanings() == null ? 0 : ecdmo.getMeanings().size()); i++) {
@@ -96,20 +97,20 @@ public class ECDUpdateManager implements Manager, Cached {
                 String u123 = StringUtil.concatUris(col1, col2, col3);
                 String u1234 = StringUtil.concatUris(col1, col2, col3, col4);
                 // <_ID_> rdf:_R <concat((R,1),(R,2))> .
-                query.append('<').append(id).append("> rdf:_").append(R).append(' ')
+                insertQuery.append('<').append(id).append("> rdf:_").append(R).append(' ')
                         .append('<').append(u12).append("> .\n");
                 // <concat((R,1),(R,2))> a lexicog:LexicographicComponent ; rdfs:label "(R,2)" ; rdf:_(R,3) <concat((R,1),(R,2),(R,3))> .
-                query.append('<').append(u12).append("> a lexicog:LexicographicComponent ;\n")
+                insertQuery.append('<').append(u12).append("> a lexicog:LexicographicComponent ;\n")
                         .append("   rdfs:label \"").append(StringUtil.esc(col2)).append("\" ;\n")
                         .append("   rdf:_").append(arNum).append(' ')
                         .append('<').append(u123).append("> .\n");
                 // <concat((R,1),(R,2),(R,3))> a lexicog:LexicographicComponent ; rdfs:label "(R,3)" ; rdf:_number((R,4)) <concat((R,1),(R,2),(R,3),(R,4))> .
-                query.append('<').append(u123).append("> a lexicog:LexicographicComponent ;\n")
+                insertQuery.append('<').append(u123).append("> a lexicog:LexicographicComponent ;\n")
                         .append("   rdfs:label \"").append(StringUtil.esc(col3)).append("\" ;\n")
                         .append("   rdf:_").append(idxLetter).append(' ')
                         .append('<').append(u1234).append("> .\n");
                 // <concat((R,1),(R,2),(R,3),(R,4))> a lexicog:LexicographicComponent ; rdfs:label "(R,4)" ; lexicog:describes <(R,1)> .
-                query.append('<').append(u1234).append("> a lexicog:LexicographicComponent ;\n")
+                insertQuery.append('<').append(u1234).append("> a lexicog:LexicographicComponent ;\n")
                         .append("   rdfs:label \"").append(StringUtil.esc(col4)).append("\" ;\n")
                         .append("   lexicog:describes <").append(col1).append("> .\n");
                 continue;
@@ -119,13 +120,13 @@ public class ECDUpdateManager implements Manager, Cached {
                 int arNum = StringUtil.parsePositiveInt(col3, "(R,3) arabicNumber");
                 String u12 = StringUtil.concatUris(col1, col2);
                 String u123 = StringUtil.concatUris(col1, col2, col3);
-                query.append('<').append(id).append("> rdf:_").append(R).append(' ')
+                insertQuery.append('<').append(id).append("> rdf:_").append(R).append(' ')
                         .append('<').append(u12).append("> .\n");
-                query.append('<').append(u12).append("> a lexicog:LexicographicComponent ;\n")
+                insertQuery.append('<').append(u12).append("> a lexicog:LexicographicComponent ;\n")
                         .append("   rdfs:label \"").append(StringUtil.esc(col2)).append("\" ;\n")
                         .append("   rdf:_").append(arNum).append(' ')
                         .append('<').append(u123).append("> .\n");
-                query.append('<').append(u123).append("> a lexicog:LexicographicComponent ;\n")
+                insertQuery.append('<').append(u123).append("> a lexicog:LexicographicComponent ;\n")
                         .append("   rdfs:label \"").append(StringUtil.esc(col3)).append("\" ;\n")
                         .append("   lexicog:describes <").append(col1).append("> .\n");
                 continue;
@@ -133,9 +134,9 @@ public class ECDUpdateManager implements Manager, Cached {
             // Se (R,3) vuota ma (R,2) valorizzata -> branch 3
             if (!col2.isEmpty()) {
                 String u12 = StringUtil.concatUris(col1, col2);
-                query.append('<').append(id).append("> rdf:_").append(R).append(' ')
+                insertQuery.append('<').append(id).append("> rdf:_").append(R).append(' ')
                         .append('<').append(u12).append("> .\n");
-                query.append('<').append(u12).append("> a lexicog:LexicographicComponent ;\n")
+                insertQuery.append('<').append(u12).append("> a lexicog:LexicographicComponent ;\n")
                         .append("   rdfs:label \"").append(StringUtil.esc(col2)).append("\" ;\n")
                         .append("   lexicog:describes <").append(col1).append("> .\n");
                 // Se (R,2) è valorizzata e basta, non aggiungiamo altro.
@@ -144,8 +145,9 @@ public class ECDUpdateManager implements Manager, Cached {
             // Se (R,2) non valorizzata: non fare nulla.
         }
         StringBuilder full = new StringBuilder();
-        full.append("INSERT DATA {\n")
-                .append(query)
+        full.append(query)
+                .append("INSERT DATA {\n")
+                .append(insertQuery)
                 .append("}\n");
         String lastupdate = timestampFormat.format(new Timestamp(System.currentTimeMillis()));
         RDFQueryUtil.update(full.toString());
