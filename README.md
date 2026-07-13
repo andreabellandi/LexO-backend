@@ -4,7 +4,8 @@
 
 LexO-server is a backend software providing REST services for building and managing linguistic resources in the context of the Semantic Web, in particular:
 - lexical and terminological resources are based on the [_OntoLex-Lemon_](https://www.w3.org/2016/05/ontolex/) model;
-- lexicographic resources (dictionaries) are based on the [_Lexicog_](https://www.w3.org/2019/09/lexicog/) model.
+- lexicographic resources (dictionaries) are based on the [_Lexicog_](https://www.w3.org/2019/09/lexicog/) model;
+- Explanatory Combinatorial Dictionaries (ECDs) are represented using a combination of these two models.
 
 LexO-server uses the [Swagger](https://swagger.io/) open source tool. It helps one to design and to document APIs at scale, for easing and supporting the front end GUI development process
 
