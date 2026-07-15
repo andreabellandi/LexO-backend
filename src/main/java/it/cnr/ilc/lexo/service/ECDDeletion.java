@@ -277,6 +277,29 @@ public class ECDDeletion extends Service {
             log(Level.ERROR, "ecd/delete/ECDMeaning: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
         }
+        
     }
+    
+       //////////////////////////////
+    @GET
+    @Path("ECDGovPatt")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "ECDGovPatt",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "ECD government pattern deletion",
+            notes = "This method deletes a government pattern")
+    public Response ECDGovPatt() {return null;}
 
+        @GET
+    @Path("ECDSemanticMapping")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "ECDSemanticMapping",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "ECD semantic mapping deletion",
+            notes = "This method deletes a semantic mapping")
+    public Response ECDSemanticMapping() {return null;}
 }

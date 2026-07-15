@@ -459,4 +459,30 @@ public class ECDCreation extends Service {
 
     }
 
+    
+    //////////////////////
+    @POST
+    @Path("ECDGovPat")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.POST,
+            value = "ECDGovPat",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "ECD Government Pattern creation",
+            notes = "This method creates a new government pattern of a ECD entry and returns it")
+    public Response ECDGovPat() {return null;}
+    
+    @POST
+    @Path("ECDSemanticMapping")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.POST,
+            value = "ECDSemanticMapping",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "ECD semantic mapping creation",
+            notes = "This method creates a semantic mapping for a specific government pattern")
+    public Response ECDSemanticMapping() {return null;}
+    
 }

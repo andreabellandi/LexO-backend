@@ -101,35 +101,6 @@ public class Conversion extends Service {
         }
     }
 
-//    @POST
-//    @Path("/upload")
-//    @Consumes(MediaType.MULTIPART_FORM_DATA)
-//    @Produces(MediaType.APPLICATION_JSON)
-//    public Response upload(@HeaderParam("Authorization") String key, @FormDataParam("file") InputStream fileStream,
-//            @FormDataParam("file") FormDataContentDisposition meta) {
-//        try {
-//            checkKey(key);
-//            if (fileStream == null || meta == null) {
-//                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("Missing file").build();
-//            }
-//            final String name = meta.getFileName();
-//            if (name == null || !(name.endsWith(".ttl") || name.endsWith(".rdf"))) {
-//                return Response.status(Response.Status.UNSUPPORTED_MEDIA_TYPE).type(MediaType.TEXT_PLAIN).entity("Only .ttl or .rdf allowed").build();
-//            }
-//            final String fileId = java.util.UUID.randomUUID().toString();
-//            log(Level.INFO, "/upload: file " + name + " - " + meta.getSize() + " with id = " + fileId);
-//            JobManager.get().saveUploadEnforcingLimit(fileId, fileStream, name, MAX_BYTES);
-//            Map<String, String> resp = new LinkedHashMap<>();
-//            resp.put("fileId", fileId);
-//            return Response.ok().entity(new ObjectMapper().writeValueAsString(resp)).build();
-//        } catch (IOException e) {
-//            log(Level.ERROR, "/upload: " + e.getMessage());
-//            return Response.status(Response.Status.REQUEST_ENTITY_TOO_LARGE).type(MediaType.TEXT_PLAIN).entity(e.getMessage()).build();
-//        } catch (AuthorizationException | ServiceException e) {
-//            log(Level.ERROR, "/upload: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
-//            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
-//        }
-//    }
 
     @POST
     @Path("/{fileId}/parse")
@@ -209,26 +180,6 @@ public class Conversion extends Service {
         }
     }
 
-//    @POST
-//    @Path("/{fileId}/convert")
-//    @Produces(MediaType.APPLICATION_JSON)
-//    public Response convert(@HeaderParam("Authorization") String key, @PathParam("fileId") String fileId) {
-//        try {
-//            checkKey(key);
-//            log(Level.INFO, "/{fileId}/convert: required for id " + fileId);
-//            JobInfo ji = JobManager.get().startConvert(fileId, null);
-//            return Response.ok(new ObjectMapper().writeValueAsString(ji)).build();
-//        } catch (IllegalStateException ise) {
-//            log(Level.ERROR, "/{fileId}/convert: bad state for id " + fileId + ": " + ise.getMessage());
-//            return Response.status(Response.Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity(ise.getMessage()).build();
-//        } catch (JsonProcessingException e) {
-//            log(Level.ERROR, "/{fileId}/convert: failed for id " + fileId + ": " + e.getMessage());
-//            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN).entity(e.getMessage()).build();
-//        } catch (AuthorizationException | ServiceException ex) {
-//            log(Level.ERROR, "/{fileId}/convert: " + (authenticationData.getUsername() != null ? authenticationData.getUsername() : "") + " not authorized");
-//            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(authenticationData.getUsername() + " not authorized").build();
-//        }
-//    }
     @GET
     @Path("/{fileId}/status")
     @Produces(MediaType.APPLICATION_JSON)

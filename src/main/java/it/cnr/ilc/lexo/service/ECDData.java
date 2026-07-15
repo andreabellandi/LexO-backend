@@ -398,4 +398,28 @@ public class ECDData extends Service {
             return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
         }
     }
+    
+    
+    ////////////////////
+    @GET
+    @Path("ECDGovPat")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "ECDGovPat",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "ECD Government Pattern",
+            notes = "This method returns the details of a specific government pattern")
+    public Response ECDGovPat(){ return null ;}
+    
+    @GET
+    @Path("ECDGovPats")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "ECDGovPats",
+            produces = "application/json; charset=UTF-8")
+    @ApiOperation(value = "ECD Government Patterns of a dictionary entry",
+            notes = "This method returns the details of the government patterns of a specific entry")
+    public Response ECDGovPats(){ return null ;}
 }
