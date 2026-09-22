@@ -66,7 +66,7 @@ public class SparqlPrefix {
    
 
     // melchuk
-    public static Namespace LFREL = new Namespace("lfrel:", "https://github.com/alex-fonseca/lexfom/lfrel.owl#");
+    //public static Namespace LFREL = new Namespace("lfrel:", "https://github.com/alex-fonseca/lexfom/lfrel.owl#");
     public static Namespace LFRLF = new Namespace("lfrlf:", "https://github.com/alex-fonseca/rlfowl/lfrlf.owl#");
 
 }

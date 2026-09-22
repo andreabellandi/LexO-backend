@@ -16,7 +16,9 @@ import it.cnr.ilc.lexo.service.data.Data;
 public class LexicalFunction implements Data {
 
     @ApiModelProperty(value = "IRI")
-    private String lexicalFunction;
+    private String lexicalFunction;    
+    private String type;
+
     
 
     public String getLexicalFunction() {
@@ -27,5 +29,11 @@ public class LexicalFunction implements Data {
         this.lexicalFunction = lexicalFunction;
     }
 
-   
+     public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 }

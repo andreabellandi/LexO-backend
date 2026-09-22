@@ -19,6 +19,7 @@ public class LexicalFunctionHelper extends TripleStoreDataHelper<LexicalFunction
     public void fillData(LexicalFunction data, BindingSet bs) {
        
         data.setLexicalFunction(getStringValue(bs, SparqlVariable.Lexical_Function));
+        data.setType(getStringValue(bs, SparqlVariable.TYPE));
         List<Label> labels = new ArrayList();
         labels.addAll(getLabel(getStringValue(bs, SparqlVariable.PREF_LABEL) != null ? getStringValue(bs, SparqlVariable.PREF_LABEL) : null, "prefLabel", ";"));
         labels.addAll(getLabel(getStringValue(bs, SparqlVariable.ALT_LABEL) != null ? getStringValue(bs, SparqlVariable.ALT_LABEL) : null, "altLabel", ";"));
