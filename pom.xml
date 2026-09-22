@@ -308,7 +308,7 @@
         </profile> 
         <profile>
             <id>dec-facile-local</id>
-            <!-- compilazione di lexo-backend che punta repo di maia-repo in GraphDB sulla stessa macchina (localhost) -->
+            <!-- compilazione di lexo-backend che punta repo DEC-Facile in GraphDB sulla stessa macchina (localhost) -->
             <dependencies>
                 <!-- https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client -->
                 <dependency>
