@@ -39,9 +39,13 @@ public abstract class TripleStoreDataHelper<D extends Data> extends Helper<D> {
     public abstract void fillData(D data, BindingSet bs);
 
     public List<D> newDataList(TupleQueryResult res) {
-        return res.stream().
-                map(bs -> newData(bs)).
-                collect(Collectors.toList());
+        List<D> ret = null;
+        if (res != null) {
+            ret = res.stream().
+                    map(bs -> newData(bs)).
+                    collect(Collectors.toList());
+        }
+        return ret;
     }
 
     public D newData(TupleQueryResult res) {
