@@ -307,6 +307,31 @@
             </properties>
         </profile> 
         <profile>
+            <id>dec-facile-local</id>
+            <!-- compilazione di lexo-backend che punta repo di maia-repo in GraphDB sulla stessa macchina (localhost) -->
+            <dependencies>
+                <!-- https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client -->
+                <dependency>
+                    <groupId>org.mariadb.jdbc</groupId>
+                    <artifactId>mariadb-java-client</artifactId>
+                    <version>3.2.0</version>
+                </dependency>
+            </dependencies> 
+            <properties>
+                <db.jdbcDialect>org.hibernate.dialect.MariaDB103Dialect</db.jdbcDialect>
+                <db.jdbcDriverClass>org.mariadb.jdbc.Driver</db.jdbcDriverClass>
+                <db.jdbcUrl>jdbc:mariadb://localhost/lexo_server?characterEncoding=UTF-8&amp;amp;serverTimezone=Europe/Rome</db.jdbcUrl>
+                <db.user>lexo</db.user>
+                <db.password>LexOServer12</db.password>
+                <envClassifier></envClassifier> <!-- postfix del nome del war -->
+                <postfix></postfix> <!-- postfix della webapp (parte finale della URL) -->
+                <graphdb.url>http://localhost:7200</graphdb.url>
+                <graphdb.repository>DEC-Facile</graphdb.repository>
+                <graphdb.poolSize>5</graphdb.poolSize>
+                <graphDb.namedGraph></graphDb.namedGraph>
+            </properties>
+        </profile> 
+        <profile>
             <id>maia-localhost-mysql</id>
             <!-- compilazione di lexo-backend che punta repo di maia-repo in GraphDB sulla stessa macchina (localhost) -->
             <properties>
